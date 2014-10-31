@@ -1,3 +1,4 @@
+#Given the file path of a .delta file. Use this function to filter out unuseful values and leave values of interest. 
 def process_data(path):
     with open(path) as input_file:
         for line in input_file:
