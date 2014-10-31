@@ -1,0 +1,44 @@
+#blastn 
+#get x and y to compare in blastn
+#assuming input is 
+print('blastn must be installed')
+x = input('Enter fasta file for blastn:') #ecoliK12.fasta
+y = input('Enter fasta file for blastn:') #ecoliK12.fasta
+cmdline = 'blastn -query' + x + '-db' + y + '-task blastn -dust no -outfmt "6 std qlen slen'
+z = input('If custom parementers for blastn, enter command line:')
+
+#is z null? if not, replace with z
+if z is not None:
+  cmdline = z
+  
+#read output from terminal, put into output
+from subprocess import Popen, PIPE
+stdout = Popen(cmdline), shell=True, stdout=PIPE).stdout
+output = stdout.read()
+
+#num_lines = count all \n in output
+num_lines = [s.strip(\n) for s in output.splitlines()]
+for x in range(0, num_lines):
+ output_array = num_line.split()
+ #P = (%id/100)*length of the match
+  p = (output_array[2]/100)*output_array[3]
+  total += P (for every output line)
+  #next line
+
+ANI = (total / output_array[12])
+
+#output array contents for every strip
+#output_array[0] = query_id
+#output_array[1] = db_id
+#output_array[2] = percent_id
+#output_array[3] = alignment_length
+#output_array[4] = number_gap
+#output_array[5] = number_mismatch
+#output_array[6] = start_query
+#output_array[7] = end_query
+#output_array[8] = start_db
+#output_array[9] = end_db
+#output_array[10] = e_value
+#output_array[11] = bitscore
+#output_array[12] = query_length
+#output_array[13] = db_length
