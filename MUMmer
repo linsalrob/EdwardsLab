@@ -1,7 +1,20 @@
 #Given the file path of a .delta file. Use this function to filter out unuseful values and leave values of interest. 
+
+PATH = 'my file location'
+
 def process_data(path):
     with open(path) as input_file:
         for line in input_file:
             chunk = line.strip().split(' ')
             if len(chunk) == 7:
                 yield chunk
+                
+for piece in process_data(PATH):
+    length = ((int(piece[1])-int(piece[0])) + (int(piece[3])-int(piece[2])))/2
+    if length != 0.0:
+        ANI = ((length - int(piece[5])) / length) * 100
+        print ANI
+    else:
+        continue
+        
+#found a design flaw so will have to rewrite some lines in order to calculate the average of all ANI values obtained.
