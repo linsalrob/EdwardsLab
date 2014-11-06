@@ -9,12 +9,14 @@ def process_data(path):
             if len(chunk) == 7:
                 yield chunk
                 
+x=0
+list1 = []
 for piece in process_data(PATH):
     length = ((int(piece[1])-int(piece[0])) + (int(piece[3])-int(piece[2])))/2
-    if length != 0.0:
+    if length > 0.0:
         ANI = ((length - int(piece[5])) / length) * 100
-        print ANI
-    else:
-        continue
-        
-#found a design flaw so will have to rewrite some lines in order to calculate the average of all ANI values obtained.
+        if ANI > 0.0:
+            list1.insert(x, ANI)
+            x=x+1
+print(sum(list1) / x)
+
