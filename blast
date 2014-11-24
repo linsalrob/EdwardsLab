@@ -6,7 +6,7 @@ def process_data(path):
     with open(path) as input_file:
         for line in input_file:
             chunk = line.strip().split(' ')
-            if len(chunk) == 7:
+            if len(chunk) == 7:#change for blast?
                 yield chunk
 
 
