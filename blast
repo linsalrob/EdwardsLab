@@ -16,7 +16,7 @@ p = 0
 listOfTotal = []
 for piece in process_data(PATH):
     p = (float(piece[2])/100)*float(piece[3])
-    # = abs(p)
+    p = abs(p)
     listOfTotal.insert(x,p)
     lengthOfGenomes = int(piece[13]) - int(piece[12])#out of range?
     x += 1
