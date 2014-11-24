@@ -8,9 +8,6 @@ def process_data(path):
             chunk = line.strip().split(' ')
             if len(chunk) == 7:#change for blast?
                 yield chunk
-
-
-lengthOfGenomes = 0
 x = 0
 p = 0
 listOfTotal = []
@@ -18,10 +15,16 @@ for piece in process_data(PATH):
     p = (float(piece[2])/100)*float(piece[3])
     p = abs(p)
     listOfTotal.insert(x,p)
-    lengthOfGenomes = int(piece[13]) - int(piece[12])#out of range?
     x += 1
 total = (sum(listOfTotal)/len(listOfTotal))
 ANI = (total / lengthOfGenomes)
+
+lengthOfGenomes = 0
+for piece in process_data(PATH):
+    lengthOfGenomes = int(piece[13]) - int(piece[12])#out of range?
+    break
+
+
 
 #output array[0] = piece[0]
 #output array contents for every strip
