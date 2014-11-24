@@ -1,32 +1,29 @@
-#blastn 
-#get x and y to compare in blastn
-#assuming input is 
-print('blastn must be installed')
-x = input('Enter fasta file for blastn:') #ecoliK12.fasta
-y = input('Enter fasta file for blastn:') #ecoliK12.fasta
-cmdline = 'blastn -query' + x + '-db' + y + '-task blastn -dust no -outfmt "6 std qlen slen'
-z = input('If custom parementers for blastn, enter command line:')
+from __future__ import division
+PATH = '/Users/jon6/Desktop/outfile3.delta'
 
-#is z null? if not, replace with z
-if z is not None:
-  cmdline = z
-  
-#read output from terminal, put into output
-from subprocess import Popen, PIPE
-stdout = Popen(cmdline), shell=True, stdout=PIPE).stdout
-output = stdout.read()
 
-#num_lines = count all \n in output
-num_lines = [s.strip(\n) for s in output.splitlines()]
-for x in range(0, num_lines):
- output_array = num_line.split()
- #P = (%id/100)*length of the match
-  p = (output_array[2]/100)*output_array[3]
-  total += P (for every output line)
-  #next line
+def process_data(path):
+    with open(path) as input_file:
+        for line in input_file:
+            chunk = line.strip().split(' ')
+            if len(chunk) == 7:
+                yield chunk
 
-ANI = (total / output_array[12])
 
+lengthOfGenomes = 0
+x = 0
+p = 0
+listOfTotal = []
+for piece in process_data(PATH):
+    p = (float(piece[2])/100)*float(piece[3])
+    # = abs(p)
+    listOfTotal.insert(x,p)
+    lengthOfGenomes = int(piece[13]) - int(piece[12])#out of range?
+    x += 1
+total = (sum(listOfTotal)/len(listOfTotal))
+ANI = (total / lengthOfGenomes)
+
+#output array[0] = piece[0]
 #output array contents for every strip
 #output_array[0] = query_id
 #output_array[1] = db_id
