@@ -1,5 +1,5 @@
 from __future__ import division
-PATH = '/Users/jon6/Desktop/outfile3.delta'
+PATH = '/Users/jon6/Desktop/outfile3.delta'#delta file mummers vs blast is probably the issue
 
 
 def process_data(path):
