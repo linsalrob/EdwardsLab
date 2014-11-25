@@ -6,23 +6,23 @@ def process_data(path):
     with open(path) as input_file:
         for line in input_file:
             chunk = line.strip().split(' ')
-            if len(chunk) == 7:#change for blast?
                 yield chunk
-x = 0
-p = 0
-listOfTotal = []
-for piece in process_data(PATH):
-    p = (float(piece[2])/100)*float(piece[3])
-    p = abs(p)
-    listOfTotal.insert(x,p)
-    x += 1
-total = (sum(listOfTotal)/len(listOfTotal))
-ANI = (total / lengthOfGenomes)
 
 lengthOfGenomes = 0
 for piece in process_data(PATH):
     lengthOfGenomes = int(piece[13]) - int(piece[12])#out of range?
     break
+    
+x = 0
+p = 0
+listOfTotal = []
+for piece in process_data(PATH):
+    p = abs(float(piece[2])/100)*float(piece[3])
+    listOfTotal.insert(x,p)
+    x += 1
+total = (sum(listOfTotal)/len(listOfTotal))
+ANI = (total / lengthOfGenomes)
+
 
 
 
