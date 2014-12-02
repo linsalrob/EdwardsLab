@@ -1,4 +1,4 @@
-#Given the file path of a .delta file. Use this function to filter out unuseful values and leave values of interest. 
+#Given the file path of a .delta file from Mummer. Use this function to calculate ANI.
 
 PATH = 'my file location'
 
@@ -11,9 +11,9 @@ def process_data(path):
 
 x=0
 list1 = []
-for piece in process_data(PATH):
-    length = abs(((int(piece[1])-int(piece[0]))) + abs((int(piece[3])-int(piece[2]))))/2
-    ANI = ((length - int(piece[5])) / length) * 100
+for a, b, c, d, e, f, g in process_data(PATH):
+    length = abs(((int(b)-int(a))) + abs((int(d)-int(c))))/2
+    ANI = ((length - int(e)) / length) * 100
     list1.insert(x, ANI)
     x +=1
 print(sum(list1)/ x)   
