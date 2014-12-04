@@ -19,3 +19,34 @@ for a, b, c, d, e, f, g in process_data(PATH):
 print(sum(list1)/ x)   
 
 
+'''
+
+__author__ = 'jon6'
+
+PATH = '/Users/jon6/Desktop/outfileEcoli.delta'
+
+def process_data(path):
+    with open(path) as input_file:
+        for line in input_file:
+            chunk = line.strip().split(' ')
+            if len(chunk) == 7:
+                yield chunk
+
+x=0
+list1 = []
+for piece in process_data(PATH):
+    if piece[0] == piece[2]:
+        length = abs(((int(piece[1])-int(piece[0]))) + abs((int(piece[3])-int(piece[2]))))/2
+        ANI = ((length - int(piece[5])) / length) * 100
+        list1.insert(x, ANI)
+        x +=1
+        break;
+    else:
+        length = abs(((int(piece[1])-int(piece[0]))) + abs((int(piece[3])-int(piece[2]))))/2
+        ANI = ((length - int(piece[5])) / length) * 100
+        list1.insert(x, ANI)
+        x +=1
+print(sum(list1)/ x)
+
+'''
+
