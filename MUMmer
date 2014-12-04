@@ -20,10 +20,8 @@ print(sum(list1)/ x)
 
 
 '''
-
-__author__ = 'jon6'
-
-PATH = '/Users/jon6/Desktop/outfileEcoli.delta'
+#breaks if query was used for exact dna match
+PATH = '/Users/jon6/Desktop/somedelta.delta'
 
 def process_data(path):
     with open(path) as input_file:
