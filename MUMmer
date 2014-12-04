@@ -20,7 +20,7 @@ print(sum(list1)/ x)
 
 
 '''
-#breaks if query was used for exact dna match
+#breaks if query was used for exact dna match e.g. ecolik12.fasta vs ecolik12.fasta
 PATH = '/Users/jon6/Desktop/somedelta.delta'
 
 def process_data(path):
