@@ -1,4 +1,26 @@
 from __future__ import division
+import sys
+
+PATH = '/Users/gina/ncbi-blast-2.2.29+/results1.out'
+
+
+def process_data(path):
+    with open(path) as input_file:
+        for line in input_file:
+            chunk = line.strip().split()
+            yield chunk
+
+total = 0
+for piece in process_data(PATH):
+    percent_identity = (float(piece[2])/100) * int(piece[3])
+    total += percent_identity
+query_length = int(piece[12])
+ANI = (total / query_length) * 100
+print ANI
+
+
+'''
+from __future__ import division
 PATH = '/Users/jon6/Desktop/outfile3.delta'#delta file mummers vs blast is probably the issue
 
 
@@ -42,3 +64,5 @@ ANI = (total / lengthOfGenomes)
 #output_array[11] = bitscore
 #output_array[12] = query_length
 #output_array[13] = db_length
+
+'''
