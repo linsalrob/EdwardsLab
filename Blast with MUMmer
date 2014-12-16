@@ -1,0 +1,32 @@
+from __future__ import division
+import sys
+
+PATH = '/Users/gina/ncbi-blast-2.2.29+/ecol_shig.out'
+
+
+def process_data(path):
+    with open(path) as input_file:
+        for line in input_file:
+            chunk = line.strip().split()
+            yield chunk
+
+x = 0
+list1 = []
+for piece in process_data(PATH):
+    if piece[2] == '100.00' and piece[6] == '1':
+        length = abs(((int(piece[7])-int(piece[6]))) + abs((int(piece[9])-int(piece[8]))))/2
+        similarity_errors = abs((int(piece[4])+int(piece[5])))
+        ANI = abs((length - similarity_errors) / length) * 100
+        list1.insert(x, ANI)
+        x +=1
+        break
+    else:
+        length = abs(((int(piece[7])-int(piece[6]))) + abs((int(piece[9])-int(piece[8]))))/2
+        similarity_errors = abs((int(piece[4])+int(piece[5])))
+        ANI = abs((length - similarity_errors) / length) * 100
+        list1.insert(x, ANI)
+        x +=1
+print(sum(list1)/ x)
+
+
+
