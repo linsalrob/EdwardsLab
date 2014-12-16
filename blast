@@ -12,57 +12,14 @@ def process_data(path):
 
 total = 0
 for piece in process_data(PATH):
-    percent_identity = (float(piece[2])/100) * int(piece[3])
-    total += percent_identity
+    if piece[2] == '100.00' and piece[6] == '1':
+        percent_identity = (float(piece[2])/100) * int(piece[3])
+        total += percent_identity
+        break
+    else:
+        percent_identity = (float(piece[2])/100) * int(piece[3])
+        total += percent_identity
+
 query_length = int(piece[12])
 ANI = (total / query_length) * 100
 print ANI
-
-
-'''
-from __future__ import division
-PATH = '/Users/jon6/Desktop/outfile3.delta'#delta file mummers vs blast is probably the issue
-
-
-def process_data(path):
-    with open(path) as input_file:
-        for line in input_file:
-            chunk = line.strip().split(' ')
-                yield chunk
-
-lengthOfGenomes = 0
-for piece in process_data(PATH):
-    lengthOfGenomes = int(piece[13]) - int(piece[12])#out of range?
-    break
-    
-x = 0
-p = 0
-listOfTotal = []
-for piece in process_data(PATH):
-    p = abs(float(piece[2])/100)*float(piece[3])
-    listOfTotal.insert(x,p)
-    x += 1
-total = (sum(listOfTotal)/len(listOfTotal))
-ANI = (total / lengthOfGenomes)
-
-
-
-
-#output array[0] = piece[0]
-#output array contents for every strip
-#output_array[0] = query_id
-#output_array[1] = db_id
-#output_array[2] = percent_id
-#output_array[3] = alignment_length
-#output_array[4] = number_gap
-#output_array[5] = number_mismatch
-#output_array[6] = start_query
-#output_array[7] = end_query
-#output_array[8] = start_db
-#output_array[9] = end_db
-#output_array[10] = e_value
-#output_array[11] = bitscore
-#output_array[12] = query_length
-#output_array[13] = db_length
-
-'''
