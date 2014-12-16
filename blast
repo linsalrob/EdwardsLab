@@ -23,3 +23,11 @@ for piece in process_data(PATH):
 query_length = int(piece[12])
 ANI = (total / query_length) * 100
 print ANI
+
+'''
+query_length = int(piece[12])
+database_length = int(piece[13])
+genome_length = (query_length + database_length) / 2
+ANI = (total / query_length) * 100
+print ANI
+'''
