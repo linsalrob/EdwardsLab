@@ -21,17 +21,33 @@ def process_data(path):
             if len(chunk) == 7:
                 yield chunk
 
+from __future__ import division
+import sys
+
+PATH = '/Users/jon6/MUMmer3.23/ecolik12_shingellaFlexneri.delta'
+
+def process_data(path):
+    with open(path) as input_file:
+        for line in input_file:
+            chunk = line.strip().split(' ')
+            if len(chunk) == 7:
+                yield chunk
+
 x=0
 list1 = []
+oneHundredANI = False
 for piece in process_data(PATH):
     if piece[0] == piece[2]:
         if piece[4] and piece[5] == '0':
+            oneHundredANI = True
             length = abs(((int(piece[1])-int(piece[0]))) + abs((int(piece[3])-int(piece[2])))) / 2
             ANI = ((length - int(piece[5])) / length) * 100
             list1.insert(x, ANI)
             x += 1
             break
-    else:
+
+if not oneHundredANI:
+    for piece in process_data(PATH):
         length = abs(((int(piece[1])-int(piece[0]))) + abs((int(piece[3])-int(piece[2])))) / 2
         ANI = ((length - int(piece[5])) / length) * 100
         list1.insert(x, ANI)
