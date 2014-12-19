@@ -2,7 +2,6 @@ from __future__ import division
 import sys
 
 PATH = '/Users/gina/MUMmer3.23/outfile3.delta'
-
 def process_data(path):
     with open(path) as input_file:
         for line in input_file:
@@ -27,6 +26,6 @@ for piece in process_data(PATH):
         x += 1
 
 if not list1:
-    print 'None, %ANI is low'
+    print ('None, %ANI is low')
 else:
-    print(sum(list1)/ x)
+    print((sum(list1)/ x))
