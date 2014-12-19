@@ -10,13 +10,6 @@ def process_data(path):
             if len(chunk) == 7:
                 yield chunk
 
-def process_data(path):
-    with open(path) as input_file:
-        for line in input_file:
-            chunk = line.strip().split(' ')
-            if len(chunk) == 7:
-                yield chunk
-
 x=0
 list1 = []
 for piece in process_data(PATH):
