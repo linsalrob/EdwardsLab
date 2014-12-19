@@ -3,6 +3,16 @@ import sys
 
 PATH = '/Users/gina/ncbi-blast-2.2.29+/results1.out'
 
+'''
+python3
+user_input = eval(input('Path to delta output result file:'))
+PATH = user_input
+'''
+'''
+python2.7
+user_input = raw_input('Path to delta output result file:')
+PATH = user_input
+'''
 
 def process_data(path):
     with open(path) as input_file:
