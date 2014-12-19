@@ -3,17 +3,6 @@ import sys
 
 PATH = '/Users/gina/MUMmer3.23/outfile3.delta'
 
-'''
-python3
-user_input = eval(input('Path to delta output result file:'))
-PATH = user_input
-'''
-'''
-python2.7
-user_input = raw_input('Path to delta output result file:')
-PATH = user_input
-'''
-
 def process_data(path):
     with open(path) as input_file:
         for line in input_file:
@@ -43,7 +32,5 @@ if not oneHundredANI:
 
 if not list1:
     print ('None, %ANI is low')
-    s = 'Hello, world.'
-    str(s)
 else:
     print((sum(list1)/ x))
