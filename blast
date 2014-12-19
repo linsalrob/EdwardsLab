@@ -19,7 +19,24 @@ def process_data(path):
         for line in input_file:
             chunk = line.strip().split()
             yield chunk
+x = 0
+total = 0
+for piece in process_data(PATH):
+    if piece[2] == '100.00' and piece[6] == '1':
+        percent_identity = float(piece[2])
+        total += percent_identity
+        x += 1
+        break
+    else:
+        percent_identity = float(piece[2])
+        total += percent_identity
+        x += 1
 
+ANI = total / x
+print ANI
+
+'''
+old algorithm, doesnt work correctly
 total = 0
 for piece in process_data(PATH):
     if piece[2] == '100.00' and piece[6] == '1':
@@ -34,7 +51,6 @@ query_length = int(piece[12])
 ANI = (total / query_length) * 100
 print ANI
 
-'''
 query_length = int(piece[12])
 database_length = int(piece[13])
 genome_length = (query_length + database_length) / 2
