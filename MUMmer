@@ -21,18 +21,6 @@ def process_data(path):
             if len(chunk) == 7:
                 yield chunk
 
-from __future__ import division
-import sys
-
-PATH = '/Users/jon6/MUMmer3.23/ecolik12_shingellaFlexneri.delta'
-
-def process_data(path):
-    with open(path) as input_file:
-        for line in input_file:
-            chunk = line.strip().split(' ')
-            if len(chunk) == 7:
-                yield chunk
-
 x=0
 list1 = []
 oneHundredANI = False
