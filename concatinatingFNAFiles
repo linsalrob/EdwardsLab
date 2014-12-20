@@ -1,0 +1,26 @@
+__author__ = 'jon6'
+
+import os
+directory = '/Users/jon6/Desktop/all.fna'
+
+'''
+for root, dirs, files in os.walk(directory, topdown=True):
+    for dir in dirs:
+        print (dir)
+        for file in files:
+            print(os.path.join(dir, file))
+'''
+import os.system("cat directoryat/*")
+
+x = None
+y = None
+listOfFNA = None
+for subdir, dirs, files in os.walk(directory, topdown=True):
+    for file in files:
+        print (subdir)
+        print ("previous:{0}".format(x))
+        if x == y:
+            print ("same as previous")
+        x = subdir
+        y = subdir
+        print (file)
