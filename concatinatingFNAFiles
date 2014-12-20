@@ -1,26 +1,35 @@
-__author__ = 'jon6'
-
 import os
-directory = '/Users/jon6/Desktop/all.fna'
+import fileinput
+from collections import OrderedDict
 
-'''
-for root, dirs, files in os.walk(directory, topdown=True):
-    for dir in dirs:
-        print (dir)
-        for file in files:
-            print(os.path.join(dir, file))
-'''
-import os.system("cat directoryat/*")
+directory = '/Users/jon6/Desktop/test.fna'
 
-x = None
-y = None
-listOfFNA = None
+currentDirectory = None
+previousDirectory = None
+listOfDirectoriesWithMultipleFNAfiles = []
+listOfDirectoriesWithMultipleFNAfilesNoRepeats = []
+listOfFNAFiles = None
+x = 0
+y = 0
 for subdir, dirs, files in os.walk(directory, topdown=True):
     for file in files:
-        print (subdir)
-        print ("previous:{0}".format(x))
-        if x == y:
-            print ("same as previous")
-        x = subdir
-        y = subdir
-        print (file)
+        currentDirectory = subdir
+        '''print ("current:{0}".format(currentDirectory))'''
+        if currentDirectory == previousDirectory:
+            '''print ("same as previous")'''
+            listOfDirectoriesWithMultipleFNAfiles.insert(x, currentDirectory)
+            x +=1
+        previousDirectory = subdir
+        '''print (file)'''
+listOfDirectoriesWithMultipleFNAfilesNoRepeats = list(OrderedDict.fromkeys(listOfDirectoriesWithMultipleFNAfiles))
+'''print (listOfDirectoriesWithMultipleFNAfilesNoRepeats)'''
+
+FNAname = None
+testName = None
+for dirFiles in listOfDirectoriesWithMultipleFNAfilesNoRepeats:
+    for root, dir, files in os.walk(dirFiles, topdown=True):
+        FNAname = ("directory name:{0}".format((os.path.basename(root))))
+        
+        for file in files:
+            FNAname = os.path.join(root, file)
+            print ("current file:{0}".format((FNAname)))
