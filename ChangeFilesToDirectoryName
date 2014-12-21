@@ -10,6 +10,7 @@ import shutil
 'user/directory1/file1.ext'
 'this program will turn directory1 into'
 'user/directory1/directory1.ext'
+'run concatinatingFNAFile.py, then run ChangeFileToDirectory.py to achieve user/dicrectory1/directory1.ext for all'
 
 directory = '/Users/jon6/Desktop/all.fna'
 ext = ".fna"
