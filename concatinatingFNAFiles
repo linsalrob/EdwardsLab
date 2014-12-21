@@ -2,7 +2,7 @@ import os
 import fileinput
 from collections import OrderedDict
 import shutil
-'This program concatenates files >= 2 in a large amount of directories into directory.extension and deletes the previous files'
+'This program concatenates files in a large amount of directories into directory.extension '
 'This script was designed to concatenate DNA files from all.fna downloaded from NCBI database on a unix machine into'
 '/user/directory/dictionary.extension'
 
@@ -43,18 +43,26 @@ for dirFile in listOfDirectoriesWithMultipleFNAfilesNoRepeats:
     for root, dir, files in os.walk(dirFile, topdown=True):
         for f in files:
             if f is newFNAfileName:
-                print ("overwriting current file, error")
+                print ("run already done before, error")
                 break
             if f.endswith(ext):
                 catFileTo = ((os.path.join(root, f)))
                 listOfFNAfiles.append(catFileTo+' ')
+                print (catFileTo)
+
     string1 = ''.join(listOfFNAfiles)
     catCommand = "cat " + string1 + " > " + newFNAfileName
+    rmCommand = "rm " + string1
     print (catCommand)
     os.system(catCommand)
+    print(rmCommand)
+    os.system(rmCommand)
     listOfFNAfiles = []
     catCommand = None
     newFNAfileName = None
+    string1 = None
+
+listOfDirectoriesWithMultipleFNAfilesNoRepeats = None
 
 
 '''
