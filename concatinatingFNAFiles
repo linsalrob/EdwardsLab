@@ -59,3 +59,47 @@ with open(newFNAfileName, 'w') as result:
         print (FNAfile)
         for line in open(FNAfile, 'r'):
             result.write(line)
+'''part 2
+import os
+import fileinput
+from collections import OrderedDict
+import shutil
+directory = '/Users/jon6/Desktop/test.fna'
+
+currentDirectory = None
+previousDirectory = None
+listOfDirectoriesWithMultipleFNAfiles = []
+listOfDirectoriesWithMultipleFNAfilesNoRepeats = []
+x = 0
+for subdir, dirs, files in os.walk(directory, topdown=True):
+    for file in files:
+        currentDirectory = subdir
+        '''print ("current:{0}".format(currentDirectory))'''
+        if currentDirectory == previousDirectory:
+            '''print ("same as previous")'''
+            listOfDirectoriesWithMultipleFNAfiles.insert(x, currentDirectory)
+            x +=1
+        previousDirectory = subdir
+        '''print (file)'''
+listOfDirectoriesWithMultipleFNAfilesNoRepeats = list(OrderedDict.fromkeys(listOfDirectoriesWithMultipleFNAfiles))
+'''print (listOfDirectoriesWithMultipleFNAfilesNoRepeats)'''
+
+newFNAfileName = None
+listOfFNAfiles = []
+ext = ".rtf"
+command1 = None
+for dirFile in listOfDirectoriesWithMultipleFNAfilesNoRepeats:
+    base = os.path.basename(dirFile)
+    fnaConstruct = (os.path.join(dirFile, base))
+    newFNAfileName = fnaConstruct+ext
+    '''print (newFNAfileName)'''
+    for root, dir, files in os.walk(dirFile, topdown=True):
+        for f in files:
+            if f.endswith(ext):
+                catFileTo = ((os.path.join(root, f)))
+                listOfFNAfiles.append(catFileTo+' ')
+    string1 = ''.join(listOfFNAfiles)
+    command1 = "cat " + string1 + " > " + newFNAfileName
+    print (command1)
+    os.system(command1)
+'''
