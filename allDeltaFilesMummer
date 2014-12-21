@@ -15,20 +15,22 @@ file2_vs_file3.delta
 file2_vs_file4.delta
 file3_vs_file4.delta
 '''
+vs = '__vs__'
+
 list = []
 list.append('/users/directory/blah1')
 list.append('/users/directory/blah2')
 list.append('/users/directory/blah3')
 list.append('/users/directory/blah4')
-print (list)
+n =  len(list)
+print (n)
 
-c = 4
-n = c-1
 for i in range(0,n):
     for j in range(i,n):
         i_list = list[i]
         j_list = list[j]
-        print(i_list+'_vs_'+j_list)
+        if(i_list is not j_list):
+            print(i_list+vs+j_list)
 
 '''
 mummers_directory = '/Users/jon6/MUMmer3.23/'
