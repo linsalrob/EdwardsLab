@@ -28,8 +28,6 @@ for i in range(0,n):
     for j in range(i,n):
         i_list = list[i]
         j_list = list[j]
-        i_string = ('{0}'.format(i))
-        j_string = ('{0}'.format(j+1))
         print(i_list+'_vs_'+j_list)
 
 '''
