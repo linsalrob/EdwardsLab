@@ -15,7 +15,7 @@ import shutil
 'user/directory2/file.ext will be unchanged, where dictionary2 has only file.ext'
 
 directory = '/Users/jon6/Desktop/all.fna'
-ext = ".txt"
+ext = ".fna"
 
 currentDirectory = None
 previousDirectory = None
