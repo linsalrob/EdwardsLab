@@ -1,0 +1,67 @@
+import os
+import fileinput
+from collections import OrderedDict
+import shutil
+'This program takes a list of directories with a single file in it and changes the file to directory.extension '
+'This script was designed to change names of DNA files from all.fna downloaded from NCBI database on a unix machine into'
+'/user/directory/directory.extension'
+
+'example:'
+'user/directory1/file1.txt'
+'this program will turn directory1 into'
+'user/directory1/directory1.txt'
+
+directory = '/Users/jon6/Desktop/testfna'
+ext = ".txt"
+
+listOfDirectories = []
+x = 0
+first = True
+for subdir, dirs, files in os.walk(directory, topdown=True):
+    for file in files:
+        currentDirectory = subdir
+        if not first:
+            listOfDirectories.insert(x, currentDirectory)
+        x +=1
+        first = False
+listOfDirectories = list(OrderedDict.fromkeys(listOfDirectories))
+
+print (listOfDirectories)
+
+
+listOfFNAfiles = []
+catCommand = None
+newFNAfileName = None
+for dirFile in listOfDirectories:
+    uniqueFiles = True
+    print(dirFile)
+    base = os.path.basename(dirFile)
+    fnaConstruct = (os.path.join(dirFile, base))
+    newFNAfileName = fnaConstruct+ext
+    for root, dir, files in os.walk(dirFile, topdown=True):
+        for f in files:
+            currentFile = ((os.path.join(root, f)))
+            print (currentFile)
+            if newFNAfileName == currentFile:
+                print ("run already done before, error")
+                uniqueFiles = False
+                break
+            if f.endswith(ext):
+                catFileTo = ((os.path.join(root, f)))
+                listOfFNAfiles.append(catFileTo+' ')
+                print (catFileTo)
+
+    if uniqueFiles:
+        string1 = ''.join(listOfFNAfiles)
+        catCommand = "cat " + string1 + " > " + newFNAfileName
+        print (catCommand)
+        os.system(catCommand)
+        rmCommand = "rm " + string1
+        print(rmCommand)
+        os.system(rmCommand)
+        listOfFNAfiles = []
+        catCommand = None
+        newFNAfileName = None
+        string1 = None
+
+listOfDirectoriesWithMultipleFNAfilesNoRepeats = None
