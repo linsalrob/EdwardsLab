@@ -1,5 +1,20 @@
+import os
+import fileinput
+from collections import OrderedDict
+import shutil
+'This program concatenates files in a large amount of directories into directory.extension '
+'This script was designed to concatenate DNA files from all.fna downloaded from NCBI database on a unix machine into'
+'/user/directory/directory.extension'
 
-directory = '/Users/jon6/Desktop/testfna'
+'example:'
+'user/directory1/file1.txt'
+'user/directory1/file2.txt'
+'this program will turn directory1 into'
+'user/directory1/directory1.txt'
+'where directory1 is cat file1.txt file2.txt > dictionary1.txt'
+'user/directory2/file.txt will be unchanged, where dictionary2 has only file.txt'
+
+directory = '/Users/jon6/Desktop/all.fna'
 ext = ".txt"
 
 currentDirectory = None
