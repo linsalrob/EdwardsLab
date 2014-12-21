@@ -11,8 +11,8 @@ import shutil
 'this program will turn directory1 into'
 'user/directory1/directory1.ext'
 
-directory = '/Users/jon6/Desktop/testfna'
-ext = ".txt"
+directory = '/Users/jon6/Desktop/all.fna'
+ext = ".fna"
 
 listOfDirectories = []
 x = 0
