@@ -2,10 +2,6 @@ import os
 import fileinput
 from collections import OrderedDict
 directory = '/Users/jon6/Desktop/test.fna'
-'''
-Run before if on mac to remove DS store files that cause errors in this program:
-sudo find / -name ".DS_Store" -depth -exec rm {} \;
-'''
 
 currentDirectory = None
 previousDirectory = None
