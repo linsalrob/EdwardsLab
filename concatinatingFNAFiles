@@ -43,7 +43,7 @@ for dirFile in listOfDirectoriesWithMultipleFNAfilesNoRepeats:
     for root, dir, files in os.walk(dirFile, topdown=True):
         for f in files:
             if f is newFNAfileName:
-                print ("run already done before, error")
+                print ("overwriting current file, error")
                 break
             if f.endswith(ext):
                 catFileTo = ((os.path.join(root, f)))
