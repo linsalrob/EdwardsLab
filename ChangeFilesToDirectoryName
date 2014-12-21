@@ -26,6 +26,7 @@ listOfDirectories = list(OrderedDict.fromkeys(listOfDirectories))
 print (listOfDirectories)
 
 currentFile = None
+catFile = None
 newFNAfileName = None
 uniqueFile = True
 for dirFile in listOfDirectories:
@@ -42,17 +43,19 @@ for dirFile in listOfDirectories:
                 uniqueFile = False
                 break
             if f.endswith(ext):
-                print (currentFile)
+                catFile = currentFile
+
     if uniqueFile:
-        print (currentFile)
-        catCommand = "cat " + currentFile + " > " + newFNAfileName
+        print (catFile)
+        catCommand = "cat " + catFile + " > " + newFNAfileName
         print (catCommand)
         os.system(catCommand)
-        rmCommand = "rm " + currentFile
+        rmCommand = "rm " + catFile
         print(rmCommand)
         os.system(rmCommand)
         catCommand = None
         newFNAfileName = None
         currentFile = None
+        catFile = None
 
 listOfDirectories = None
