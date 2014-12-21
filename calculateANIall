@@ -1,0 +1,9 @@
+import os
+'This program takes a list of .faa files from all.fna and calculates every one vs every other one on a unix machine'
+'This script was intended to be used on all.fna downloaded from NCBI database on a unix machine'
+
+mummers_directory = '/Users/jon6/MUMmer3.23/'
+blast_directory = '/Users/jon6/ncbi-blast-2.2.29+/'
+
+mummers_command = './nucmer -p x_y_outfile x.fasta y.fasta'
+blast_command = 'blastn -query x.fasta -db y.fasta -out x_y.out -task blastn -dust no -outfmt "6 std qlen slen"'
