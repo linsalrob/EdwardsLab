@@ -1,0 +1,51 @@
+import os
+from collections import OrderedDict
+
+'''
+This program takes a list of .faa files from all.fna and calculates every one vs every other one on a unix machine
+This script was intended to be used on all.fna downloaded from NCBI database on a unix machine
+Example input->output:
+    Users/all.fna/directory1/directory1.fna
+->
+    Users/newDirectory/directory1.fna
+'''
+'''
+mummers_directory = '/Users/jon6/MUMmer3.23/'
+blast_directory = '/Users/jon6/ncbi-blast-2.2.29+/'
+'''
+directory = '/Users/jon6/Desktop/testfna'
+ext = ".txt"
+moveToDirectory = '/Users/jon6/Desktop/testfna/files/'
+
+listOfDirectories = []
+x = 0
+first = True
+for subdir, dirs, files in os.walk(directory, topdown=True):
+    for file in files:
+        currentDirectory = subdir
+        if first is False:
+            listOfDirectories.insert(x, currentDirectory)
+        x +=1
+        first = False
+listOfDirectories = list(OrderedDict.fromkeys(listOfDirectories))
+
+currentFile = None
+catFile = None
+catFile2 = None
+for dirFile in listOfDirectories:
+    for root, dir, files in os.walk(dirFile, topdown=True):
+        for f in files:
+            currentFile = ((os.path.join(root, f)))
+            if f.endswith(ext):
+                catFile = currentFile
+                catFile2 = f
+
+        catCommand = "cat " + catFile + " > " + moveToDirectory + catFile2
+        print (catCommand)
+        os.system(catCommand)
+        catCommand = None
+        newFNAfileName = None
+        currentFile = None
+        catFile = None
+
+listOfDirectories = None
