@@ -1,7 +1,5 @@
 import os
-import fileinput
 from collections import OrderedDict
-import shutil
 'This program takes a list of directories with a single file in it and changes the file to directory.extension '
 'This script was designed to change names from all.fna downloaded from NCBI database on a unix machine into'
 '/user/directory/directory.extension'
