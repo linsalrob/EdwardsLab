@@ -33,26 +33,18 @@ n+1 vs n+3
 n+2 vs n+3
 '''
 
-'''
-a = 1
-for(i = 1; i < n; i++)
-    a vs i+1
-a ++    
-for(j = 2; j < n; j++)
-    a vs j+1
-a++
-for(k = 3; k < n; k++)
-    a vs k+1
+''' 
+n = files.count
+for(a = 1; a < n; a++)
+    for(j = a; j < n; j++)
+        a vs j+1
 '''
 
-
-
+'''
 
 mummers_directory = '/Users/jon6/MUMmer3.23/'
 mummers_command = './nucmer -p x_y_outfile x.fasta y.fasta'
 vs = '_vs_'
 
-
-'''
 os.system(command)
 '''
