@@ -10,10 +10,9 @@ import shutil
 'user/directory1/file1.ext'
 'this program will turn directory1 into'
 'user/directory1/directory1.ext'
-'run concatinatingFNAFile.py, then run ChangeFileToDirectory.py to achieve user/dicrectory1/directory1.ext for all'
 
-directory = '/Users/jon6/Desktop/all.fna'
-ext = ".fna"
+directory = '/Users/jon6/Desktop/testfna'
+ext = ".txt"
 
 listOfDirectories = []
 x = 0
@@ -28,29 +27,34 @@ for subdir, dirs, files in os.walk(directory, topdown=True):
 listOfDirectories = list(OrderedDict.fromkeys(listOfDirectories))
 print (listOfDirectories)
 
-
-catCommand = None
+currentFile = None
 newFNAfileName = None
+uniqueFile = True
 for dirFile in listOfDirectories:
     uniqueFiles = True
-    print(dirFile)
     base = os.path.basename(dirFile)
     fnaConstruct = (os.path.join(dirFile, base))
     newFNAfileName = fnaConstruct+ext
+    print (newFNAfileName)
     for root, dir, files in os.walk(dirFile, topdown=True):
         for f in files:
             currentFile = ((os.path.join(root, f)))
-            print (currentFile)
             if newFNAfileName == currentFile:
-                print ("run already done before, error")
-                uniqueFiles = False
+                print ("already taken care of")
+                uniqueFile = False
                 break
             if f.endswith(ext):
-                catFileTo = ((os.path.join(root, f)))
-                listOfFNAfiles.append(catFileTo+' ')
-                print (catFileTo)
-
-    if uniqueFiles:
-
+                print (currentFile)
+    if uniqueFile:
+        print (currentFile)
+        catCommand = "cat " + currentFile + " > " + newFNAfileName
+        print (catCommand)
+        os.system(catCommand)
+        rmCommand = "rm " + currentFile
+        print(rmCommand)
+        os.system(rmCommand)
+        catCommand = None
+        newFNAfileName = None
+        currentFile = None
 
 listOfDirectories = None
