@@ -15,6 +15,7 @@ import shutil
 'user/directory2/file.txt will be unchanged, where dictionary2 has only file.txt'
 
 directory = '/Users/jon6/Desktop/testfna'
+ext = ".txt"
 
 currentDirectory = None
 previousDirectory = None
@@ -34,7 +35,6 @@ print (listOfDirectoriesWithMultipleFNAfilesNoRepeats)
 listOfFNAfiles = []
 catCommand = None
 newFNAfileName = None
-ext = ".txt"
 for dirFile in listOfDirectoriesWithMultipleFNAfilesNoRepeats:
     print(dirFile)
     base = os.path.basename(dirFile)
