@@ -13,6 +13,7 @@ import shutil
 'user/directory1/directory1.ext'
 'where directory1 is cat file1.ext file2.ext > dictionary1.ext'
 'user/directory2/file.ext will be unchanged, where dictionary2 has only file.ext'
+'run concatinatingFNAFile.py, then run ChangeFileToDirectory.py to achieve user/dicrectory1/directory1.ext for all'
 
 directory = '/Users/jon6/Desktop/all.fna'
 ext = ".fna"
