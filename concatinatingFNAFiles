@@ -7,12 +7,12 @@ import shutil
 '/user/directory/directory.extension'
 
 'example:'
-'user/directory1/file1.txt'
-'user/directory1/file2.txt'
+'user/directory1/file1.ext'
+'user/directory1/file2.ext'
 'this program will turn directory1 into'
-'user/directory1/directory1.txt'
-'where directory1 is cat file1.txt file2.txt > dictionary1.txt'
-'user/directory2/file.txt will be unchanged, where dictionary2 has only file.txt'
+'user/directory1/directory1.ext'
+'where directory1 is cat file1.txt file2.txt > dictionary1.ext'
+'user/directory2/file.txt will be unchanged, where dictionary2 has only file.ext'
 
 directory = '/Users/jon6/Desktop/all.fna'
 ext = ".txt"
