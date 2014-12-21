@@ -11,8 +11,8 @@ import shutil
 'user/directory1/file2.ext'
 'this program will turn directory1 into'
 'user/directory1/directory1.ext'
-'where directory1 is cat file1.txt file2.txt > dictionary1.ext'
-'user/directory2/file.txt will be unchanged, where dictionary2 has only file.ext'
+'where directory1 is cat file1.ext file2.ext > dictionary1.ext'
+'user/directory2/file.ext will be unchanged, where dictionary2 has only file.ext'
 
 directory = '/Users/jon6/Desktop/all.fna'
 ext = ".txt"
@@ -73,7 +73,6 @@ listOfDirectoriesWithMultipleFNAfilesNoRepeats = None
 
 '''
 old, buggy version
-
 
 import os
 import fileinput
