@@ -2,7 +2,7 @@ import os
 import fileinput
 from collections import OrderedDict
 import shutil
-'This program concatenates files in a large amount of directories into directory.extension '
+'This program concatenates files >= 2 in a large amount of directories into directory.extension and deletes the previous files'
 'This script was designed to concatenate DNA files from all.fna downloaded from NCBI database on a unix machine into'
 '/user/directory/dictionary.extension'
 
