@@ -1,18 +1,3 @@
-import os
-import fileinput
-from collections import OrderedDict
-import shutil
-'This program concatenates files in a large amount of directories into directory.extension '
-'This script was designed to concatenate DNA files from all.fna downloaded from NCBI database on a unix machine into'
-'/user/directory/dictionary.extension'
-
-'example:'
-'user/directory1/file1.txt'
-'user/directory1/file2.txt'
-'this program will turn directory1 into'
-'user/directory1/directory1.txt'
-'where directory1 is cat file1.txt file2.txt > dictionary1.txt'
-'user/directory2/file.txt will be unchanged, where dictionary2 has only file.txt'
 
 directory = '/Users/jon6/Desktop/testfna'
 ext = ".txt"
@@ -36,33 +21,39 @@ listOfFNAfiles = []
 catCommand = None
 newFNAfileName = None
 for dirFile in listOfDirectoriesWithMultipleFNAfilesNoRepeats:
+    uniqueFiles = True
     print(dirFile)
     base = os.path.basename(dirFile)
     fnaConstruct = (os.path.join(dirFile, base))
     newFNAfileName = fnaConstruct+ext
     for root, dir, files in os.walk(dirFile, topdown=True):
         for f in files:
-            if f is newFNAfileName:
+            currentFile = ((os.path.join(root, f)))
+            print (currentFile)
+            if newFNAfileName == currentFile:
                 print ("run already done before, error")
+                uniqueFiles = False
                 break
             if f.endswith(ext):
                 catFileTo = ((os.path.join(root, f)))
                 listOfFNAfiles.append(catFileTo+' ')
                 print (catFileTo)
 
-    string1 = ''.join(listOfFNAfiles)
-    catCommand = "cat " + string1 + " > " + newFNAfileName
-    rmCommand = "rm " + string1
-    print (catCommand)
-    os.system(catCommand)
-    print(rmCommand)
-    os.system(rmCommand)
-    listOfFNAfiles = []
-    catCommand = None
-    newFNAfileName = None
-    string1 = None
+    if uniqueFiles:
+        string1 = ''.join(listOfFNAfiles)
+        catCommand = "cat " + string1 + " > " + newFNAfileName
+        print (catCommand)
+        os.system(catCommand)
+        rmCommand = "rm " + string1
+        print(rmCommand)
+        os.system(rmCommand)
+        listOfFNAfiles = []
+        catCommand = None
+        newFNAfileName = None
+        string1 = None
 
 listOfDirectoriesWithMultipleFNAfilesNoRepeats = None
+
 
 
 '''
