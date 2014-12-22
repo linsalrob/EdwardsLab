@@ -1,0 +1,39 @@
+'''
+This takes fna files and matches them against eachother uniquely for Blast. 
+'''
+import os
+from collections import OrderedDict
+import subprocess
+vs = '__vs__'
+
+mummerBaseDirectory = '/Users/jon6/MUMmer3.23/'
+directoryFNAfiles = '/Users/jon6/MUMmer3.23/allfnafiles/'
+saveDeltaFileNamesDirectory = '/Users/jon6/MUMmer3.23/allDeltaFiles/'
+ext = ".fna"
+
+listOfFiles = []
+for root, subdir, files in os.walk(directoryFNAfiles, topdown=True):
+    for file in files:
+        currentDirectory = subdir
+        if file.endswith(ext):
+            currentFile = ((os.path.join(root, file)))
+            listOfFiles.append(currentFile)
+listOfFilesNoRepeats = list(OrderedDict.fromkeys(listOfFiles))
+print (listOfFilesNoRepeats)
+
+n =  len(listOfFilesNoRepeats)
+print (n)
+os.chdir(mummerBaseDirectory)
+
+for i in range(0,n):
+    for j in range(i,n):
+        if(listOfFilesNoRepeats[i] is not listOfFilesNoRepeats[j]):
+            deltaFileName = (os.path.basename(os.path.splitext(listOfFilesNoRepeats[i])[0])+vs+os.path.basename(os.path.splitext(listOfFilesNoRepeats[j])[0]))
+            saveDeltaFileNamesPath = saveDeltaFileNamesDirectory + deltaFileName
+            mummers_command = './nucmer -p '+ saveDeltaFileNamesPath + ' ' + listOfFilesNoRepeats[i]+' '+listOfFilesNoRepeats[j]
+            print (mummers_command)
+            #os.system(mummers_command)
+            process = subprocess.Popen(mummers_command, stdout=subprocess.PIPE, stderr=None, shell=True)
+            output = process.communicate()
+            p_status = process.wait()
+            print ("return code:", p_status)
