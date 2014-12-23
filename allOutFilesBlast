@@ -30,10 +30,11 @@ for i in range(0,n):
         if(listOfFilesNoRepeats[i] is not listOfFilesNoRepeats[j]):
             outFileName = (os.path.basename(os.path.splitext(listOfFilesNoRepeats[i])[0])+vs+os.path.basename(os.path.splitext(listOfFilesNoRepeats[j])[0]))
             saveOutFileNamesPath = saveOutFileNamesDirectory + outFileName + ".out"
-            blast_command = 'blastn -query '+ os.path.basename(listOfFilesNoRepeats[i]) +' -db '+os.path.basename(listOfFilesNoRepeats[j]) + ' -out ' + saveOutFileNamesPath + ' ' + '-task blastn -dust no -outfmt "6 std qlen slen"'
+            blast_command = 'blastn -query '+ os.path.basename(listOfFilesNoRepeats[i]) +' -subject '+os.path.basename(listOfFilesNoRepeats[j]) + ' -out ' + saveOutFileNamesPath + ' ' + '-task blastn -dust no -outfmt "6 std qlen slen"'
             print (blast_command)
             process = subprocess.Popen(blast_command, stdout=subprocess.PIPE, stderr=None, shell=True)
             output = process.communicate()
             p_status = process.wait()
             print ("return code:", p_status)
+
 
