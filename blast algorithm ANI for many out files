@@ -17,20 +17,27 @@ def calculateANI(path):
         if piece[2] == '100.00' and piece[6] == '1':
             oneHundredPercentANI = True
             percent_identity = float(piece[2])
-            total += percent_identity
+            decimal_percent_identity = (percent_identity/100)
+            total += decimal_percent_identity*float(piece[3])
             x += 1
             break
 
     if not oneHundredPercentANI:
         for piece in process_data(path):
             percent_identity = float(piece[2])
-            total += percent_identity
+            decimal_percent_identity = (percent_identity/100)
+            total += decimal_percent_identity*float(piece[3])
             x += 1
 
-    ANI = total / x
+    #length = abs(int(piece[13]) - int(piece[12]))
+    length = (int(piece[13]) + int(piece[12]))/2
+    print (length)
+    print(total)
+    ANI = total / length
     return ANI
 
 print (calculateANI(path))
+
 
 '''
 blastBaseDirectory = '/Users/jon6/ncbi-blast-2.2.29+/'
