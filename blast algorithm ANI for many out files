@@ -30,6 +30,7 @@ def calculateANI(path):
             x += 1
 
     #length = abs(int(piece[13]) - int(piece[12]))
+    #length = abs(int(piece[13]) - int(piece[12]))
     length = (int(piece[13]) + int(piece[12]))/2
     print (length)
     print(total)
