@@ -1,7 +1,7 @@
 from __future__ import division
 import sys
 
-path = '/Users/jon6/Desktop/blast_stuff/ecol_shig.out'
+path = '/Users/jon6/Desktop/blast_stuff/ecoli_salmonella.out'
 
 def process_data(path):
     with open(path) as input_file:
