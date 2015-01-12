@@ -8,7 +8,7 @@ def process_data(path):
         for line in input_file:
             chunk = line.strip().split()
             yield chunk
-
+            
 def calculateANI(path):
     x = 0
     total = 0
@@ -35,10 +35,9 @@ def calculateANI(path):
 
     length = (int(piece[13]) + int(piece[12]))/2
     ANI = total /length
-    return round(ANI*100, 4)
+    return round(ANI*100, 2)
 
 print (calculateANI(path))
-
 
 '''
 blastBaseDirectory = '/Users/jon6/ncbi-blast-2.2.29+/'
