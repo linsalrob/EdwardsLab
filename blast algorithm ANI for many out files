@@ -8,7 +8,6 @@ def process_data(path):
         for line in input_file:
             chunk = line.strip().split()
             yield chunk
-
 def calculateANI(path):
     x = 0
     total = 0
@@ -18,7 +17,10 @@ def calculateANI(path):
             oneHundredPercentANI = True
             percent_identity = float(piece[2])
             decimal_percent_identity = (percent_identity/100)
-            total += decimal_percent_identity*float(piece[3])
+            align = decimal_percent_identity*int(piece[3])
+            gap_mismatch = int(piece[4]) + int(piece[5])
+            total += align
+            #print (total)
             x += 1
             break
 
@@ -26,19 +28,17 @@ def calculateANI(path):
         for piece in process_data(path):
             percent_identity = float(piece[2])
             decimal_percent_identity = (percent_identity/100)
-            total += decimal_percent_identity*float(piece[3])
+            align = decimal_percent_identity*int(piece[3])
+            gap_mismatch = int(piece[4]) + int(piece[5])
+            total += align
+            #print (total)
             x += 1
-
-    #length = abs(int(piece[13]) - int(piece[12]))
-    #length = abs(int(piece[13]) + int(piece[12]))
+            
     length = (int(piece[13]) + int(piece[12]))/2
-    print (length)
-    print(total)
-    ANI = total / length
-    return ANI
+    ANI = total /length
+    return round(ANI*100, 4)
 
 print (calculateANI(path))
-
 
 '''
 blastBaseDirectory = '/Users/jon6/ncbi-blast-2.2.29+/'
