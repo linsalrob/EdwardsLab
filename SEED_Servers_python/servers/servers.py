@@ -6,7 +6,8 @@ Written by Rob Edwards, Daniel Cuevas, and Genivaldo Gueiros
 
 '''
 
-#Note: this requests. See http://www.python-requests.org
+#Note: this requires requests. See http://www.python-requests.org
+# requests is now often installed directly
 
 import requests
 import sys

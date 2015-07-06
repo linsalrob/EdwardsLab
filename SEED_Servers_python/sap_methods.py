@@ -1023,8 +1023,12 @@
         '''
 
         self.function('classification_of')
-        return self.retrieve(data)
-
+        ss = self.retrieve(data)
+        for k in ss:
+            if (len(ss[k]) == 1):
+                print(k)
+                ss[k].append(None)
+        return ss
     def genomes_to_subsystems(self,data):
         '''
         Return a list of the subsystems participated in by each of the specified

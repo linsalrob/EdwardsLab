@@ -22,11 +22,13 @@ These servers provide programmatic access to the SEED and RAST environments and 
 
 # Source
 
-These are automatically generated from the PERL versions using this code:A
+These are automatically generated from the PERL .pm modules. We start with the pm2py.pl code (perl code that makes python), and then we add the header pieces and parts.
 
 ```
-perl pm2py.pl SAP.pm > sap_methods.py
+perl pm2py.pl SAP.pm > SAP.py
 ```
+
+Edit `SAP.py` to include the appropriate header (in headers/SAP.py)
 
 
 
