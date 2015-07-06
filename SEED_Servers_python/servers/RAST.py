@@ -1,4 +1,4 @@
-from servers.servers import server
+from .servers import server
 
 class RASTserver(server):
     '''
@@ -39,9 +39,12 @@ class RASTserver(server):
     '''
 
 
-    def __init__(self):
+    def __init__(self, username, password):
         server.__init__(self)
-        self.urlservice = "sapling"
+        self.urlbase = 'http://servers.nmpdr.org/'
+        self.urlservice = "rast"
+        self.urlcgi = '/server.cgi'
+        self.params(username = username, password = password)
 
 
 
@@ -50,12 +53,15 @@ class RASTserver(server):
         This method submits a job to the RAST server. It returns a hash of:
         '''
 
+        data['username']=self.username
+        data['password']=self.password
+
         self.function('submit_RAST_job')
         return self.retrieve(data)
 
     def status_of_RAST_job(self,data):
         '''
-        Where @jobs is a list of jobs
+        Where data is a list of jobs
         The return value is a hash keyed by Jobid of   
         '''
 

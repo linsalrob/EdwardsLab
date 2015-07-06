@@ -1,4 +1,4 @@
-from servers.servers import server
+from .servers import server
 
 class ANNOserver(server):
     '''

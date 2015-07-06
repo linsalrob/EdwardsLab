@@ -78,7 +78,7 @@ class server:
             data = {"":""}
 
         dataToProcess['args'] = json.dumps(data)
-
+        # print("TRYING: " + str(data))
 
         #print("ARGS: ||>>", dataToProcess['args'], "<<||\n")
         # sys.stderr.write("URL: " + url + "\nData: " + str(dataToProcess) + "\n");
