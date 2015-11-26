@@ -31,4 +31,4 @@ if __name__ == '__main__':
 
 
     for read in samfile.fetch():
-        print("{} -> {}".format(read.query_name), read.reference_id)
+        print("{} -> {}".format(read.query_name, read.reference_id))
