@@ -52,3 +52,33 @@ docs/_build/
 
 # PyBuilder
 target/
+
+# vim
+*.swo
+*.swp
+
+# textedit
+*~
+
+# openoffice
+.~lock.*#
+
+# a temporary folder
+temp/
+
+# binary data that is generally pickle files
+Biochemistry/binary_data
+
+# pycharm files
+.idea/
+
+# ipython notebook
+.ipynb_checkpoints/
+
+# for the cluster
+
+sge/
+
+
+# pickle files for the models
+models/pickles/*.p
