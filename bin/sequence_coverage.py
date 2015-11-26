@@ -31,4 +31,4 @@ if __name__ == '__main__':
 
 
     for read in samfile.fetch():
-        print("{}".format(read))
+        print("{}".format(read[0]))
