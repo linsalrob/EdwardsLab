@@ -40,8 +40,6 @@ if __name__ == '__main__':
 
         if read.reference_name not in count:
             count[read.reference_name] = {}
-        if library not in count[read.reference_name]:
-            count[read.reference_name][library] = {}
 
         count[read.reference_name][library] = count[read.reference_name].get(library, 0)+1
 
