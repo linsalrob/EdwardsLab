@@ -1,14 +1,13 @@
-import os
+import argparse
 import sys
+
+import pysam
 
 __author__ = 'Rob Edwards'
 
 """
 Read a BAM file and calculate the coverage for each read
 """
-
-import pysam
-import argparse
 
 
 
