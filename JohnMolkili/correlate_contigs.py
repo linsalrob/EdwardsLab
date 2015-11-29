@@ -18,6 +18,8 @@ def merge_clust(c1, c2, inclust, clustermembers):
     clustermembers.pop(c2)
     return inclust, clustermembers
 
+def notzero(x): return x > 0
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='calculate pairwise pearson correlations between contigs and then cluster them')
     parser.add_argument('-d', help='data table with contigs in rows and occurence in columns', required=True)
@@ -34,18 +36,27 @@ if __name__ == '__main__':
             else:
                 data[p[0]] = map(int, p[1:])
 
-    allcontigs  = data.keys()
+    allcontigs = data.keys()
     allcontigs.sort()
-    dist = {x:{} for x in allcontigs}
+    dist = {x: {} for x in allcontigs}
+
+    # we're just going to use contigs where at least 10 samples are not zero
+    nonzero = []
+    for c in allcontigs:
+        nz = filter(notzero, data[c])
+        if len(nz) > 10:
+            nonzero.append(c)
+
+    sys.stderr.write("Before filtering we had {} contigs, after filtering on 10 > 0 we have {} contigs\n".format(len(allcontigs), len(nonzero)))
 
     cluster = 0
     inclust = {}
     clustermembers = {}
 
-    for i in range(len(allcontigs)):
-        cfr = allcontigs[i]
-        for j in range(i, len(allcontigs)):
-            cto = allcontigs[j]
+    for i in range(len(nonzero)):
+        cfr = nonzero[i]
+        for j in range(i, len(nonzero)):
+            cto = nonzero[j]
             if cfr in inclust and cto in inclust and inclust[cfr] == inclust[cto]:
                 # no need to calculate!
                 continue
