@@ -23,7 +23,7 @@ def notzero(x): return x > 0
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='calculate pairwise pearson correlations between contigs and then cluster them')
     parser.add_argument('-d', help='data table with contigs in rows and occurence in columns', required=True)
-    parser.add_argument('-t', help='pearson correlation minimum for clustering (default = 0.9)', default=0.9)
+    parser.add_argument('-t', help='pearson correlation minimum for clustering (default = 0.9)', default=0.9, type=float)
     args = parser.parse_args()
 
     data = {}
