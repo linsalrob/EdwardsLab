@@ -65,7 +65,7 @@ for contig in allcontigs:
     if means[contig]['plasma'] - std[contig]['plasma'] > means[contig]['control'] + std[contig]['control'] and \
         means[contig]['buffy'] - std[contig]['buffy'] > means[contig]['control'] + std[contig]['control'] and \
         means[contig]['csf'] - std[contig]['csf'] > means[contig]['control'] + std[contig]['control']:
-        print("\t".join(map(str(["ALL", contig, means[contig['plasma'], means[contig]['buffy'], means[contig]['csf'],
-                                                      means[contig]['control']]]))))
+        print("\t".join(map(str(["ALL", contig, means[contig]['plasma'], means[contig]['buffy'], means[contig]['csf'],
+                                                      means[contig]['control']]))))
 
 
