@@ -1,5 +1,6 @@
-import os
+import numpy
 import sys
+from math import sqrt
 
 __author__ = 'Rob Edwards'
 
