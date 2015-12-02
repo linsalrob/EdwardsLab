@@ -25,4 +25,7 @@ if __name__ == '__main__':
 
     bamfile = pysam.AlignmentFile(args.b, "rb")
     for read in bamfile.fetch(until_eof=True):
-        print("@{}\n{}\n+\n{}".format(read.query_name, read.query_sequence, qual2fastq(read.query_qualities)))
+        if read.query_qualities:
+            print("@{}\n{}\n+\n{}".format(read.query_name, read.query_sequence, qual2fastq(read.query_qualities)))
+        else:
+            print("@{}\n{}\n+\n".format(read.query_name, read.query_sequence))
