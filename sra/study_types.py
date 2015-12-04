@@ -86,6 +86,8 @@ def get_metagenome_run_ids(database_file, amplicons=False):
     # now wrap that to get the accession ids using a subselect
     query = 'select run_accession from run where experiment_accession in (' + query + ');'
 
+    sys.stderr.write("Executing query\n" + query + "\n")
+
     for row in sql.execute(query):
         print(str(row[0]))
 
