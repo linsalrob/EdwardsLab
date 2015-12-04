@@ -98,5 +98,9 @@ if __name__ == '__main__':
     parser.add_argument('-d', help='SQLLite databasae')
     args = parser.parse_args()
 
-    count_study_types(args.d)
-    count_metagenome_types(args.d)
+    # count_study_types(args.d)
+    # count_metagenome_types(args.d)
+    print("NON AMPLICON RUNS")
+    get_metagenome_run_ids(args.d, False)
+    print("\nAMPLICON RUNS")
+    get_metagenome_run_ids(args.d, True)
