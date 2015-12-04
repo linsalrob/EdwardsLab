@@ -56,6 +56,41 @@ def count_metagenome_types(database_file):
         print("\t".join(map(str, row)))
 
 
+
+def get_metagenome_run_ids(database_file, amplicons=False):
+    """
+    Get all the run id's for the metagenome sequences, If amplicons is false we get the non-amplicon sequences. If
+    amplicons is true we only get the amplicon sequences.
+
+    :param database_file: The sql lite file
+    :type database_file: str
+    :param amplicons: Whether to get amplicon sequences or not
+    :type amplicons: bool
+    :return:
+    :rtype:
+    """
+
+    # select experiment_accession from study left join experiment on
+    # study.study_accession = experiment.study_accession where experiment.library_strategy = 'FL-cDNA' and study_type NOT LIKE '%their%';
+
+    # first build the query to get the experiment accession ids
+    query = 'select experiment_accession from study left join experiment on study.study_accession = '
+    query += 'experiment.study_accession where experiment.library_strategy'
+
+    if amplicons:
+        query += ' = "AMPLICON"'
+    else:
+        query += ' != "AMPLICON"'
+    query += ' and study_type = "Metagenomics";'
+
+    # now wrap that to get the accession ids using a subselect
+    query = 'select run_accession from run where experiment_accession in (' + query + ');'
+
+    for row in sql.execute(query):
+        print(str(row[0]))
+
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='get the study types')
     parser.add_argument('-d', help='SQLLite databasae')
