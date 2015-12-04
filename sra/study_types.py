@@ -70,6 +70,7 @@ def get_metagenome_run_ids(database_file, amplicons=False):
     :rtype:
     """
 
+    sql = get_cursor(database_file)
     # select experiment_accession from study left join experiment on
     # study.study_accession = experiment.study_accession where experiment.library_strategy = 'FL-cDNA' and study_type NOT LIKE '%their%';
 
