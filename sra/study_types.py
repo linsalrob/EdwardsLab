@@ -53,7 +53,7 @@ def count_metagenome_types(database_file):
     print("Amplicon Studies")
     for row in sql.execute(
             'select study_type, count(1) from study where study_accession in (select study_accession from experiment where library_strategy = "AMPLICON") group by study_type;'):
-        print("\t".join(row))
+        print("\t".join(map(str, row)))
 
 
 if __name__ == '__main__':
