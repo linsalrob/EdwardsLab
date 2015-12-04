@@ -1,3 +1,4 @@
+import argparse
 import sqlite3
 import pandas as pd
 
@@ -14,4 +15,7 @@ def to_csv(filename):
 
 
 if __name__ == '__main__':
-    parser=
+    parser = argparse.ArgumentParser(description='Dump the contents of an SQL file to CSV. This was taken from http://stackoverflow.com/questions/305378/get-list-of-tables-db-schema-dump-etc-in-sqlite-databases')
+    parser.add_argument('-d', help='SQLlite database file', required=True)
+    args = parser.parse_args()
+    to_csv(args)
