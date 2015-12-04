@@ -82,7 +82,7 @@ def get_metagenome_run_ids(database_file, amplicons=False):
         query += ' = "AMPLICON"'
     else:
         query += ' != "AMPLICON"'
-    query += ' and study_type = "Metagenomics";'
+    query += ' and study_type = "Metagenomics"'
 
     # now wrap that to get the accession ids using a subselect
     query = 'select run_accession from run where experiment_accession in (' + query + ');'
