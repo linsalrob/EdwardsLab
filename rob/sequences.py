@@ -1,5 +1,8 @@
 import os
 import sys
+import gzip
+
+import subprocess
 
 __author__ = 'Rob Edwards'
 
@@ -11,12 +14,19 @@ def read_fasta(fname, whole_id=True):
     If wholeId is set to false only the first part of the ID
     (upto the first white space) is returned
     """
+
     try:
         if fname.endswith('.gz'):
             f = gzip.open(fname, 'rb')
+        elif fname.endswith('.lrz'):
+            f = subprocess.Popen(['/usr/bin/lrunzip', '-q', '-d', '-f', '-o-', fname], stdout=subprocess.PIPE).stdout
         else:
             f = open(fname, 'r')
-    except:
+    except IOError as e:
+        sys.stderr.write(str(e) + "\n")
+
+        sys.stderr.write("Message: \n" + str(e.message) + "\n")
+
         sys.exit("Unable to open file " + fname)
 
     seqs = {}
@@ -71,3 +81,5 @@ def stream_fastq(fqfile):
             qualscores = qualscores.strip()
             header = header.replace('@', '', 1)
             yield seqid, header, seq, qualscores
+
+
