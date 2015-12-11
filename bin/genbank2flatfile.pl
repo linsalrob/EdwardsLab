@@ -46,8 +46,8 @@ foreach my $file (@ARGV)
 			if (!$np) {
 			    $np = $locus;
 			}
-			if ($trans && !$np) {print STDERR "No NP for $trans. Skipped\n"; next}
-			elsif (!$trans && $np) {print STDERR "No translation for $np. Skipped\n"; next}
+			if (!$np) {print STDERR "No NP for $trans. Skipped\n"; next}
+			elsif (!$trans) {print STDERR "No translation for $np. Skipped\n"; next}
 			next unless ($trans && $np);
 
 			eval {
