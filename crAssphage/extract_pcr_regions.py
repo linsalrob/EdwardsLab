@@ -147,8 +147,6 @@ def print_alignment(bam):
     :rtype:
     """
 
-    print("REFERENCES\n{}".format(bam.references))
-
     for template in locations:
         for primer in locations[template]:
             start, end = locations[template][primer]
@@ -170,7 +168,8 @@ def print_alignment(bam):
             #         refseq[posns[i]-start] = seq[i]
             #
             # print("{}_{}     {}".format(template, primer, ''.join(refseq)))
-            # alignment = {}
+
+            alignment = {}
             for p in bam.pileup(reference=template, start=start, end=end, truncate=True):
                 for pilups in p.pileups:
                     if pilups.alignment.query_name not in alignment:
