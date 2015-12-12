@@ -147,20 +147,42 @@ def print_alignment(bam):
     :rtype:
     """
 
+    print("REFERENCES\n{}".format(bam.references))
+
     for template in locations:
         for primer in locations[template]:
             start, end = locations[template][primer]
-            alignment = {}
+            print("ALIGNMENT: {} FROM {} TO {}\n".format(primer, start, end))
+            # This is a failed attempt to get the reference sequence for this region, but I am not sure that this
+            # is even possible from a BAM file, since each read will have a unique alignment to the reference
+            # refseq = ['-' for i in range(start, end)]
+            # for aln in bam.fetch(reference=template, start=start, end=end, until_eof=True):
+            #     posns = aln.get_reference_positions()
+            #     seq = aln.get_reference_sequence()
+            #     if len(posns) > len(seq):
+            #         sys.stderr.write("There are more positions {} than sequences {}\n".format(len(posns), len(seq)))
+            #         continue
+            #     for i in range(len(posns)):
+            #         if posns[i] - start > len(refseq) -1:
+            #             sys.stderr.write("Too many positions\n")
+            #         if i > len(seq)-1:
+            #             sys.stderr.write("Too many seq\n")
+            #         refseq[posns[i]-start] = seq[i]
+            #
+            # print("{}_{}     {}".format(template, primer, ''.join(refseq)))
+            # alignment = {}
             for p in bam.pileup(reference=template, start=start, end=end, truncate=True):
                 for pilups in p.pileups:
                     if pilups.alignment.query_name not in alignment:
-                        alignment[pilups.alignment.query_name] = ['-' for idx in range(start, end)]
+                        alignment[pilups.alignment.query_name] = ['-' for idx in range(start, end+1)]
             for p in bam.pileup(reference=template, start=start, end=end, truncate=True):
+                rp = p.reference_pos
+                idx = rp - start
                 for pilups in p.pileups:
                     if pilups.query_position:
                         posn = pilups.query_position - start
-                        alignment[pilups.alignment.query_name][posn] = \
-                            pilups.alignment.query_sequence[pilups.query_position]
+                        # sys.stderr.write("Posn: {} Q.position: {} start: {} end: {} len: {}\n".format(posn, pilups.query_position, start, end, end-start))
+                        alignment[pilups.alignment.query_name][idx] = pilups.alignment.query_sequence[pilups.query_position]
 
             # find the longest name
             longest_name = 0
@@ -169,7 +191,15 @@ def print_alignment(bam):
                     longest_name = len(n)
             longest_name += 5
 
+            # I want to sort by the number of -'s at the beginning of the sequence
+            beginning_gaps = {}
             for n in alignment:
+                gap = 0
+                while (gap < len(alignment[n]) and alignment[n][gap] == '-'):
+                    gap += 1
+                beginning_gaps[n] = gap
+
+            for n in sorted(alignment.keys(), key=beginning_gaps.get):
                 sys.stdout.write(n)
                 sys.stdout.write(" " * (longest_name - len(n)))
                 sys.stdout.write(''.join(alignment[n]) + "\n")
@@ -180,10 +210,10 @@ def print_alignment(bam):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Extract PCRd regions from BAM files')
     parser.add_argument('-b', help='bam file', required=True)
-    parser.add_argument('-q', help='print query regions', action='store_true')
-    parser.add_argument('-p', help='print pileup', action='store_true')
-    parser.add_argument('-c', help='print consensus sequence', action='store_true')
-    parser.add_argument('-a', help='print alignment', action='store_true')
+    parser.add_argument('-q', help='print query regions. This is a fasta output of all sequences that are in the region', action='store_true')
+    parser.add_argument('-p', help='print pileup. Prints debug information about each position in the pileup', action='store_true')
+    parser.add_argument('-c', help='print consensus sequence. Prints a single sequence for each region', action='store_true')
+    parser.add_argument('-a', help='print alignment. Prints an alignment for each region.', action='store_true')
     parser.add_argument('-v', help='verbose output')
     args = parser.parse_args()
 
