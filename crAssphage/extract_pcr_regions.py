@@ -137,14 +137,63 @@ def print_consensus(bam):
             print(">{} {} {} {}\n{}".format(primer, template, start, end, ''.join(cseq)))
 
 
+def print_alignment(bam):
+    """
+    Print an alignment of all matching pileups
+
+    :param bam: the bam object from pysam
+    :type bam: pysam.AlignmentFile
+    :return:
+    :rtype:
+    """
+
+    for template in locations:
+        for primer in locations[template]:
+            start, end = locations[template][primer]
+            alignment = {}
+            for p in bam.pileup(reference=template, start=start, end=end, truncate=True):
+                for pilups in p.pileups:
+                    if pilups.alignment.query_name not in alignment:
+                        alignment[pilups.alignment.query_name] = ['-' for idx in range(start, end)]
+            for p in bam.pileup(reference=template, start=start, end=end, truncate=True):
+                for pilups in p.pileups:
+                    if pilups.query_position:
+                        posn = pilups.query_position - start
+                        alignment[pilups.alignment.query_name][posn] = \
+                            pilups.alignment.query_sequence[pilups.query_position]
+
+            # find the longest name
+            longest_name = 0
+            for n in alignment:
+                if len(n) > longest_name:
+                    longest_name = len(n)
+            longest_name += 5
+
+            for n in alignment:
+                sys.stdout.write(n)
+                sys.stdout.write(" " * (longest_name - len(n)))
+                sys.stdout.write(''.join(alignment[n]) + "\n")
+
+        print("\n\n")
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Extract PCRd regions from BAM files')
     parser.add_argument('-b', help='bam file', required=True)
+    parser.add_argument('-q', help='print query regions', action='store_true')
+    parser.add_argument('-p', help='print pileup', action='store_true')
+    parser.add_argument('-c', help='print consensus sequence', action='store_true')
+    parser.add_argument('-a', help='print alignment', action='store_true')
     parser.add_argument('-v', help='verbose output')
     args = parser.parse_args()
 
     bam = pysam.AlignmentFile(args.b, 'rb')
 
-    # print_query_regions(bam)
-    # print_pileup(bam)
-    print_consensus(bam)
+    if args.q:
+        print_query_regions(bam)
+    if args.p:
+        print_pileup(bam)
+    if args.c:
+        print_consensus(bam)
+    if args.a:
+        print_alignment(bam)
