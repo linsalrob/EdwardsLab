@@ -206,6 +206,25 @@ def print_alignment(bam):
         print("\n\n")
 
 
+def list_sequences(bam):
+    """
+    List the sequences involved and whether they are forward or reverse
+
+    :param bam: the bam object from pysam
+    :type bam: pysam.AlignmentFile
+    :return:
+    :rtype:
+    """
+    for template in locations:
+        for primer in locations[template]:
+            start, end = locations[template][primer]
+            for read in bam.fetch(reference=template, start=start, end=end):
+                print("{}\t{}\t{}".format(read.query_name, read.is_reverse, str(read)))
+
+
+
+
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Extract PCRd regions from BAM files')
     parser.add_argument('-b', help='bam file', required=True)
@@ -213,6 +232,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', help='print pileup. Prints debug information about each position in the pileup', action='store_true')
     parser.add_argument('-c', help='print consensus sequence. Prints a single sequence for each region', action='store_true')
     parser.add_argument('-a', help='print alignment. Prints an alignment for each region.', action='store_true')
+    parser.add_argument('-l', help='list read ids and whether they are reversed', action='store_true')
     parser.add_argument('-v', help='verbose output')
     args = parser.parse_args()
 
@@ -226,3 +246,5 @@ if __name__ == '__main__':
         print_consensus(bam)
     if args.a:
         print_alignment(bam)
+    if args.l:
+        list_sequences(bam)
