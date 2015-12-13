@@ -29,9 +29,9 @@ Primer C:
 
 locations = {
     'JQ995537': {
-        'PrimerA': (25634, 26964),
-        'PrimerB': (33709, 35062),
-        'PrimerC': (43820, 45057)
+        'PrimerA': (25633, 26964),
+        'PrimerB': (33708, 35062),
+        'PrimerC': (43819, 45057)
     }
 }
 
