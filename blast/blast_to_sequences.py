@@ -4,7 +4,7 @@ import sys
 
 import argparse
 
-import rob
+import roblib
 
 __author__ = 'Rob Edwards'
 
@@ -94,7 +94,7 @@ def extract_sequences(fastafile, hits, addhitname=False):
     if not os.path.exists(fastafile):
         sys.exit("{} not found\n".format(fastafile))
 
-    fa = rob.read_fasta(fastafile)
+    fa = roblib.read_fasta(fastafile)
 
     for contig in hits:
         if contig not in fa:
@@ -103,7 +103,7 @@ def extract_sequences(fastafile, hits, addhitname=False):
         for tple in hits[contig]:
           seq = fa[contig][tple[0]:tple[1]]
           if tple[2]:
-              seq = rob.rc(seq)
+              seq = roblib.rc(seq)
           loc = "_".join(map(str, [contig, tple[0]+1, tple[1]]))
           if addhitname:
               loc += " [hit={}]".format(tple[3])

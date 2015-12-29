@@ -2,7 +2,7 @@ import unittest
 
 import sys
 
-from rob import sequences
+from roblib import sequences
 import os
 
 class MyTestCase(unittest.TestCase):
@@ -45,6 +45,17 @@ class MyTestCase(unittest.TestCase):
         else:
             sys.stderr.write("WARNING: {} does not exist. Cannot test fasta files\n".format(lrzipfile))
             return
+
+    def test_stream_fasta(self):
+        """
+        Test streaming a fasta file
+        """
+        fastafile = os.path.join(os.environ['HOME'], 'Dropbox/Metagenomics/51.hits_small.fa')
+        if os.path.exists(fastafile):
+            idline, seq = sequences.stream_fasta(fastafile)
+            self.assertEqual(idline, "aaa")
+            self.assertEqual(seq, 'GGG')
+
 
 if __name__ == '__main__':
     unittest.main()

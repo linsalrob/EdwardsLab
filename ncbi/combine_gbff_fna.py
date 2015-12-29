@@ -1,7 +1,7 @@
 import os
 import sys
 import re
-import rob
+import roblib
 import gzip
 
 '''Combine .gbff and .fna files to get just the coding sequences. We need to get the data from RefSeq and they have 
@@ -85,7 +85,7 @@ for line in gbfin:
             else:
                 sys.stderr.write("Can't parse an apparent location at : " + line + "\n")
 
-fa = rob.readFasta(fnaf)
+fa = roblib.readFasta(fnaf)
 
 ncre = re.compile('.*ref\|(\w+)')
 for id in fa:
@@ -99,7 +99,7 @@ for id in fa:
         [start, end, complement] = locations[locus][l]
         if complement:
             print ">" + l + " "  + locus + " " + end + "_" + start + " COMPLEMENT"
-            print rob.rc(fa[id][int(start)-1:int(end)])
+            print roblib.rc(fa[id][int(start) - 1:int(end)])
         else:
             print ">" + l + " "  + locus + " " + start + "_" + end
             print fa[id][int(start)-1:int(end)]

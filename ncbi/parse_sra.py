@@ -3,7 +3,7 @@ import sys
 from bs4 import BeautifulSoup
 import argparse
 
-import rob
+import roblib
 
 __author__ = 'Rob Edwards'
 
@@ -169,12 +169,12 @@ def parse_parent_directory(directory, verbose):
     alltags = ['primary_id', 'title', 'scientific_name', 'taxon_id', 'xref', 'sra_ids']
     tags.difference_update(set(alltags))
     [alltags.append(x) for x in sorted(tags)]
-    alltags = [rob.ascii_clean(x) for x in alltags]
+    alltags = [roblib.ascii_clean(x) for x in alltags]
     print("DIRECTORY\t"+"\t".join(alltags))
     for readid in results:
         sys.stdout.write(readid)
         for t in alltags:
-            sys.stdout.write("\t" + str(rob.ascii_clean(results[readid].get(t, ""))))
+            sys.stdout.write("\t" + str(roblib.ascii_clean(results[readid].get(t, ""))))
         sys.stdout.write("\n")
 
 

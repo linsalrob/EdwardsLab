@@ -1,7 +1,7 @@
 import argparse
 import os
 import sys
-from rob import stream_fastq
+from roblib import stream_fastq
 
 __author__ = 'Rob Edwards'
 

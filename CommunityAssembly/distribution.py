@@ -9,7 +9,7 @@ Add a line for a beta distribution
 
 import sys
 import numpy as np
-import rob
+import roblib
 
 if len(sys.argv) == 1:
     sys.exit(sys.argv[0] + " [-c number of columns as names] [-nh no header information] <output file>")
@@ -54,7 +54,7 @@ for p in data:
         sys.stderr.write("alpha:" + str(data[p][0]) + " beta: " + str((ncols-data[p][0])+1)+ "\n")
         # samples = np.random.beta(data[p][0]+1, ncols-data[p][0], 1000)
         samples = np.random.beta(data[p][1]+1, total-data[p][1], 100000)
-        betad[data[p][0]] = (rob.mean(samples), rob.stdev(samples))
+        betad[data[p][0]] = (roblib.mean(samples), roblib.stdev(samples))
 
 
 

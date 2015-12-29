@@ -2,7 +2,7 @@ import argparse
 import os
 import sys
 
-import rob
+import roblib
 
 __author__ = 'Rob Edwards'
 
@@ -58,8 +58,8 @@ for contig in allcontigs:
     std[contig] = {}
     for sample in cols:
         testdata = [data[contig][i] for i in cols[sample]]
-        means[contig][sample] = rob.mean(testdata)
-        std[contig][sample] = 2 * rob.stdev(testdata)
+        means[contig][sample] = roblib.mean(testdata)
+        std[contig][sample] = 2 * roblib.stdev(testdata)
 
     # test the NS vs Control
     if means[contig]['plasma'] - std[contig]['plasma'] > means[contig]['control'] + std[contig]['control'] and \

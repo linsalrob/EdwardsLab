@@ -1,7 +1,7 @@
 import os
 import sys
 
-from rob import read_fasta
+from roblib import read_fasta
 import argparse
 __author__ = 'Rob Edwards'
 
