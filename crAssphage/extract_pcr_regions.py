@@ -190,6 +190,10 @@ def print_alignment(bam, output_dir, filename):
                         # sys.stderr.write("Posn: {} Q.position: {} start: {} end: {} len: {}\n".format(posn, pilups.query_position, start, end, end-start))
                         alignment[pilups.alignment.query_name][idx] = pilups.alignment.query_sequence[pilups.query_position]
 
+            # don't want to carry on if we have no sequences
+            if len(alignment) == 0:
+                continue
+
             # find the longest name
             longest_name = 0
             for n in alignment:
