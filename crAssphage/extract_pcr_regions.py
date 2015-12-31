@@ -191,7 +191,7 @@ def print_alignment(bam, output_dir, filename):
                         alignment[pilups.alignment.query_name][idx] = pilups.alignment.query_sequence[pilups.query_position]
 
             # don't want to carry on if we have no sequences
-            if len(alignment) == 0:
+            if len(alignment) < 10:
                 continue
 
             # find the longest name
