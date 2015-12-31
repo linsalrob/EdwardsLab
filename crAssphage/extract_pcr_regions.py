@@ -137,7 +137,7 @@ def print_consensus(bam):
             print(">{} {} {} {}\n{}".format(primer, template, start, end, ''.join(cseq)))
 
 
-def print_alignment(bam, output_dir, filename):
+def print_alignment(bam, output_dir, filename, min_read_length=0, min_alignment_frac=0):
     """
     Print an alignment of all matching pileups
 
@@ -180,7 +180,9 @@ def print_alignment(bam, output_dir, filename):
             for p in bam.pileup(reference=template, start=start, end=end, truncate=True):
                 for pilups in p.pileups:
                     if pilups.alignment.query_name not in alignment:
-                        alignment[pilups.alignment.query_name] = ['-' for idx in range(start, end+1)]
+                        alignment_frac = 1.0 * pilups.alignment.query_alignment_length/ pilups.alignment.query_length
+                        if pilups.alignment.query_length > min_read_length and alignment_frac > min_alignment_frac:
+                            alignment[pilups.alignment.query_name] = ['-' for idx in range(start, end+1)]
             for p in bam.pileup(reference=template, start=start, end=end, truncate=True):
                 rp = p.reference_pos
                 idx = rp - start
@@ -188,7 +190,9 @@ def print_alignment(bam, output_dir, filename):
                     if pilups.query_position:
                         posn = pilups.query_position - start
                         # sys.stderr.write("Posn: {} Q.position: {} start: {} end: {} len: {}\n".format(posn, pilups.query_position, start, end, end-start))
-                        alignment[pilups.alignment.query_name][idx] = pilups.alignment.query_sequence[pilups.query_position]
+                        if pilups.alignment.query_name in alignment:
+                            # if the read is too short, we don't include it here!
+                            alignment[pilups.alignment.query_name][idx] = pilups.alignment.query_sequence[pilups.query_position]
 
             # don't want to carry on if we have no sequences
             if len(alignment) == 0:
@@ -250,6 +254,8 @@ if __name__ == '__main__':
     parser.add_argument('-a', help='print alignment. Prints an alignment for each region.', action='store_true')
     parser.add_argument('-l', help='list read ids and whether they are reversed', action='store_true')
     parser.add_argument('-d', help='output directory to write the alignments to (required with -a)')
+    parser.add_argument('-m', help='minimum alignment length for inclusion in output. Default=0', default=0, type=int)
+    parser.add_argument('-f', help='minimum fraction (i.e. <=1) of read length in alignment. Default=0', default=0, type=float)
     parser.add_argument('-v', help='verbose output')
     args = parser.parse_args()
 
@@ -266,6 +272,6 @@ if __name__ == '__main__':
     if args.a:
         if not args.d:
             sys.exit("You must provide an output directory with -a flag")
-        print_alignment(bam, args.d, filename)
+        print_alignment(bam, args.d, filename, args.m, args.f)
     if args.l:
         list_sequences(bam)
