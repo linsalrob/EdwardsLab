@@ -137,20 +137,27 @@ def print_consensus(bam):
             print(">{} {} {} {}\n{}".format(primer, template, start, end, ''.join(cseq)))
 
 
-def print_alignment(bam):
+def print_alignment(bam, output_dir, filename):
     """
     Print an alignment of all matching pileups
 
+    :param output_dir: The output directory to store the results in. We will make a sub directory for each PCR region
+    :type output_dir: str
     :param bam: the bam object from pysam
     :type bam: pysam.AlignmentFile
     :return:
     :rtype:
     """
 
+    if not os.path.exists(output_dir):
+        os.mkdir(output_dir)
+
     for template in locations:
         for primer in locations[template]:
+            if not os.path.exists(os.path.join(output_dir, primer)):
+                os.mkdir(os.path.join(output_dir, primer))
             start, end = locations[template][primer]
-            print("ALIGNMENT: {} FROM {} TO {}\n".format(primer, start, end))
+            # print("ALIGNMENT: {} FROM {} TO {}\n".format(primer, start, end))
             # This is a failed attempt to get the reference sequence for this region, but I am not sure that this
             # is even possible from a BAM file, since each read will have a unique alignment to the reference
             # refseq = ['-' for i in range(start, end)]
@@ -198,12 +205,16 @@ def print_alignment(bam):
                     gap += 1
                 beginning_gaps[n] = gap
 
-            for n in sorted(alignment.keys(), key=beginning_gaps.get):
-                sys.stdout.write(n)
-                sys.stdout.write(" " * (longest_name - len(n)))
-                sys.stdout.write(''.join(alignment[n]) + "\n")
+            out = open(os.path.join(output_dir, primer, filename), 'w')
 
-        print("\n\n")
+            for n in sorted(alignment.keys(), key=beginning_gaps.get):
+                # this is for "pylip style output"
+                # out.write(n)
+                # out.write(" " * (longest_name - len(n)))
+                # out.write(''.join(alignment[n]) + "\n")
+                out.write(">{}\n{}".format(n, ''.join(alignment[n])))
+            out.close()
+        #print("\n\n")
 
 
 def list_sequences(bam):
@@ -234,10 +245,13 @@ if __name__ == '__main__':
     parser.add_argument('-c', help='print consensus sequence. Prints a single sequence for each region', action='store_true')
     parser.add_argument('-a', help='print alignment. Prints an alignment for each region.', action='store_true')
     parser.add_argument('-l', help='list read ids and whether they are reversed', action='store_true')
+    parser.add_argument('-d', help='output directory to write the alignments to (required with -a)')
     parser.add_argument('-v', help='verbose output')
     args = parser.parse_args()
 
     bam = pysam.AlignmentFile(args.b, 'rb')
+    filename = args.b.split(os.pathsep)[-1]
+    filename = filename.replace('.bam', '.aln')
 
     if args.q:
         print_query_regions(bam)
@@ -246,6 +260,8 @@ if __name__ == '__main__':
     if args.c:
         print_consensus(bam)
     if args.a:
-        print_alignment(bam)
+        if not args.d:
+            sys.exit("You must provide an output directory with -a flag")
+        print_alignment(bam, args.d, filename)
     if args.l:
         list_sequences(bam)
