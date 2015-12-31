@@ -212,7 +212,7 @@ def print_alignment(bam, output_dir, filename):
                 # out.write(n)
                 # out.write(" " * (longest_name - len(n)))
                 # out.write(''.join(alignment[n]) + "\n")
-                out.write(">{}\n{}".format(n, ''.join(alignment[n])))
+                out.write(">{}\n{}\n".format(n, ''.join(alignment[n])))
             out.close()
         #print("\n\n")
 
@@ -249,9 +249,9 @@ if __name__ == '__main__':
     parser.add_argument('-v', help='verbose output')
     args = parser.parse_args()
 
-    bam = pysam.AlignmentFile(args.b, 'rb')
-    filename = args.b.split(os.pathsep)[-1]
+    filename = os.path.split(args.b)[-1]
     filename = filename.replace('.bam', '.aln')
+    bam = pysam.AlignmentFile(args.b, 'rb')
 
     if args.q:
         print_query_regions(bam)
