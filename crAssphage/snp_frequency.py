@@ -86,7 +86,7 @@ def average_genotype_frequency(seqs, kmer=10, min_num_reads=1):
         for c in counts:
             if counts[c] >= min_num_reads:
                 snps += 1
-        if snps > 1:
+        if snps > 0:
             all_genotypes.append(snps)
             sites += 1
 
