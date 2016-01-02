@@ -98,7 +98,7 @@ if __name__ == '__main__':
         newresults = [set() for x in seqs[0]]
         if not existing:
             existing = [set() for x in seqs[0]]
-        newresults = average_genotype_frequency(seqs, newresults, 10, 2, True)
+        newresults = average_genotype_frequency(seqs, newresults, 10, 2, False)
         new_genotypes = []
         for i in range(len(newresults)):
             new = 0
