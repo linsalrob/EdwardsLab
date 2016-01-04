@@ -19,6 +19,25 @@ import sys
 import argparse
 
 
+def select_top(allkmers, percent):
+    """
+    Select the top percent of kmers
+
+    :param allkmers: A hash of all kmers and their counts
+    :type allkmers: hash
+    :param percent: The percent to keep
+    :type percent: int
+    :return: The revised hash
+    :rtype: hash
+    """
+
+
+    maxval = max(allkmers.values())
+    cutoff = maxval * (1.0 * (100 - percent) / 100)
+    allks = {x:allkmers[x] for x in allkmers if allkmers[x] >= cutoff}
+    sys.stderr.write("Max value: {}, Cutoff: {}, Length allks: {}\n".format(maxval, cutoff, len(allks)))
+    return allks
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="create a kmer table for fecal metagenomes")
     parser.add_argument('-m', help='SRA metadata table from sql query', required=True)
@@ -40,6 +59,8 @@ if __name__ == '__main__':
 
     counts = {}
     allk = {}
+    # once we add 100,000 kmers we're only going to add the top n percent (to keep memory usage reasonable!)
+    addall = True
     for f in os.listdir(args.d):
         if f.endswith('gz'):
             readid = f.split('_')[0]
@@ -48,16 +69,18 @@ if __name__ == '__main__':
                 fin = gzip.open(os.path.join(args.d, f), 'rb')
                 for l in fin:
                     k, n = l.split()
-                    counts[readid][k]=n
-                    allk[k] = allk.get(k, 0) + int(n)
+                    if addall:
+                        counts[readid][k]=n
+                        allk[k] = allk.get(k, 0) + int(n)
+                    else:
+                        if k in allk:
+                            counts[readid][k] = n
+                            allk[k] = allk.get(k, 0) + int(n)
+        if len(allk) > 100000:
+            allk = select_top(allk, args.p)
 
 
     allks = list(allk.keys())
-    if args.p < 100:
-        maxval = max(allk.values())
-        cutoff = maxval * (1.0 * (100-args.p)/100)
-        allks = [x for x in allks if allk[x] >= cutoff]
-        sys.stderr.write("Max value: {}, Cutoff: {}, Length allks: {}\n".format(maxval, cutoff, len(allks)))
     allks.sort()
 
     with open(args.o, 'w') as out:
