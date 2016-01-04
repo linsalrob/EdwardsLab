@@ -24,6 +24,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', help='SRA metadata table from sql query', required=True)
     parser.add_argument('-d', help='directory of jellyfish output files', required=True)
     parser.add_argument('-o', help='output file', required=True)
+    parser.add_argument('-p', help='choose top -p percent of sequences for inclusion in output. Default = all kmers (-p 100)', default=100, type=int)
     args = parser.parse_args()
 
     runtype = {}
@@ -38,7 +39,7 @@ if __name__ == '__main__':
             runtype[p[0]]=p[2]
 
     counts = {}
-    allk = set()
+    allk = {}
     for f in os.listdir(args.d):
         if f.endswith('gz'):
             readid = f.split('_')[0]
@@ -48,10 +49,16 @@ if __name__ == '__main__':
                 for l in fin:
                     k, n = l.split()
                     counts[readid][k]=n
-                    allk.add(k)
+                    allk[k] = allk.get(k, 0) + int(n)
 
-    allks = list(allk)
+
+    allks = list(allk.keys())
+    if args.p < 100:
+        totalsum = sum(allk.values())
+        cutoff = totalsum * (1.0 * (100-args.p)/100)
+        allks = [x for x in allks if x >= cutoff]
     allks.sort()
+
     with open(args.o, 'w') as out:
         for r in counts:
             out.write("{}\t{}".format(r, runtype[r]))
