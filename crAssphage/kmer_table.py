@@ -41,10 +41,7 @@ if __name__ == '__main__':
     allk = set()
     for f in os.listdir(args.d):
         if f.endswith('gz'):
-            sys.stderr.write("{}\n".format(f))
             readid = f.split('_')[0]
-
-            sys.stderr.write("{}\n".format(readid))
             if readid in runtype:
                 counts[readid] = {}
                 fin = gzip.open(os.path.join(args.d, f), 'rb')
@@ -57,7 +54,6 @@ if __name__ == '__main__':
     allks.sort()
     with open(args.o, 'w') as out:
         for r in counts:
-            sys.stderr.write("{}\n".format(r))
             out.write("{}\t{}".format(r, runtype[r]))
             for k in allks:
                 out.write("\t{}".format(counts[r].get(k, 0)))
