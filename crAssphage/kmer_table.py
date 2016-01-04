@@ -54,6 +54,7 @@ if __name__ == '__main__':
     allks.sort()
     with open(args.o, 'w') as out:
         for r in counts:
+            sys.stderr.write("{}\n".format(r))
             out.write("{}\t{}".format(r, runtype[r]))
             for k in allks:
                 out.write("\t{}".format(counts[r].get(k, 0)))
