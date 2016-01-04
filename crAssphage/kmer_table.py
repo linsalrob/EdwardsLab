@@ -46,7 +46,7 @@ if __name__ == '__main__':
                 counts[readid] = {}
                 fin = gzip.open(os.path.join(args.d, f), 'rb')
                 for l in fin:
-                    k, n = l.split('\t')
+                    k, n = l.split()
                     counts[readid][k]=n
                     allk.add(k)
 
