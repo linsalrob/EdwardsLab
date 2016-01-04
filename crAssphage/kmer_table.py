@@ -24,7 +24,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', help='SRA metadata table from sql query', required=True)
     parser.add_argument('-d', help='directory of jellyfish output files', required=True)
     parser.add_argument('-o', help='output file', required=True)
-    parser.add_argument('-p', help='choose top -p percent of sequences for inclusion in output. Default = all kmers (-p 100)', default=100, type=int)
+    parser.add_argument('-p', help='Percent of maximum value to be included. Default = all kmers (-p 100)', default=100, type=int)
     args = parser.parse_args()
 
     runtype = {}
@@ -54,11 +54,10 @@ if __name__ == '__main__':
 
     allks = list(allk.keys())
     if args.p < 100:
-        totalsum = sum(allk.values())
         maxval = max(allk.values())
-        cutoff = totalsum * (1.0 * (100-args.p)/100)
+        cutoff = maxval * (1.0 * (100-args.p)/100)
         allks = [x for x in allks if allk[x] >= cutoff]
-        sys.stderr.write("Total Sum: {}, Cutoff: {}, Length allks: {}, max val: {}\n".format(totalsum, cutoff, len(allks), maxval))
+        sys.stderr.write("Max value: {}, Cutoff: {}, Length allks: {}\n".format(maxval, cutoff, len(allks)))
     allks.sort()
 
     with open(args.o, 'w') as out:
