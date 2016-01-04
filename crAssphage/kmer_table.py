@@ -57,6 +57,7 @@ if __name__ == '__main__':
         totalsum = sum(allk.values())
         cutoff = totalsum * (1.0 * (100-args.p)/100)
         allks = [x for x in allks if allk[x] >= cutoff]
+        sys.stderr.write("Total Sum: {}, Cutoff: {}, Length allks: {}\n".format(totalsum, cutoff, len(allks)))
     allks.sort()
 
     with open(args.o, 'w') as out:
