@@ -41,7 +41,7 @@ if __name__ == '__main__':
     allk = set()
     for f in os.listdir(args.d):
         if f.endswith('gz'):
-            readid = f.split('/')[1].split('_')[0]
+            readid = f.split('_')[0]
             if readid in runtype:
                 counts[readid] = {}
                 fin = gzip.open(os.path.join(args.d, f), 'rb')
