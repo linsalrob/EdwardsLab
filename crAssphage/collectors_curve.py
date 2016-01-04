@@ -88,7 +88,7 @@ if __name__ == '__main__':
     current_file_no = 0
 
     for aln_file in os.listdir(args.d):
-        sys.stderr.write("{}\t{}\n".format(current_file_no, aln_file))
+        # sys.stderr.write("{}\t{}\n".format(current_file_no, aln_file))
         current_file_no += 1
         seqs = []
         seqids = []
