@@ -60,24 +60,31 @@ if __name__ == '__main__':
     counts = {}
     allk = {}
     # once we add 100,000 kmers we're only going to add the top n percent (to keep memory usage reasonable!)
+    # refactored to store the percentage of kmers as n gets bigger than 2^64!
     addall = True
     for f in os.listdir(args.d):
         if f.endswith('gz'):
             readid = f.split('_')[0]
             if readid in runtype:
-                counts[readid] = {}
                 fin = gzip.open(os.path.join(args.d, f), 'rb')
+                total = 0
                 for l in fin:
                     k, n = l.split()
-                    if addall:
-                        counts[readid][k]=n
-                        allk[k] = allk.get(k, 0) + int(n)
-                    else:
-                        if k in allk:
-                            counts[readid][k] = n
-                            allk[k] = allk.get(k, 0) + int(n)
+                    total += int(n)
+                fin.close()
+
+                counts[readid] = {}
+                if addall:
+                    counts[readid][k]=1.0 * n/total
+                    allk[k] = allk.get(k, 0) + (1.0 * n / total)
+                else:
+                    if k in allk:
+                        counts[readid][k] = 1.0 * n / total
+                        allk[k] = allk.get(k, 0) + (1.0 * n / total)
+
         if len(allk) > 100000:
             allk = select_top(allk, args.p)
+            addall = False
 
 
     allks = list(allk.keys())
