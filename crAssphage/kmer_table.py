@@ -75,12 +75,12 @@ if __name__ == '__main__':
 
                 counts[readid] = {}
                 if addall:
-                    counts[readid][k]=1.0 * n/total
-                    allk[k] = allk.get(k, 0) + (1.0 * n / total)
+                    counts[readid][k]=1.0 * int(n)/total
+                    allk[k] = allk.get(k, 0) + (1.0 * int(n)/ total)
                 else:
                     if k in allk:
-                        counts[readid][k] = 1.0 * n / total
-                        allk[k] = allk.get(k, 0) + (1.0 * n / total)
+                        counts[readid][k] = 1.0 * int(n)/ total
+                        allk[k] = allk.get(k, 0) + (1.0 * int(n)/ total)
 
         if len(allk) > 100000:
             allk = select_top(allk, args.p)
