@@ -23,7 +23,7 @@ if __name__ == '__main__':
         for l in f:
             p = l.strip().split("\t")
             if len(p) == 1:
-                p.append('UNKNOWN')
+                p.append('OTHER')
             explib[p[0]] = p[1]
 
     data = {}
