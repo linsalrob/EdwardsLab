@@ -13,6 +13,7 @@ if __name__ == '__main__':
     parser.add_argument('-e', help='Experiment library file (run id\texperiment library', required=True)
     parser.add_argument('-k', help='minimum value for k-mer composition to keep (0-1)', default=-10, type=float)
     parser.add_argument('-s', help='maximum value for 16S composition to keep (0-100)', default=200, type=float)
+    parser.add_argument('-o', help='output a few of the ones that we want to keep that are amplicons', action='store_true')
     args = parser.parse_args()
 
     explib = {}
@@ -41,9 +42,14 @@ if __name__ == '__main__':
 
     keep = set()
 
+    printout=0
     for s in data.keys():
         if data[s][0] > args.k and data[s][1] < args.s:
             keep.add(s)
+            if args.o and explib[s] == 'AMPLICON' and printout < 100:
+                printout+=1
+                print(s + "\tAMPLICON")
+
 
     # summarize how many we keep
     count = {}
