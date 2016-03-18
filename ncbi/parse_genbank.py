@@ -73,6 +73,10 @@ if __name__ == '__main__':
             # we don't want to print all the information
             continue
 
+        gene = "None"
+        if 'gene' in feature.qualifiers:
+            gene = feature.qualifiers['gene'][0]
+
         gs = "None"
         if 'gene_synonym' in feature.qualifiers:
             for gene_symbols in feature.qualifiers['gene_synonym']:
@@ -87,5 +91,5 @@ if __name__ == '__main__':
                 if d.startswith('GeneID'):
                     db = d
 
-        print("\t".join([lt, gs, db]))
+        print("\t".join([lt, gene, gs, db]))
 
