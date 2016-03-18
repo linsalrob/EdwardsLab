@@ -65,6 +65,8 @@ if __name__ == '__main__':
 
     ## This block will just print the locus_tag, ECK, and GeneID for all features
 
+    locus_tag = {}
+
     for feature in seq.features:
         lt = 'None'
         if 'locus_tag' in feature.qualifiers:
@@ -91,5 +93,18 @@ if __name__ == '__main__':
                 if d.startswith('GeneID'):
                     db = d
 
-        print("\t".join([lt, gene, gs, db]))
+        if lt in locus_tag:
+            if gene != "None":
+                locus_tag[lt][0] = gene
+            if gs != "None":
+                locus_tag[lt][1] = gs
+            if db != "None":
+                locus_tag[lt][2] = db
+        else:
+            locus_tag[lt] = [gene, gs, db]
+
+
+    for l in locus_tag:
+        print(l + "\t" + "\t".join(locus_tag[l]))
+#        print("\t".join([lt, gene, gs, db]))
 
