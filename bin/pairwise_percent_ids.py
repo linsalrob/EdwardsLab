@@ -41,13 +41,13 @@ def pairwise(seqs):
                     same += 1
                 else:
                     diff += 1
-            print("{}\t{}\t{}".format(allseqs[i], allseqs[j], (same/(same+diff))*100))
+            print("{}\t{}\t{}".format(allseqs[i], allseqs[j], (1.0 * same/(same+diff))*100))
 
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Calculate the percent pairwise ID between all pairs of sequences")
-    parser.add_argument('-f', help='protein fasta file')
+    parser.add_argument('-f', help='protein fasta file', required=True)
     args = parser.parse_args()
 
     sq = read_fasta(args.f)
