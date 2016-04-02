@@ -14,7 +14,7 @@ import matplotlib.pyplot as plt
 def median(lst):
     sortedLst = sorted(lst)
     lstLen = len(lst)
-    index = (lstLen - 1) // 2
+    index = (lstLen - 1) // 2 # // is the floor division
 
     if (lstLen % 2):
         return sortedLst[index]
@@ -46,6 +46,7 @@ ax.set_ylabel("Average percent identity")
 ax.set_xticklabels(tax)
 ax.get_xaxis().tick_bottom()
 ax.get_yaxis().tick_left()
+fig.set_facecolor('white')
 
 plt.show()
 

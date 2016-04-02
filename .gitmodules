@@ -1,0 +1,3 @@
+[submodule "ProphageGenomics"]
+	path = ProphageGenomics
+	url = git@github.com:hkang408/ProphageGenomics.git
