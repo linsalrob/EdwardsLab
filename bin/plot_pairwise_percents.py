@@ -23,7 +23,7 @@ def median(lst):
 
 
 
-filename = '/home/redwards/Desktop/identical_percent_ids.tsv'
+filename = '/home/redwards/Desktop/identical_percent_ids.json'
 with open(filename, 'r') as f:
     data = json.load(f)
 
