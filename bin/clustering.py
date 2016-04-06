@@ -53,7 +53,7 @@ if __name__ == '__main__':
     matrix = parse_text_file(args.t)
     L = sch.linkage(matrix, method='complete')
 
-    for i in range(11):
-        ind = sch.fcluster(L, i/10.0, 'distance')
-        print("{}\t{}".format(i/10.0, max(ind)))
+    for i in range(101):
+        ind = sch.fcluster(L, i/100.0, 'distance')
+        print("{}\t{}".format(100-i, max(ind)))
 
