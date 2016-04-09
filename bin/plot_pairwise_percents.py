@@ -23,7 +23,7 @@ def median(lst):
 
 
 
-filename = '/home/redwards/Desktop/identical_percent_ids.json'
+filename = '/home/redwards/Desktop/all_pairwise.json'
 with open(filename, 'r') as f:
     data = json.load(f)
 
@@ -40,7 +40,9 @@ for t in tax:
 fig = plt.figure()
 ax = fig.add_subplot(111)
 
-ax.boxplot(alldata)
+#ax.boxplot(alldata)
+tax.insert(0, "")
+ax.violinplot(alldata, showmeans=True)
 ax.set_xlabel("Phylogeny")
 ax.set_ylabel("Average percent identity")
 ax.set_xticklabels(tax)
