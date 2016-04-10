@@ -14,8 +14,8 @@ x = np.concatenate([norm(-1, 1.).rvs(400), norm(1, 0.3).rvs(100)])
 
 # print(x)
 
-# print("X Grid:" + str(len(x_grid)))
-# print("X: " + str(len(x)))
+print("X Grid:" + str(len(x_grid)) + "\t" + str(min(x_grid)) + ":" + str(max(x_grid)) + "\t" + str(x_grid[0:10]))
+print("X: " + str(len(x)) + "\t" + str(min(x)) + ":" + str(max(x)) + "\t" + str(x[0:10]))
 
 if (0):
     density.covariance_factor = lambda: .25
