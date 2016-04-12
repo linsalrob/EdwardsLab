@@ -48,12 +48,15 @@ def parse_text_file(tf):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Cluster genes based on %id with cutoffs")
     parser.add_argument('-t', help='file with [a, b, distance] separated by tabs', required=True)
+    parser.add_argument('-o', help='clusters output file name. We print them out in json format', required=True)
     args = parser.parse_args()
 
     matrix = parse_text_file(args.t)
     L = sch.linkage(matrix, method='complete')
 
+    out = open(args.o, 'w')
     for i in range(101):
         ind = sch.fcluster(L, i/100.0, 'distance')
+        out.write("{" + str(i) + " : " + str(ind) + "},\n")
         print("{}\t{}".format(100-i, max(ind)))
 
