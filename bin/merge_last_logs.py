@@ -50,7 +50,8 @@ for k in log:
         never.pop(k)
 sys.stderr.write("{} never logged in\n".format(len(never.keys())))
 
-print(never.values())
+for n in never.values():
+    sys.stdout.write(n)
 
 ke = sorted(log, key=access.__getitem__)
 for l in ke:
