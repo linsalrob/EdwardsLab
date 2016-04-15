@@ -20,11 +20,14 @@ if __name__ == '__main__':
 
     access = {}
     log = {}
+    never = {}
 
     for f in args.l:
         with open(f, 'r') as fin:
             for l in fin:
                 if 'Never logged in' in l:
+                    p = l.split()
+                    never[p] = l
                     continue
                 m = re.match('(\S+)\s+(\S+)\s+(\S+)\s+(.*?)$', l)
                 if not m:
@@ -39,6 +42,14 @@ if __name__ == '__main__':
                 elif dateutil.parser.parse(m.group(4)) > access[m.group(1)]:
                     access[m.group(1)] = dateutil.parser.parse(m.group(4))
                     log[m.group(1)] = l
+
+# delete the never logged in if they did
+sys.stderr.write("{} never logged in\n".format(len(never.keys())))
+for k in log:
+    if k in never:
+        never.pop(k)
+sys.stderr.write("{} never logged in\n".format(len(never.keys())))
+
 
 ke = sorted(log, key=access.__getitem__)
 for l in ke:
