@@ -29,8 +29,11 @@ if __name__ == '__main__':
                     sys.stderr.write("Can't parse: '{}'\n".format(l))
                     continue
                 if m.group(1) not in access:
-                    access[m.group(1)] = dateutil.parser.parse(m.group(4))
-                    log[m.group(1)] = l
+                    try:
+                        access[m.group(1)] = dateutil.parser.parse(m.group(4))
+                        log[m.group(1)] = l
+                    except:
+                        sys.stderr.write("Can't parse date from '{}' in '{}'\n".format(m.group(4), l.strip()))
                 elif dateutil.parser.parse(m.group(4)) > access[m.group(1)]:
                     access[m.group(1)] = dateutil.parser.parse(m.group(4))
                     log[m.group(1)] = l
