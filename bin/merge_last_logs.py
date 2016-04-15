@@ -27,7 +27,7 @@ if __name__ == '__main__':
             for l in fin:
                 if 'Never logged in' in l:
                     p = l.split()
-                    never[p] = l
+                    never[p[0]] = l
                     continue
                 m = re.match('(\S+)\s+(\S+)\s+(\S+)\s+(.*?)$', l)
                 if not m:
@@ -50,6 +50,7 @@ for k in log:
         never.pop(k)
 sys.stderr.write("{} never logged in\n".format(len(never.keys())))
 
+print(never.values())
 
 ke = sorted(log, key=access.__getitem__)
 for l in ke:
