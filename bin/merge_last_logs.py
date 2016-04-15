@@ -25,7 +25,8 @@ if __name__ == '__main__':
                      'halt', 'abrt', 'ntp', 'nobody', 'sshd', 'gopher', 'privoxy', 'pegasus', 'dovecot', 'apache',
                      'news', 'xfs', 'pcap', 'haldaemon', 'biobike3', 'biobike2', 'daemon', 'ident', 'tomcat', 'rpcuser',
                      'postfix', 'dbus', 'biobike4', 'ais', 'nfsnobody', 'games', 'vcsa', 'nscd', 'avahi', 'saslauth',
-                     'fig', 'jottotoo', 'root', 'jotto']
+                     'fig', 'jottotoo', 'root', 'jotto', 'rtkit', 'biobike', 'pulse', 'tcpdump', 'avahi-autoipd',
+                     'dockerroot']
     special_users.sort()
     special_users_set = set(special_users)
 
