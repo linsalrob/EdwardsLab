@@ -40,6 +40,6 @@ if __name__ == '__main__':
                     access[m.group(1)] = dateutil.parser.parse(m.group(4))
                     log[m.group(1)] = l
 
-
-for l in log:
+ke = sorted(log, key=access.__getitem__)
+for l in ke:
     sys.stdout.write(log[l])
