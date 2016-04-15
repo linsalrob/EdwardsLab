@@ -24,6 +24,8 @@ if __name__ == '__main__':
     for f in args.l:
         with open(f, 'r') as fin:
             for l in fin:
+                if 'Never logged in' in l:
+                    continue
                 m = re.match('(\S+)\s+(\S+)\s+(\S+)\s+(.*?)$', l)
                 if not m:
                     sys.stderr.write("Can't parse: '{}'\n".format(l))
@@ -40,4 +42,4 @@ if __name__ == '__main__':
 
 
 for l in log:
-    sys.stdout.write(l)
+    sys.stdout.write(log[l])
