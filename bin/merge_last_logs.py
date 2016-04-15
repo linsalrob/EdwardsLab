@@ -66,7 +66,7 @@ for k in log:
 sys.stderr.write("{} never logged in\n".format(len(never.keys())))
 
 for s in special_users:
-    sys.stdout.write("{}: special user. Do not deactivate\n".format(s))
+    sys.stdout.write("{}\tspecial user. Do not deactivate\n".format(s))
 sys.stdout.write("\n\nNEVER LOGGED IN\n")
 
 for n in never.values():
