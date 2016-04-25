@@ -102,7 +102,8 @@ def clean_hits():
 
 
 #with open('/home/redwards/Desktop/16S_all.cf94.blastn', 'r') as bin:
-with open('/home/redwards/Desktop/16S_all_padded.blastn', 'r') as bin:
+#with open('/home/redwards/Desktop/16S_all_padded.blastn', 'r') as bin:
+with open('/home3/redwards/16S_contamination/16S_all_padded.blastn', 'r') as bin:
     for l in bin:
         p=l.strip().split('\t')
         for i in [2, 10, 11]:
@@ -181,11 +182,12 @@ ax.spines['right'].set_visible(False)
 ax.get_xaxis().tick_bottom()
 ax.get_yaxis().tick_left()
 
-ax.legend()
+#ax.legend()
 
 fig.set_facecolor('white')
 
-plt.show()
+# plt.show()
+plt.savefig("raw_45nl.png")
 
 
 
