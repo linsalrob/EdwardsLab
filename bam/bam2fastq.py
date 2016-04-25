@@ -14,7 +14,7 @@ def qual2fastq(quals):
     :return: A fastq quality string
     :rtype: str
     """
-    quality = [chr(q) for q in quals]
+    quality = [chr(q + 33) for q in quals]
     return "".join(quality)
 
 if __name__ == '__main__':
