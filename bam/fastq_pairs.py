@@ -1,5 +1,81 @@
 import os
 import sys
+import re
+import rob
+
+def clean_fastq(file1, file2):
+    """
+    Make a set of cleaned pairs and unpaired reads. If all the reads are paired we do not do anything
+
+    :param file1: first fastq file
+    :type file1: str
+    :param file2: second fastq file
+    :type file2: str
+    :return: A string for the output using -1 -2 and -U for unpaired reads
+    :rtype: str
+    """
+
+    seq1 = {}
+    seq2 = {}
+
+    for (sid, label, seq, qual) in rob.stream_fastq(file1):
+        sid = re.sub('@', '', sid)
+        sid = re.sub('\.[12]$', '', sid)
+        seq1[sid] = "@" + label + "\n" + seq + "\n+\n" + qual + "\n"
+
+    for (sid, label, seq, qual) in rob.stream_fastq(file1):
+        sid = re.sub('@', '', sid)
+        sid = re.sub('\.[12]$', '', sid)
+        seq2[sid] = "@" + label + "\n" + seq + "\n+\n" + qual + "\n"
+
+    seq1set = set(seq1.keys())
+    seq2set = set(seq2.keys())
+
+    # are there reads in one but not the other?
+    s1unique = seq1set.difference(seq2set)
+    s2unique = seq2set.difference(seq1set)
+
+    ret = ' -1 ' + file1 + ' -2 ' + file2
+
+    if len(s1unique) > 0 or len(s2unique) > 0:
+        # we have to make new files
+        file1clean = file1.replace('.fastq', '.clean.fastq')
+        file2clean = file2.replace('.fastq', '.clean.fastq')
+
+        ret = " -1 " + file1clean + " -2 " + file2clean
+        try:
+            out1 = open(file1clean, 'w')
+            out2 = open(file2clean, 'w')
+            for sid in seq1set.intersection(seq2set):
+                out1.write(seq1[sid])
+                out2.write(seq2[sid])
+            out1.close()
+            out2.close()
+        except IOError as e:
+            print "I/O error({0}): {1}".format(e.errno, e.strerror)
+
+        if len(s1unique) > 0:
+            file1unique = file1.replace('.fastq', '.unique.fastq')
+            ret = ret + " -U " + file1unique
+            try:
+                out = open(file1unique, 'w')
+                for sid in s1unique:
+                    out.write(seq1[sid])
+                out.close()
+            except IOError as e:
+                print "I/O error({0}): {1}".format(e.errno, e.strerror)
+
+        if len(s2unique) > 0:
+            file2unique = file2.replace('.fastq', '.unique.fastq')
+            ret = ret + " -U " + file2unique
+            try:
+                out = open(file2unique, 'w')
+                for sid in s2unique:
+                    out.write(seq2[sid])
+                out.close()
+            except IOError as e:
+                print "I/O error({0}): {1}".format(e.errno, e.strerror)
+    return ret
 
 files = {}
 for f in os.listdir('fastq'):
@@ -11,5 +87,8 @@ for f in os.listdir('fastq'):
 for s in files:
     if len(files[s]) == 1:
         print("fastq/" + files[s].pop())
+    elif len(files[s]) == 2:
+        outstr = clean_fastq(files[0], files[1])
+        print(outstr)
     else:
-        print("fastq/" + " fastq/".join(files[s]))
+        sys.stderr.write("Apparently more than two files for " + s + " ==> " + " ".join(files))
