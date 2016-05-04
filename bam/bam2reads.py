@@ -12,7 +12,7 @@ import sys
 import argparse
 import pysam
 import re
-import rob
+from roblib import sequences
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Convert bam to fastq')
@@ -32,8 +32,17 @@ if __name__ == '__main__':
         elif t.endswith('.2'):
             t = re.sub('\.2$', '.1', t)
             wanted.add(t)
+
+    keep = {}
     for f in args.f:
-        for fq in rob.stream_fastq(f):
-            if fq[0] in wanted:
-                print("@" + fq[1] + "\n" + fq[2] + "\n+\n" + fq[3])
+        for (seqid, header, seq, qual) in sequences.stream_fastq(f):
+            seqid = seqid.replace('@', '')
+            if seqid in wanted:
+                keep[seqid] = "@" + header + "\n" + seq + "\n+\n" + qual
+
+    sorted_keys = keep.keys()
+    sorted_keys.sort()
+    for k in sorted_keys:
+        print(keep[k])
+
 

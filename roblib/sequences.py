@@ -64,21 +64,25 @@ def stream_fastq(fqfile):
     while the header is the whole header.
     """
 
-    with open(fqfile, 'r') as qin:
-        while True:
-            header = qin.readline()
-            if not header:
-                break
-            header = header.strip()
-            seqidparts = header.split(' ')
-            seqid = seqidparts[0]
-            seq = qin.readline()
-            seq = seq.strip()
-            qualheader = qin.readline()
-            qualscores = qin.readline()
-            qualscores = qualscores.strip()
-            header = header.replace('@', '', 1)
-            yield seqid, header, seq, qualscores
+    if fqfile.endswith('.gz'):
+        qin = gzip.open(fqfile, 'rb')
+    else:
+        qin = open(fqfile, 'r')
+
+    while True:
+        header = qin.readline()
+        if not header:
+            break
+        header = header.strip()
+        seqidparts = header.split(' ')
+        seqid = seqidparts[0]
+        seq = qin.readline()
+        seq = seq.strip()
+        qualheader = qin.readline()
+        qualscores = qin.readline()
+        qualscores = qualscores.strip()
+        header = header.replace('@', '', 1)
+        yield seqid, header, seq, qualscores
 
 
 def stream_fasta(fastafile, whole_id=True):
