@@ -21,7 +21,7 @@ def read_data(data):
 def process_a_file(filename):
     if 'phg' in filename:
         sys.stderr.write("Processing phage file: " + filename + "\n")
-        ftp.retrbinary('RETR genbank/' + filename, read_data)
+        ftp.retrbinary('RETR ' + filename, read_data)
         r.seek(0)
 
         for seq in SeqIO.parse(gzip.GzipFile(fileobj=r), 'genbank'):
