@@ -16,7 +16,7 @@ def process_a_file(filename):
     if 'phg' in filename:
         sys.stderr.write("Processing phage file: " + filename + "\n")
         print("Processing phage file: " + filename)
-        r = StringIO()
+        r = StringIO
         ftp.retrbinary('RETR genbank/' + filename, r.write)
         for seq in SeqIO.read(r.getvalue(), 'genbank'):
             for feature in seq.features:
