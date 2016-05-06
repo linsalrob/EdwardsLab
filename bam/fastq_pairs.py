@@ -1,7 +1,7 @@
 import os
 import sys
 import re
-import rob
+from roblib import sequences
 
 def clean_fastq(file1, file2):
     """
@@ -15,21 +15,24 @@ def clean_fastq(file1, file2):
     :rtype: str
     """
 
+    sys.stderr.write("Checking " + file1 +  " and " + file2 + "\n")
     seq1 = {}
     seq2 = {}
 
-    for (sid, label, seq, qual) in rob.stream_fastq(file1):
+    for (sid, label, seq, qual) in sequences.stream_fastq(file1):
         sid = re.sub('@', '', sid)
         sid = re.sub('\.[12]$', '', sid)
         seq1[sid] = "@" + label + "\n" + seq + "\n+\n" + qual + "\n"
 
-    for (sid, label, seq, qual) in rob.stream_fastq(file1):
+    for (sid, label, seq, qual) in sequences.stream_fastq(file2):
         sid = re.sub('@', '', sid)
         sid = re.sub('\.[12]$', '', sid)
         seq2[sid] = "@" + label + "\n" + seq + "\n+\n" + qual + "\n"
 
     seq1set = set(seq1.keys())
     seq2set = set(seq2.keys())
+
+    sys.stderr.write("File 1: " + file1 + " seqs: " + str(len(seq1set)) + " File 2: " + file2 + " seqs: " + str(len(seq2set)) + "\n")
 
     # are there reads in one but not the other?
     s1unique = seq1set.difference(seq2set)
@@ -38,6 +41,9 @@ def clean_fastq(file1, file2):
     ret = ' -1 ' + file1 + ' -2 ' + file2
 
     if len(s1unique) > 0 or len(s2unique) > 0:
+        file1 = file1.replace('.gz', '')
+        file2 = file2.replace('.gz', '')
+        sys.stderr.write("Rewriting " + file1 + " and " + file2 + "\n")
         # we have to make new files
         file1clean = file1.replace('.fastq', '.clean.fastq')
         file2clean = file2.replace('.fastq', '.clean.fastq')
@@ -88,7 +94,7 @@ for s in files:
     if len(files[s]) == 1:
         print("fastq/" + files[s].pop())
     elif len(files[s]) == 2:
-        outstr = clean_fastq(files[0], files[1])
+        outstr = clean_fastq(os.path.join('fastq/', files[s].pop()), os.path.join('fastq/', files[s].pop()))
         print(outstr)
     else:
         sys.stderr.write("Apparently more than two files for " + s + " ==> " + " ".join(files))
