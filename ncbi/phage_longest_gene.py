@@ -10,15 +10,21 @@ import sys
 import StringIO
 from Bio import SeqIO
 from ftplib import FTP
+import gzip
 
+
+r = StringIO.StringIO()
+
+def read_data(data):
+    r.write(data)
 
 def process_a_file(filename):
     if 'phg' in filename:
         sys.stderr.write("Processing phage file: " + filename + "\n")
-        print("Processing phage file: " + filename)
-        r = StringIO()
-        ftp.retrbinary('RETR genbank/' + filename, r.write)
-        for seq in SeqIO.read(r.getvalue(), 'genbank'):
+        ftp.retrbinary('RETR genbank/' + filename, read_data)
+        r.seek(0)
+
+        for seq in SeqIO.parse(gzip.GzipFile(fileobj=r), 'genbank'):
             for feature in seq.features:
                 if 'locus_tag' in feature.qualifiers:
                     lt = feature.qualifiers['locus_tag'][0]
@@ -26,6 +32,8 @@ def process_a_file(filename):
                     print("{}\t{}".format(lt, len(feature.qualifiers['translation'][0])))
     else:
         sys.stderr.write("Skipped " + filename + "\n")
+
+    r.close()
 
 # first find all the phg files in genbank
 
