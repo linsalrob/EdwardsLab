@@ -76,6 +76,11 @@ def clean_fastq(file1, file2):
         if file2unique == file2:
             file2unique = file2 + '.unique.fastq'
 
+        file1unique = file1unique.replace('.gz', '')
+        file2unique = file2unique.replace('.gz', '')
+        file1clean = file1clean.replace('.gz', '')
+        file2clean = file2clean.replace('.gz', '')
+
 
         ret = " -1 " + file1clean + " -2 " + file2clean
         try:
