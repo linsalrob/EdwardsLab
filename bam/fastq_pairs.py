@@ -1,7 +1,9 @@
 import os
-import sys
 import re
+import sys
+
 from roblib import sequences
+
 
 def clean_fastq(file1, file2):
     """
@@ -15,7 +17,7 @@ def clean_fastq(file1, file2):
     :rtype: str
     """
 
-    sys.stderr.write("Checking " + file1 +  " and " + file2 + "\n")
+    sys.stderr.write("Checking " + file1 + " and " + file2 + "\n")
     seq1 = {}
     seq2 = {}
 
@@ -32,7 +34,8 @@ def clean_fastq(file1, file2):
     seq1set = set(seq1.keys())
     seq2set = set(seq2.keys())
 
-    sys.stderr.write("File 1: " + file1 + " seqs: " + str(len(seq1set)) + " File 2: " + file2 + " seqs: " + str(len(seq2set)) + "\n")
+    sys.stderr.write(
+        "File 1: " + file1 + " seqs: " + str(len(seq1set)) + " File 2: " + file2 + " seqs: " + str(len(seq2set)) + "\n")
 
     # are there reads in one but not the other?
     s1unique = seq1set.difference(seq2set)
@@ -83,18 +86,26 @@ def clean_fastq(file1, file2):
                 print "I/O error({0}): {1}".format(e.errno, e.strerror)
     return ret
 
-files = {}
-for f in os.listdir('fastq'):
-    sid = f.split('_')[0]
-    if sid not in files:
-        files[sid]=set()
-    files[sid].add(f)
 
-for s in files:
-    if len(files[s]) == 1:
-        print("fastq/" + files[s].pop())
-    elif len(files[s]) == 2:
-        outstr = clean_fastq(os.path.join('fastq/', files[s].pop()), os.path.join('fastq/', files[s].pop()))
-        print(outstr)
-    else:
-        sys.stderr.write("Apparently more than two files for " + s + " ==> " + " ".join(files))
+import argparse
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Given a directory of fastq files, figure out the pairs and check if they are ok. The only requirement is the fastq files have _ between the name and id")
+    parser.add_argument('-d', help='Directory of fastq files')
+    args = parser.parse_args()
+
+    files = {}
+    for f in os.listdir(args.d):
+        sid = f.split('_')[0]
+        if sid not in files:
+            files[sid] = set()
+        files[sid].add(f)
+
+    for s in files:
+        if len(files[s]) == 1:
+            print("fastq/" + files[s].pop())
+        elif len(files[s]) == 2:
+            outstr = clean_fastq(os.path.join('fastq/', files[s].pop()), os.path.join('fastq/', files[s].pop()))
+            print(outstr)
+        else:
+            sys.stderr.write("Apparently more than two files for " + s + " ==> " + " ".join(files))
