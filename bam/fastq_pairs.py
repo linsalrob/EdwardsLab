@@ -26,11 +26,13 @@ def clean_fastq(file1, file2):
     for (sid, label, seq, qual) in sequences.stream_fastq(file1):
         sid = re.sub('@', '', sid)
         sid = re.sub('\.[12]$', '', sid)
+        sid = re.sub('/[12]$', '', sid)
         seq1[sid] = "@" + label + "\n" + seq + "\n+\n" + qual + "\n"
 
     for (sid, label, seq, qual) in sequences.stream_fastq(file2):
         sid = re.sub('@', '', sid)
         sid = re.sub('\.[12]$', '', sid)
+        sid = re.sub('/[12]$', '', sid)
         seq2[sid] = "@" + label + "\n" + seq + "\n+\n" + qual + "\n"
 
     seq1set = set(seq1.keys())
