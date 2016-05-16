@@ -5,6 +5,8 @@ import sys
 from roblib import sequences
 
 
+
+
 def clean_fastq(file1, file2):
     """
     Make a set of cleaned pairs and unpaired reads. If all the reads are paired we do not do anything
@@ -48,8 +50,32 @@ def clean_fastq(file1, file2):
         file2 = file2.replace('.gz', '')
         sys.stderr.write("Rewriting " + file1 + " and " + file2 + "\n")
         # we have to make new files
+
+
         file1clean = file1.replace('.fastq', '.clean.fastq')
+        if file1clean == file1:
+            file1clean = file1.replace('.fq', '.clean.fq')
+        if file1clean == file1:
+            file1clean = file1 + ".clean.fastq"
+
+        file1unique = file1.replace('.fastq', '.unique.fastq')
+        if file1unique == file1:
+            file1unique = file1.replace('.fq', '.unique.fastq')
+        if file1unique == file1:
+            file1unique = file1 + '.unique.fastq'
+
         file2clean = file2.replace('.fastq', '.clean.fastq')
+        if file2clean == file2:
+            file2clean = file2.replace('.fq', '.clean.fq')
+        if file2clean == file2:
+            file2clean = file2 + ".clean.fastq"
+
+        file2unique = file2.replace('.fastq', '.unique.fastq')
+        if file2unique == file2:
+            file2unique = file2.replace('.fq', '.unique.fastq')
+        if file2unique == file2:
+            file2unique = file2 + '.unique.fastq'
+
 
         ret = " -1 " + file1clean + " -2 " + file2clean
         try:
@@ -64,7 +90,6 @@ def clean_fastq(file1, file2):
             print "I/O error({0}): {1}".format(e.errno, e.strerror)
 
         if len(s1unique) > 0:
-            file1unique = file1.replace('.fastq', '.unique.fastq')
             ret = ret + " -U " + file1unique
             try:
                 out = open(file1unique, 'w')
@@ -75,7 +100,6 @@ def clean_fastq(file1, file2):
                 print "I/O error({0}): {1}".format(e.errno, e.strerror)
 
         if len(s2unique) > 0:
-            file2unique = file2.replace('.fastq', '.unique.fastq')
             ret = ret + " -U " + file2unique
             try:
                 out = open(file2unique, 'w')
@@ -91,7 +115,7 @@ import argparse
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Given a directory of fastq files, figure out the pairs and check if they are ok. The only requirement is the fastq files have _ between the name and id")
-    parser.add_argument('-d', help='Directory of fastq files')
+    parser.add_argument('-d', help='Directory of fastq files', required=True)
     args = parser.parse_args()
 
     files = {}
@@ -103,9 +127,9 @@ if __name__ == '__main__':
 
     for s in files:
         if len(files[s]) == 1:
-            print("fastq/" + files[s].pop())
+            print(args.d + "/" + files[s].pop())
         elif len(files[s]) == 2:
-            outstr = clean_fastq(os.path.join('fastq/', files[s].pop()), os.path.join('fastq/', files[s].pop()))
+            outstr = clean_fastq(os.path.join(args.d, files[s].pop()), os.path.join(args.d, files[s].pop()))
             print(outstr)
         else:
             sys.stderr.write("Apparently more than two files for " + s + " ==> " + " ".join(files))
