@@ -32,4 +32,4 @@ if __name__ == '__main__':
                 tl = feature.qualifiers['translation'][0]
 
             if 'gpA' in gs or 'gpA' in pd:
-                print("\t".join([pi, gs, pd, tl]))
+                print("\t".join([seq.id, seq.annotations['organism'], pi, gs, pd, tl]))
