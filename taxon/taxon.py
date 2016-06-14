@@ -1,4 +1,5 @@
 import gzip
+import sys
 
 # the location of the taxonomy files
 defaultdir = '/home/db/taxonomy/current/'
@@ -148,7 +149,7 @@ def readDivisions():
     return divs
 
 
-def readGiTaxId(type='nucl'):
+def readGiTaxId(dtype='nucl'):
     '''
     Read gi_taxid.dmp. You can specify the type of database that you
     want to parse, default is nucl (nucleotide), can also accept prot 
@@ -156,10 +157,10 @@ def readGiTaxId(type='nucl'):
     
     Returns a hash of gi and taxid
     '''
-    if type != 'nucl' and type != 'prot':
-        sys.stderr.write("Type must be either nucl or prot, not " + type + "\n")
+    if dtype != 'nucl' and dtype != 'prot':
+        sys.stderr.write("Type must be either nucl or prot, not " + dtype + "\n")
         sys.exit(-1)
-    fileIn = defaultdir + "/gi_taxid_" + type + ".dmp.gz"
+    fileIn = defaultdir + "/gi_taxid_" + dtype + ".dmp.gz"
     taxid={}
     fin = gzip.open(fileIn, 'r')
     for line in fin:
