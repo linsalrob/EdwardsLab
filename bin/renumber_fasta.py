@@ -1,3 +1,5 @@
+#!/usr/bin/env python
+
 """
 Renumber a fasta file, starting with either number 1 or a number provided on the command line.
 At the end, we output the last number written.
@@ -17,6 +19,7 @@ if __name__ == "__main__":
     parser.add_argument('-f', help='input file', required=True)
     parser.add_argument('-o', help='output file', required=True)
     parser.add_argument('-n', help='number to start from. Default: 1', type=int, default=1)
+    parser.add_argument('-x', help='maximum number of sequences to write out', type=int)
     args = parser.parse_args()
 
 
@@ -26,6 +29,8 @@ if __name__ == "__main__":
         for id in fa:
             counter += 1
             out.write(">{}\n{}\n".format(counter, fa[id]))
+            if args.x and (counter - (args.n-2)) > args.x:
+                break
 
-    print("{} sequences wrote to the file".format(counter))
+    print("The last ID written to the file {} was {}".format(args.o, counter))
 
