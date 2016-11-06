@@ -26,9 +26,11 @@ names,blastname = taxon.readNames()
 divs = taxon.readDivisions()
 gi2tax = taxon.readGiTaxId(dtype=dbtype)
 
+sys.stderr.write("Read taxonomy\n")
 
-want = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
+want = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
 
+results = {}
 with open(args.b, 'r') as f:
     for l in f:
         p=l.strip().split("\t")
@@ -36,24 +38,35 @@ with open(args.b, 'r') as f:
         if 'gi|' in p[0]:
             m = re.findall('gi\|(\d+)', p[0])
         elif 'gi|' in p[1]:
-            m = re.findall('gi\|(\d+)', p[0])
+            m = re.findall('gi\|(\d+)', p[1])
         if m == []:
             continue
+
+        if m[0] in results:
+            p.append(results[m[0]])
+            print("\t".join(p))
+            continue
+
         if m[0] not in gi2tax:
             continue
 
         tid = gi2tax[m[0]]
         level = {}
-        while taxa[tid].parent != '1' and tid != '1':
+        while tid != '0' and tid != '1' and tid in taxa and taxa[tid].parent != '1':
             if taxa[tid].rank in want:
                 level[taxa[tid].rank] = names[tid].name
             tid = taxa[tid].parent
 
+        resultstr = ""
         for w in want:
+            if w != 'superkingdom':
+                resultstr  += "\t"
             if w in level:
                 p.append(level[w])
+                resultstr  += level[w]
             else:
                 p.append("")
+                resultstr  += ""
 
         print("\t".join(p))
 

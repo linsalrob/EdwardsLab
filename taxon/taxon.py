@@ -171,7 +171,7 @@ def readGiTaxId(dtype='nucl'):
     return taxid
 
 
-def readTaxIdGi(type='nucl'):
+def readTaxIdGi(dtype='nucl'):
     '''
     Read gi_taxid.dmp. You can specify the type of database that you
     want to parse, default is nucl (nucleotide), can also accept prot 
@@ -183,10 +183,10 @@ def readTaxIdGi(type='nucl'):
 
     Returns a hash of taxid and gi
     '''
-    if type != 'nucl' and type != 'prot':
-        sys.stderr.write("Type must be either nucl or prot, not " + type + "\n")
+    if dtype != 'nucl' and dtype != 'prot':
+        sys.stderr.write("Type must be either nucl or prot, not " + dtype + "\n")
         sys.exit(-1)
-    fileIn = defaultdir + "/gi_taxid_" + type + ".dmp.gz"
+    fileIn = defaultdir + "/gi_taxid_" + dtype + ".dmp.gz"
     taxid={}
     fin = gzip.open(fileIn, 'r')
     for line in fin:
