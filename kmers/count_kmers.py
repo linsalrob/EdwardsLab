@@ -20,7 +20,7 @@ for id in fa:
     count = []
     for k in product("ATGC", repeat=args.s):
         sk = "".join(k)
-        count.append(fa[id].count(sk))
+        count.append(fa[id].upper().count(sk))
 
     print("id: {} len(seq): {} sum: {}  n: {} average: {} median: {} max: {}".format(
         id, len(fa[id]), sum(count), len(count), (1.0 * sum(count) / len(count)), median(count), max(count)
