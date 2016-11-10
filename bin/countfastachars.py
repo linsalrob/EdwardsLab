@@ -41,7 +41,7 @@ if __name__ == "__main__":
         if not n75 and c>=length*0.75:
             n75 = len(fa[i])
             n75name = i
-
+    
     print("Total length: {}\nShortest: {} ({})\nLongest: {} ({})\n\nN50: {} ({})\nN75: {} ({})".format(
         length, lens[0], shortestname, lens[-1], longestname, n50, n50name, n75, n75name
     ))
