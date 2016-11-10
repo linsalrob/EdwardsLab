@@ -9,12 +9,16 @@ from itertools import product
 from roblib import read_fasta
 from statistics import median
 
+parser = argparse.ArgumentParser(description='Count the kmers in a fasta file')
+parser.add_argument('-f', help='fasta file', required=True)
+parser.add_argument('-s', help='K-mer size, (default=11)', type=int, size=11)
+args = parser.parse_args()
 
-fa = read_fasta("/home/redwards/Desktop/83333.1.contigs")
+fa = read_fasta(args.f)
 
 for id in fa:
     count = []
-    for k in product("ATGC", repeat=11):
+    for k in product("ATGC", repeat=args.s):
         sk = "".join(k)
         count.append(fa[id].count(sk))
 
