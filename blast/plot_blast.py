@@ -3,6 +3,9 @@ Plot blast hits against a genome
 '''
 import argparse
 
+import matplotlib as mpl
+mpl.use('Agg')
+
 import matplotlib.pyplot as plt
 import os
 import sys
@@ -152,7 +155,7 @@ def window_merge(hits, window):
     return avhits
 
 
-def plot_hits(hits, breaks=[], window=0, maxy=0):
+def plot_hits(hits, outputfile, breaks=[], window=0, maxy=0):
     '''
     Plot the hits!
     :param breaks: An optional list of contig breakpoints to be added. If an empty list is provided no lines added
@@ -177,18 +180,24 @@ def plot_hits(hits, breaks=[], window=0, maxy=0):
     cx=[200000, 200000]
     cy=[0, 1000]
 
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+
+
     #plt.plot(hits)
-    line, = plt.plot(x, y, '-')
+    line, = ax.plot(x, y, '-')
     if breaks:
         for b in breaks:
-            plt.plot([b,b], [0, maxy], 'r-')
-    plt.axis([0, maxx, 0, maxy])
+            ax.plot([b,b], [0, maxy], 'r-')
+    ax.set_xlim([0, maxx])
+    ax.set_ylim([0, maxy])
     if window > 0:
-        plt.ylabel('Average fold coverage across a ' + str(window) + " bp window")
+        ax.set_ylabel('Average fold coverage across a ' + str(window) + " bp window")
     else:
-        plt.ylabel('Fold coverage')
-    plt.xlabel('Cumulative position in the genome (bp)')
-    plt.show()
+        ax.set_ylabel('Fold coverage')
+    ax.set_xlabel('Cumulative position in the genome (bp)')
+    #plt.show()
+    fig.savefig(outputfile)
 
 
 def print_region(hitshash, threshold, merge=1000, minwindow=100):
@@ -230,6 +239,7 @@ if __name__ == "__main__":
 
     parser = argparse.ArgumentParser(description='Plot genome coverage from blast hits and optionally print out regions with coverage above some value')
     parser.add_argument("-b", help='blast file', required=True)
+    parser.add_argument("-i", help='image output file', required=True)
     parser.add_argument('-c', help='minimum coverage for regions to write', type=float)
     parser.add_argument('-a', help='size to merge adjacent regions in printing over coverage (default=1000)', default=1000, type=int)
     parser.add_argument('-m', help='minimum size of window over threshold to print (default=100)', default=100, type=int)
@@ -255,7 +265,7 @@ if __name__ == "__main__":
 
     if not args.n:
         if args.k:
-           plot_hits(hitlist, breaks=breaklist, window=args.w, maxy=args.y)
+           plot_hits(hitlist, args.i, breaks=breaklist, window=args.w, maxy=args.y)
         else:
-            plot_hits(hitlist, breaks=[], window=args.w, maxy=args.y)
+            plot_hits(hitlist, args.i, breaks=[], window=args.w, maxy=args.y)
 
