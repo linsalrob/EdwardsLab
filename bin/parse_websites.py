@@ -10,29 +10,28 @@ from bs4 import BeautifulSoup
 __author__ = 'Rob Edwards'
 
 if __name__ == "__main__":
-    # parser = argparse.ArgumentParser(description=' ')
-    # parser.add_argument('-f', help='input file', required=True)
-    # args = parser.parse_args()
+    parser = argparse.ArgumentParser(description='Parse a directory of websites')
+    parser.add_argument('-d', help='directory of files', required=True)
+    args = parser.parse_args()
 
-    # replace file with args.f
+    for f in os.listdir(args.d):
+        aid = f.replace('.aspx', '')
+        soup = BeautifulSoup(open(os.path.join(args.d, f), 'r'), 'html.parser')
 
-    file = "/home/redwards/Desktop/ATCC/10004.aspx"
+        print("Organism\t{}".format(soup.title.get_text()))
+        print("ID\t{}".format(aid))
+        for table in soup.find_all('table', class_="fulllist"):
+            for row in table.find_all('tr'):
+                header = row.find('th').get_text()
+                cell = row.find('td').get_text()
 
-    soup = BeautifulSoup(open(file, 'r'), 'html.parser')
+                if header:
+                    header = header.strip()
+                    # header = header.encode('ascii', 'ignore')
 
-    print("Organism\t{}".format(soup.title.get_text()))
-    for table in soup.find_all('table', class_="fulllist"):
-        for row in table.find_all('tr'):
-            header = row.find('th').get_text()
-            cell = row.find('td').get_text()
+                if cell:
+                    cell = cell.strip()
+                    # cell = cell.encode('ascii', 'ignore')
 
-            if header:
-                header = header.strip()
-                # header = header.encode('ascii', 'ignore')
-
-            if cell:
-                cell = cell.strip()
-                # cell = cell.encode('ascii', 'ignore')
-
-            print("{}\t{}".format(header, cell))
-    print("//")
+                print("{}\t{}".format(header, cell))
+        print("//")
