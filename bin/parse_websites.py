@@ -20,7 +20,30 @@ if __name__ == "__main__":
             aid = f.replace('.aspx', '')
             soup = BeautifulSoup(open(os.path.join(args.d, f), 'r'), 'html.parser')
 
-            print("Organism\t{}".format(soup.title.get_text()))
+            desc = soup.find('meta', name='description')
+            if desc:
+                descc = desc['content']
+            else:
+                descc = "No description"
+
+            parts=re.search('^(.*?)\s+Designation:\s+(.*?)\s+TypeStrain=(\S+)\s+Application:\s+(.*?)$', descc)
+            (org, desig, typestrain, application)=parts.groups()
+            print("Name\t{}\nDesignation\t{}\nType Strain\t{}\nApplication\t{}\n".format(org, desig, typestrain, application))
+
+            organism = soup.title.get_text()
+            organism = organism.replace('\n', '; ')
+            organism = organism.replace('\r', '')
+            (organism, n) = re.subn(';\s+;', '; ', organism)
+            while (n > 0):
+                (organism, n) = re.subn(';\s+;', '; ', organism)
+            organism = re.sub(';\s+', '; ', organism)
+            organism = re.sub('\s+:\s+;\s+', ' : ', organism)
+            organism = organism.strip()
+
+
+
+            print("Organism\t{}".format(organism))
+
             print("ID\t{}".format(aid))
             for table in soup.find_all('table', class_="fulllist"):
                 for row in table.find_all('tr'):
@@ -32,7 +55,6 @@ if __name__ == "__main__":
                         # header = header.encode('ascii', 'ignore')
 
                     if cell:
-                        cell = cell.strip()
                         # cell = cell.encode('ascii', 'ignore')
                         cell = cell.replace('\n', '; ')
                         cell = cell.replace('\r', '')
@@ -41,6 +63,7 @@ if __name__ == "__main__":
                             (cell, n) = re.subn(';\s+;', '; ', cell)
                         cell = re.sub(';\s+', '; ', cell)
                         cell = re.sub('\s+:\s+;\s+', ' : ', cell)
+                        cell = cell.strip()
 
                     print("{}\t{}".format(header, cell))
             print("//")
