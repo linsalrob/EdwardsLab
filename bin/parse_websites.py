@@ -20,7 +20,7 @@ if __name__ == "__main__":
             aid = f.replace('.aspx', '')
             soup = BeautifulSoup(open(os.path.join(args.d, f), 'r'), 'html.parser')
 
-            desc = soup.find('meta', name='description')
+            desc = soup.find('meta', attrs={'name':"description"})
             if desc:
                 descc = desc['content']
             else:
