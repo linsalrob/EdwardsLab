@@ -4,6 +4,7 @@ Parse some websites and print some information
 
 import os
 import sys
+import re
 import argparse
 from bs4 import BeautifulSoup
 
@@ -33,6 +34,13 @@ if __name__ == "__main__":
                     if cell:
                         cell = cell.strip()
                         # cell = cell.encode('ascii', 'ignore')
+                        cell = cell.replace('\n', '; ')
+                        cell = cell.replace('\r', '')
+                        (cell, n) = re.subn(';\s+;', '; ', cell)
+                        while (n > 0):
+                            (cell, n) = re.subn(';\s+;', '; ', cell)
+                        cell = re.sub(';\s+', '; ', cell)
+                        cell = re.sub('\s+:\s+;\s+', ' : ', cell)
 
                     print("{}\t{}".format(header, cell))
             print("//")
