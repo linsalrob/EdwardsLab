@@ -13,6 +13,10 @@ def read_fasta(fname, whole_id=True):
 
     If wholeId is set to false only the first part of the ID
     (upto the first white space) is returned
+
+    :param fname: The file name to read
+    :param whole_id: Whether to keep the whole id, or trim to first whitespace (default = all)
+    :return: dict
     """
 
     try:
