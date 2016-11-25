@@ -26,9 +26,20 @@ if __name__ == "__main__":
             else:
                 descc = "No description"
 
-            parts=re.search('^(.*?)\s+Designation:\s+(.*?)\s+TypeStrain=(\S+)\s+Application:\s+(.*?)$', descc)
-            (org, desig, typestrain, application)=parts.groups()
-            print("Name\t{}\nDesignation\t{}\nType Strain\t{}\nApplication\t{}\n".format(org, desig, typestrain, application))
+            if "Designation" in descc:
+                parts=re.search('^(.*?)\s+Designation:\s+(.*?)\s+TypeStrain=(\S+)\s+Application:\s*(.*?)$', descc)
+                if parts:
+                    (org, desig, typestrain, application)=parts.groups()
+                    org = org.replace('&reg;', '')
+                    org = org.replace('&trade;', '')
+
+                    print("Name\t{}\nDesignation\t{}\nType Strain\t{}\nApplication\t{}\n".format(org, desig, typestrain, application))
+                else:
+                    sys.stderr.write("Malformed description in {}\n".format(os.path.join(args.d, f)))
+            elif descc:
+                print("Name\t{}\n".format(descc))
+            else:
+                sys.stderr.write("No description in {}\n".format(os.path.join(args.d, f)))
 
             organism = soup.title.get_text()
             organism = organism.replace('\n', '; ')
@@ -38,7 +49,8 @@ if __name__ == "__main__":
                 (organism, n) = re.subn(';\s+;', '; ', organism)
             organism = re.sub(';\s+', '; ', organism)
             organism = re.sub('\s+:\s+;\s+', ' : ', organism)
-            organism = organism.strip()
+            organism = re.sub('^[\s\;]+', '', organism)
+            organism = re.sub('[\s\;]+$', '', organism)
 
 
 
@@ -63,7 +75,8 @@ if __name__ == "__main__":
                             (cell, n) = re.subn(';\s+;', '; ', cell)
                         cell = re.sub(';\s+', '; ', cell)
                         cell = re.sub('\s+:\s+;\s+', ' : ', cell)
-                        cell = cell.strip()
+                        cell = re.sub('^[\s\;]+', '', cell)
+                        cell = re.sub('[\s\;]+$', '', organism)
 
                     print("{}\t{}".format(header, cell))
             print("//")
