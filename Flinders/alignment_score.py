@@ -34,14 +34,15 @@ __author__ = 'Rob Edwards'
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-f', help='fasta file of sequence alignments', required=True)
+    parser.add_argument('-s', help='maximum size of kmers to count (default=3)', default=3, type=int)
     args = parser.parse_args()
 
     fa = read_fasta(args.f)
     for sid in fa:
         fa[sid] = fa[sid].upper()
 
-    sm = []
-    for i in range(0, 4):
+    sm = [""] # there is no point counting for size = 0, but it makes it easier if we are 0 indexed :)
+    for i in range(1, args.s+1):
         sm.append(substitution_rules.score(i))
 
     # score all pairwise comparisons
@@ -52,11 +53,14 @@ if __name__ == "__main__":
             s1 = fa[seqid1]
             s2 = fa[seqid2]
             scores = []
-            for sublen in range(1, 4):
+            for sublen in range(1, args.s+1):
                 score = 0
                 posn = 0
                 while posn + sublen < len(s1):
                     score += sm[sublen][s1[posn:posn+sublen]][s2[posn:posn+sublen]]
                     posn += 1
                 scores.append(score)
-            print("{}\t{}\t{}\t{}\t{}".format(seqid1, seqid2, *scores))
+            sys.stdout.write("{}\t{}\t".format(seqid1, seqid2))
+            sys.stdout.write("\t".join(map(str, scores)))
+            sys.stdout.write("\n")
+            #print("{}\t{}\t{}\t{}\t{}".format(seqid1, seqid2, *scores))
