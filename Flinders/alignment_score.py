@@ -19,6 +19,18 @@ roughness. Now repeat this whole process for all of the sequences in the metagen
 Get extracted deviation values for each gene set. These values are then used to plot a cloud of the entire gene set for
 that individual (ideally), or more likely for that population. Extract the deviation values for that cloud to get
 a description of the population shape. Then repeat this for each OUT to get a community cloud.
+
+This is not the correct way to do this. Consider the sequence
+
+gagtttgtcttggagaattgaa
+gag-ttgtcatggag-attgaa
+...-.....+.....-......
+
+
+This will get a score of 2.5 | 5.0 | 7.5 | 10.0 for 1 | 2 | 3 | 4 mers respectively if you use overlapping kmers
+and 2.5 | 2.5 | 2.5 | 2.5 for 1 | 2 | 3 | 4 mers respectively if you use an overlap of k
+
+
 """
 
 
@@ -34,6 +46,7 @@ __author__ = 'Rob Edwards'
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-f', help='fasta file of sequence alignments', required=True)
+    parser.add_argument('-m', help='minimum size of kmers to count (default=1)', default=1, type=int)
     parser.add_argument('-s', help='maximum size of kmers to count (default=3)', default=3, type=int)
     args = parser.parse_args()
 
@@ -42,7 +55,7 @@ if __name__ == "__main__":
         fa[sid] = fa[sid].upper()
 
     sm = [""] # there is no point counting for size = 0, but it makes it easier if we are 0 indexed :)
-    for i in range(1, args.s+1):
+    for i in range(args.m, args.s+1):
         sm.append(substitution_rules.score(i))
 
     # score all pairwise comparisons
@@ -53,12 +66,12 @@ if __name__ == "__main__":
             s1 = fa[seqid1]
             s2 = fa[seqid2]
             scores = []
-            for sublen in range(1, args.s+1):
+            for sublen in range(args.m, args.s+1):
                 score = 0
                 posn = 0
                 while posn + sublen < len(s1):
                     score += sm[sublen][s1[posn:posn+sublen]][s2[posn:posn+sublen]]
-                    posn += 1
+                    posn += sublen
                 scores.append(score)
             sys.stdout.write("{}\t{}\t".format(seqid1, seqid2))
             sys.stdout.write("\t".join(map(str, scores)))

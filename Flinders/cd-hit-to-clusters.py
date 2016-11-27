@@ -53,6 +53,8 @@ if __name__ == "__main__":
         os.mkdir(args.d)
 
     for c in range(len(clusters)):
+        if len(clusters[c]) < 2:
+            continue
         with open(os.path.join(args.d, "Cluster{}.fasta".format(c)), 'w') as out:
             for seq in clusters[c]:
                 out.write(">{}\n{}\n".format(seq, fa[seq]))
