@@ -40,6 +40,9 @@ if __name__ == "__main__":
                             break
                     if not added:
                         sl.append(val)
+                if len(sl) >= int(args.n):
+                    break
+
         sys.stderr.write("Repeat {} sampled the file {} times\n".format(repeat, len(sl)))
 
         indices = [-1 for i in range(100)]
