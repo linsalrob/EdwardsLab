@@ -76,7 +76,7 @@ if __name__ == "__main__":
                         cell = re.sub(';\s+', '; ', cell)
                         cell = re.sub('\s+:\s+;\s+', ' : ', cell)
                         cell = re.sub('^[\s\;]+', '', cell)
-                        cell = re.sub('[\s\;]+$', '', organism)
+                        cell = re.sub('[\s\;]+$', '', cell)
 
                     print("{}\t{}".format(header, cell))
             print("//")
