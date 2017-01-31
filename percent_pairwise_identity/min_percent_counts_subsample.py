@@ -22,8 +22,8 @@ if __name__ == "__main__":
     lines_in_file = 100000 # for the first pass, we just use a low ball estimate of how many lines. Subsequently we'll use the real number
 
 
-    for repeat in range(args.r):
-        sample_every  = args.n / lines_in_file
+    for repeat in range(int(args.r)):
+        sample_every  = 1.0 * int(args.n) / lines_in_file
         lines_in_file = 0
         sl = [] # sorted list
         with open(args.f, 'r') as f:
