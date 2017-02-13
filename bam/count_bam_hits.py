@@ -26,18 +26,16 @@ if __name__ == '__main__':
             continue
         bam = pysam.AlignmentFile(os.path.join(args.d, f), 'rb')
 
-        try:
-            for p in bam.pileup(truncate=True):
-                for pilups in p.pileups:
-                    if pilups.alignment.query_length < args.l:
-                        continue
-                    alignment_frac = 1.0 * pilups.alignment.query_alignment_length / pilups.alignment.query_length
-                    if alignment_frac <= args.c:
-                        continue
-                    count[pilups.alignment.query_name] = count.get(pilups.alignment.query_name, 0) + 1
-                    found = True
-        except ValueError:
-            print("{}\t\t0".format(f))
+        for p in bam.pileup():
+            for pilups in p.pileups:
+                if pilups.alignment.query_length < args.l:
+                    continue
+                alignment_frac = 1.0 * pilups.alignment.query_alignment_length / pilups.alignment.query_length
+                if alignment_frac <= args.c:
+                    continue
+                count[pilups.alignment.reference_name] = count.get(pilups.alignment.reference_name, 0) + 1
+                found = True
+
 
         if found:
             for q in count:
