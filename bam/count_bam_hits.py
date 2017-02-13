@@ -37,7 +37,7 @@ if __name__ == '__main__':
                     count[pilups.alignment.query_name] = count.get(pilups.alignment.query_name, 0) + 1
                     found = True
         except ValueError:
-            continue
+            print("{}\t\t0".format(f))
 
         if found:
             for q in count:
