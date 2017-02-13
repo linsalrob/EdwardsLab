@@ -38,4 +38,4 @@ if __name__ == '__main__':
 
         if found:
             for q in count:
-                print("{}\t{}".format(q, count[q]))
+                print("{}\t{}\t{}".format(f, q, count[q]))
