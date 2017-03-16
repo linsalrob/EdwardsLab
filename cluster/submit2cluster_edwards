@@ -1,0 +1,46 @@
+#!/usr/bin/perl -w
+
+# submit a job using my new method
+
+use strict;
+use lib '/home/redwards/perl/lib/perl5/site_perl/5.8.8/';
+use Schedule::SGE;
+
+my $usage=<<EOF;
+
+$0 <options> <command>
+
+OPTIONS: 
+ -N name    (default=first word of command)
+ -P project (default=redwards)
+EOF
+
+my ($name, $project, $command)=('', 'redwards', '');
+while (@ARGV) {
+ my $test=shift @ARGV;
+ if ($test eq "-N") {$name=shift @ARGV}
+ elsif ($test eq "-P") {$project=shift @ARGV}
+ else {$command .= " ". $test}
+}
+
+die $usage unless $command;
+
+unless ($name) { 
+ $command =~ m/^(\S+)/; $name=$1;
+}
+ 
+
+my $sge=Schedule::SGE->new(
+ -executable 	=> {qsub=>'/usr/local/bin/qsub', qstat=>'/usr/local/bin/qstat'},
+ -name		=> $name,
+ -verbose   	=> 0,
+ -notify 	=> 1,
+ -mailto	=> 'rob@salmonella.org',
+);
+
+$sge->command($command);
+
+my $pid=$sge->execute();
+exit(0);
+ 
+
