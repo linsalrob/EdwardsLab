@@ -12,7 +12,7 @@ IFS='
 ################# change these file names 
 #
 # this is the output location
-ODIR=/vol1/bam.crassphage
+ODIR=bam.crassphage
 # this is the name of the bowtie index, without the suffixes
 BOWTIEIDX=crassphage
 #
