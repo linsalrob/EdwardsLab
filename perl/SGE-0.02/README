@@ -1,0 +1,46 @@
+SGE Modules
+
+These are light-weight modules designed to submit jobs to the Sun Grid Engine, and query the status of the engine. There are more comprehensive modules available in DRMAA. The alternate module, DRMAA, relies on Swig and a bunch of C code. This is a pure perl implementation of an interface to SGE. The required commands are qsub, qdel, and qstat that should be supplied by SGE.
+
+Environment Variables
+
+The following environment variables should probably be set. The values below are the defaults for my system, an Orion cluster
+	SGE_CELL		=>  "orionmulti"
+	SGE_EXECD_PORT		=>  537
+	SGE_QMASTER_PORT	=>  536
+	SGE_ROOT		=>  /opt/sge
+
+
+These are set at the beginning of SGE.pm
+
+There are currently four modules, SGE that is the glue, SGE::Run allows you to submit jobs to the SGE. SGE::Control for starting/stopping/deleting jobs, and SGE::Status for seeing what the cluster is currently up to. You should be able to use SGE; in your script and have all methods available to you.
+
+Methods should be documented with perldoc.
+
+This has only been tested on an Orion 12-node desktop cluster. I would be happy to crash test it on any other clusters, just give me a login or send me a cluster to use.
+
+Version History
+
+0.01 April 2005. Initial release to the wild
+0.02 October 2005. Received these excellent comments from Hinri Kerstens:
+
+	Thank you for writing the ScheduleSGE perl module. When using this
+	module I found two 'mismatches' between your system and mine.
+	- My SGE version (5.3) returns "your job" instead of "Your job" after
+	submission of a job. Maybe you can make line 233 of Run.pm tolerant for
+	that.
+	- The CPAN documentation claims that a jobID can be grabbed by  "my
+	$pid=$sge->job_id;", but job_id doesn't exist in the modules. It should
+	be "my $pid=$sge->execute;" isn't it?
+	
+	After these modifications the module runs happily, so keep on the good
+	work.
+	
+	regards
+	
+	Hinri
+
+These two bugs have been fixed, and the method job_id added
+
+
+

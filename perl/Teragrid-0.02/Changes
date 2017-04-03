@@ -1,0 +1,8 @@
+v 0.01
+
+Initial release into the wild, using LWP for web services
+
+v 0.02
+
+Added better job control, and some examples.
+

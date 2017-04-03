@@ -1,0 +1,7 @@
+The script test.pl should max out one node by calculating factorials of large numbers and summing them.
+
+You should be able to submit this to the cluster using the script submit2cluster.pl like this:
+
+submit2cluster.pl test.pl
+
+

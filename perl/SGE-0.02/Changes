@@ -1,0 +1,29 @@
+v 0.01
+
+Initial release into the wild
+
+
+v 0.02 
+
+October 2005. Received these excellent comments from Hinri Kerstens:
+
+	Thank you for writing the ScheduleSGE perl module. When using this
+	module I found two 'mismatches' between your system and mine.
+	- My SGE version (5.3) returns "your job" instead of "Your job" after
+	submission of a job. Maybe you can make line 233 of Run.pm tolerant for
+	that.
+	- The CPAN documentation claims that a jobID can be grabbed by  "my
+	$pid=$sge->job_id;", but job_id doesn't exist in the modules. It should
+	be "my $pid=$sge->execute;" isn't it?
+	
+	After these modifications the module runs happily, so keep on the good
+	work.
+	
+	regards
+	
+	Hinri
+
+These two bugs have been fixed, and the method job_id added
+
+
+
