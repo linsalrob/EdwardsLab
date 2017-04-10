@@ -12,14 +12,13 @@ if __name__ == '__main__':
 
     for f in os.listdir(args.d):
         with open(os.path.join(args.d, f), 'r') as fin:
-            firstline = True
+            data = []
             for l in fin:
                 p=l.strip().split("\t")
-                if firstline:
-                    firstline = False
-                    sys.stdout.write(p[1])
-		else:
-			sys.stdout.write("\t{}".format(p[1]))
-            sys.stdout.write("\n")
+                data.append(p[1])
+            sumd = sum(map(int, data[1:]))
+            data[1:0] = sumd
+        print("\t".join(map(str, data)))
+
 
 
