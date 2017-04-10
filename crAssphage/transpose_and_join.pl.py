@@ -11,13 +11,14 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     for f in os.listdir(args.d):
+        sys.stderr.write("{}\n".format(f))
+        data = []
         with open(os.path.join(args.d, f), 'r') as fin:
-            data = []
             for l in fin:
                 p=l.strip().split("\t")
                 data.append(p[1])
             sumd = sum(map(int, data[1:]))
-            data[1:0] = sumd
+            data[1:0] = [sumd]
         print("\t".join(map(str, data)))
 
 
