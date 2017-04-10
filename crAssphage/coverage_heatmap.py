@@ -1,5 +1,5 @@
 """
-Plot a heatmap of the coverage data from coverage_depth.py
+Plot a heatmap of the coverage data from coverage_depth.py, except this needs the data to be transposed from that code
 """
 
 import os
