@@ -18,7 +18,8 @@ if __name__ == '__main__':
                 if firstline:
                     firstline = False
                     sys.stdout.write(p[1])
-                sys.stdout.write("\t{}".format(p[1]))
+		else:
+			sys.stdout.write("\t{}".format(p[1]))
             sys.stdout.write("\n")
 
 
