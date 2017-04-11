@@ -83,7 +83,7 @@ if __name__ == '__main__':
     ax.set_xlabel("Position in genome (x100 bp)")
     ax.set_ylabel("Metagenome number")
 
-    heatmap = ax.pcolor(npd, cmap=plt.cm.Blues)
+    heatmap = ax.pcolormesh(npd, cmap=plt.cm.Blues)
     # heatmap = ax.pcolor(allxlabelsd, npd)
 
     # legend
