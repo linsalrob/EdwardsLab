@@ -14,6 +14,7 @@ if __name__ == '__main__':
     parser.add_argument('-l', help='genome length', required=True, type=int)
     parser.add_argument('-s', help='start position (default = 0)', default=0, type=int)
     parser.add_argument('-e', help='end position (default = all)', type=int)
+    parser.add_argument('-r', help="refefence name for the pileup (optional)", default=None)
     parser.add_argument('-t', help='print a title that includes the name of the file (e.g. if you want to merge multiple outputs)', action='store_true')
     args = parser.parse_args()
 
@@ -22,7 +23,7 @@ if __name__ == '__main__':
         coverage.append(0)
 
     bam = pysam.AlignmentFile(args.f, 'rb')
-    for pu in bam.pileup():
+    for pu in bam.pileup(reference=args.r):
         if pu.reference_pos > args.l:
             sys.stderr.write("Warning {} is larger than you genome size of {}\n".format(pu.reference_pos, args.l))
             continue
