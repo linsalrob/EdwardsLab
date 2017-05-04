@@ -40,6 +40,6 @@ if __name__ == '__main__':
         end = args.e+1
 
     if args.r:
-        print("{}\t{}\t{}".format(args.f, args.r, (1.0 * sum(coverage[start:end]) / end - start)))
+        print("{}\t{}\t{}".format(args.f, args.r, (1.0 * sum(coverage[start:end]) / (end - start))))
     else:
-        print("{}\t{}".format(args.f, (1.0*sum(coverage[start:end])/end-start)))
+        print("{}\t{}".format(args.f, (1.0*sum(coverage[start:end])/(end-start))))
