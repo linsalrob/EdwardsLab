@@ -17,7 +17,10 @@ while (my $seq=$sio->next_seq)
  my $id=$seq->id;
  $id =~ s/\s+/_/g;
  while ($seen{$id}) {print "$id already written, "; $id.="1"; print " now trying $id\n"}
- my $fout=Bio::SeqIO->new(-file=>">$dir/$id.fasta", -format=>"fasta");
+ my $outfn = $id;
+ $outfn =~ s/\|/_/g;
+ $outfn =~ s/\_$//;
+ my $fout=Bio::SeqIO->new(-file=>">$dir/$outfn.fasta", -format=>"fasta");
  $seen{$id}=1;
  $fout->write_seq($seq);
 }
