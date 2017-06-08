@@ -10,12 +10,12 @@ int editDistance(const char* S, const char* T, int sLength, int tLength) {
 	if(tLength == 0) {
 		return sLength;
 	}
+	//Conditional 1 or 0
 	if(S[sLength-1] != T[tLength - 1]) {
 		conditional = 1;
 	} else {
 		conditional = 0;
 	}
-
 	//Minimum
 	first = editDistance(S, T, sLength - 1, tLength) + 1;
 	second = editDistance(S, T, sLength, tLength - 1) + 1;
@@ -28,16 +28,12 @@ int editDistance(const char* S, const char* T, int sLength, int tLength) {
 	if (second > third) {
 		minimum = third;
 	}
-
 	return minimum;
 }
-
-//test
+//Test
 int main() {
 	const char *A = "GCGGCAGGAAGGCGCACCCCCCC";
 	const char *B = "ACGCGAAGGGAGCCCACCAAAAA";
-
 	printf("%d\n", editDistance(A, B, strlen(A), strlen(B)));
-
 	return 0;
 }
