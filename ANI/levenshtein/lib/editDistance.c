@@ -21,13 +21,14 @@ int editDistance(const char* S, const char* T, int sLength, int tLength) {
 	second = editDistance(S, T, sLength, tLength - 1) + 1;
 	third = editDistance(S, T, sLength - 1, tLength - 1) + conditional;
 
+	minimum = first;
 	if(first > second) {
 		minimum = second;
-	} else if (second > third) {
+	} 
+	if (second > third) {
 		minimum = third;
-	} else {
-		minimum = first;
 	}
+
 	return minimum;
 }
 
