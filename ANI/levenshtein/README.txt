@@ -5,5 +5,5 @@ In terminal:
 > ./a.out
 
 Tested:
-2 characters completes very fast
+4 characters completes very fast
 23 characters completes very slow
