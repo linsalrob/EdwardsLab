@@ -1,7 +1,7 @@
 ANI in C (CANI)
 
 In terminal:
-> gcc -o editDistanceLib.o -c editDistanceLib.c
+> gcc editDistanceLib.c -o editDistanceLib.o 
 > gcc editDistanceMain.c editDistanceLib.o
 > ./a.out
 
@@ -10,7 +10,7 @@ Tested:
 23 characters completes very slow
 
 In terminal:
-> gcc -o queryKmersLib.o -c queryKmersLib.c
+> gcc queryKmersLib.c -o queryKmersLib.o 
 > gcc queryKmersMain.c editDistanceLib.o
 > ./a.out
 
