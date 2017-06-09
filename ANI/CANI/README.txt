@@ -1,3 +1,5 @@
+ANI in C (CANI)
+
 
 In terminal:
 > gcc -o editDistanceLib.o -c editDistanceLib.c
