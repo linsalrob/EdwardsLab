@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <stdlib.h>
-#include "queryKmersLib4.h"
+#include "queryKmersLib.h"
 
 char** queryKmersIntoArray(const char* dnaChars, int kmerSize, const int numKmers) {
 	char** kmersArrayMalloc = (char**) malloc(numKmers*sizeof(char*));
