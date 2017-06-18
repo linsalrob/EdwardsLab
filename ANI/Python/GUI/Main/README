@@ -1,0 +1,217 @@
+EdwardsLab
+==========
+
+Code from the Edwards lab, including bioinformatics, image analysis and more. All this code is created and maintained by folks at Rob Edwards' bioinformatics lab at SDSU.
+
+For more information about the Edwards' lab see http://edwards.sdsu.edu/research.
+
+We use this repository to share our code and data with each other, and with the world.
+
+We make all this code available to everyone to use. If you find errors or bugs please let Rob Edwards know ... see the above URL for contact information.
+
+---------------------------------------------------------------------------------------------------------
+
+This is a Python library to calculate average nucleotide identities using a range of different methods.
+
+The different methods are blastn(BLAST) and nucmer(MUMmer). 
+Currently, nucmer algorithm is assumed to be working(tests to verify correctness will take place) 
+The blastn ANI algorithm is currently not working correctly.
+
+The most current and applicable program is aniGUI.py
+
+------------------------------
+Operating System Requirements
+------------------------------
+Linux or OS X Operating System
+(Tested on OS X)
+
+MUMmer3.10 has been tested successfully on:
+
+- Redhat Linux 6.2, 7.3   (Pentium 4)
+- Compaq Tru64 UNIX 5.1   (alpha)
+- SunOS UNIX 5.8          (sparc)
+- Mac OS X 10.2.8         (PowerPC G4)
+
+
+--------------------------------
+Installed Software Requirements
+--------------------------------
+
+- Python version 2.7 or greater
+
+   The MUMmer3.x package requires the following to run successfully. In the
+absence of one or more of these utilities, certain MUMmer programs may fail
+to run correctly. Listed in parenthesis are the versions used to test the
+MUMmer package. These versions, or subsequent versions should assure the proper
+execution of the various MUMmer programs. These utilities must be accessible
+via the system path:
+
+- make (GNU make 3.79.1)
+- perl (PERL     5.6.0)
+- sh   (GNU sh   1.14.7)
+- csh  (tcsh     6.10.00)
+- g++  (GNU gcc  2.95.3)
+- sed  (GNU sed  3.02)
+- awk  (GNU awk  3.0.4)
+- ar   (GNU ar   2.9.5)
+
+BLAST version 2.2.29 or higher
+--------------------------------
+Directions:
+1. Download ftp://ftp.ncbi.nih.gov/blast/executables/LATEST/ncbi-blast-2.6.0+.dmg
+  
+  a. ftp://ftp.ncbi.nih.gov/blast/executables/LATEST/
+  
+  b. http://www.ncbi.nlm.nih.gov/news/1-7-2014-blast-2-2-29/
+  
+2. Check md5: 19397736eafbb9e42d6541dc2797523a  ncbi-blast-2.6.0+.dmg
+
+3. Right click and open ncbi-blast-2.6.0+.dmg
+  
+  a. If one double clicks the left mousepad twice to open, it will probably not install because of default permissions
+4.
+
+MUMmer version 3.23 or higher
+------------------------------
+Directions:
+1. Download MUMmer (http://sourceforge.net/projects/mummer/files/mummer/3.23/MUMmer3.23.tar.gz/stats/timeline)
+https://sourceforge.net/projects/mummer/files/mummer/
+2. Check md5: ?
+
+In terminal:
+3. "cd Users/YourUsername/"
+
+4. "mkdir MUMmer3.x"
+5. "cd MUMmer3.x"
+6. "open Users/YourUsername/MUMmer3.x"
+7. "tar -xvzf MUMmer3.x"
+8. "su" (or append sudo to the beginning of 8 and 9) [tested with "su"]
+9. "make check"
+10. "make install"
+11. MUMmer 3.x should now be installed properly
+  a. Try entering ./nucmer to test if installation worked. If a reply of "not found" shows, it was probably not installed correctly 
+
+------------------
+File Requirements
+------------------
+Directions:
+1. Download ftp://ftp.ncbi.nlm.nih.gov/genomes/archive/old_refseq/Bacteria/all.fna.tar.gz 
+2. Unzip all.fna
+3. In terminal:
+	(Tested)
+	a.Change directory to aniGUI.py
+	b.Inputpython aniGUI.py
+or
+	(Not Tested)
+	a. Double click on aniGUI.py
+4. A GUI should open
+
+
+----------------
+GUI Directions
+----------------
+
+Left Buttons
+------------
+These optional buttons can help the user open directories and input the correct directory location names in the middle red boxes
+
+Middle Red Boxes
+----------------
+- Red Box 1(Top box):
+Input directory location of all.fna or use left box to point to it and the program will fill out the directory location name for you.
+- Red Box 2:
+Input directory location of the installed BLAST directory or use left box to point to it and the program will fill out the directory location name for you.
+- Red Box 3(Middle box):
+Input location of the installed MUMMer directory or use left box to point to it and the program will fill out the directory location name for you.
+- Red Box 4:
+Input location where to save delta files from MUMMer output, or use left box to point to it and the program will fill out the directory location name for you.
+- Red Box 5(Bottom Box):
+Input location where to save percent ANI files from ANI output, or use left box to point to it and the program will fill out the directory location name for you.
+
+Right Check Boxes
+------------------
+- Reformat, rename and concatenate:
+(Tested, complete)
+Prerequisite: Downloaded all.fna
+When checked, this will reformat, rename and concatenate all.fna to be able to be used later in the program. 
+This concatinates multiple .fna files into one, deletes the other multiple .fna files and renames the one .fna file to the same name as its parent, without calling it junior
+
+- Move modified files to Blast/MUMmer Directories:
+(Tested, complete)
+Prerequisite: Ran Reformat, rename and concatinate option on all.fna
+When checked, this will move the reformatted, renamed and concatinated all.fna files to the directories specified in Red Box 2 and Red Box 3
+
+- Execute Blast:
+(Not completed)
+When checked, this will call blastn on the files in the respective directory specified in Red Box 2
+
+- Execute MUMmer:
+(Not complete)
+When checked, this will call nucmer on the files in the respective directory specified in Red Box 3
+
+- Create output for SQLite:
+(Not complete)
+When checked, this will create a statement to create a SQL lite database respective to the output generated by this program
+
+- Create output for JSON:
+(Not complete)
+When checked, this will create a statement to create a JSON seed respective to the output generated by this program
+
+
+----------------
+Test Information
+----------------
+Test case documenation will be available at a further date
+
+
+----------------------------
+Current Bugs or Known Issues
+----------------------------
+1. Directories with spaces do not work correctly
+
+   a. For example, /Users/jon/Desktop/all fna will not work correctly, but /Users/jon/Desktop/all.fna will work
+   
+2. If the user has checked Move modified files to Blast/MUMmer Directories, the directory should not already exist. 
+
+   a. If the directory without children exists, the program will delete it. 
+   
+   b. If there are any children to the specified parent, unknown behavior will happen as it has not been tested yet.
+   
+3. User must select all.fna in the first Red Box or the reformat, rename and concatenate program will not work correctly 
+
+4. First line of each FNA file isnt removed. Will work on fixing this important issue
+
+---------
+Authors
+----------
+Jon Beacher
+
+Gina Benavides
+
+Rob Edwards
+
+
+--------
+License 
+--------
+The MIT License (MIT)
+
+Copyright (c) 2014 Rob Edwards
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
