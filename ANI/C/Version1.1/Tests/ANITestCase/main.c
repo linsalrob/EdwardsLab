@@ -33,7 +33,6 @@ int main() {
     const int numChars = minimumLines*LINESIZE;
     const int numKmers = (numLines1-1)*LINESIZE-KMERSIZE;
     for(int i=0; i<numChars; i++) {
-        printf("%d\n",  numChars);
         for(int j=0; j<kmerSizeMod; j++) {
             if(j == 0) {
                 chr = i;
