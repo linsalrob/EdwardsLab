@@ -101,6 +101,7 @@ int main() {
                 kmerCount++;
             }
             printf("\n %s %s ANI: %d\n", fnaArrayMalloc[i], fnaArrayMalloc[j], finalANI);
+            finalANI = 0;
             }
         }
 }
