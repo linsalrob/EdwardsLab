@@ -9,7 +9,7 @@
 
 const int DATABUFFER2[4096];
 const int LINESIZE = 70;
-const int KMERSIZE = 2;
+const int KMERSIZE = 15;
 const int fnaFilesDirectoryStringLength = 41 + 2;
 const char fnaFilesDirectory[fnaFilesDirectoryStringLength] = {"."};
 const int minimumFnaFileStringLength = 4;
@@ -61,11 +61,12 @@ int main() {
     FILE *fnaPointer;
       for(int i=0; i < amountOfFNAFiles; i++) {
         for(int j=i; j < amountOfFNAFiles; j++) {
-            int numLines1 = numberOfLines(LINESIZE, fnaArrayMalloc[i]);
-            int numLines2 = numberOfLines(LINESIZE, fnaArrayMalloc[j]);
+            int numLines1 = numberOfLines(LINESIZE, fnaArrayMalloc[i]) - 1;          
+            int numLines2 = numberOfLines(LINESIZE, fnaArrayMalloc[j]) - 1;
             char **fna1Characters = fnaCharactersOf(fnaArrayMalloc[i], LINESIZE, numLines1);
             char **fna2Characters = fnaCharactersOf(fnaArrayMalloc[j], LINESIZE, numLines2);
             int minimumLines;
+            int maximumLines;
             int chr = 0;
             int chr2 = 0;
             int kmerCount = 0;
@@ -73,12 +74,16 @@ int main() {
             ptr2=fna2Characters[0];
             if(numLines1 < numLines2) {
                 minimumLines = numLines1;
+                maximumLines = numLines2;
             } else {
                 minimumLines = numLines2;
+                maximumLines = numLines1;
             }
-            const int numChars = minimumLines*LINESIZE;
+            const int numCharsMin = minimumLines*LINESIZE;
+            const int numCharsMax = maximumLines*LINESIZE;
             const int numKmers = (numLines1-1)*LINESIZE-KMERSIZE;
-            for(int i=0; i<numChars; i++) {
+            int booleanVal1 = 0;
+            for(int i=0; i<numCharsMin; i++) {
                 for(int j=0; j<kmerSizeMod; j++) {
                     if(j == 0) {
                         chr = i;
@@ -95,15 +100,30 @@ int main() {
                         tempArr2[j] = ptr2[chr2++];
                     }
                 }
-                if(strlen(tempArr) != KMERSIZE && strlen(tempArr2) != KMERSIZE) {break;}
-                int kmerANI = editDistance(tempArr, tempArr2, KMERSIZE, KMERSIZE);
-                finalANI = finalANI + kmerANI;
-                kmerCount++;
+                if(strlen(tempArr) != KMERSIZE) {
+                    if(booleanVal1 == 1) {
+                    } else {
+                    //printf("\n((numCharsMax-i)/KMERSIZE): %d", ((numCharsMax - i)/KMERSIZE));
+                    finalANI = finalANI + (numCharsMax - i)/KMERSIZE;
+                    booleanVal1 = 1;
+                    }
+                }
+                if(strlen(tempArr2) != KMERSIZE) {
+                    if(booleanVal1 == 1) {
+                    } else {
+                    //printf("\n((numCharsMax-i)/KMERSIZE): %d", ((numCharsMax - i)/KMERSIZE));
+                    finalANI = finalANI + (numCharsMax - i)/KMERSIZE;
+                    booleanVal1 = 1;
+                    }
+                } 
+                if(booleanVal1 == 0) {
+                    int kmerANI = editDistance(tempArr, tempArr2, KMERSIZE, KMERSIZE);
+                    finalANI = finalANI + kmerANI;
+                    kmerCount++;
+                } 
             }
             printf("\n %s %s ANI: %d\n", fnaArrayMalloc[i], fnaArrayMalloc[j], finalANI);
             finalANI = 0;
             }
         }
 }
-
-
