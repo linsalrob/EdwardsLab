@@ -5,14 +5,14 @@
 
 int numberOfLines(const int LINESIZE, const char *FNANAME) {
     FILE *fnaPointer;
-    char singleCharLine[100];
+    char singleCharLine[256];
     fnaPointer = fopen(FNANAME, "r");
     if(fnaPointer == NULL) {
         printf("%s", "Error: fnaPointer is null\n");
         exit(EXIT_FAILURE);
     }
     int numberOfLines = 0;
-    while (fgets(singleCharLine, 100, fnaPointer) != NULL) {
+    while (fgets(singleCharLine, 256, fnaPointer) != NULL) {
         numberOfLines++;
     }
     if(numberOfLines == 0) {
