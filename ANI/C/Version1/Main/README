@@ -1,0 +1,46 @@
+EdwardsLab
+==========
+
+Code from the Edwards lab, including bioinformatics, image analysis and more. All this code is created and maintained by folks at Rob Edwards' bioinformatics lab at SDSU.
+
+For more information about the Edwards' lab see http://edwards.sdsu.edu/research.
+
+We use this repository to share our code and data with each other, and with the world.
+
+We make all this code available to everyone to use. If you find errors or bugs please let Rob Edwards know ... see the above URL for contact information.
+
+---------------------------------------------------------------------------------------------------------
+To run:
+Each library in terminal:
+>gcc -o <LIBRARY_NAME>.o -c <LIBRARY_NAME>.c
+To run:
+>gcc main.c numberOfLinesLib.o FNACharactersLib.o queryKmersLib.o levenshteinDistanceLib.o 
+
+Current known bugs: kmer counts over 66 do not work, for some reason it creates kmers in the thousands if over 66.
+It is currently slow for actual bacterial FNA Files. A lower kmer number(kmer size) results in a faster program. 
+
+==========
+--------
+License 
+--------
+The MIT License (MIT)
+
+Copyright (c) 2014 Rob Edwards
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
