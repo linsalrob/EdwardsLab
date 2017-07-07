@@ -239,7 +239,7 @@ def list_sequences(bam):
             start, end = locations[template][primer]
             print("\nALIGNMENT: {} FROM {} TO {}\n".format(primer, start, end))
             for read in bam.fetch(reference=template, start=start, end=end):
-                print("{}\t{}".format(read.query_name, read.is_reverse))
+                print("{}\t{}\t{}".format(primer, read.query_name, read.is_reverse))
 
 
 
