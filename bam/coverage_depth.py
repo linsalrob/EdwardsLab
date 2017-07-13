@@ -45,7 +45,7 @@ if __name__ == '__main__':
             sys.stdout.write(args.f)
 
         for i in range(start, end):
-            sys.stdout.write("\t{}", coverage[i])
+            sys.stdout.write("\t{}".format(coverage[i]))
         sys.stdout.write("\n")
     else:
         if args.t:
