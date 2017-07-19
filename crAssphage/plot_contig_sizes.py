@@ -14,6 +14,7 @@ __author__ = 'Rob Edwards'
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-d', help='directory of fasta files', required=True, action='append')
+    parser.add_argument('-p', help='figure file name for the graph', required=True)
     args = parser.parse_args()
 
     lengths = {}
@@ -30,4 +31,4 @@ if __name__ == "__main__":
     for d in args.d:
         pyplot.hist(lengths[d], bins, alpha=alpha, label=d)
     pyplot.legend(loc='upper right')
-    pyplot.show()
+    pyplot.savefig(args.p)
