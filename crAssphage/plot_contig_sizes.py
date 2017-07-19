@@ -23,9 +23,10 @@ if __name__ == "__main__":
     lengths = {}
     maxd = 0
     for d in args.d:
+        lengths[d] = []
         for f in os.listdir(d):
             fa = read_fasta(os.path.join(d, f))
-            lengths[d] = [len(fa[x]) for x in fa]
+            lengths[d].extend([len(fa[x]) for x in fa])
             maxd = max(lengths[d]) if max(lengths[d]) > maxd else maxd
 
     bins = numpy.linspace(0, maxd, 100)
