@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-d', help='directory of fasta files', required=True, action='append')
     parser.add_argument('-p', help='figure file name for the graph', required=True)
+    parser.add_argument('-m', help='minimum length to be included (default = all reads)', default=0, type=int)
     args = parser.parse_args()
 
     lengths = {}
@@ -32,8 +33,9 @@ if __name__ == "__main__":
     bins = numpy.linspace(0, maxd, 100)
     alpha = 1.0 / len(args.d)
 
-    for d in args.d:
-        pyplot.hist(lengths[d], bins, alpha=alpha, label=d)
-    pyplot.legend(loc='upper right')
     pyplot.ylim(ymin=0)
+    for d in args.d:
+        data = list(filter(lambda x: x > args.m, lengths[d]))
+        pyplot.hist(data, bins, alpha=alpha, label=d)
+    pyplot.legend(loc='upper right')
     pyplot.savefig(args.p)
