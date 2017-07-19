@@ -35,4 +35,5 @@ if __name__ == "__main__":
     for d in args.d:
         pyplot.hist(lengths[d], bins, alpha=alpha, label=d)
     pyplot.legend(loc='upper right')
+    pyplot.ylim(ymin=0)
     pyplot.savefig(args.p)
