@@ -5,6 +5,9 @@ Plot a histogram of contig sizes and numbers from a directory of fasta files
 import os
 import sys
 import argparse
+import matplotlib
+matplotlib.use('Agg')
+
 from matplotlib import pyplot
 import numpy
 from roblib import read_fasta
