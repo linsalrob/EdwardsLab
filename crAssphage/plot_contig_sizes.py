@@ -30,10 +30,10 @@ if __name__ == "__main__":
             lengths[d].extend([len(fa[x]) for x in fa])
             maxd = max(lengths[d]) if max(lengths[d]) > maxd else maxd
 
-    bins = numpy.linspace(0, maxd, 100)
+    bins = numpy.linspace(args.m, maxd, 100)
     alpha = 1.0 / len(args.d)
 
-    pyplot.ylim(ymin=0)
+    pyplot.ylim(ymin=args.m)
     for d in args.d:
         data = list(filter(lambda x: x > args.m, lengths[d]))
         pyplot.hist(data, bins, alpha=alpha, label=d)
