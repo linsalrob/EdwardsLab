@@ -82,3 +82,10 @@ sge/
 
 # pickle files for the models
 models/pickles/*.p
+
+# cmake
+CMakeCache.txt 
+CMakeFiles
+Makefile
+cmake_install.cmake
+cmake-build-debug
