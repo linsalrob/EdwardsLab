@@ -11,7 +11,7 @@
 // our hash for the fastq ids
 struct filehash *ids[HASHSIZE] = {NULL};
 
-int DEBUG = 1;
+int DEBUG = 0;
 
 int index_file(char *left_fn, char *right_fn) {
     FILE *lfp;
