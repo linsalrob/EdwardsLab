@@ -11,7 +11,7 @@
 // our hash for the fastq ids
 struct filehash *ids[HASHSIZE] = {NULL};
 
-int DEBUG = 0;
+int DEBUG = 1;
 
 int index_file(char *left_fn, char *right_fn) {
     FILE *lfp;
@@ -89,15 +89,18 @@ int index_file(char *left_fn, char *right_fn) {
      */
 
     if (DEBUG) {
-        fprintf(stderr, "Getting IDs\n");
+        fprintf(stderr, "Bucket sizes\n");
 
         for (int i = 0; i <= HASHSIZE; i++) {
             struct filehash *ptr;
             ptr = ids[i];
+            int counter=0;
             while (ptr != NULL) {
-                fprintf(stdout, "ID: %s Position %ld\n", ptr->id->id, ptr->id->pos);
+                // fprintf(stdout, "ID: %s Position %ld\n", ptr->id->id, ptr->id->pos);
+                counter++;
                 ptr = ptr->next;
             }
+            fprintf(stderr, "%d\t%d\n", i, counter);
         }
     }
 
