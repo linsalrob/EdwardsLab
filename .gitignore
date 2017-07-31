@@ -88,6 +88,6 @@ CMakeCache.txt
 CMakeFiles
 Makefile
 cmake_install.cmake
-cmake-build-debug
+cmake-build-debug/*
 CMakeCache.txt
 install_manifest.txt
