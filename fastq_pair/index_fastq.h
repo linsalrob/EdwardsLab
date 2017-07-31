@@ -18,11 +18,11 @@ struct filehash {
     struct idloc *id;
 };
 
-// how long should our lines be
-#define MAXLINELEN 1000
+// how long should our lines be. This is a 64k buffer
+#define MAXLINELEN 65536
 // what is our hash table size. This should probably approach the size
 // of our fastq file
-#define HASHSIZE 20000
+#define HASHSIZE 2000000
 
 
 /*
