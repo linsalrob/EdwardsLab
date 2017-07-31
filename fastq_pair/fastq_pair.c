@@ -1,5 +1,5 @@
 /*
- * Pair a fastq file using a quick index
+ * Pair a fastq file using a quick index.
  */
 
 #include "fastq_pair.h"
@@ -8,12 +8,21 @@
 #include <stdlib.h>
 #include <string.h>
 
-// our hash for the fastq ids
-struct filehash *ids[HASHSIZE] = {NULL};
+int pair_files(char *left_fn, char *right_fn, struct options *opt) {
 
-int DEBUG = 1;
+    // our hash for the fastq ids.
+    struct idloc **ids;
+    ids = malloc(sizeof(*ids) * opt->tablesize);
 
-int pair_files(char *left_fn, char *right_fn) {
+    // if we are not able to allocate the memory for this, there is no point continuing!
+    if (ids == NULL) {
+        fprintf(stderr, "We cannot allocation the memory for a table size of %d. Please try a smaller value for -t\n", opt->tablesize);
+        exit(-1);
+    }
+
+    //for (int i = 0; i < opt->tablesize; i++)
+    //    ids[i] = NULL;
+
     FILE *lfp;
 
     char *line = malloc(sizeof(char) * MAXLINELEN + 1);
@@ -41,7 +50,6 @@ int pair_files(char *left_fn, char *right_fn) {
 
         line[strcspn(line, " ")] = '\0';
 
-
         /*
          * Figure out what the match mechanism is. We have three examples so
          *     i.   using /1 and /2
@@ -60,25 +68,15 @@ int pair_files(char *left_fn, char *right_fn) {
         newid->id = dupstr(line);
         newid->pos = nextposition;
         newid->printed = false;
+        newid->next = NULL;
 
-        struct filehash *ptr;
-        ptr = (struct filehash *) malloc(sizeof(*ptr));
-        if (ptr == NULL) {
-            fprintf(stderr, "Can't allocate memory for pointer\n");
-            return -1;
-        }
-
-        ptr->id = newid;
-
-        unsigned hashval = hash(newid->id);
-        ptr->next = ids[hashval];
-        ids[hashval] = ptr;
+        unsigned hashval = hash(newid->id) % opt->tablesize;
+        newid->next = ids[hashval];
+        ids[hashval] = newid;
 
         /* read the next three lines and ignore them: sequence, header, and quality */
-        aline = fgets(line, MAXLINELEN, lfp);
-        aline = fgets(line, MAXLINELEN, lfp);
-        aline = fgets(line, MAXLINELEN, lfp);
-        //fprintf(stderr, "%s", aline);
+        for (int i=0; i<3; i++)
+            aline = fgets(line, MAXLINELEN, lfp);
 
         nextposition = ftell(lfp);
     }
@@ -88,19 +86,18 @@ int pair_files(char *left_fn, char *right_fn) {
      * Now just print all the id lines and their positions
      */
 
-    if (DEBUG) {
-        fprintf(stderr, "Bucket sizes\n");
+    if (opt->print_table_counts) {
+        fprintf(stdout, "Bucket sizes\n");
 
-        for (int i = 0; i <= HASHSIZE; i++) {
-            struct filehash *ptr;
-            ptr = ids[i];
+        for (int i = 0; i < opt->tablesize; i++) {
+            struct idloc *ptr = ids[i];
             int counter=0;
             while (ptr != NULL) {
-                // fprintf(stdout, "ID: %s Position %ld\n", ptr->id->id, ptr->id->pos);
+                // fprintf(stdout, "ID: %s Position %ld\n", ptr->id, ptr->pos);
                 counter++;
                 ptr = ptr->next;
             }
-            fprintf(stderr, "%d\t%d\n", i, counter);
+            fprintf(stdout, "%d\t%d\n", i, counter);
         }
     }
 
@@ -143,6 +140,10 @@ int pair_files(char *left_fn, char *right_fn) {
     * Now read the second file, and print out things in common
     */
 
+    int left_paired_counter=0;
+    int right_paired_counter=0;
+    int left_single_counter=0;
+    int right_single_counter=0;
 
     FILE *rfp;
 
@@ -167,13 +168,13 @@ int pair_files(char *left_fn, char *right_fn) {
             line[strlen(line)-1] = '\0';
 
         // now see if we have the mate pair
-        unsigned hashval = hash(line);
-        struct filehash *ptr = ids[hashval];
+        unsigned hashval = hash(line) % opt->tablesize;
+        struct idloc *ptr = ids[hashval];
         long int posn = -1; // -1 is not a valid file position
         while (ptr != NULL) {
-            if (strcmp(ptr->id->id, line) == 0) {
-                posn = ptr->id->pos;
-                ptr->id->printed = true;
+            if (strcmp(ptr->id, line) == 0) {
+                posn = ptr->pos;
+                ptr->printed = true;
             }
             ptr = ptr->next;
         }
@@ -182,12 +183,14 @@ int pair_files(char *left_fn, char *right_fn) {
             // we have a match.
             // lets process the left file
             fseek(lfp, posn, SEEK_SET);
+            left_paired_counter++;
             for (int i=0; i<=3; i++) {
                 aline = fgets(line, MAXLINELEN, lfp);
                 fprintf(left_paired, "%s", line);
             }
             // now process the right file
             fprintf(right_paired, "%s", headerline);
+            right_paired_counter++;
             for (int i=0; i<=2; i++) {
                 aline = fgets(line, MAXLINELEN, rfp);
                 fprintf(right_paired, "%s", line);
@@ -195,6 +198,7 @@ int pair_files(char *left_fn, char *right_fn) {
         }
         else {
             fprintf(right_single, "%s", headerline);
+            right_single_counter++;
             for (int i=0; i<=2; i++) {
                 aline = fgets(line, MAXLINELEN, rfp);
                 fprintf(right_single, "%s", line);
@@ -202,15 +206,14 @@ int pair_files(char *left_fn, char *right_fn) {
         }
     }
 
-
     /* all that remains is to print the unprinted singles from the left file */
 
-    for (int i = 0; i <= HASHSIZE; i++) {
-        struct filehash *ptr;
-        ptr = ids[i];
+    for (int i = 0; i < opt->tablesize; i++) {
+        struct idloc *ptr = ids[i];
         while (ptr != NULL) {
-            if (! ptr->id->printed) {
-                fseek(lfp, ptr->id->pos, SEEK_SET);
+            if (! ptr->printed) {
+                fseek(lfp, ptr->pos, SEEK_SET);
+                left_single_counter++;
                 for (int n=0; n<=3; n++) {
                     aline = fgets(line, MAXLINELEN, lfp);
                     fprintf(left_single, "%s", line);
@@ -220,11 +223,14 @@ int pair_files(char *left_fn, char *right_fn) {
         }
     }
 
+    fprintf(stderr, "Left paired: %d\t\tRight paired: %d\nLeft single: %d\t\tRight single: %d\n",
+            left_paired_counter, right_paired_counter, left_single_counter, right_single_counter);
 
     fclose(lfp);
     fclose(rfp);
 
-
+    free(ids);
+    free(line);
 
     return 0;
 }
@@ -235,5 +241,5 @@ unsigned hash (char *s) {
 
     for (hashval=0; *s != '\0'; s++)
         hashval = *s + 31 * hashval;
-    return hashval % HASHSIZE;
+    return hashval;
 }
