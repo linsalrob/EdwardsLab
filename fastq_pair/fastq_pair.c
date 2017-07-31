@@ -1,5 +1,5 @@
 /*
- * Index a fastq file
+ * Pair a fastq file using a quick index
  */
 
 #include "fastq_pair.h"
