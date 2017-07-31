@@ -16,7 +16,7 @@ int main(int argc, char* argv[]) {
     struct options *opt;
     opt = malloc(sizeof(struct options));
 
-    opt->tablesize = 100001;
+    opt->tablesize = 100003;
     char *left_file = NULL;
     char *right_file = NULL;
 
