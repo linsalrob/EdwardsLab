@@ -1,4 +1,4 @@
-#include "index_fastq.h"
+#include "fastq_pair.h"
 #include <stdio.h>
 #include <stdlib.h>
 

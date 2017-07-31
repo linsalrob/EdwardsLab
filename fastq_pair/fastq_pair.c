@@ -2,7 +2,7 @@
  * Index a fastq file
  */
 
-#include "index_fastq.h"
+#include "fastq_pair.h"
 #include "robstr.h"
 #include <stdio.h>
 #include <stdlib.h>
