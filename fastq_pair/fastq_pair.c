@@ -13,7 +13,7 @@ struct filehash *ids[HASHSIZE] = {NULL};
 
 int DEBUG = 1;
 
-int index_file(char *left_fn, char *right_fn) {
+int pair_files(char *left_fn, char *right_fn) {
     FILE *lfp;
 
     char *line = malloc(sizeof(char) * MAXLINELEN + 1);

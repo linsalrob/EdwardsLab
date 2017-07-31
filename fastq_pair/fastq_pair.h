@@ -35,6 +35,6 @@ struct filehash {
 
 unsigned hash (char *s);
 
-int index_file(char *f, char *g);
+int pair_files(char *f, char *g);
 
 #endif //CEEQLIB_INDEX_FASTQ_H

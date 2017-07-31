@@ -9,7 +9,7 @@ int main(int argc, char* argv[]) {
         exit(0);
     }
 
-    int success =  index_file(argv[1], argv[2]);
+    int success = pair_files(argv[1], argv[2]);
 
     return success;
 }
