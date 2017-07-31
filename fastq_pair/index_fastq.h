@@ -22,7 +22,7 @@ struct filehash {
 #define MAXLINELEN 65536
 // what is our hash table size. This should probably approach the size
 // of our fastq file
-#define HASHSIZE 2000000
+#define HASHSIZE 20000000
 
 
 /*
