@@ -45,11 +45,14 @@ if __name__ == "__main__":
     bib = parse_file(args.f, 'bibtex')
 
     authors = set()
+    authoryear = {}
     for e in bib.entries:
         if 'year' in bib.entries[e].fields:
             if int(bib.entries[e].fields['year']) > args.y:
                 for aut in bib.entries[e].fields['author'].split(" and "):
                     authors.add(aut)
+                    if int(bib.entries[e].fields['year']) > authoryear.get(aut, 0):
+                        authoryear[aut] = int(bib.entries[e].fields['year'])
 
     known = {}
     if args.c:
@@ -63,4 +66,4 @@ if __name__ == "__main__":
         if a in known:
             print(known[a])
         else:
-            print("C:\t{}".format(a))
+            print("C:\t{}\t{}".format(a, authoryear[a]))
