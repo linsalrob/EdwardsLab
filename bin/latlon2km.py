@@ -5,6 +5,7 @@ Convert a triple of [name, lat, lon] to a matrix of pairwise distances
 import os
 import sys
 import argparse
+import math
 
 __author__ = 'Rob Edwards'
 
@@ -24,6 +25,10 @@ def latlon2distance(lat1, long1, lat2, long2, miles=False):
     Arguments: lat1, long1; lat2, long2; miles is a boolean. If you want miles set it to true. Else set it to false
 
     """
+
+    if lat1 == lat2 and long1 == long2:
+        return 0
+
 
     # Convert latitude and longitude to
     # spherical coordinates in radians.
@@ -46,8 +51,11 @@ def latlon2distance(lat1, long1, lat2, long2, miles=False):
     # distance = rho * arc length
 
     cos = (math.sin(phi1) * math.sin(phi2) * math.cos(theta1 - theta2) + math.cos(phi1) * math.cos(phi2))
-    arc = math.acos(cos)
-
+    try:
+        arc = math.acos(cos)
+    except Exception as err:
+        sys.stderr.write("There was an err: {} trying to take the acos of ({})\n".format(err, cos))
+        arc=0
     # Remember to multiply arc by the radius of the earth
     # in your favorite set of units to get length.
     #
@@ -78,7 +86,13 @@ if __name__ == "__main__":
                 first = False
                 continue
             p = l.strip().split("\t")
-            loc[p[0]]=[float(p[1]), float(p[2])]
+            if len(p) < 3:
+                sys.stderr.write("Not enough values. Skipped: {}\n".format(l.strip()))
+                continue
+            try:
+                loc[p[0]]=[float(p[1]), float(p[2])]
+            except Exception as err:
+                sys.stderr.write("Error {} converting {}\n".format(err, l.strip()))
 
     names = list(loc.keys())
     names.sort()
