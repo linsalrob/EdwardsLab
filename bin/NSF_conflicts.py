@@ -11,16 +11,21 @@ from pybtex.database import parse_file
 import os
 import sys
 import argparse
+import datetime
 
 __author__ = 'Rob Edwards'
 
 if __name__ == "__main__":
+    now = datetime.datetime.now()
+    earlyyear = now.year - 4
     parser = argparse.ArgumentParser(description='Parse a bibtex file and create a list of conflicts')
     parser.add_argument('-f', help='bibtex file', required=True)
     parser.add_argument('-c', help="Exisiting known conflicts (name, location, type)")
+    parser.add_argument('-y', help="Earliest year to report conflict (default={})".format(earlyyear), default=earlyyear)
     args = parser.parse_args()
 
     entries = set()
+    dupentries=False
     with open(args.f, 'r') as bin:
         for l in bin:
             if l.startswith('@'):
@@ -29,14 +34,20 @@ if __name__ == "__main__":
                 l = l.replace('@inproceedings', '')
                 if l in entries:
                     sys.stderr.write("Duplicate entry " + l)
+                    dupentries=True
                 entries.add(l)
+
+    if dupentries:
+        sys.stderr.write("FATAL: The bibtex file has duplicate entries in it. Please remove them before trying to continue\n")
+        sys.stderr.write("(It is an issue with Google Scholar, but pybtex breaks with duplicate entries. Sorry)\n")
+        sys.exit(-1)
 
     bib = parse_file(args.f, 'bibtex')
 
     authors = set()
     for e in bib.entries:
         if 'year' in bib.entries[e].fields:
-            if int(bib.entries[e].fields['year']) > 2013:
+            if int(bib.entries[e].fields['year']) > args.y:
                 for aut in bib.entries[e].fields['author'].split(" and "):
                     authors.add(aut)
 
@@ -46,12 +57,10 @@ if __name__ == "__main__":
             for l in cin:
                 l = l.strip()
                 p = l.split("\t")
-                if (p[3] == "Advisee" or p[3] == "Advisor"):
-                    print(l)
-                else:
-                    known[p[1]] = l
-    for a in authors:
+                known[p[1]] = l
+
+    for a in sorted(authors):
         if a in known:
             print(known[a])
         else:
-            print("Edwards, Robert\t" + a)
+            print("C:\t{}".format(a))
