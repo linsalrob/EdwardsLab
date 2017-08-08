@@ -18,6 +18,10 @@ def latlon2distance(lat1, long1, lat2, long2, miles=False):
 
     """
 
+    if lat1 == lat2 and long1 == long2:
+        # these are the same place!
+        return 0
+
     # Convert latitude and longitude to
     # spherical coordinates in radians.
     degrees_to_radians = math.pi / 180.0
