@@ -60,10 +60,26 @@ if __name__ == "__main__":
             for l in cin:
                 l = l.strip()
                 p = l.split("\t")
-                known[p[1]] = l
+                if len(p) > 3:
+                    if p[1] in authoryear and authoryear[p[1]] and authoryear[p[1]] > int(p[3]):
+                        p[3] = authoryear[p[1]]
+                    elif p[3] and int(p[3]) > authoryear.get(p[1], 0):
+                        authoryear[p[1]] = int(p[3])
+                elif p[1] in authoryear:
+                    p.append("1/1/{}".format(authoryear[p[1]]))
+                known[p[1]] = "\t".join(p)
+                authors.add(p[1])
 
     for a in sorted(authors):
+        toprint="" # this is just so we can fix all the unicode characters in one go
         if a in known:
-            print(known[a])
+            toprint = known[a]
         else:
-            print("C:\t{}\t{}".format(a, authoryear[a]))
+            toprint = "C:\t{}\tUnknown\t1/1/{}".format(a, authoryear[a])
+
+        toprint = toprint.replace(r"{\'e}", u"\u00E9")
+        toprint = toprint.replace(r"{\~a}", u"\u00E3")
+        toprint = toprint.replace(r'{\"u}', u"\u00FC")
+        toprint = toprint.replace(r'{\'a}', u"\u00E1")
+        toprint = toprint.replace(r"{\'o}", u"\u00F3")
+        print(toprint)
