@@ -7,7 +7,7 @@ import sys
 import argparse
 from itertools import product
 from roblib import read_fasta
-from statistics import median
+from roblib import median
 
 parser = argparse.ArgumentParser(description='Count the kmers in a fasta file')
 parser.add_argument('-f', help='fasta file', required=True)
