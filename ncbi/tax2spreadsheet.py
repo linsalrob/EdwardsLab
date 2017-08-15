@@ -1,8 +1,8 @@
 import taxon
 
-taxa=taxon.readNodes()
-names,blastname = taxon.readNames()
-divs = taxon.readDivisions()
+taxa=taxon.read_nodes()
+names,blastname = taxon.read_names()
+divs = taxon.read_divisions()
 
 want = ['species', 'genus', 'family', 'order', 'class', 'phylum', 'kingdom']
 
@@ -19,22 +19,22 @@ def printtaxa(i):
             level[taxa[node].rank]=names[node].name
         node=taxa[node].parent
 
-    print i  + "\t" + bn,
+    print("{}\t{}".format(i, bn), end="")
     for l in want:
         if l in level:
-            print "\t" + level[l],
+            print("\t{}".format(level[l]), end="")
         else:
-            print "\t-",
-    print
+            print("\t-", end="")
+    print("")
 
 
 
 # levels: species genus family order class phylum  kingdom
 
-print "id\tname",
+print ("id\tname", end="")
 for l in want:
-    print "\t" + l,
-print
+    print("\t{}".format(l), end="")
+print("")
 
 for i in taxa:
     if taxa[i].rank == "species":
