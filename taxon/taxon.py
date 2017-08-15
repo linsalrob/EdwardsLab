@@ -173,11 +173,11 @@ def read_gi_tax_id(dtype='nucl'):
         sys.exit(-1)
     file_in = defaultdir + "/gi_taxid_" + dtype + ".dmp.gz"
     taxid = {}
-    fin = gzip.open(file_in, 'r')
-    for line in fin:
-        line = line.strip()
-        parts = line.split("\t")
-        taxid[parts[0]] = parts[1]
+    with gzip.open(file_in, 'r') as fin:
+        for line in fin:
+            line = line.decode().strip()
+            parts = line.split("\t")
+            taxid[parts[0]] = parts[1]
     fin.close()
     return taxid
 
@@ -199,12 +199,12 @@ def read_tax_id_gi(dtype='nucl'):
         sys.exit(-1)
     file_in = defaultdir + "/gi_taxid_" + dtype + ".dmp.gz"
     tax_id = {}
-    fin = gzip.open(file_in, 'r')
-    for line in fin:
-        line = line.strip()
-        parts = line.split("\t")
-        if parts[1] not in tax_id:
-            tax_id[parts[1]] = []
-        tax_id[parts[1]].append(parts[0])
+    with gzip.open(file_in, 'r') as fin:
+        for line in fin:
+            line = line.decode().strip()
+            parts = line.split("\t")
+            if parts[1] not in tax_id:
+                tax_id[parts[1]] = []
+            tax_id[parts[1]].append(parts[0])
     fin.close()
     return tax_id
