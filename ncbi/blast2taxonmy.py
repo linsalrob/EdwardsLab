@@ -14,6 +14,7 @@ import re
 parser = argparse.ArgumentParser(description="Add taxonomy to a blast output file")
 parser.add_argument('-b', help='blast ouput file', required=True)
 parser.add_argument('-p', help='blast program (blastn, blastp, or blastx (default)', default='blastx')
+parser.add_argument('-t', help='taxonomy directory (default=/home2/db/taxonomy/current/)', default='/home2/db/taxonomy/current/')
 args = parser.parse_args()
 
 dbtype='nucl'
@@ -21,10 +22,10 @@ if args.p == 'blastx' or args.p == 'blastp':
     dbtype='prot'
 
 sys.stderr.write("Reading taxonomy\n")
-taxa=taxon.read_nodes()
-names,blastname = taxon.read_names()
-divs = taxon.read_divisions()
-gi2tax = taxon.read_gi_tax_id(dtype=dbtype)
+taxa=taxon.read_nodes(directory=args.t)
+names,blastname = taxon.read_names(directory=args.t)
+divs = taxon.read_divisions(directory=args.t)
+gi2tax = taxon.read_gi_tax_id(dtype=dbtype, directory=args.t)
 
 sys.stderr.write("Read taxonomy\n")
 

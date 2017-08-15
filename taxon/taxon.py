@@ -83,12 +83,12 @@ def read_taxa():
     return read_nodes()
 
 
-def read_nodes():
+def read_nodes(directory=defaultdir):
     """
     Read the node information from the default location
     """
     taxa = {}
-    fin = open(defaultdir + 'nodes.dmp', 'r')
+    fin = open(directory + 'nodes.dmp', 'r')
     for line in fin:
         line = line.rstrip('\t|\n')
         cols = line.split('\t|\t')
@@ -98,7 +98,7 @@ def read_nodes():
     return taxa
 
 
-def extended_names():
+def extended_names(directory=defaultdir):
     """
     Extended names returns "genbank synonym" and "synonym" as well as
     "scientific name" and "blast name". Because we are reading more
@@ -108,7 +108,7 @@ def extended_names():
     blastname = {}
     genbankname = {}
     synonym = {}
-    fin = open(defaultdir + 'names.dmp', 'r')
+    fin = open(directory + 'names.dmp', 'r')
     for line in fin:
         line = line.rstrip('\t|\n')
         cols = line.split('\t|\t')
@@ -126,13 +126,13 @@ def extended_names():
     return names, blastname, genbankname, synonym
 
 
-def read_names():
+def read_names(directory=defaultdir):
     """
     Read the name information from the default location
     """
     names = {}
     blastname = {}
-    fin = open(defaultdir + 'names.dmp', 'r')
+    fin = open(directory + 'names.dmp', 'r')
     for line in fin:
         line = line.rstrip('\t|\n')
         cols = line.split('\t|\t')
@@ -145,12 +145,12 @@ def read_names():
     return names, blastname
 
 
-def read_divisions():
+def read_divisions(directory=defaultdir):
     """
     Read the divisions.dmp file
     """
     divs = {}
-    fin = open(defaultdir + 'division.dmp', 'r')
+    fin = open(directory + 'division.dmp', 'r')
     for line in fin:
         line = line.rstrip('\t|\n')
         cols = line.split('\t|\t')
@@ -160,7 +160,7 @@ def read_divisions():
     return divs
 
 
-def read_gi_tax_id(dtype='nucl'):
+def read_gi_tax_id(dtype='nucl', directory=defaultdir):
     """
     Read gi_taxid.dmp. You can specify the type of database that you
     want to parse, default is nucl (nucleotide), can also accept prot
@@ -171,7 +171,7 @@ def read_gi_tax_id(dtype='nucl'):
     if dtype != 'nucl' and dtype != 'prot':
         sys.stderr.write("Type must be either nucl or prot, not " + dtype + "\n")
         sys.exit(-1)
-    file_in = defaultdir + "/gi_taxid_" + dtype + ".dmp.gz"
+    file_in = directory + "/gi_taxid_" + dtype + ".dmp.gz"
     taxid = {}
     fin = gzip.open(file_in, 'r')
     for line in fin:
@@ -182,7 +182,7 @@ def read_gi_tax_id(dtype='nucl'):
     return taxid
 
 
-def read_tax_id_gi(dtype='nucl'):
+def read_tax_id_gi(dtype='nucl', directory=defaultdir):
     """
     Read gi_taxid.dmp. You can specify the type of database that you
     want to parse, default is nucl (nucleotide), can also accept prot
@@ -197,7 +197,7 @@ def read_tax_id_gi(dtype='nucl'):
     if dtype != 'nucl' and dtype != 'prot':
         sys.stderr.write("Type must be either nucl or prot, not " + dtype + "\n")
         sys.exit(-1)
-    file_in = defaultdir + "/gi_taxid_" + dtype + ".dmp.gz"
+    file_in = directory + "/gi_taxid_" + dtype + ".dmp.gz"
     tax_id = {}
     fin = gzip.open(file_in, 'r')
     for line in fin:
