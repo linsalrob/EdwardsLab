@@ -5,13 +5,13 @@ import taxon
 if __name__ == "__main__":
     ids=['1211997']
     if len(sys.argv) == 1:
-        print "Supply your own id for the tree. Here is an example"
+        print("Supply your own id for the tree. Here is an example")
     else:
         ids=sys.argv[1:]
 
-    taxa = taxon.readNodes()
-    names,blastname = taxon.readNames()
-    divs = taxon.readDivisions()
+    taxa = taxon.read_nodes()
+    names,blastname = taxon.read_names()
+    divs = taxon.read_divisions()
     for i in ids:
         c=0
         if i not in taxa:
@@ -22,8 +22,8 @@ if __name__ == "__main__":
             bn=names[i].name
             if i in blastname:
                 bn=blastname[i].name
-            print taxa[i].taxid, "name:", names[i].name, "blast name", bn, "rank:", taxa[i].rank, "parent: ", taxa[i].parent
+            print("{} name: {}    blast name: {}   rank: {}   parent: {}".format(taxa[i].taxid, names[i].name, bn, taxa[i].rank, taxa[i].parent))
             i=taxa[i].parent
             c+=1
-        print
+
 
