@@ -21,10 +21,10 @@ if args.p == 'blastx' or args.p == 'blastp':
     dbtype='prot'
 
 sys.stderr.write("Reading taxonomy\n")
-taxa=taxon.readNodes()
-names,blastname = taxon.readNames()
-divs = taxon.readDivisions()
-gi2tax = taxon.readGiTaxId(dtype=dbtype)
+taxa=taxon.read_nodes()
+names,blastname = taxon.read_names()
+divs = taxon.read_divisions()
+gi2tax = taxon.read_gi_tax_id(dtype=dbtype)
 
 sys.stderr.write("Read taxonomy\n")
 
