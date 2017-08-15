@@ -2,7 +2,7 @@ import gzip
 import sys
 
 # the location of the taxonomy files
-defaultdir = '/home2/db/taxonomy/current'
+defaultdir = '/home2/db/taxonomy/current/'
 
 '''
 From nodes.dmp
