@@ -22,8 +22,9 @@ From nodes.dmp
 '''
 
 
-class taxonNode:
-    def __init__(self, t = None, p = None, r = None, e = None, d = None, i = None, gc = None, igc = False, mgc = None, imgc = False,  gh = False, hs = False, c=None, *others):
+class TaxonNode:
+    def __init__(self, t=None, p=None, r=None, e=None, d=None, i=None, gc=None, igc=False, mgc=None, imgc=False,
+                 gh=False, hs=False, c=None, *others):
         self.parent = p
         self.taxid = t
         self.rank = r
@@ -38,7 +39,8 @@ class taxonNode:
         self.hiddenSubtree = hs
         self.comments = c
         if len(others) > 0:
-            print "WARNING: ", p, " :: ", others
+            print("WARNING: {} :: {}".format(p, others))
+
 
 '''
 Taxonomy names file (names.dmp):
@@ -48,13 +50,15 @@ Taxonomy names file (names.dmp):
         name class                              -- (synonym, common name, ...)
 '''
 
-class taxonName:
-     def __init__(self, t = None, n = None, u = None, nc = None):
+
+class TaxonName:
+    def __init__(self, t=None, n=None, u=None, nc=None):
         self.taxid = t
         self.name = n
         self.unique = u
         self.nameClass = nc
-        
+
+
 '''
 Divisions file (division.dmp):
         division id                             -- taxonomy database division id
@@ -62,140 +66,145 @@ Divisions file (division.dmp):
         division name                           -- e.g. BCT, PLN, VRT, MAM, PRI...
         comments
 '''
-class taxonDivision:
-     def __init__(self, i = None, c = None, n = None, co = None):
+
+
+class TaxonDivision:
+    def __init__(self, i=None, c=None, n=None, co=None):
         self.divid = i
         self.name = n
         self.code = c
         self.comments = co
-        
 
 
+def read_taxa():
+    """
+    Read the taxonomy tree. An alias for read_nodes()
+    """
+    return read_nodes()
 
 
-def readTaxa():
-    '''Read the taxonomy tree. An alias for readNodes()'''
-    return readNodes()
-
-
-def readNodes():
-    '''Read the node information from the default location'''
+def read_nodes():
+    """
+    Read the node information from the default location
+    """
     taxa = {}
-    fin = open(defaultdir+'nodes.dmp', 'r')
+    fin = open(defaultdir + 'nodes.dmp', 'r')
     for line in fin:
         line = line.rstrip('\t|\n')
         cols = line.split('\t|\t')
-        t=taxonNode(*cols)
-        taxa[cols[0]]=t
+        t = TaxonNode(*cols)
+        taxa[cols[0]] = t
     fin.close()
     return taxa
 
 
-def extendedNames():
-    '''
-    Extended names returns "genbank synonym" and "synonym" as well as 
-    "scientific name" and "blast name". Because we are reading more 
+def extended_names():
+    """
+    Extended names returns "genbank synonym" and "synonym" as well as
+    "scientific name" and "blast name". Because we are reading more
     names it is slower and consumes more memory
-    '''
+    """
     names = {}
-    blastname={}
-    genbankname={}
-    synonym={}
-    fin = open(defaultdir+'names.dmp', 'r')
+    blastname = {}
+    genbankname = {}
+    synonym = {}
+    fin = open(defaultdir + 'names.dmp', 'r')
     for line in fin:
         line = line.rstrip('\t|\n')
         cols = line.split('\t|\t')
-        t=taxonName(*cols)
+        t = TaxonName(*cols)
         if "scientific name" in cols[3]:
-            names[cols[0]]=t
+            names[cols[0]] = t
         elif "blast name" in cols[3]:
-            blastname[cols[0]]=t
+            blastname[cols[0]] = t
         elif "genbank synonym" in cols[3]:
-            genbankname[cols[0]]=t
+            genbankname[cols[0]] = t
         elif "synonym" in cols[3]:
-            synonym[cols[0]]=t
+            synonym[cols[0]] = t
 
     fin.close()
     return names, blastname, genbankname, synonym
 
 
-
-def readNames():
-    '''Read the name information from the default location'''
+def read_names():
+    """
+    Read the name information from the default location
+    """
     names = {}
-    blastname={}
-    fin = open(defaultdir+'names.dmp', 'r')
+    blastname = {}
+    fin = open(defaultdir + 'names.dmp', 'r')
     for line in fin:
         line = line.rstrip('\t|\n')
         cols = line.split('\t|\t')
-        t=taxonName(*cols)
+        t = TaxonName(*cols)
         if "scientific name" in cols[3]:
-            names[cols[0]]=t
+            names[cols[0]] = t
         if "blast name" in cols[3]:
-            blastname[cols[0]]=t
+            blastname[cols[0]] = t
     fin.close()
     return names, blastname
 
-def readDivisions():
-    '''Read the divisions.dmp file'''
+
+def read_divisions():
+    """
+    Read the divisions.dmp file
+    """
     divs = {}
-    fin = open(defaultdir+'division.dmp', 'r')
+    fin = open(defaultdir + 'division.dmp', 'r')
     for line in fin:
         line = line.rstrip('\t|\n')
         cols = line.split('\t|\t')
-        t=taxonDivision(*cols)
-        divs[cols[0]]=t
+        t = TaxonDivision(*cols)
+        divs[cols[0]] = t
     fin.close()
     return divs
 
 
-def readGiTaxId(dtype='nucl'):
-    '''
+def read_gi_tax_id(dtype='nucl'):
+    """
     Read gi_taxid.dmp. You can specify the type of database that you
-    want to parse, default is nucl (nucleotide), can also accept prot 
+    want to parse, default is nucl (nucleotide), can also accept prot
     (protein).
-    
+
     Returns a hash of gi and taxid
-    '''
+    """
     if dtype != 'nucl' and dtype != 'prot':
         sys.stderr.write("Type must be either nucl or prot, not " + dtype + "\n")
         sys.exit(-1)
-    fileIn = defaultdir + "/gi_taxid_" + dtype + ".dmp.gz"
-    taxid={}
-    fin = gzip.open(fileIn, 'r')
+    file_in = defaultdir + "/gi_taxid_" + dtype + ".dmp.gz"
+    taxid = {}
+    fin = gzip.open(file_in, 'r')
     for line in fin:
         line = line.strip()
-        parts=line.split("\t")
-        taxid[parts[0]]=parts[1]
+        parts = line.split("\t")
+        taxid[parts[0]] = parts[1]
     fin.close()
     return taxid
 
 
-def readTaxIdGi(dtype='nucl'):
-    '''
+def read_tax_id_gi(dtype='nucl'):
+    """
     Read gi_taxid.dmp. You can specify the type of database that you
-    want to parse, default is nucl (nucleotide), can also accept prot 
+    want to parse, default is nucl (nucleotide), can also accept prot
     (protein).
-    
+
     NOTE: This method returns taxid -> gi not the other way around. This
     may be a one -> many mapping (as a single taxid maps to more than
     one gi), and so we return a list of gi's for each taxid.
 
     Returns a hash of taxid and gi
-    '''
+    """
     if dtype != 'nucl' and dtype != 'prot':
         sys.stderr.write("Type must be either nucl or prot, not " + dtype + "\n")
         sys.exit(-1)
-    fileIn = defaultdir + "/gi_taxid_" + dtype + ".dmp.gz"
-    taxid={}
-    fin = gzip.open(fileIn, 'r')
+    file_in = defaultdir + "/gi_taxid_" + dtype + ".dmp.gz"
+    tax_id = {}
+    fin = gzip.open(file_in, 'r')
     for line in fin:
         line = line.strip()
-        parts=line.split("\t")
-        if parts[1] not in taxid:
-            taxid[parts[1]]=[]
-        taxid[parts[1]].append(parts[0])
+        parts = line.split("\t")
+        if parts[1] not in tax_id:
+            tax_id[parts[1]] = []
+        tax_id[parts[1]].append(parts[0])
     fin.close()
-    return taxid
-
-
+    return tax_id
