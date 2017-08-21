@@ -24,24 +24,18 @@ if __name__ == "__main__":
     donefirst = False
 
     for (seqid, seq) in sequences.stream_fasta(args.f):
-        counts = dna.kmers(seq, args.k)
+        fwdcounts = dna.kmers(seq, args.k)
         if not donefirst:
-            first['fwd'] = counts
+            first['fwd'] = fwdcounts
 
-        keys = set(counts.keys())
+        keys = set(fwdcounts.keys())
         keys.update(first['fwd'].keys())
-        keys = list(keys)
 
-        std = [first['fwd'].get(k, 0) for k in keys]
-        tst = [counts.get(k, 0) for k in keys]
-
-        fwddist = np.linalg.norm(np.array(std) - np.array(tst))
-
-        counts = dna.kmers(dna.rc(seq), args.k)
+        revcounts = dna.kmers(dna.rc(seq), args.k)
         if not donefirst:
-            first['rev'] = counts
+            first['rev'] = revcounts
 
-        keys = set(counts.keys())
+        keys.update(set(revcounts.keys()))
         keys.update(first['rev'].keys())
         keys = list(keys)
 
@@ -49,10 +43,13 @@ if __name__ == "__main__":
             print("{}\t{}\t{}".format(k, first['fwd'].get(k, 0), first['rev'].get(k, 0)))
         sys.exit(0);
 
-        std = [first['rev'].get(k, 0) for k in keys]
-        tst = [counts.get(k, 0) for k in keys]
+        fwdstd = [first['fwd'].get(k, 0) for k in keys]
+        fwdtst = [fwdcounts.get(k, 0) for k in keys]
+        revstd = [first['rev'].get(k, 0) for k in keys]
+        revtst = [revcounts.get(k, 0) for k in keys]
 
-        revdist = np.linalg.norm(np.array(std) - np.array(tst))
+        fwddist = np.linalg.norm(np.array(fwdstd) - np.array(fwdtst))
+        revdist = np.linalg.norm(np.array(revstd) - np.array(revtst))
 
         rc = "no"
         if revdist < fwddist:
