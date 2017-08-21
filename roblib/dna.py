@@ -41,3 +41,23 @@ def shannon(dna, word):
         n = 1.0 * count[s]
         hp += float((n / p) * log(n / p))
     return 0 - hp
+
+def kmers(dna, k):
+    """
+    Given a dna sequence return a hash with all kmers of length k and their frequency.
+
+    This method does NOT use the reverse complement, it only checks the strand you supply.
+
+    :param dna: the dna sequence
+    :param k: the length of the kmer
+    :return: a hash of kmers and abundance
+    """
+
+    counts = {}
+    for i in range(len(dna)-k):
+        subseq=dna[i:i+k]
+        counts[subseq] = counts.get(subseq, 0) + 1
+
+    return counts
+
+
