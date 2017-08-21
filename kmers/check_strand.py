@@ -8,7 +8,6 @@ import sys
 import argparse
 from roblib import sequences
 from roblib import dna
-from scipy.spatial.distance import cdist
 import numpy as np
 
 __author__ = 'Rob Edwards'
@@ -35,7 +34,7 @@ if __name__ == "__main__":
         std = [first['fwd'].get(k, 0) for k in keys]
         tst = [counts.get(k,0) for k in keys]
 
-        fwddist = cdist(np.array(std), np.array(tst), metric="euclidean")
+        fwddist = np.linalg.norm(np.array(std)-np.array(tst))
 
 
         counts = dna.kmers(dna.rc(seq), args.k)
@@ -49,7 +48,7 @@ if __name__ == "__main__":
         std = [first['rev'].get(k, 0) for k in keys]
         tst = [counts.get(k,0) for k in keys]
 
-        revdist = cdist(np.array(std), np.array(tst), metric="euclidean")
+        revdist = np.linalg.norm(np.array(std)-np.array(tst))
 
         rc = "no"
         if revdist < fwddist:
