@@ -1,5 +1,4 @@
 import os
-import string
 import sys
 
 __author__ = 'Rob Edwards'
@@ -14,7 +13,7 @@ def rc(dna):
     :return: The reverse complement of the DNA sequence
     :rtype: str
     """
-    complements = string.maketrans('acgtrymkbdhvACGTRYMKBDHV', 'tgcayrkmvhdbTGCAYRKMVHDB')
+    complements = str.maketrans('acgtrymkbdhvACGTRYMKBDHV', 'tgcayrkmvhdbTGCAYRKMVHDB')
     rcseq = dna.translate(complements)[::-1]
     return rcseq
 
