@@ -13,7 +13,8 @@ import numpy as np
 __author__ = 'Rob Edwards'
 
 if __name__ == "__main__":
-    parser = argparse.ArgumentParser(description='Given a fasta file of sequences check to see which sequences should be reverse complemented to match best to the first sequence')
+    parser = argparse.ArgumentParser(
+        description='Given a fasta file of sequences check to see which sequences should be reverse complemented to match best to the first sequence')
     parser.add_argument('-f', help='fasta file of sequences', required=True)
     parser.add_argument('-k', help="k-mer size (default=7)", default=7)
     args = parser.parse_args()
@@ -32,10 +33,9 @@ if __name__ == "__main__":
         keys = list(keys)
 
         std = [first['fwd'].get(k, 0) for k in keys]
-        tst = [counts.get(k,0) for k in keys]
+        tst = [counts.get(k, 0) for k in keys]
 
-        fwddist = np.linalg.norm(np.array(std)-np.array(tst))
-
+        fwddist = np.linalg.norm(np.array(std) - np.array(tst))
 
         counts = dna.kmers(dna.rc(seq), args.k)
         if not donefirst:
@@ -46,12 +46,13 @@ if __name__ == "__main__":
         keys = list(keys)
 
         std = [first['rev'].get(k, 0) for k in keys]
-        tst = [counts.get(k,0) for k in keys]
+        tst = [counts.get(k, 0) for k in keys]
 
-        revdist = np.linalg.norm(np.array(std)-np.array(tst))
+        revdist = np.linalg.norm(np.array(std) - np.array(tst))
 
         rc = "no"
         if revdist < fwddist:
             rc = "yes"
 
         print("{}\t{}\t{}\t{}".format(seqid, fwddist, revdist, rc))
+        donefirst = True
