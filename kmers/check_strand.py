@@ -16,7 +16,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(
         description='Given a fasta file of sequences check to see which sequences should be reverse complemented to match best to the first sequence')
     parser.add_argument('-f', help='fasta file of sequences', required=True)
-    parser.add_argument('-k', help="k-mer size (default=7)", default=7)
+    parser.add_argument('-k', help="k-mer size (default=7)", default=7, type=int)
     args = parser.parse_args()
 
     # for the first sequence we need to store its information
@@ -44,6 +44,10 @@ if __name__ == "__main__":
         keys = set(counts.keys())
         keys.update(first['rev'].keys())
         keys = list(keys)
+
+        for k in keys:
+            print("{}\t{}\t{}".format(k, first['fwd'].get(k, 0), first['rev'].get(k, 0)))
+        sys.exit(0);
 
         std = [first['rev'].get(k, 0) for k in keys]
         tst = [counts.get(k, 0) for k in keys]
