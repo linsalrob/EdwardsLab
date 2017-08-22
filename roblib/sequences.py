@@ -7,7 +7,7 @@ import subprocess
 __author__ = 'Rob Edwards'
 
 
-def read_fasta(fname, whole_id=True):
+def read_fasta(fname: str, whole_id: bool = True) -> object:
     """
     Read a fasta file and return a hash.
 
