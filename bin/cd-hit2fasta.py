@@ -22,7 +22,7 @@ if __name__ == "__main__":
     fa = sequences.read_fasta(args.f)
 
     if os.path.exists(args.o):
-        sys.stderr.write("ERROR: OUTPUT DIRECTORY EXISTS")
+        sys.stderr.write("ERROR: OUTPUT DIRECTORY {} EXISTS\n".format(args.o))
         sys.exit(-1)
 
     os.mkdir(args.o)
@@ -39,6 +39,7 @@ if __name__ == "__main__":
                 out = open(os.path.join(args.o, "{}.fa".format(cluster)), 'w')
             else:
                 m=re.search('>(\d+)\.\.\.', l)
-                out.write(">{}\n{}".format(m.groups(1), fa[m.groups(1)]))
+                seqid = m.group(1)
+                out.write(">{}\n{}\n".format(seqid, fa[seqid]))
 
     out.close()
