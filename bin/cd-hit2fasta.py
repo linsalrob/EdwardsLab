@@ -39,6 +39,9 @@ if __name__ == "__main__":
                 out = open(os.path.join(args.o, "{}.fa".format(cluster)), 'w')
             else:
                 m=re.search('>(\d+)\.\.\.', l)
+                if not m:
+                    sys.stderr.write("Could not find a seq id in: {}".format(l))
+                    continue
                 seqid = m.group(1)
                 out.write(">{}\n{}\n".format(seqid, fa[seqid]))
 
