@@ -25,7 +25,7 @@ if __name__ == '__main__':
     header = None
     data = []
     row_labels = []
-    eps = 0.00000001 # epsilon since we can't do log 0
+    eps = 0.00000000000000001 # epsilon since we can't do log 0
 
     with open(args.f, 'r') as f:
         for l in f:
