@@ -166,8 +166,8 @@ def plotmap(ll, dd, maxdist=1, maxlinewidth=3):
 
 
 if __name__ == '__main__':
-    dnadist_file = "/home/redwards/Dropbox/GitHubs/crAssphage/Analysis/PrimerA/seqs.dnadist"
-    idmap_file = "/home/redwards/Dropbox/GitHubs/crAssphage/Analysis/PrimerA/id.map"
+    dnadist_file = "/home/redwards/Dropbox/GitHubs/crAssphage/Global_Survey/Analysis/PrimerA/seqs.dnadist"
+    idmap_file = "/home/redwards/Dropbox/GitHubs/crAssphage/Global_Survey/Analysis/PrimerA/id.map"
     lonlat = get_lon_lat(idmap_file)
     # This line gets _all_ similarites. The next line gets the single best
     # similarities = get_dna_distance(dnadist_file)
