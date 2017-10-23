@@ -70,12 +70,6 @@ if __name__ == '__main__':
     fig, ax = plt.subplots()
     ax.xaxis.set_ticks_position('none')
     ax.yaxis.set_ticks_position('none')
-    xlocs = ax.get_xticklabels()
-
-    n = int(genomelength/len(xlocs))
-    xlocs = [str(int((n * i)/1000)) for i in range(len(xlocs))]
-    ax.set_xticklabels(xlocs)
-
 
     ax.set_xlim(0, len(data[0]))
     ax.set_ylim(0, len(data))
@@ -83,7 +77,10 @@ if __name__ == '__main__':
     ax.set_xlabel("Position in genome (x1000 bp)")
     ax.set_ylabel("Metagenome number")
 
-
+    xlocs = ax.get_xticklabels()
+    n = int(genomelength/len(xlocs))
+    xlocs = [str(int((n * i)/1000)) for i in range(len(xlocs))]
+    ax.set_xticklabels(xlocs)
 
     heatmap = ax.pcolormesh(npd, cmap=plt.cm.Blues)
     # heatmap = ax.pcolor(allxlabelsd, npd)
