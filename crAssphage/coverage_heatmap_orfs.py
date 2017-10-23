@@ -30,11 +30,13 @@ if __name__ == '__main__':
     row_labels = []
     eps = 0.00000000000000001 # epsilon since we can't do log 0
 
+    genomelength = 0
     with open(args.f, 'r') as f:
         for l in f:
             if l.startswith("#"):
                 continue
             p = l.strip().split("\t")
+            genomelength = len(p) - args.n
             if len(p) > args.n:
                 row_labels.append(p[0])
                 s = [int(x) for x in p[args.n:]]
@@ -65,20 +67,15 @@ if __name__ == '__main__':
 
     npd = np.array(data)
 
-    xlabels = []
-    for i in range(len(data[1])/1000):
-        xlabels.append(i * 1000)
-
-    allxlabels = []
-    for i in range(len(data)):
-        allxlabels.append(xlabels)
-    allxlabelsd = np.array(allxlabels)
-
     fig, ax = plt.subplots()
     ax.xaxis.set_ticks_position('none')
     ax.yaxis.set_ticks_position('none')
-    #xtl = ax.get_xticklabels()
-    ax.set_xticklabels(xlabels)
+    xlocs = ax.get_xticklabels()
+
+    n = int(genomelength/len(xlocs))
+    xlocs = [str(int((n * i)/1000)) for i in range(len(xlocs))]
+    ax.set_xticklabels(xlocs)
+
 
     ax.set_xlim(0, len(data[0]))
     ax.set_ylim(0, len(data))
