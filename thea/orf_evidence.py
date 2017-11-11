@@ -40,9 +40,9 @@ def normalized_bitscore(m8file):
             if l.startswith("#"):
                 continue
             # Fields: Query Subject identity        aln-len mismatch        gap-openings    q.start q.end   s.start s.end   log(e-value)    bit-score
-            p = l.strip().split("\t")
-            if float(p[10]) > -5:
+            if len(p) != 12:
                 continue
+            p = l.strip().split("\t")
             s = p[1]
             l = int(p[3])
             b = float(p[11])
