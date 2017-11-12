@@ -14,29 +14,25 @@ import matplotlib.pyplot as plt
 
 def plot(f, figf):
     freq = {}
-    if 'gz' in f:
-        i = gzip.open(f)
-    else:
-        i = open(f)
-    for l in i:
-        p=l.strip().split("\t")
+    with open(f, 'r') as i:
+        for l in i:
+            p=l.strip().split("\t")
 
-        if 'human' in p[0]:
-            p[0]='human'
-        if 'human' in p[1]:
-            p[1]='human'
-        if p[0] < p[1]:
-            (g1, g2) = (p[0], p[1])
-        else:
-            (g2, g1) = (p[0], p[1])
+            if 'human' in p[0]:
+                p[0]='human'
+            if 'human' in p[1]:
+                p[1]='human'
+            if p[0] < p[1]:
+                (g1, g2) = (p[0], p[1])
+            else:
+                (g2, g1) = (p[0], p[1])
 
-        if g1 not in freq:
-            freq[g1] = {}
-        if g2 not in freq[g1]:
-            freq[g1][g2] = []
+            if g1 not in freq:
+                freq[g1] = {}
+            if g2 not in freq[g1]:
+                freq[g1][g2] = []
 
-        freq[g1][g2].append(float(p[2]))
-    i.close()
+            freq[g1][g2].append(float(p[2]))
 
     labels = []
     scores = []
