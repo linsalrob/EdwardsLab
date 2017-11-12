@@ -109,6 +109,7 @@ def plot_nbs(allp, thea, nop, figf):
     sys.stderr.write("Lengths: All: {} THEA: {} NONE: {}\n".format(len(allp), len(thea), len(nop)))
 
     fig = plt.figure()
+    # add space at the bottom for the labels
     ax = fig.add_subplot(111)
 
     #ax.boxplot(alldata)
