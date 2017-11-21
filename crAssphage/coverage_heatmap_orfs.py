@@ -146,6 +146,7 @@ if __name__ == '__main__':
     for t in texts:
         ax2.text(t[0], t[1], t[2], ha='center', va='center', size='x-small')
 
+    plt.tight_layout()
     if args.o:
         plt.savefig(args.o)
     else:

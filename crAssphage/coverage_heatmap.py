@@ -91,6 +91,7 @@ if __name__ == '__main__':
     else:
         cbar.set_label('sequence coverage')
 
+    plt.tight_layout()
 
     if args.o:
         plt.savefig(args.o)
