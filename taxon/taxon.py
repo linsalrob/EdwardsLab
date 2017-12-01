@@ -3,7 +3,8 @@ import sys
 
 # the location of the taxonomy files
 #defaultdir = '/home2/db/taxonomy/current/'
-defaultdir = '/data/ncbi/taxonomy/'
+# defaultdir = '/data/ncbi/taxonomy/'
+defaultdir = '/localdata/ncbi/taxonomy/20170814'
 
 '''
 From nodes.dmp
@@ -89,7 +90,7 @@ def read_nodes(directory=defaultdir):
     Read the node information from the default location
     """
     taxa = {}
-    fin = open(directory + 'nodes.dmp', 'r')
+    fin = open(directory + '/nodes.dmp', 'r')
     for line in fin:
         line = line.rstrip('\t|\n')
         cols = line.split('\t|\t')
@@ -109,7 +110,7 @@ def extended_names(directory=defaultdir):
     blastname = {}
     genbankname = {}
     synonym = {}
-    fin = open(directory + 'names.dmp', 'r')
+    fin = open(directory + '/names.dmp', 'r')
     for line in fin:
         line = line.rstrip('\t|\n')
         cols = line.split('\t|\t')
@@ -133,7 +134,7 @@ def read_names(directory=defaultdir):
     """
     names = {}
     blastname = {}
-    fin = open(directory + 'names.dmp', 'r')
+    fin = open(directory + '/names.dmp', 'r')
     for line in fin:
         line = line.rstrip('\t|\n')
         cols = line.split('\t|\t')
@@ -151,7 +152,7 @@ def read_divisions(directory=defaultdir):
     Read the divisions.dmp file
     """
     divs = {}
-    fin = open(directory + 'division.dmp', 'r')
+    fin = open(directory + '/division.dmp', 'r')
     for line in fin:
         line = line.rstrip('\t|\n')
         cols = line.split('\t|\t')
