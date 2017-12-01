@@ -14,7 +14,7 @@ if __name__ == "__main__":
     parser.add_argument('-f', help='tab seperated values', required=True)
     args = parser.parse_args()
 
-    want = ['superkingdom', 'kingdom' 'phylum', 'class', 'order', 'family', 'genus', 'species']
+    want = ['superkingdom', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
 
     sys.stderr.write("Reading databases\n")
     taxa = taxon.read_nodes()
