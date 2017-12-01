@@ -29,8 +29,9 @@ if __name__ == "__main__":
             p = l.strip().split("\t")
             m = ["" for w in want]
             i = p[2]
-            while taxa[i].parent != '1' and i != '1':
-                if taxa[i].rank in want:
-                    m[want.index(taxa[i].rank)] = names[i].name
-                i = taxa[i].parent
+            if i in taxa:
+                while taxa[i].parent != '1' and i != '1':
+                    if taxa[i].rank in want:
+                        m[want.index(taxa[i].rank)] = names[i].name
+                    i = taxa[i].parent
             print("{}\t".format(l.strip()) + "\t".join(m))
