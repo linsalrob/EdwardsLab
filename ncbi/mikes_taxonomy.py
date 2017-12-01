@@ -16,8 +16,10 @@ if __name__ == "__main__":
 
     want = ['superkingdom', 'kingdom' 'phylum', 'class', 'order', 'family', 'genus', 'species']
 
+    sys.stderr.write("Reading databases\n")
     taxa = taxon.read_nodes()
     names, blastname = taxon.read_names()
+    sys.stderr.write("Done\n")
 
     with open(args.f, 'r') as f:
         for l in f:
@@ -30,4 +32,5 @@ if __name__ == "__main__":
             while taxa[i].parent != '1' and i != '1':
                 if taxa[i].rank in want:
                     m[want.index(taxa[i].rank)] = names[i].name
+                i = taxa[i].parent
             print("{}\t".format(l.strip()) + "\t".join(m))
