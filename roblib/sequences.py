@@ -21,7 +21,7 @@ def read_fasta(fname: str, whole_id: bool = True) -> object:
 
     try:
         if fname.endswith('.gz'):
-            f = gzip.open(fname, 'rb')
+            f = gzip.open(fname, 'rt')
         elif fname.endswith('.lrz'):
             f = subprocess.Popen(['/usr/bin/lrunzip', '-q', '-d', '-f', '-o-', fname], stdout=subprocess.PIPE).stdout
         else:
