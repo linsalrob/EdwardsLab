@@ -69,7 +69,7 @@ def stream_fastq(fqfile):
     """
 
     if fqfile.endswith('.gz'):
-        qin = gzip.open(fqfile, 'rb')
+        qin = gzip.open(fqfile, 'rt')
     else:
         qin = open(fqfile, 'r')
 
@@ -103,7 +103,7 @@ def stream_fasta(fastafile, whole_id=True):
 
     try:
         if fastafile.endswith('.gz'):
-            f = gzip.open(fastafile, 'rb')
+            f = gzip.open(fastafile, 'rt')
         elif fastafile.endswith('.lrz'):
             f = subprocess.Popen(['/usr/bin/lrunzip', '-q', '-d', '-f', '-o-', fastafile], stdout=subprocess.PIPE).stdout
         else:
