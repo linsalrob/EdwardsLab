@@ -1,4 +1,4 @@
-#!/usr/bin/env python
+#!/usr/bin/env python3
 
 """
 Count the characters in a fasta file. We summarize the longest and shortest reads
