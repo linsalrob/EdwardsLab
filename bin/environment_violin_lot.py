@@ -12,7 +12,7 @@ matplotlib.use('Agg')
 import matplotlib.pyplot as plt
 
 
-def plot(f, figf):
+def plot(f, figf, freqmin):
     freq = {}
     with open(f, 'r') as i:
         for l in i:
@@ -41,7 +41,7 @@ def plot(f, figf):
     ticks = []
     for g1 in freq.keys():
         for g2 in freq[g1].keys():
-            if len(freq[g1][g2]) < 1000000:
+            if len(freq[g1][g2]) < freqmin:
                 continue
             labels.append("{}-{}".format(g1, g2))
             scores.append(freq[g1][g2])
@@ -77,9 +77,10 @@ def plot(f, figf):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Draw a voilin plot of same and different environments")
-    parser.add_argument('-f', help='file of environments and distances', default="/home/redwards/Desktop/first_part.tsv")
-    parser.add_argument('-o', help='output image file', default='/home/redwards/Desktop/out.png')
+    parser.add_argument('-f', help='file of environments and distances', required=True)
+    parser.add_argument('-o', help='output image file', default='out.png')
+    parser.add_argument('-m', help='Minimum frequency (default=100000)', default=100000)
     parser.add_argument('-v', help='verbose output')
     args = parser.parse_args()
 
-    plot(args.f, args.o)
+    plot(args.f, args.o, int(args.m))
