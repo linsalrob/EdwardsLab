@@ -21,7 +21,7 @@ def read_fasta(fname: str, whole_id: bool = True) -> object:
 
     try:
         if fname.endswith('.gz'):
-            f = gzip.open(fname, 'rt')
+            f = gzip.open(fname, 'rb')
         elif fname.endswith('.lrz'):
             f = subprocess.Popen(['/usr/bin/lrunzip', '-q', '-d', '-f', '-o-', fname], stdout=subprocess.PIPE).stdout
         else:
@@ -68,22 +68,30 @@ def stream_fastq(fqfile):
     while the header is the whole header.
     """
 
+    needsdecode = False
     if fqfile.endswith('.gz'):
-        qin = gzip.open(fqfile, 'rt')
+        qin = gzip.open(fqfile, 'rb')
+        needsdecode = True
     else:
         qin = open(fqfile, 'r')
 
     while True:
         header = qin.readline()
+        if needsdecode:
+            header = header.decode('UTF-8')
         if not header:
             break
         header = header.strip()
         seqidparts = header.split(' ')
         seqid = seqidparts[0]
         seq = qin.readline()
+        if needsdecode:
+            seq = seq.decode('UTF-8')
         seq = seq.strip()
         qualheader = qin.readline()
         qualscores = qin.readline()
+        if needsdecode:
+            qualscores = qualscores.decode('UTF-8')
         qualscores = qualscores.strip()
         header = header.replace('@', '', 1)
         yield seqid, header, seq, qualscores
@@ -103,7 +111,7 @@ def stream_fasta(fastafile, whole_id=True):
 
     try:
         if fastafile.endswith('.gz'):
-            f = gzip.open(fastafile, 'rt')
+            f = gzip.open(fastafile, 'rb')
         elif fastafile.endswith('.lrz'):
             f = subprocess.Popen(['/usr/bin/lrunzip', '-q', '-d', '-f', '-o-', fastafile], stdout=subprocess.PIPE).stdout
         else:
