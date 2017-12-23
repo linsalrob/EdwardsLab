@@ -10,8 +10,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Calculate the kingdom / phylum / genus / species per genera for the phages")
     parser.add_argument('-d', help='directory with phage flat files, one file per phage', required=True)
     parser.add_argument('-i', help='file with id, taxid, taxonomy (just kingdom / phylum / genus / species). Output from blast_tax_to_genera.py', required=True)
+    parser.add_argument('-l', help='file with location in body (default: phage_host_location.txt)', default='phage_host_location.txt')
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
+
+    bodysite={}
+    with open(args.l, 'r') as fin:
+        for l in fin:
+            p=l.strip().split("\t")
+            bodysite[p[0]] = p[3]
+
 
     genome = {} # this is a hash of proteins -> genomes
     count = {}
@@ -46,6 +54,11 @@ if __name__ == '__main__':
             genomeavs[g][j].append(len(count[i][j]))
     for g in genomeavs:
         sys.stdout.write(g)
+        if g in bodysite:
+            sys.stdout.write("\t{}".format(bodysite[g]))
+        else:
+            sys.stderr.write("No body site for {}\n".format(g))
+            sys.stdout.write("\t")
         for i in range(4):
             av = 1.0 * sum(genomeavs[g][i])/len(genomeavs[g][i])
             sys.stdout.write("\t{}".format(av))
