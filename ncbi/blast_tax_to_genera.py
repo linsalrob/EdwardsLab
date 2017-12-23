@@ -29,7 +29,6 @@ if __name__ == '__main__':
             p=l.strip().split("\t")
 
             for tid in p[14].split(";"):
-                tid = p[14]
                 level = {}
                 while tid != '0' and tid != '1' and tid in taxa and taxa[tid].parent != '1':
                     if taxa[tid].rank in want:
