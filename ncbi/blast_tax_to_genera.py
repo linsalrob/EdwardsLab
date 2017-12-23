@@ -12,7 +12,7 @@ import re
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Read a blast file and create a tuple of [query / kingdom / phylum / genus / species]")
-    parser.add_argument('-f', help='blast file. Note this must have taxids as column 14')
+    parser.add_argument('-f', help='blast file. Note this must have taxids as column 14', required=True)
     parser.add_argument('-t', help='taxonomy directory (default=/home2/db/taxonomy/current/)', default='/home2/db/taxonomy/current/')
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
@@ -27,19 +27,21 @@ if __name__ == '__main__':
     with open(args.f, 'r') as fin:
         for l in fin:
             p=l.strip().split("\t")
-            tid = p[14]
-            level = {}
-            while tid != '0' and tid != '1' and tid in taxa and taxa[tid].parent != '1':
-                if taxa[tid].rank in want:
-                    level[taxa[tid].rank] = names[tid].name
-                tid = taxa[tid].parent
 
-            results = [p[0]]
-            for w in want:
-                if w in level:
-                    results.append(level[w])
-                else:
-                    results.append("")
+            for tid in p[14].split(";"):
+                tid = p[14]
+                level = {}
+                while tid != '0' and tid != '1' and tid in taxa and taxa[tid].parent != '1':
+                    if taxa[tid].rank in want:
+                        level[taxa[tid].rank] = names[tid].name
+                    tid = taxa[tid].parent
 
-            print("\t".join(results))
+                results = [p[0], tid]
+                for w in want:
+                    if w in level:
+                        results.append(level[w])
+                    else:
+                        results.append("")
+
+                print("\t".join(results))
 
