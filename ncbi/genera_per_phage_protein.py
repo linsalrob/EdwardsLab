@@ -11,6 +11,7 @@ if __name__ == '__main__':
     parser.add_argument('-d', help='directory with phage flat files, one file per phage', required=True)
     parser.add_argument('-i', help='file with id, taxid, taxonomy (just kingdom / phylum / genus / species). Output from blast_tax_to_genera.py', required=True)
     parser.add_argument('-l', help='file with location in body (default: phage_host_location.txt)', default='phage_host_location.txt')
+    parser.add_argument('-b', help='Only print phages for which we have a body site associated with the host', action='store_true')
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
 
@@ -53,6 +54,8 @@ if __name__ == '__main__':
         for j in range(4):
             genomeavs[g][j].append(len(count[i][j]))
     for g in genomeavs:
+        if g not in bodysite and args.b:
+            continue
         sys.stdout.write(g)
         if g in bodysite:
             sys.stdout.write("\t{}".format(bodysite[g]))
