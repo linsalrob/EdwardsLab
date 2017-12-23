@@ -42,11 +42,12 @@ if __name__ == '__main__':
                             level[taxa[tid].rank] = names[tid].name
                         tid = taxa[tid].parent
 
+                    # we are only going to print the entries that have all four levels
                     for w in want:
                         if w in level:
                             results.append(level[w])
                         else:
-                            results.append("")
+                            continue
 
                     print("\t".join(results))
 
