@@ -19,28 +19,33 @@ if __name__ == '__main__':
 
     want = ['superkingdom', 'phylum', 'genus', 'species']
 
-    sys.stderr.write("Reading taxonomy\n")
+    if args.v:
+        sys.stderr.write("Reading taxonomy\n")
     taxa=taxon.read_nodes(directory=args.t)
     names,blastname = taxon.read_names(directory=args.t)
-    sys.stderr.write("Read taxonomy\n")
+    if args.v:
+        sys.stderr.write("Read taxonomy\n")
 
-    with open(args.f, 'r') as fin:
-        for l in fin:
-            p=l.strip().split("\t")
+    for blastf in args.f:
+        if args.v:
+            sys.stderr.write("Reading {}\n".format(blastf))
+        with open(blastf, 'r') as fin:
+            for l in fin:
+                p=l.strip().split("\t")
 
-            for tid in p[14].split(";"):
-                level = {}
-                while tid != '0' and tid != '1' and tid in taxa and taxa[tid].parent != '1':
-                    if taxa[tid].rank in want:
-                        level[taxa[tid].rank] = names[tid].name
-                    tid = taxa[tid].parent
+                for tid in p[14].split(";"):
+                    level = {}
+                    while tid != '0' and tid != '1' and tid in taxa and taxa[tid].parent != '1':
+                        if taxa[tid].rank in want:
+                            level[taxa[tid].rank] = names[tid].name
+                        tid = taxa[tid].parent
 
-                results = [p[0], tid]
-                for w in want:
-                    if w in level:
-                        results.append(level[w])
-                    else:
-                        results.append("")
+                    results = [p[0], tid]
+                    for w in want:
+                        if w in level:
+                            results.append(level[w])
+                        else:
+                            results.append("")
 
-                print("\t".join(results))
+                    print("\t".join(results))
 
