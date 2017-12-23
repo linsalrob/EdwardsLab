@@ -12,7 +12,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Separate a single genbank file with lots of entries into a directory of single files")
     parser.add_argument('-f', help='genbank file to separate', required=True)
     parser.add_argument('-d', help='output directory to write to', required=True)
-    parser.add_argument('-v', help='verbose output')
+    parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
 
     if not os.path.exists(args.d):
