@@ -43,11 +43,13 @@ if __name__ == '__main__':
                         tid = taxa[tid].parent
 
                     # we are only going to print the entries that have all four levels
+                    toprint = True
                     for w in want:
                         if w in level:
                             results.append(level[w])
                         else:
-                            continue
+                            toprint = False
 
-                    print("\t".join(results))
+                    if toprint:
+                        print("\t".join(results))
 
