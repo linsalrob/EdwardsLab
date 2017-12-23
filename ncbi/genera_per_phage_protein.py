@@ -32,6 +32,9 @@ if __name__ == '__main__':
                 continue
             seen.add(p[0])
             for i in range(4):
+                if len(p) < 6:
+                    sys.stderr.write("Not enough elements in {}\n".format("|".join(p)))
+                    continue
                 count[p[0]][i].add(p[i+2])
 
     genomeavs = {}
