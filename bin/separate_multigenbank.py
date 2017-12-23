@@ -41,8 +41,10 @@ if __name__ == '__main__':
                 sys.stderr.write("FATAL: Could not parse a filename from {}".format(l))
                 sys.exit(-1)
             outfilename += ".gbk"
+            if args.v:
+                sys.stderr.write("Writing to {}\n".format(outfilename))
             out = open(os.path.join(args.d, outfilename), 'w')
         if out:
             out.write(l)
-        else:
+        elif args.v:
             sys.stderr.write("SKIPPED: {}".format(l))
