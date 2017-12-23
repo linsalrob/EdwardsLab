@@ -35,12 +35,13 @@ if __name__ == '__main__':
 
                 for tid in p[14].split(";"):
                     level = {}
+                    results = [p[0], tid]
+
                     while tid != '0' and tid != '1' and tid in taxa and taxa[tid].parent != '1':
                         if taxa[tid].rank in want:
                             level[taxa[tid].rank] = names[tid].name
                         tid = taxa[tid].parent
 
-                    results = [p[0], tid]
                     for w in want:
                         if w in level:
                             results.append(level[w])
