@@ -12,7 +12,7 @@ import re
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Read a blast file and create a tuple of [query / kingdom / phylum / genus / species]")
-    parser.add_argument('-f', help='blast file(s). Note this must have taxids as column 14. You may specify more than one file', required=True, action='append')
+    parser.add_argument('-f', help='blast file(s). Note this must have taxids as column 14. You may specify more than one file', action='append', nargs='+')
     parser.add_argument('-t', help='taxonomy directory (default=/home2/db/taxonomy/current/)', default='/home2/db/taxonomy/current/')
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
