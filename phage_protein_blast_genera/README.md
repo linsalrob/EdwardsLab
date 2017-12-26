@@ -34,7 +34,6 @@ grep \/host= * | cut -f 1 -d ':' | xargs -i cp {} ../host/
 
 4b\. Post a quick tweet about how many more there have been since last time:
 <blockquote class="twitter-tweet" data-lang="en"><p lang="en" dir="ltr">There are now 5,088 complete <a href="https://twitter.com/hashtag/phage?src=hash&amp;ref_src=twsrc%5Etfw">#phage</a> genomes in GenBank and 3,072 of them have a host tag. Up from 820 phages w/ host when <a href="https://twitter.com/BEDutilh?ref_src=twsrc%5Etfw">@BEDutilh</a> et al tried to computationally predict host in 2016 <a href="https://t.co/tdfTiWqC1D">https://t.co/tdfTiWqC1D</a></p>&mdash; Rob Edwards (@linsalrob) <a href="https://twitter.com/linsalrob/status/944378872031612928?ref_src=twsrc%5Etfw">December 23, 2017</a></blockquote>
-<script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
 
 
 5\. Convert those genbank files  to flatfiles
