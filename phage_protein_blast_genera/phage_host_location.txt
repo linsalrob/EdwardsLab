@@ -1,0 +1,1052 @@
+# genbank accession	Genus/species/strain	Genus/species	Body site
+KP202969	Achromobacter xylosoxidans	Achromobacter xylosoxidans	Ear
+KP202970	Achromobacter xylosoxidans	Achromobacter xylosoxidans	Ear
+KP202971	Achromobacter xylosoxidans	Achromobacter xylosoxidans	Ear
+KP313532	Achromobacter xylosoxidans A22732	Achromobacter xylosoxidans	Ear
+KT321316	Achromobacter xylosoxidans	Achromobacter xylosoxidans	Ear
+KT321317	Achromobacter xylosoxidans	Achromobacter xylosoxidans	Ear
+DQ123818	Actinomyces naeslundii	Actinomyces naeslundii	Mouth
+HE608841	Bacteroides fragilis	Bacteroides fragilis	Appendix
+KM236239	Citrobacter freundii	Citrobacter freundii	Mouth
+KM236240	Citrobacter freundii	Citrobacter freundii	Mouth
+KM236241	Citrobacter freundii	Citrobacter freundii	Mouth
+KP313531	Citrobacter freundii P10159	Citrobacter freundii	Mouth
+KR869820	Citrobacter freundii	Citrobacter freundii	Mouth
+KT001915	Citrobacter freundii	Citrobacter freundii	Mouth
+KT001916	Citrobacter freundii	Citrobacter freundii	Mouth
+KT363872	Citrobacter freundii	Citrobacter freundii	Mouth
+KU687347	Citrobacter freundii CF5	Citrobacter freundii	Mouth
+KU687348	Citrobacter freundii CF5	Citrobacter freundii	Mouth
+KU687349	Citrobacter freundii CF3	Citrobacter freundii	Mouth
+KU687350	Citrobacter freundii CF3	Citrobacter freundii	Mouth
+KU687351	Citrobacter freundii CF3	Citrobacter freundii	Mouth
+KY654690	Citrobacter freundii	Citrobacter freundii	Mouth
+KY694971	Citrobacter freundii	Citrobacter freundii	Mouth
+EU719189	Clostridium difficile	Clostridium difficile	Gut
+GU949551	Clostridium difficile	Clostridium difficile	Gut
+HG796225	Clostridium difficile	Clostridium difficile	Gut
+HM568888	Clostridium difficile	Clostridium difficile	Gut
+JX145341	Clostridium difficile	Clostridium difficile	Gut
+JX145342	Clostridium difficile	Clostridium difficile	Gut
+KU057941	Clostridium difficile AIU	Clostridium difficile	Gut
+KX228399	Clostridium difficile strain CD105HE1 ribotype 076	Clostridium difficile	Gut
+KX228400	Clostridium difficile strain CD105HE1 ribotype 076	Clostridium difficile	Gut
+LN681534	Clostridium difficile	Clostridium difficile	Gut
+LN681535	Clostridium difficile	Clostridium difficile	Gut
+LN681536	Clostridium difficile	Clostridium difficile	Gut
+LN681537	Clostridium difficile	Clostridium difficile	Gut
+LN681538	Clostridium difficile	Clostridium difficile	Gut
+LN681539	Clostridium difficile	Clostridium difficile	Gut
+LN681540	Clostridium difficile	Clostridium difficile	Gut
+LN681541	Clostridium difficile	Clostridium difficile	Gut
+LN681542	Clostridium difficile	Clostridium difficile	Gut
+AY082070	Clostridium perfringens	Clostridium perfringens	Gut
+CP000315	Clostridium perfringens SM101	Clostridium perfringens	Gut
+EU588980	Clostridium perfringens	Clostridium perfringens	Gut
+GQ443085	Clostridium perfringens	Clostridium perfringens	Gut
+JF767208	Clostridium perfringens	Clostridium perfringens	Gut
+JF767209	Clostridium perfringens	Clostridium perfringens	Gut
+JF767210	Clostridium perfringens	Clostridium perfringens	Gut
+JN800508	Clostridium perfringens	Clostridium perfringens	Gut
+JQ660954	Clostridium perfringens strain S63	Clostridium perfringens	Gut
+JQ729990	Clostridium perfringens	Clostridium perfringens	Gut
+JQ729991	Clostridium perfringens	Clostridium perfringens	Gut
+JQ729992	Clostridium perfringens	Clostridium perfringens	Gut
+KC237729	Clostridium perfringens 5147-97	Clostridium perfringens	Gut
+KY996523	Clostridium perfringens	Clostridium perfringens	Gut
+HQ641380	Enterobacter cloacae	Enterobacter cloacae	Gut
+JQ267518	Enterobacter cloacae	Enterobacter cloacae	Gut
+KJ101592	Enterobacter cloacae clinial isolate EC7	Enterobacter cloacae	Gut
+KP791805	Enterobacter cloacae	Enterobacter cloacae	Gut
+KP791806	Enterobacter cloacae	Enterobacter cloacae	Gut
+KP791807	Enterobacter cloacae	Enterobacter cloacae	Gut
+AB609718	Enterococcus faecalis	Enterococcus faecalis	Gut
+AB712291	Enterococcus faecalis	Enterococcus faecalis	Gut
+AP009390	Enterococcus faecalis	Enterococcus faecalis	Gut
+CP002495	Enterococcus faecalis 62	Enterococcus faecalis	Gut
+FJ792813	Enterococcus faecalis	Enterococcus faecalis	Gut
+GQ452243	Enterococcus faecalis	Enterococcus faecalis	Gut
+GQ478081	Enterococcus faecalis	Enterococcus faecalis	Gut
+GQ478082	Enterococcus faecalis	Enterococcus faecalis	Gut
+GQ478083	Enterococcus faecalis	Enterococcus faecalis	Gut
+GQ478084	Enterococcus faecalis	Enterococcus faecalis	Gut
+GQ478085	Enterococcus faecalis	Enterococcus faecalis	Gut
+GQ478086	Enterococcus faecalis	Enterococcus faecalis	Gut
+GQ478087	Enterococcus faecalis	Enterococcus faecalis	Gut
+GQ478088	Enterococcus faecalis	Enterococcus faecalis	Gut
+GU815339	Enterococcus faecalis	Enterococcus faecalis	Gut
+JF731128	Enterococcus faecalis	Enterococcus faecalis	Gut
+JX193904	Enterococcus faecalis	Enterococcus faecalis	Gut
+KF192053	Enterococcus faecalis 002	Enterococcus faecalis	Gut
+KF728385	Enterococcus faecalis	Enterococcus faecalis	Gut
+KJ094032	Enterococcus faecalis	Enterococcus faecalis	Gut
+KJ127303	Enterococcus faecalis 8413	Enterococcus faecalis	Gut
+KJ608188	Enterococcus faecalis	Enterococcus faecalis	Gut
+KJ801817	Enterococcus faecalis	Enterococcus faecalis	Gut
+KP339049	Enterococcus faecalis	Enterococcus faecalis	Gut
+KR049063	Enterococcus faecalis	Enterococcus faecalis	Gut
+KT932699	Enterococcus faecalis 2008	Enterococcus faecalis	Gut
+KT932700	Enterococcus faecalis 2003	Enterococcus faecalis	Gut
+KT932701	Enterococcus faecalis 2007	Enterococcus faecalis	Gut
+KT945994	Enterococcus faecalis	Enterococcus faecalis	Gut
+KX284704	Enterococcus faecalis ATCC 19433	Enterococcus faecalis	Gut
+KY303907	Enterococcus faecalis GF29	Enterococcus faecalis	Gut
+KY472224	Enterococcus faecalis N10	Enterococcus faecalis	Gut
+MF678788	Enterococcus faecalis	Enterococcus faecalis	Gut
+MF678789	Enterococcus faecalis	Enterococcus faecalis	Gut
+MF678790	Enterococcus faecalis	Enterococcus faecalis	Gut
+MG264739	Enterococcus faecalis ATCC 49533	Enterococcus faecalis	Gut
+JQ309827	Enterococcus faecium	Enterococcus faecium	Gut
+KJ010489	Enterococcus faecium	Enterococcus faecium	Gut
+KR131750	Enterococcus faecium	Enterococcus faecium	Gut
+KT588072	Enterococcus faecium	Enterococcus faecium	Gut
+KT945995	Enterococcus faecium	Enterococcus faecium	Gut
+KY549443	Enterococcus faecium	Enterococcus faecium	Gut
+AB255436	Escherichia coli O86:H-, strain DIJ1	Escherichia coli	Gut
+AB285204	Escherichia coli	Escherichia coli	Gut
+AB971354	Escherichia coli	Escherichia coli	Gut
+AF125520	Escherichia coli O157:H7, strain EDL933	Escherichia coli	Gut
+AP000363	Escherichia coli O157:H7, strain RIMD0509894	Escherichia coli	Gut
+AP004402	Escherichia coli O157:H7 Okayama O-27	Escherichia coli	Gut
+AP005153	Escherichia coli O157:H7 Morioka V526	Escherichia coli	Gut
+AP005154	Escherichia coli O157:H7 Morioka V526	Escherichia coli	Gut
+AP011113	Escherichia coli O157:H7	Escherichia coli	Gut
+AP012529	Escherichia coli O157:H7 strain F403	Escherichia coli	Gut
+AP012530	Escherichia coli O157:H7 strain F349	Escherichia coli	Gut
+AP012531	Escherichia coli O157:H7 strain F422	Escherichia coli	Gut
+AP012532	Escherichia coli O157:H7 strain F451	Escherichia coli	Gut
+AP012533	Escherichia coli O157:H7 strain F723	Escherichia coli	Gut
+AP012534	Escherichia coli O157:H7 strain F765	Escherichia coli	Gut
+AP012535	Escherichia coli O157:H7 strain 981795	Escherichia coli	Gut
+AP012536	Escherichia coli O157:H7 strain 1447	Escherichia coli	Gut
+AP012537	Escherichia coli O157:H7 strain 980938	Escherichia coli	Gut
+AP012538	Escherichia coli O157:H7 strain 990281	Escherichia coli	Gut
+AP012539	Escherichia coli O157:H7 strain 990570	Escherichia coli	Gut
+AP012540	Escherichia coli O157:H7 strain 982243	Escherichia coli	Gut
+AY135739	Escherichia coli W strain ATCC9637	Escherichia coli	Gut
+CP000711	Escherichia coli RS218	Escherichia coli	Gut
+DQ126339	Escherichia coli O157:H7	Escherichia coli	Gut
+EF380009	Escherichia coli	Escherichia coli	Gut
+EF380010	Escherichia coli	Escherichia coli	Gut
+EF380011	Escherichia coli	Escherichia coli	Gut
+EF380012	Escherichia coli	Escherichia coli	Gut
+EF380013	Escherichia coli	Escherichia coli	Gut
+EF380014	Escherichia coli	Escherichia coli	Gut
+EF380015	Escherichia coli	Escherichia coli	Gut
+EF380016	Escherichia coli	Escherichia coli	Gut
+EF380017	Escherichia coli	Escherichia coli	Gut
+EF380018	Escherichia coli	Escherichia coli	Gut
+EF380019	Escherichia coli	Escherichia coli	Gut
+EF380020	Escherichia coli	Escherichia coli	Gut
+EF380021	Escherichia coli	Escherichia coli	Gut
+EF380022	Escherichia coli	Escherichia coli	Gut
+EF380023	Escherichia coli	Escherichia coli	Gut
+EF380024	Escherichia coli	Escherichia coli	Gut
+EF380025	Escherichia coli	Escherichia coli	Gut
+EF380026	Escherichia coli	Escherichia coli	Gut
+EF380027	Escherichia coli	Escherichia coli	Gut
+EF380028	Escherichia coli	Escherichia coli	Gut
+EF380029	Escherichia coli	Escherichia coli	Gut
+EF380030	Escherichia coli	Escherichia coli	Gut
+EF380031	Escherichia coli	Escherichia coli	Gut
+EF380032	Escherichia coli	Escherichia coli	Gut
+EF437941	Escherichia coli K-12 (F+)	Escherichia coli	Gut
+EU078592	Escherichia coli BL21(DE3)	Escherichia coli	Gut
+EU311208	Escherichia coli O157:H7 str. Min27	Escherichia coli	Gut
+EU330206	Escherichia coli	Escherichia coli	Gut
+EU734171	Escherichia coli	Escherichia coli	Gut
+EU734172	Escherichia coli	Escherichia coli	Gut
+EU734174	Escherichia coli	Escherichia coli	Gut
+EU863408	Escherichia coli K12	Escherichia coli	Gut
+FJ483837	Escherichia coli	Escherichia coli	Gut
+FJ483838	Escherichia coli	Escherichia coli	Gut
+FJ483839	Escherichia coli	Escherichia coli	Gut
+FJ483840	Escherichia coli	Escherichia coli	Gut
+FJ483841	Escherichia coli	Escherichia coli	Gut
+FJ483842	Escherichia coli	Escherichia coli	Gut
+FJ483843	Escherichia coli	Escherichia coli	Gut
+FJ483844	Escherichia coli	Escherichia coli	Gut
+FJ539132	Escherichia coli	Escherichia coli	Gut
+FJ539133	Escherichia coli	Escherichia coli	Gut
+FJ539134	Escherichia coli	Escherichia coli	Gut
+FJ539135	Escherichia coli	Escherichia coli	Gut
+FJ750948	Escherichia coli	Escherichia coli	Gut
+FJ849058	Escherichia coli C	Escherichia coli	Gut
+FO818745	Escherichia coli	Escherichia coli	Gut
+FR775895	Escherichia coli K92	Escherichia coli	Gut
+GQ149088	Escherichia coli strain K12	Escherichia coli	Gut
+GQ357916	Escherichia coli	Escherichia coli	Gut
+GQ468526	Escherichia coli	Escherichia coli	Gut
+GU196277	Escherichia coli O18:K1:H7	Escherichia coli	Gut
+GU196278	Escherichia coli O18:K1:H7	Escherichia coli	Gut
+GU196279	Escherichia coli O18:K1:H7	Escherichia coli	Gut
+GU196280	Escherichia coli O18:K1:H7	Escherichia coli	Gut
+GU196281	Escherichia coli O18:K1:H7	Escherichia coli	Gut
+GU323318	Escherichia coli	Escherichia coli	Gut
+GU385905	Escherichia coli	Escherichia coli	Gut
+GU903191	Escherichia coli	Escherichia coli	Gut
+HE664024	Escherichia coli CB13374, serotype O104:H4	Escherichia coli	Gut
+HE978309	Escherichia coli O104:H4	Escherichia coli	Gut
+HG803182	Escherichia coli CB13363, serotype O104:H4	Escherichia coli	Gut
+HG803183	Escherichia coli CB13368, serotype O104:H4	Escherichia coli	Gut
+HG803184	Escherichia coli CB13353, serotype O104:H4	Escherichia coli	Gut
+HG803185	Escherichia coli CB13357, serotype O104:H4	Escherichia coli	Gut
+HM134276	Escherichia coli	Escherichia coli	Gut
+HM137666	Escherichia coli	Escherichia coli	Gut
+HM173637	Escherichia coli K-12	Escherichia coli	Gut
+HM208537	Escherichia coli	Escherichia coli	Gut
+HM563683	Escherichia coli	Escherichia coli	Gut
+HM753658	Escherichia coli	Escherichia coli	Gut
+HM753659	Escherichia coli	Escherichia coli	Gut
+HM753664	Escherichia coli	Escherichia coli	Gut
+HM753665	Escherichia coli	Escherichia coli	Gut
+HM753666	Escherichia coli	Escherichia coli	Gut
+HM753667	Escherichia coli	Escherichia coli	Gut
+HM753668	Escherichia coli	Escherichia coli	Gut
+HM753676	Escherichia coli	Escherichia coli	Gut
+HM753677	Escherichia coli	Escherichia coli	Gut
+HM753680	Escherichia coli	Escherichia coli	Gut
+HM753681	Escherichia coli	Escherichia coli	Gut
+HM753682	Escherichia coli	Escherichia coli	Gut
+HM753683	Escherichia coli	Escherichia coli	Gut
+HM753684	Escherichia coli	Escherichia coli	Gut
+HM753685	Escherichia coli	Escherichia coli	Gut
+HM753690	Escherichia coli	Escherichia coli	Gut
+HM753691	Escherichia coli	Escherichia coli	Gut
+HM753692	Escherichia coli	Escherichia coli	Gut
+HM753693	Escherichia coli	Escherichia coli	Gut
+HM753694	Escherichia coli	Escherichia coli	Gut
+HM753695	Escherichia coli	Escherichia coli	Gut
+HM753703	Escherichia coli	Escherichia coli	Gut
+HM753704	Escherichia coli	Escherichia coli	Gut
+HM753707	Escherichia coli	Escherichia coli	Gut
+HM753708	Escherichia coli	Escherichia coli	Gut
+HM753709	Escherichia coli	Escherichia coli	Gut
+HM753710	Escherichia coli	Escherichia coli	Gut
+HM753711	Escherichia coli	Escherichia coli	Gut
+HM753712	Escherichia coli	Escherichia coli	Gut
+HM997020	Escherichia coli	Escherichia coli	Gut
+HQ665011	Escherichia coli	Escherichia coli	Gut
+HQ829472	Escherichia coli O78.A	Escherichia coli	Gut
+JF719726	Escherichia coli IJ1862	Escherichia coli	Gut
+JF719727	Escherichia coli IJ1862	Escherichia coli	Gut
+JF719728	Escherichia coli IJ1862	Escherichia coli	Gut
+JF719729	Escherichia coli IJ1862	Escherichia coli	Gut
+JF719730	Escherichia coli IJ1862	Escherichia coli	Gut
+JF719731	Escherichia coli IJ1862	Escherichia coli	Gut
+JF719732	Escherichia coli IJ1862	Escherichia coli	Gut
+JF719733	Escherichia coli IJ1862	Escherichia coli	Gut
+JF719734	Escherichia coli IJ1862	Escherichia coli	Gut
+JF974339	Escherichia coli	Escherichia coli	Gut
+JN202312	Escherichia coli	Escherichia coli	Gut
+JN600960	Escherichia coli	Escherichia coli	Gut
+JN673056	Escherichia coli O157:H7	Escherichia coli	Gut
+JN986844	Escherichia coli	Escherichia coli	Gut
+JN986846	Escherichia coli	Escherichia coli	Gut
+JQ011317	Escherichia coli O103:H25 strain	Escherichia coli	Gut
+JQ011318	Escherichia coli O103:H25 strain	Escherichia coli	Gut
+JQ031132	Escherichia coli	Escherichia coli	Gut
+JX128257	Escherichia coli O157:H7	Escherichia coli	Gut
+JX128258	Escherichia coli O157:H7	Escherichia coli	Gut
+JX128259	Escherichia coli O157:H7	Escherichia coli	Gut
+JX415535	Escherichia coli KBP21	Escherichia coli	Gut
+JX415536	Escherichia coli KBP135	Escherichia coli	Gut
+JX421753	Escherichia coli	Escherichia coli	Gut
+JX536493	Escherichia coli DM01	Escherichia coli	Gut
+JX560968	Escherichia coli serotype O157:H7	Escherichia coli	Gut
+JX865427	Escherichia coli O157:H7	Escherichia coli	Gut
+JX880034	Escherichia coli	Escherichia coli	Gut
+KC206276	Escherichia coli O78:K80	Escherichia coli	Gut
+KC295538	Escherichia coli O157	Escherichia coli	Gut
+KC333879	Escherichia coli	Escherichia coli	Gut
+KC618326	Escherichia coli O157:H43 str. T22	Escherichia coli	Gut
+KC690136	Escherichia coli O157:H7 E318	Escherichia coli	Gut
+KC801932	Escherichia coli BL21(DE3)	Escherichia coli	Gut
+KF030445	Escherichia coli strain O174:H21 isolate 1720a	Escherichia coli	Gut
+KF055347	Escherichia coli VN2-O8:F4 ETEC	Escherichia coli	Gut
+KF322032	Escherichia coli O157:H7	Escherichia coli	Gut
+KF591601	Escherichia coli 147-30R1	Escherichia coli	Gut
+KF971864	Escherichia coli O111:H2 strain ED 191	Escherichia coli	Gut
+KF981730	Escherichia coli KBP1711	Escherichia coli	Gut
+KJ135004	Escherichia coli	Escherichia coli	Gut
+KJ190157	Escherichia coli O157:H7	Escherichia coli	Gut
+KJ190158	Escherichia coli O157:H7	Escherichia coli	Gut
+KJ419279	Escherichia coli	Escherichia coli	Gut
+KJ668714	Escherichia coli	Escherichia coli	Gut
+KJ748011	Escherichia coli O153	Escherichia coli	Gut
+KJ749827	Escherichia coli	Escherichia coli	Gut
+KM044272	Escherichia coli ECOR10	Escherichia coli	Gut
+KM092515	Escherichia coli O157:H7	Escherichia coli	Gut
+KM190144	Escherichia coli O157:H7	Escherichia coli	Gut
+KM236242	Escherichia coli	Escherichia coli	Gut
+KM236243	Escherichia coli	Escherichia coli	Gut
+KM242061	Escherichia coli HY05C	Escherichia coli	Gut
+KM247287	Escherichia coli K-12 IJ2038	Escherichia coli	Gut
+KM360178	Escherichia coli	Escherichia coli	Gut
+KM606994	Escherichia coli B	Escherichia coli	Gut
+KM606995	Escherichia coli B	Escherichia coli	Gut
+KM606996	Escherichia coli B	Escherichia coli	Gut
+KM606997	Escherichia coli B	Escherichia coli	Gut
+KM606998	Escherichia coli B	Escherichia coli	Gut
+KM606999	Escherichia coli B	Escherichia coli	Gut
+KM607000	Escherichia coli B	Escherichia coli	Gut
+KM607001	Escherichia coli B	Escherichia coli	Gut
+KM607002	Escherichia coli B	Escherichia coli	Gut
+KM607003	Escherichia coli B	Escherichia coli	Gut
+KM607004	Escherichia coli B	Escherichia coli	Gut
+KM657822	Escherichia coli B strains	Escherichia coli	Gut
+KM896878	Escherichia coli ATCC 11303	Escherichia coli	Gut
+KM979354	Escherichia coli	Escherichia coli	Gut
+KM979355	Escherichia coli	Escherichia coli	Gut
+KP007359	Escherichia coli	Escherichia coli	Gut
+KP007360	Escherichia coli	Escherichia coli	Gut
+KP007361	Escherichia coli	Escherichia coli	Gut
+KP007362	Escherichia coli	Escherichia coli	Gut
+KP063541	Escherichia coli K88	Escherichia coli	Gut
+KP064094	Escherichia coli K12 MG1655	Escherichia coli	Gut
+KP090453	Escherichia coli DE48	Escherichia coli	Gut
+KP090454	Escherichia coli DE69	Escherichia coli	Gut
+KP308307	Escherichia coli 172	Escherichia coli	Gut
+KP682371	Escherichia coli PA2	Escherichia coli	Gut
+KP682372	Escherichia coli PA4	Escherichia coli	Gut
+KP682373	Escherichia coli PA5	Escherichia coli	Gut
+KP682374	Escherichia coli PA8	Escherichia coli	Gut
+KP682375	Escherichia coli PA11	Escherichia coli	Gut
+KP682376	Escherichia coli PA12	Escherichia coli	Gut
+KP682377	Escherichia coli PA16	Escherichia coli	Gut
+KP682378	Escherichia coli PA18	Escherichia coli	Gut
+KP682379	Escherichia coli PA21	Escherichia coli	Gut
+KP682380	Escherichia coli PA27	Escherichia coli	Gut
+KP682381	Escherichia coli PA28	Escherichia coli	Gut
+KP682382	Escherichia coli PA29	Escherichia coli	Gut
+KP682383	Escherichia coli PA30	Escherichia coli	Gut
+KP682384	Escherichia coli PA32	Escherichia coli	Gut
+KP682385	Escherichia coli PA33	Escherichia coli	Gut
+KP682386	Escherichia coli PA36	Escherichia coli	Gut
+KP682387	Escherichia coli PA42	Escherichia coli	Gut
+KP682388	Escherichia coli PA44	Escherichia coli	Gut
+KP682389	Escherichia coli PA45	Escherichia coli	Gut
+KP682390	Escherichia coli PA50	Escherichia coli	Gut
+KP682391	Escherichia coli PA51	Escherichia coli	Gut
+KP682392	Escherichia coli PA52	Escherichia coli	Gut
+KP719132	Escherichia coli K-12 MG1655	Escherichia coli	Gut
+KP719133	Escherichia coli K-12 MG1655	Escherichia coli	Gut
+KP719134	Escherichia coli K-12 MG1655	Escherichia coli	Gut
+KP869100	Escherichia coli O157:H7	Escherichia coli	Gut
+KP869101	Escherichia coli O157:H7	Escherichia coli	Gut
+KP869103	Escherichia coli O157:H7	Escherichia coli	Gut
+KP869104	Escherichia coli O157:H7	Escherichia coli	Gut
+KP869108	Escherichia coli O157:H7	Escherichia coli	Gut
+KP869109	Escherichia coli O157:H7	Escherichia coli	Gut
+KP869110	Escherichia coli O157:H7	Escherichia coli	Gut
+KR073660	Escherichia coli DE048	Escherichia coli	Gut
+KR073661	Escherichia coli DE048	Escherichia coli	Gut
+KR233165	Escherichia coli O157:H7	Escherichia coli	Gut
+KR269718	Escherichia coli O157:H7 ATCC 43890	Escherichia coli	Gut
+KR422352	Escherichia coli	Escherichia coli	Gut
+KR422353	Escherichia coli	Escherichia coli	Gut
+KR698074	Escherichia coli	Escherichia coli	Gut
+KT001917	Escherichia coli	Escherichia coli	Gut
+KT232076	Escherichia coli K-12 CV601	Escherichia coli	Gut
+KT454805	Escherichia coli MG1655	Escherichia coli	Gut
+KT454806	Escherichia coli MG1655	Escherichia coli	Gut
+KT825490	Escherichia coli O:157 EC-48	Escherichia coli	Gut
+KU052037	water buffalo	Escherichia coli	Gut
+KU255730	Escherichia coli	Escherichia coli	Gut
+KU298437	Escherichia coli O104:H4 strain ON-2011	Escherichia coli	Gut
+KU867876	Escherichia coli UFV30	Escherichia coli	Gut
+KU878968	Escherichia coli DE017	Escherichia coli	Gut
+KU878969	Escherichia coli DE217	Escherichia coli	Gut
+KU925172	Escherichia coli	Escherichia coli	Gut
+KU927499	Escherichia coli	Escherichia coli	Gut
+KX130668	Escherichia coli NovaBlue	Escherichia coli	Gut
+KX130726	Escherichia coli ATCC 13706	Escherichia coli	Gut
+KX130960	Escherichia coli	Escherichia coli	Gut
+KX266300	Escherichia coli C	Escherichia coli	Gut
+KX266301	Escherichia coli C	Escherichia coli	Gut
+KX266302	Escherichia coli C	Escherichia coli	Gut
+KX266303	Escherichia coli C	Escherichia coli	Gut
+KX266304	Escherichia coli C	Escherichia coli	Gut
+KX266305	Escherichia coli C	Escherichia coli	Gut
+KX266306	Escherichia coli C	Escherichia coli	Gut
+KX266307	Escherichia coli C	Escherichia coli	Gut
+KX266308	Escherichia coli C	Escherichia coli	Gut
+KX266309	Escherichia coli C	Escherichia coli	Gut
+KX266310	Escherichia coli C	Escherichia coli	Gut
+KX266311	Escherichia coli C	Escherichia coli	Gut
+KX266312	Escherichia coli C	Escherichia coli	Gut
+KX266313	Escherichia coli C	Escherichia coli	Gut
+KX266314	Escherichia coli C	Escherichia coli	Gut
+KX266315	Escherichia coli C	Escherichia coli	Gut
+KX266316	Escherichia coli C	Escherichia coli	Gut
+KX266317	Escherichia coli C	Escherichia coli	Gut
+KX266318	Escherichia coli C	Escherichia coli	Gut
+KX266319	Escherichia coli C	Escherichia coli	Gut
+KX266320	Escherichia coli C	Escherichia coli	Gut
+KX266321	Escherichia coli C	Escherichia coli	Gut
+KX266322	Escherichia coli C	Escherichia coli	Gut
+KX266323	Escherichia coli C	Escherichia coli	Gut
+KX266324	Escherichia coli C	Escherichia coli	Gut
+KX266325	Escherichia coli C	Escherichia coli	Gut
+KX266326	Escherichia coli C	Escherichia coli	Gut
+KX266327	Escherichia coli C	Escherichia coli	Gut
+KX266328	Escherichia coli C	Escherichia coli	Gut
+KX266329	Escherichia coli C	Escherichia coli	Gut
+KX266330	Escherichia coli C	Escherichia coli	Gut
+KX266331	Escherichia coli C	Escherichia coli	Gut
+KX266332	Escherichia coli C	Escherichia coli	Gut
+KX266333	Escherichia coli C	Escherichia coli	Gut
+KX266334	Escherichia coli C	Escherichia coli	Gut
+KX266335	Escherichia coli C	Escherichia coli	Gut
+KX266336	Escherichia coli C	Escherichia coli	Gut
+KX266337	Escherichia coli C	Escherichia coli	Gut
+KX266338	Escherichia coli C	Escherichia coli	Gut
+KX266339	Escherichia coli C	Escherichia coli	Gut
+KX266340	Escherichia coli C	Escherichia coli	Gut
+KX266341	Escherichia coli C	Escherichia coli	Gut
+KX266342	Escherichia coli C	Escherichia coli	Gut
+KX266343	Escherichia coli C	Escherichia coli	Gut
+KX266344	Escherichia coli C	Escherichia coli	Gut
+KX266345	Escherichia coli C	Escherichia coli	Gut
+KX266346	Escherichia coli C	Escherichia coli	Gut
+KX266347	Escherichia coli C	Escherichia coli	Gut
+KX266348	Escherichia coli C	Escherichia coli	Gut
+KX266349	Escherichia coli C	Escherichia coli	Gut
+KX266350	Escherichia coli C	Escherichia coli	Gut
+KX266351	Escherichia coli C	Escherichia coli	Gut
+KX266352	Escherichia coli C	Escherichia coli	Gut
+KX266353	Escherichia coli C	Escherichia coli	Gut
+KX266354	Escherichia coli C	Escherichia coli	Gut
+KX266355	Escherichia coli C	Escherichia coli	Gut
+KX266356	Escherichia coli C	Escherichia coli	Gut
+KX266357	Escherichia coli C	Escherichia coli	Gut
+KX266358	Escherichia coli C	Escherichia coli	Gut
+KX266359	Escherichia coli C	Escherichia coli	Gut
+KX266360	Escherichia coli C	Escherichia coli	Gut
+KX266361	Escherichia coli C	Escherichia coli	Gut
+KX266362	Escherichia coli C	Escherichia coli	Gut
+KX266363	Escherichia coli C	Escherichia coli	Gut
+KX266364	Escherichia coli C	Escherichia coli	Gut
+KX266365	Escherichia coli C	Escherichia coli	Gut
+KX266366	Escherichia coli C	Escherichia coli	Gut
+KX266367	Escherichia coli C	Escherichia coli	Gut
+KX266368	Escherichia coli C	Escherichia coli	Gut
+KX266369	Escherichia coli C	Escherichia coli	Gut
+KX266370	Escherichia coli C	Escherichia coli	Gut
+KX266371	Escherichia coli C	Escherichia coli	Gut
+KX266372	Escherichia coli C	Escherichia coli	Gut
+KX266373	Escherichia coli C	Escherichia coli	Gut
+KX266374	Escherichia coli C	Escherichia coli	Gut
+KX266375	Escherichia coli C	Escherichia coli	Gut
+KX266376	Escherichia coli C	Escherichia coli	Gut
+KX266377	Escherichia coli C	Escherichia coli	Gut
+KX266378	Escherichia coli C	Escherichia coli	Gut
+KX266379	Escherichia coli C	Escherichia coli	Gut
+KX266380	Escherichia coli C	Escherichia coli	Gut
+KX266381	Escherichia coli C	Escherichia coli	Gut
+KX266382	Escherichia coli C	Escherichia coli	Gut
+KX266383	Escherichia coli C	Escherichia coli	Gut
+KX266384	Escherichia coli C	Escherichia coli	Gut
+KX266385	Escherichia coli C	Escherichia coli	Gut
+KX266386	Escherichia coli C	Escherichia coli	Gut
+KX266387	Escherichia coli C	Escherichia coli	Gut
+KX266388	Escherichia coli C	Escherichia coli	Gut
+KX266389	Escherichia coli C	Escherichia coli	Gut
+KX266390	Escherichia coli C	Escherichia coli	Gut
+KX266391	Escherichia coli C	Escherichia coli	Gut
+KX266392	Escherichia coli C	Escherichia coli	Gut
+KX266393	Escherichia coli C	Escherichia coli	Gut
+KX266394	Escherichia coli C	Escherichia coli	Gut
+KX266395	Escherichia coli C	Escherichia coli	Gut
+KX266396	Escherichia coli C	Escherichia coli	Gut
+KX266397	Escherichia coli C	Escherichia coli	Gut
+KX266398	Escherichia coli C	Escherichia coli	Gut
+KX266399	Escherichia coli C	Escherichia coli	Gut
+KX266400	Escherichia coli C	Escherichia coli	Gut
+KX266401	Escherichia coli C	Escherichia coli	Gut
+KX266402	Escherichia coli C	Escherichia coli	Gut
+KX266403	Escherichia coli C	Escherichia coli	Gut
+KX266404	Escherichia coli C	Escherichia coli	Gut
+KX266405	Escherichia coli C	Escherichia coli	Gut
+KX266406	Escherichia coli C	Escherichia coli	Gut
+KX266407	Escherichia coli C	Escherichia coli	Gut
+KX266408	Escherichia coli C	Escherichia coli	Gut
+KX266409	Escherichia coli C	Escherichia coli	Gut
+KX266410	Escherichia coli C	Escherichia coli	Gut
+KX266411	Escherichia coli C	Escherichia coli	Gut
+KX266412	Escherichia coli C	Escherichia coli	Gut
+KX266413	Escherichia coli C	Escherichia coli	Gut
+KX266414	Escherichia coli C	Escherichia coli	Gut
+KX266415	Escherichia coli C	Escherichia coli	Gut
+KX266416	Escherichia coli C	Escherichia coli	Gut
+KX266417	Escherichia coli C	Escherichia coli	Gut
+KX266418	Escherichia coli C	Escherichia coli	Gut
+KX266419	Escherichia coli C	Escherichia coli	Gut
+KX266420	Escherichia coli C	Escherichia coli	Gut
+KX266421	Escherichia coli C	Escherichia coli	Gut
+KX266422	Escherichia coli C	Escherichia coli	Gut
+KX266423	Escherichia coli C	Escherichia coli	Gut
+KX266424	Escherichia coli C	Escherichia coli	Gut
+KX266425	Escherichia coli C	Escherichia coli	Gut
+KX266426	Escherichia coli C	Escherichia coli	Gut
+KX266427	Escherichia coli C	Escherichia coli	Gut
+KX266428	Escherichia coli C	Escherichia coli	Gut
+KX266429	Escherichia coli C	Escherichia coli	Gut
+KX266430	Escherichia coli C	Escherichia coli	Gut
+KX266431	Escherichia coli C	Escherichia coli	Gut
+KX266432	Escherichia coli C	Escherichia coli	Gut
+KX266433	Escherichia coli C	Escherichia coli	Gut
+KX266434	Escherichia coli C	Escherichia coli	Gut
+KX266435	Escherichia coli C	Escherichia coli	Gut
+KX266436	Escherichia coli C	Escherichia coli	Gut
+KX266437	Escherichia coli C	Escherichia coli	Gut
+KX266438	Escherichia coli C	Escherichia coli	Gut
+KX266439	Escherichia coli C	Escherichia coli	Gut
+KX266440	Escherichia coli C	Escherichia coli	Gut
+KX266441	Escherichia coli C	Escherichia coli	Gut
+KX266442	Escherichia coli C	Escherichia coli	Gut
+KX266443	Escherichia coli C	Escherichia coli	Gut
+KX266444	Escherichia coli C	Escherichia coli	Gut
+KX266445	Escherichia coli C	Escherichia coli	Gut
+KX266446	Escherichia coli C	Escherichia coli	Gut
+KX266447	Escherichia coli C	Escherichia coli	Gut
+KX266448	Escherichia coli C	Escherichia coli	Gut
+KX266449	Escherichia coli C	Escherichia coli	Gut
+KX266450	Escherichia coli C	Escherichia coli	Gut
+KX266451	Escherichia coli C	Escherichia coli	Gut
+KX266452	Escherichia coli C	Escherichia coli	Gut
+KX266453	Escherichia coli C	Escherichia coli	Gut
+KX266454	Escherichia coli C	Escherichia coli	Gut
+KX266455	Escherichia coli C	Escherichia coli	Gut
+KX266456	Escherichia coli C	Escherichia coli	Gut
+KX266457	Escherichia coli C	Escherichia coli	Gut
+KX266458	Escherichia coli C	Escherichia coli	Gut
+KX266459	Escherichia coli C	Escherichia coli	Gut
+KX266460	Escherichia coli C	Escherichia coli	Gut
+KX266461	Escherichia coli C	Escherichia coli	Gut
+KX266462	Escherichia coli C	Escherichia coli	Gut
+KX266463	Escherichia coli C	Escherichia coli	Gut
+KX266464	Escherichia coli C	Escherichia coli	Gut
+KX266465	Escherichia coli C	Escherichia coli	Gut
+KX266466	Escherichia coli C	Escherichia coli	Gut
+KX266467	Escherichia coli C	Escherichia coli	Gut
+KX266468	Escherichia coli C	Escherichia coli	Gut
+KX266469	Escherichia coli C	Escherichia coli	Gut
+KX266470	Escherichia coli C	Escherichia coli	Gut
+KX266471	Escherichia coli C	Escherichia coli	Gut
+KX266472	Escherichia coli C	Escherichia coli	Gut
+KX266473	Escherichia coli C	Escherichia coli	Gut
+KX266474	Escherichia coli C	Escherichia coli	Gut
+KX266475	Escherichia coli C	Escherichia coli	Gut
+KX266476	Escherichia coli C	Escherichia coli	Gut
+KX266477	Escherichia coli C	Escherichia coli	Gut
+KX266478	Escherichia coli C	Escherichia coli	Gut
+KX266479	Escherichia coli C	Escherichia coli	Gut
+KX266480	Escherichia coli C	Escherichia coli	Gut
+KX266481	Escherichia coli C	Escherichia coli	Gut
+KX266482	Escherichia coli C	Escherichia coli	Gut
+KX266483	Escherichia coli C	Escherichia coli	Gut
+KX266484	Escherichia coli C	Escherichia coli	Gut
+KX266485	Escherichia coli C	Escherichia coli	Gut
+KX266486	Escherichia coli C	Escherichia coli	Gut
+KX266487	Escherichia coli C	Escherichia coli	Gut
+KX266488	Escherichia coli C	Escherichia coli	Gut
+KX266489	Escherichia coli C	Escherichia coli	Gut
+KX266490	Escherichia coli C	Escherichia coli	Gut
+KX266491	Escherichia coli C	Escherichia coli	Gut
+KX266492	Escherichia coli C	Escherichia coli	Gut
+KX266493	Escherichia coli C	Escherichia coli	Gut
+KX266494	Escherichia coli C	Escherichia coli	Gut
+KX266495	Escherichia coli C	Escherichia coli	Gut
+KX266496	Escherichia coli C	Escherichia coli	Gut
+KX266497	Escherichia coli C	Escherichia coli	Gut
+KX266498	Escherichia coli C	Escherichia coli	Gut
+KX266499	Escherichia coli C	Escherichia coli	Gut
+KX266500	Escherichia coli C	Escherichia coli	Gut
+KX266501	Escherichia coli C	Escherichia coli	Gut
+KX266502	Escherichia coli C	Escherichia coli	Gut
+KX266503	Escherichia coli C	Escherichia coli	Gut
+KX266504	Escherichia coli C	Escherichia coli	Gut
+KX266505	Escherichia coli C	Escherichia coli	Gut
+KX266506	Escherichia coli C	Escherichia coli	Gut
+KX266507	Escherichia coli C	Escherichia coli	Gut
+KX266508	Escherichia coli C	Escherichia coli	Gut
+KX266509	Escherichia coli C	Escherichia coli	Gut
+KX266510	Escherichia coli C	Escherichia coli	Gut
+KX266511	Escherichia coli C	Escherichia coli	Gut
+KX266512	Escherichia coli C	Escherichia coli	Gut
+KX266513	Escherichia coli C	Escherichia coli	Gut
+KX266514	Escherichia coli C	Escherichia coli	Gut
+KX266515	Escherichia coli C	Escherichia coli	Gut
+KX266516	Escherichia coli C	Escherichia coli	Gut
+KX266517	Escherichia coli C	Escherichia coli	Gut
+KX266518	Escherichia coli C	Escherichia coli	Gut
+KX266519	Escherichia coli C	Escherichia coli	Gut
+KX266520	Escherichia coli C	Escherichia coli	Gut
+KX266521	Escherichia coli C	Escherichia coli	Gut
+KX266522	Escherichia coli C	Escherichia coli	Gut
+KX266523	Escherichia coli C	Escherichia coli	Gut
+KX266524	Escherichia coli C	Escherichia coli	Gut
+KX266525	Escherichia coli C	Escherichia coli	Gut
+KX266526	Escherichia coli C	Escherichia coli	Gut
+KX266527	Escherichia coli C	Escherichia coli	Gut
+KX266528	Escherichia coli C	Escherichia coli	Gut
+KX266529	Escherichia coli C	Escherichia coli	Gut
+KX266530	Escherichia coli C	Escherichia coli	Gut
+KX266531	Escherichia coli C	Escherichia coli	Gut
+KX266532	Escherichia coli C	Escherichia coli	Gut
+KX266533	Escherichia coli C	Escherichia coli	Gut
+KX266534	Escherichia coli C	Escherichia coli	Gut
+KX266535	Escherichia coli C	Escherichia coli	Gut
+KX266536	Escherichia coli C	Escherichia coli	Gut
+KX266537	Escherichia coli C	Escherichia coli	Gut
+KX266538	Escherichia coli C	Escherichia coli	Gut
+KX266539	Escherichia coli C	Escherichia coli	Gut
+KX266540	Escherichia coli C	Escherichia coli	Gut
+KX266541	Escherichia coli C	Escherichia coli	Gut
+KX266542	Escherichia coli C	Escherichia coli	Gut
+KX266543	Escherichia coli C	Escherichia coli	Gut
+KX266544	Escherichia coli C	Escherichia coli	Gut
+KX266545	Escherichia coli C	Escherichia coli	Gut
+KX266546	Escherichia coli C	Escherichia coli	Gut
+KX266547	Escherichia coli C	Escherichia coli	Gut
+KX266548	Escherichia coli C	Escherichia coli	Gut
+KX266549	Escherichia coli C	Escherichia coli	Gut
+KX266550	Escherichia coli C	Escherichia coli	Gut
+KX266551	Escherichia coli C	Escherichia coli	Gut
+KX266552	Escherichia coli C	Escherichia coli	Gut
+KX266553	Escherichia coli C	Escherichia coli	Gut
+KX266554	Escherichia coli C	Escherichia coli	Gut
+KX266555	Escherichia coli C	Escherichia coli	Gut
+KX266556	Escherichia coli C	Escherichia coli	Gut
+KX266557	Escherichia coli C	Escherichia coli	Gut
+KX266558	Escherichia coli C	Escherichia coli	Gut
+KX266559	Escherichia coli C	Escherichia coli	Gut
+KX266560	Escherichia coli C	Escherichia coli	Gut
+KX266561	Escherichia coli C	Escherichia coli	Gut
+KX279892	Escherichia coli O45:H10	Escherichia coli	Gut
+KX377933	Escherichia coli K12	Escherichia coli	Gut
+KX669227	Escherichia coli 49	Escherichia coli	Gut
+KX689784	Escherichia coli O153	Escherichia coli	Gut
+KY014601	Escherichia coli SKB178	Escherichia coli	Gut
+KY290975	Escherichia coli ART2	Escherichia coli	Gut
+KY295891	Escherichia coli O18ac:K1:H7 ColV+	Escherichia coli	Gut
+KY295892	Escherichia coli O18ac:K1:H7 ColV+	Escherichia coli	Gut
+KY295893	Escherichia coli O18ac:K1:H7 ColV+	Escherichia coli	Gut
+KY295894	Escherichia coli O18ac:K1:H7 ColV+	Escherichia coli	Gut
+KY295895	Escherichia coli O18ac:K1:H7 ColV+	Escherichia coli	Gut
+KY295896	Escherichia coli O18ac:K1:H7 ColV+	Escherichia coli	Gut
+KY295897	Escherichia coli O18ac:K1:H7 ColV+	Escherichia coli	Gut
+KY295898	Escherichia coli O18ac:K1:H7 ColV+	Escherichia coli	Gut
+KY295899	Escherichia coli O18ac:K1:H7 ColV+	Escherichia coli	Gut
+KY398841	Escherichia coli clinical isolate 3	Escherichia coli	Gut
+KY608965	Escherichia coli CP9	Escherichia coli	Gut
+KY608966	Escherichia coli MG1655	Escherichia coli	Gut
+KY608967	Escherichia coli CP9	Escherichia coli	Gut
+KY619305	Escherichia coli	Escherichia coli	Gut
+KY677846	Escherichia coli O157 EC-48 (63-Fv18-1)	Escherichia coli	Gut
+KY683735	Escherichia coli	Escherichia coli	Gut
+KY683736	Escherichia coli	Escherichia coli	Gut
+KY703222	Escherichia coli O157:H7	Escherichia coli	Gut
+KY705409	Escherichia coli O78	Escherichia coli	Gut
+KY962008	Escherichia coli ST130	Escherichia coli	Gut
+KY979108	Escherichia coli MG1655	Escherichia coli	Gut
+KY985004	Escherichia coli MC1061	Escherichia coli	Gut
+LN881725	Escherichia coli	Escherichia coli	Gut
+LN881726	Escherichia coli	Escherichia coli	Gut
+LN881727	Escherichia coli	Escherichia coli	Gut
+LN881728	Escherichia coli	Escherichia coli	Gut
+LN881729	Escherichia coli	Escherichia coli	Gut
+LN881730	Escherichia coli	Escherichia coli	Gut
+LN881731	Escherichia coli	Escherichia coli	Gut
+LN881733	Escherichia coli	Escherichia coli	Gut
+LN881734	Escherichia coli	Escherichia coli	Gut
+LN881735	Escherichia coli	Escherichia coli	Gut
+LN881736	Escherichia coli	Escherichia coli	Gut
+LN881737	Escherichia coli	Escherichia coli	Gut
+LN881738	Escherichia coli	Escherichia coli	Gut
+MF044457	Escherichia coli H8	Escherichia coli	Gut
+MF044458	Escherichia coli H21	Escherichia coli	Gut
+MF153391	Escherichia coli O165:H8	Escherichia coli	Gut
+MF356679	Escherichia coli C600	Escherichia coli	Gut
+MF402939	Escherichia coli O157:H7	Escherichia coli	Gut
+MF807953	Escherichia coli K12	Escherichia coli	Gut
+MF996376	Escherichia coli BL21	Escherichia coli	Gut
+MG004687	Escherichia coli K1 strain EH954	Escherichia coli	Gut
+MG050172	Escherichia coli K12	Escherichia coli	Gut
+MG099933	Escherichia coli 333	Escherichia coli	Gut
+MG197996	Escherichia coli	Escherichia coli	Gut
+MG201401	Escherichia coli 3-104	Escherichia coli	Gut
+MG208881	Escherichia coli 4s	Escherichia coli	Gut
+MG383452	Escherichia coli O157:H7	Escherichia coli	Gut
+MG488277	Escherichia coli str. K-12 substr. MG1655	Escherichia coli	Gut
+KR131710	Fusobacterium nucleatum 7_1	Fusobacterium nucleatum	Mouth
+AB647160	Helicobacter pylori strain 3401	Helicobacter pylori	Gut
+AB731695	Helicobacter pylori strain KMT83	Helicobacter pylori	Gut
+JF734911	Helicobacter pylori B45	Helicobacter pylori	Gut
+JQ617284	Helicobacter pylori	Helicobacter pylori	Gut
+KX119174	Helicobacter pylori	Helicobacter pylori	Gut
+KX119175	Helicobacter pylori	Helicobacter pylori	Gut
+KX119176	Helicobacter pylori	Helicobacter pylori	Gut
+KX119177	Helicobacter pylori	Helicobacter pylori	Gut
+KX119188	Helicobacter pylori	Helicobacter pylori	Gut
+KX119189	Helicobacter pylori	Helicobacter pylori	Gut
+KX119190	Helicobacter pylori	Helicobacter pylori	Gut
+KX119191	Helicobacter pylori	Helicobacter pylori	Gut
+KX119192	Helicobacter pylori	Helicobacter pylori	Gut
+KX119193	Helicobacter pylori	Helicobacter pylori	Gut
+KX119194	Helicobacter pylori	Helicobacter pylori	Gut
+KX119195	Helicobacter pylori	Helicobacter pylori	Gut
+KX119196	Helicobacter pylori	Helicobacter pylori	Gut
+KX119197	Helicobacter pylori	Helicobacter pylori	Gut
+KX119198	Helicobacter pylori	Helicobacter pylori	Gut
+KX119199	Helicobacter pylori	Helicobacter pylori	Gut
+KX119200	Helicobacter pylori	Helicobacter pylori	Gut
+KX119201	Helicobacter pylori	Helicobacter pylori	Gut
+KX119202	Helicobacter pylori	Helicobacter pylori	Gut
+KX119203	Helicobacter pylori	Helicobacter pylori	Gut
+KX119204	Helicobacter pylori	Helicobacter pylori	Gut
+KX119205	Helicobacter pylori	Helicobacter pylori	Gut
+KX119206	Helicobacter pylori	Helicobacter pylori	Gut
+KR269720	Klebsiella oxytoca ATCC 43863	Klebsiella oxytoca	Lungs
+KY780482	Klebsiella oxytoca	Klebsiella oxytoca	Lungs
+AB897757	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+GQ413937	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+GQ413938	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+GU295964	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+HQ918180	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+JF501022	Klebsiella pneumoniae KP36	Klebsiella pneumoniae	Lungs
+JX866719	Klebsiella pneumoniae JDM777	Klebsiella pneumoniae	Lungs
+KJ021043	Klebsiella pneumoniae ATCC 10031	Klebsiella pneumoniae	Lungs
+KM576124	Klebsiella pneumoniae subsp. pneumoniae KKBO-1	Klebsiella pneumoniae	Lungs
+KP658157	Klebsiella pneumoniae KP 1513	Klebsiella pneumoniae	Lungs
+KP708985	Klebsiella pneumoniae 07RAFM-KPN-503	Klebsiella pneumoniae	Lungs
+KP708986	Klebsiella pneumoniae 07RAFM-KPN-552	Klebsiella pneumoniae	Lungs
+KR149291	Klebsiella pneumoniae KSM 5-1	Klebsiella pneumoniae	Lungs
+KR269719	Klebsiella pneumoniae KCTC 2242	Klebsiella pneumoniae	Lungs
+KT001918	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KT001919	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KT001920	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KT367885	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KT367886	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KT367887	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KT964103	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KU666550	Klebsiella pneumoniae B-7850	Klebsiella pneumoniae	Lungs
+KX211991	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KX237514	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KX237515	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KX237516	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KX258185	Klebsiella pneumoniae KPB463	Klebsiella pneumoniae	Lungs
+KX523699	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KX591654	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KX712070	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KX712071	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KX845404	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KX856662	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KY000080	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KY000081	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KY271395	Klebsiella pneumoniae KH43	Klebsiella pneumoniae	Lungs
+KY271396	Klebsiella pneumoniae H151440672	Klebsiella pneumoniae	Lungs
+KY271397	Klebsiella pneumoniae KH43	Klebsiella pneumoniae	Lungs
+KY271398	Klebsiella pneumoniae KL49	Klebsiella pneumoniae	Lungs
+KY271399	Klebsiella pneumoniae KH43	Klebsiella pneumoniae	Lungs
+KY271400	Klebsiella pneumoniae KH43	Klebsiella pneumoniae	Lungs
+KY271401	Klebsiella pneumoniae KH43	Klebsiella pneumoniae	Lungs
+KY271402	Klebsiella pneumoniae Kp-48	Klebsiella pneumoniae	Lungs
+KY385423	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KY389315	Klebsiella pneumoniae subsp. ozaenae K5	Klebsiella pneumoniae	Lungs
+KY389316	Klebsiella pneumoniae NTUH-K44	Klebsiella pneumoniae	Lungs
+KY652723	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KY652724	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KY652725	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+KY652726	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+LN866626	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+MF285615	Klebsiella pneumoniae K2044	Klebsiella pneumoniae	Lungs
+MF415410	Klebsiella pneumoniae YMC15/11/N137	Klebsiella pneumoniae	Lungs
+MF415411	Klebsiella pneumoniae YMC15/09/U2874	Klebsiella pneumoniae	Lungs
+MF415412	Klebsiella pneumoniae YMC16/01/N141	Klebsiella pneumoniae	Lungs
+MF415413	Klebsiella pneumoniae YMC15/11/N54	Klebsiella pneumoniae	Lungs
+MF476924	Klebsiella pneumoniae YMC15/11/N53	Klebsiella pneumoniae	Lungs
+MF476925	Klebsiella pneumoniae YMC16/01/N133	Klebsiella pneumoniae	Lungs
+MF614100	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+MF663761	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+MF695815	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+MG459987	Klebsiella pneumoniae	Klebsiella pneumoniae	Lungs
+DQ320509	Lactobacillus gasseri	Lactobacillus gasseri	Vagina
+KF767351	Lactobacillus gasseri ADH	Lactobacillus gasseri	Vagina
+EU871039	Lactobacillus jensenii	Lactobacillus jensenii	Vagina
+AF195902	Lactobacillus johnsonii	Lactobacillus johnsonii	Vagina
+JX486087	Lactobacillus plantarum ATCC 8014	Lactobacillus plantarum	Mouth
+JX486088	Lactobacillus plantarum ATCC 8014	Lactobacillus plantarum	Mouth
+KX223815	Lactobacillus plantarum IMAU10120	Lactobacillus plantarum	Mouth
+MG252693	Lactobacillus plantarum	Lactobacillus plantarum	Mouth
+AY131267	Lactobacillus rhamnosus	Lactobacillus rhamnosus	Mouth
+EU652770	Morganella morganii	Morganella morganii	Gut
+KY653118	Morganella morganii IME1369	Morganella morganii	Gut
+KY653119	Morganella morganii IME1369	Morganella morganii	Gut
+KY653122	Morganella morganii IME1369	Morganella morganii	Gut
+KM589515	Parabacteroides distasonis	Parabacteroides distasonis	Gut
+KM589516	Parabacteroides merdae	Parabacteroides merdae	Gut
+JX262215	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX262216	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX262217	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX262218	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX262219	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX262220	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX262221	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX262222	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX262223	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX262224	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX262225	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX570702	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX570703	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX570704	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX570705	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX570706	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX570707	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX570708	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX570709	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX570710	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX570711	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX570712	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX570713	Propionibacterium acnes	Propionibacterium acnes	Skin
+JX570714	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578758	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578759	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578760	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578761	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578762	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578763	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578764	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578765	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578766	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578767	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578768	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578769	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578770	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578771	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578772	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578773	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578774	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578775	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578776	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578777	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578778	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578779	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578780	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578781	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578782	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578783	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578784	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578785	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578786	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578787	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578788	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578789	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578790	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578791	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ578792	Propionibacterium acnes	Propionibacterium acnes	Skin
+KJ722067	Propionibacterium acnes	Propionibacterium acnes	Skin
+KR902978	Propionibacterium acnes	Propionibacterium acnes	Skin
+KR902979	Propionibacterium acnes	Propionibacterium acnes	Skin
+KR902980	Propionibacterium acnes	Propionibacterium acnes	Skin
+KR902981	Propionibacterium acnes	Propionibacterium acnes	Skin
+KR902982	Propionibacterium acnes	Propionibacterium acnes	Skin
+KR902983	Propionibacterium acnes	Propionibacterium acnes	Skin
+KR902984	Propionibacterium acnes	Propionibacterium acnes	Skin
+KR902985	Propionibacterium acnes	Propionibacterium acnes	Skin
+KR902986	Propionibacterium acnes	Propionibacterium acnes	Skin
+KR902987	Propionibacterium acnes	Propionibacterium acnes	Skin
+KT934381	Propionibacterium acnes A1-14	Propionibacterium acnes	Skin
+KY926792	Propionibacterium acnes ATCC 11828	Propionibacterium acnes	Skin
+KY926793	Propionibacterium acnes ATCC 11828	Propionibacterium acnes	Skin
+AB370205	Staphylococcus aureus	Staphylococcus aureus	Mouth
+AB370268	Staphylococcus aureus	Staphylococcus aureus	Mouth
+AB626962	Staphylococcus aureus strain SA27	Staphylococcus aureus	Mouth
+AB626963	Staphylococcus aureus strain SA27	Staphylococcus aureus	Mouth
+AB903967	Staphylococcus aureus	Staphylococcus aureus	Mouth
+AF424781	Staphylococcus aureus strain 8325	Staphylococcus aureus	Mouth
+AF424782	Staphylococcus aureus strain 8325	Staphylococcus aureus	Mouth
+AF424783	Staphylococcus aureus strain 8325	Staphylococcus aureus	Mouth
+AP001553	Staphylococcus aureus E-1	Staphylococcus aureus	Mouth
+AP008953	Staphylococcus aureus	Staphylococcus aureus	Mouth
+AP008954	Staphylococcus aureus	Staphylococcus aureus	Mouth
+AY954948	Staphylococcus aureus	Staphylococcus aureus	Mouth
+EU136189	Staphylococcus aureus	Staphylococcus aureus	Mouth
+EU418428	Staphylococcus aureus NCTC9789 (=PS80)	Staphylococcus aureus	Mouth
+EU861004	Staphylococcus aureus	Staphylococcus aureus	Mouth
+EU861005	Staphylococcus aureus	Staphylococcus aureus	Mouth
+FJ713816	Staphylococcus aureus CN125	Staphylococcus aureus	Mouth
+FR852584	Staphylococcus aureus	Staphylococcus aureus	Mouth
+GQ398772	Staphylococcus aureus	Staphylococcus aureus	Mouth
+GU169904	Staphylococcus aureus	Staphylococcus aureus	Mouth
+GU477322	Staphylococcus aureus	Staphylococcus aureus	Mouth
+HQ163896	Staphylococcus aureus	Staphylococcus aureus	Mouth
+JQ686190	Staphylococcus aureus	Staphylococcus aureus	Mouth
+JQ779023	Staphylococcus aureus	Staphylococcus aureus	Mouth
+JQ779024	Staphylococcus aureus	Staphylococcus aureus	Mouth
+JQ957932	Staphylococcus aureus	Staphylococcus aureus	Mouth
+JQ973847	Staphylococcus aureus 1	Staphylococcus aureus	Mouth
+JX013863	Staphylococcus aureus 100	Staphylococcus aureus	Mouth
+JX094501	Staphylococcus aureus	Staphylococcus aureus	Mouth
+JX174275	Staphylococcus aureus	Staphylococcus aureus	Mouth
+JX194239	Staphylococcus aureus	Staphylococcus aureus	Mouth
+JX274646	Staphylococcus aureus	Staphylococcus aureus	Mouth
+JX274647	Staphylococcus aureus	Staphylococcus aureus	Mouth
+JX875065	Staphylococcus aureus PS80	Staphylococcus aureus	Mouth
+JX878671	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KC342645	Staphylococcus aureus JS201101	Staphylococcus aureus	Mouth
+KC595278	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KC595279	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KC677663	Staphylococcus aureus ATCC 29213	Staphylococcus aureus	Mouth
+KF766114	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KF831354	Staphylococcus aureus HIP07256	Staphylococcus aureus	Mouth
+KJ140076	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KJ452291	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KJ452292	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KJ596420	Staphylococcus aureus Sau119	Staphylococcus aureus	Mouth
+KJ716334	Staphylococcus aureus RN4220	Staphylococcus aureus	Mouth
+KJ888149	Staphylococcus aureus BCP88	Staphylococcus aureus	Mouth
+KM216423	Staphylococcus aureus XN108	Staphylococcus aureus	Mouth
+KP209285	Staphylococcus aureus subsp. aureus str. Newman	Staphylococcus aureus	Mouth
+KP687431	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KP687432	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KP881332	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KP893289	Staphylococcus aureus NRL 09/166	Staphylococcus aureus	Mouth
+KP893290	Staphylococcus aureus NRL 08/236	Staphylococcus aureus	Mouth
+KR709302	Staphylococcus aureus JP8361	Staphylococcus aureus	Mouth
+KR709303	Staphylococcus aureus JP8362	Staphylococcus aureus	Mouth
+KR902361	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KR908644	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KT186243	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KT344895	Staphylococcus aureus Jevons B	Staphylococcus aureus	Mouth
+KT809368	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KT809369	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KT878766	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KU992911	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KX156762	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KX232515	Homo sapiens	Staphylococcus aureus	Mouth
+KX532239	Staphylococcus aureus ATCC 12600	Staphylococcus aureus	Mouth
+KY000084	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KY000085	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KY056620	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KY581279	Staphylococcus aureus ATCC 25923	Staphylococcus aureus	Mouth
+KY653123	Staphylococcus aureus IME1361	Staphylococcus aureus	Mouth
+KY653125	Staphylococcus aureus IME1346	Staphylococcus aureus	Mouth
+KY653128	Staphylococcus aureus IME1364	Staphylococcus aureus	Mouth
+KY695153	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KY779848	Staphylococcus aureus	Staphylococcus aureus	Mouth
+KY779849	Staphylococcus aureus ATCC 43300	Staphylococcus aureus	Mouth
+KY794641	Staphylococcus aureus ATCC 25923	Staphylococcus aureus	Mouth
+KY794642	Staphylococcus aureus ATCC 25923	Staphylococcus aureus	Mouth
+KY794643	Staphylococcus aureus ATCC 25923	Staphylococcus aureus	Mouth
+MF398190	Staphylococcus aureus	Staphylococcus aureus	Mouth
+MF580410	Staphylococcus aureus subsp. aureus strain WBG8287	Staphylococcus aureus	Mouth
+JN700521	Staphylococcus capitis	Staphylococcus capitis	Skin
+KY653117	Staphylococcus capitis IME1323	Staphylococcus capitis	Skin
+CP018841	Staphylococcus epidermidis 14.1.R1	Staphylococcus epidermidis	Mouth
+JN192400	Staphylococcus epidermidis	Staphylococcus epidermidis	Mouth
+JN192401	Staphylococcus epidermidis	Staphylococcus epidermidis	Mouth
+KT429160	Staphylococcus epidermidis 36-1	Staphylococcus epidermidis	Mouth
+KT429161	Staphylococcus epidermidis 36-1	Staphylococcus epidermidis	Mouth
+KU598975	Staphylococcus epidermidis LM1680	Staphylococcus epidermidis	Mouth
+KY442063	Staphylococcus epidermidis RP62A	Staphylococcus epidermidis	Mouth
+KY471386	Staphylococcus epidermidis CEMTC 2044	Staphylococcus epidermidis	Mouth
+KY653120	Staphylococcus epidermidis IME1348	Staphylococcus epidermidis	Mouth
+JN700519	Staphylococcus hominis	Staphylococcus hominis	Skin
+JN700520	Staphylococcus hominis	Staphylococcus hominis	Skin
+KY653121	Staphylococcus warneri IME1367	Staphylococcus warneri	Skin
+KY653124	Staphylococcus warneri IME1367	Staphylococcus warneri	Skin
+AY007505	Streptococcus mitis SF100	Streptococcus mitis	Mouth
+DQ386162	Streptococcus mutans P42-SM	Streptococcus mutans	Mouth
+KR153145	Streptococcus mutans DPC6143	Streptococcus mutans	Mouth
+FN391954	Streptococcus oralis	Streptococcus oralis	Mouth
+AJ609634	Streptococcus pneumoniae 101	Streptococcus pneumoniae	Nose
+DQ113772	Streptococcus pneumoniae strain DCC 1808	Streptococcus pneumoniae	Nose
+HF563658	Streptococcus pneumoniae BHN167	Streptococcus pneumoniae	Nose
+HQ268735	Streptococcus pneumoniae strain R6	Streptococcus pneumoniae	Nose
+KJ417497	Streptococcus pneumoniae P1121	Streptococcus pneumoniae	Nose
+KJ617393	Streptococcus pneumoniae	Streptococcus pneumoniae	Nose
+KM882824	Streptococcus pneumoniae	Streptococcus pneumoniae	Nose
+KT337339	Streptococcus pneumoniae 08B01757	Streptococcus pneumoniae	Nose
+KT337340	Streptococcus pneumoniae 08B08535	Streptococcus pneumoniae	Nose
+KT337341	Streptococcus pneumoniae 09B07772	Streptococcus pneumoniae	Nose
+KT337342	Streptococcus pneumoniae 10B01058	Streptococcus pneumoniae	Nose
+KT337352	Streptococcus pneumoniae 08B03577	Streptococcus pneumoniae	Nose
+KT337354	Streptococcus pneumoniae 09B05356	Streptococcus pneumoniae	Nose
+KT337355	Streptococcus pneumoniae 08B06220	Streptococcus pneumoniae	Nose
+KT337356	Streptococcus pneumoniae 08B07540	Streptococcus pneumoniae	Nose
+KT337358	Streptococcus pneumoniae 09B10874	Streptococcus pneumoniae	Nose
+KT337365	Streptococcus pneumoniae 10B04751	Streptococcus pneumoniae	Nose
+KT337370	Streptococcus pneumoniae 10B00617	Streptococcus pneumoniae	Nose
+KX550065	Streptococcus pneumoniae Rx1	Streptococcus pneumoniae	Nose
+KY065449	Streptococcus pneumoniae SA48	Streptococcus pneumoniae	Nose
+KY065450	Streptococcus pneumoniae USA23	Streptococcus pneumoniae	Nose
+KY065451	Streptococcus pneumoniae Finland6B-12	Streptococcus pneumoniae	Nose
+KY065452	Streptococcus pneumoniae 17F/1	Streptococcus pneumoniae	Nose
+KY065453	Streptococcus pneumoniae 9N/2	Streptococcus pneumoniae	Nose
+KY065454	Streptococcus pneumoniae 1_2	Streptococcus pneumoniae	Nose
+KY065455	Streptococcus pneumoniae SA42	Streptococcus pneumoniae	Nose
+KY065456	Streptococcus pneumoniae 10B/2	Streptococcus pneumoniae	Nose
+KY065457	Streptococcus pneumoniae 48/2	Streptococcus pneumoniae	Nose
+KY065458	Streptococcus pneumoniae 23F/5	Streptococcus pneumoniae	Nose
+KY065459	Streptococcus pneumoniae 9L/3	Streptococcus pneumoniae	Nose
+KY065460	Streptococcus pneumoniae Sp07-2838	Streptococcus pneumoniae	Nose
+KY065461	Streptococcus pneumoniae 11F/2	Streptococcus pneumoniae	Nose
+KY065462	Streptococcus pneumoniae 33B/2	Streptococcus pneumoniae	Nose
+KY065463	Streptococcus pneumoniae 33D/2	Streptococcus pneumoniae	Nose
+KY065464	Streptococcus pneumoniae 20/4	Streptococcus pneumoniae	Nose
+KY065465	Streptococcus pneumoniae 16A/1	Streptococcus pneumoniae	Nose
+KY065466	Streptococcus pneumoniae 16A/1	Streptococcus pneumoniae	Nose
+KY065467	Streptococcus pneumoniae 43/3	Streptococcus pneumoniae	Nose
+KY065468	Streptococcus pneumoniae 35B/2	Streptococcus pneumoniae	Nose
+KY065469	Streptococcus pneumoniae GA41317	Streptococcus pneumoniae	Nose
+KY065470	Streptococcus pneumoniae 14/9	Streptococcus pneumoniae	Nose
+KY065471	Streptococcus pneumoniae 34/5	Streptococcus pneumoniae	Nose
+KY065472	Streptococcus pneumoniae 9V/4	Streptococcus pneumoniae	Nose
+KY065473	Streptococcus pneumoniae SA39	Streptococcus pneumoniae	Nose
+KY065474	Streptococcus pneumoniae 18C/2	Streptococcus pneumoniae	Nose
+KY065475	Streptococcus pneumoniae GA13637	Streptococcus pneumoniae	Nose
+KY065476	Streptococcus pneumoniae 22F/2	Streptococcus pneumoniae	Nose
+KY065478	Streptococcus pneumoniae GA47373	Streptococcus pneumoniae	Nose
+KY065479	Streptococcus pneumoniae 19A	Streptococcus pneumoniae	Nose
+KY065480	Streptococcus pneumoniae Ala243	Streptococcus pneumoniae	Nose
+KY065481	Streptococcus pneumoniae 23F/10	Streptococcus pneumoniae	Nose
+KY065482	Streptococcus pneumoniae AP200	Streptococcus pneumoniae	Nose
+KY065483	Streptococcus pneumoniae 44/3	Streptococcus pneumoniae	Nose
+KY065484	Streptococcus pneumoniae USA11	Streptococcus pneumoniae	Nose
+KY065485	Streptococcus pneumoniae 670	Streptococcus pneumoniae	Nose
+KY065486	Streptococcus pneumoniae 670	Streptococcus pneumoniae	Nose
+KY065487	Streptococcus pneumoniae ST556	Streptococcus pneumoniae	Nose
+KY065488	Streptococcus pneumoniae 12F/3	Streptococcus pneumoniae	Nose
+KY065489	Streptococcus pneumoniae 6A	Streptococcus pneumoniae	Nose
+KY065490	Streptococcus pneumoniae 34/3	Streptococcus pneumoniae	Nose
+KY065491	Streptococcus pneumoniae GA41538	Streptococcus pneumoniae	Nose
+KY065492	Streptococcus pneumoniae 32F/2	Streptococcus pneumoniae	Nose
+KY065493	Streptococcus pneumoniae 47A/1	Streptococcus pneumoniae	Nose
+KY065494	Streptococcus pneumoniae Sp02-1198	Streptococcus pneumoniae	Nose
+KY065495	Streptococcus pneumoniae GA07228	Streptococcus pneumoniae	Nose
+KY065496	Streptococcus pneumoniae 6A/2	Streptococcus pneumoniae	Nose
+KY065497	Streptococcus pneumoniae 18C/3	Streptococcus pneumoniae	Nose
+KY065498	Streptococcus pneumoniae 48/6	Streptococcus pneumoniae	Nose
+KY065499	Streptococcus pneumoniae A45	Streptococcus pneumoniae	Nose
+KY065500	Streptococcus pneumoniae 24F/2	Streptococcus pneumoniae	Nose
+KY065501	Streptococcus pneumoniae 24B/2	Streptococcus pneumoniae	Nose
+KY065502	Streptococcus pneumoniae 6B/3	Streptococcus pneumoniae	Nose
+KY065503	Streptococcus pneumoniae BS458	Streptococcus pneumoniae	Nose
+KY065504	Streptococcus pneumoniae 70585	Streptococcus pneumoniae	Nose
+KY065505	Streptococcus pneumoniae SA53	Streptococcus pneumoniae	Nose
+KY629621	Streptococcus pneumoniae R6	Streptococcus pneumoniae	Nose
+LK392619	Streptococcus pneumoniae	Streptococcus pneumoniae	Nose
+CP002889	Streptococcus salivarius 57.I	Streptococcus salivarius	Mouth
+AJ251805	Yersinia enterocolitica serotype O:3	Yersinia enterocolitica	Gut
+AJ564013	Yersinia enterocolitica	Yersinia enterocolitica	Gut
+AJ972879	Yersinia enterocolitica	Yersinia enterocolitica	Gut
+HE956708	Yersinia enterocolitica	Yersinia enterocolitica	Gut
+HE956709	Yersinia enterocolitica	Yersinia enterocolitica	Gut
+KM253764	Yersinia enterocolitica serotype O:3	Yersinia enterocolitica	Gut
+KP202158	Yersinia enterocolitica	Yersinia enterocolitica	Gut
+KT008108	Yersinia enterocolitica	Yersinia enterocolitica	Gut
+KT184661	Yersinia enterocolitica	Yersinia enterocolitica	Gut
+KY318515	Yersinia enterocolitica serotype O:3 strain	Yersinia enterocolitica	Gut
+KY593455	Yersinia enterocolitica serotype O:9 strain	Yersinia enterocolitica	Gut
