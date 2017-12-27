@@ -67,7 +67,7 @@ for p in prottaxa:
 for g in genometaxa:
     sys.stdout.write("{}\t{}".format(g, numprots[g]))
     for w in want:
-        sys.stdout.write("\t{}".format(len(genometaxa[p][w])))
+        sys.stdout.write("\t{}".format(len(genometaxa[g][w])))
     sys.stdout.write("\n")
 
 
