@@ -58,11 +58,11 @@ with open(blastpf, 'r') as fin:
 genometaxa = {}
 for p in prottaxa:
     if genome[p] not in genometaxa:
-        genometaxa[p] = {}
+        genometaxa[genome[p]] = {}
         for w in want:
-            genometaxa[p][w] = set()
+            genometaxa[genome[p]][w] = set()
     for w in prottaxa[p]:
-        genometaxa[p][w].add(prottaxa[p][w])
+        genometaxa[genome[p]][w].add(prottaxa[p][w])
 
 for g in genometaxa:
     sys.stdout.write("{}\t{}".format(g, numprots[g]))
