@@ -75,7 +75,10 @@ for p in prottaxa:
 
 for g in genometaxa:
     sys.stdout.write("{}\t{}\t{}\t".format(g, numprots[g], hitcount[g]))
-    sys.stdout.write("\t".join(hostlocation[g]))
+    if g in hostlocation:
+        sys.stdout.write("\t".join(hostlocation[g]))
+    else:
+        sys.stdout.write("-\t-\t")
     for w in want:
         sys.stdout.write("\t{}".format(len(genometaxa[g][w])))
     sys.stdout.write("\n")
