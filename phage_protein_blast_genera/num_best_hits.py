@@ -55,17 +55,27 @@ with open(blastpf, 'r') as fin:
                 prottaxa[p[0]] = level
                 break
 
+hostlocation={}
+with open('phage_host_location.txt', 'r') as fin:
+    for l in fin:
+        p=l.strip().split("\t")
+        hostlocation[p[0]] = [p[2], p[3]]
+
+hitcount = {}
 genometaxa = {}
 for p in prottaxa:
     if genome[p] not in genometaxa:
         genometaxa[genome[p]] = {}
+        hitcount[genome[p]] = 0
         for w in want:
             genometaxa[genome[p]][w] = set()
     for w in prottaxa[p]:
         genometaxa[genome[p]][w].add(prottaxa[p][w])
+    hitcount[genome[p]] += 1
 
 for g in genometaxa:
-    sys.stdout.write("{}\t{}".format(g, numprots[g]))
+    sys.stdout.write("{}\t{}\t{}\t".format(g, numprots[g], hitcount[g]))
+    sys.stdout.write("\t".join(hostlocation[g]))
     for w in want:
         sys.stdout.write("\t{}".format(len(genometaxa[g][w])))
     sys.stdout.write("\n")
