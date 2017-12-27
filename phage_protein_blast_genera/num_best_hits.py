@@ -14,10 +14,10 @@ blastpf = 'phage_genes.nr.blastp'
 genome = {} # hash with protein IDs as key and genome as value
 numprots = {} # hash with genome ID as key and number of proteins as value
 
-
+taxondir = "/home2/db/taxonomy/current/"
 sys.stderr.write("Reading taxonomy\n")
-taxa = taxon.read_nodes()
-names, blastname = taxon.read_names()
+taxa = taxon.read_nodes(directory=taxondir)
+names, blastname = taxon.read_names(directory=taxondir)
 sys.stderr.write("Read taxonomy\n")
 
 # first read how many proteins there are per genome
