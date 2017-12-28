@@ -21,6 +21,12 @@ if __name__ == '__main__':
             p=l.strip().split("\t")
             bodysite[p[0]] = p[3]
 
+    host = {}
+    with open('phage_host_gs.txt', 'r') as fin:
+        for l in fin:
+            p=l.strip().split("\t")
+            host[p[0]] = p[2]
+
 
     genome = {} # this is a hash of proteins -> genomes
     count = {}
@@ -55,6 +61,11 @@ if __name__ == '__main__':
             genomeavs[g][j].append(len(count[i][j]))
     for g in genomeavs:
         sys.stdout.write(g)
+        if g in host:
+            sys.stdout.write("\t{}".format(host[g]))
+        else:
+            sys.stderr.write("No host for {}\n".format(g))
+            sys.stdout.write("\t-")
         if g in bodysite:
             sys.stdout.write("\t{}".format(bodysite[g]))
         else:
