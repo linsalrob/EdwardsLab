@@ -73,6 +73,8 @@ for p in prottaxa:
         genometaxa[genome[p]][w].add(prottaxa[p][w])
     hitcount[genome[p]] += 1
 
+print("#Genome ID\tNum proteins\tNum proteins with hits\tHost\tBody location\tKingdom\tPhylum\tGenus\tSpecies")
+
 for g in genometaxa:
     sys.stdout.write("{}\t{}\t{}\t".format(g, numprots[g], hitcount[g]))
     if g in hostlocation:

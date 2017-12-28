@@ -13,7 +13,7 @@ import matplotlib.pyplot as plt
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="")
     parser.add_argument('-f', help='Genome average output file (from genera_per_phage_protein.py', default='/home/redwards/Desktop/gav.out')
-    parser.add_argument('-n', help='taxonomy name one of: kingdom / phylum / genus / species', default='phylum')
+    parser.add_argument('-n', help='taxonomy name one of: kingdom / phylum / genus / species', default='genus')
     parser.add_argument('-v', help='verbose output', action="store_true")
 
     args = parser.parse_args()

@@ -54,14 +54,11 @@ if __name__ == '__main__':
         for j in range(4):
             genomeavs[g][j].append(len(count[i][j]))
     for g in genomeavs:
-        if g not in bodysite and args.b:
-            continue
         sys.stdout.write(g)
         if g in bodysite:
             sys.stdout.write("\t{}".format(bodysite[g]))
         else:
-            sys.stderr.write("No body site for {}\n".format(g))
-            sys.stdout.write("\t")
+            sys.stdout.write("\t-")
         for i in range(4):
             av = 1.0 * sum(genomeavs[g][i])/len(genomeavs[g][i])
             sys.stdout.write("\t{}".format(av))
