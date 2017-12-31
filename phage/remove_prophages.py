@@ -75,8 +75,12 @@ if __name__ == '__main__':
         for gid, genomecontig in roblib.stream_fasta(os.path.join(args.s, phispydir, "contigs")):
             contigcount = 0
             posn = 0
+            lastposn = posn
             while posn < len(genomecontig):
                 lowest, posn, ss = next_location(genomecontig, posn, phageseqs)
                 contigcount += 1
+                if args.v and posn != len(genomecontig) - 1:
+                    sys.stderr.write("Removed {} bases from contig {}\n".format(lowest-lastposn, gid))
+                lastposn = posn
                 if len(ss) > 0:
-                    out.write(">{}.{}\n{}".format(gid, contigcount, ss))
+                    out.write(">{}.{}\n{}\n".format(gid, contigcount, ss))
