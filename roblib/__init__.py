@@ -3,7 +3,7 @@ import sys
 
 __author__ = 'Rob Edwards'
 from .stats import mean, median, stdev
-from .sequences import read_fasta, readFasta, stream_fastq
+from .sequences import read_fasta, readFasta, stream_fastq, stream_fasta
 from .dna import rc, shannon
 from .geography import latlon2distance
 from .strings import ascii_clean
@@ -13,7 +13,7 @@ from .dnadist import parse_dnadist
 
 __all__ = [
     'mean', 'median', 'stdev',
-    'read_fasta', 'readFasta', 'stream_fastq',
+    'read_fasta', 'readFasta', 'stream_fastq', 'stream_fasta'
     'rc', 'shannon',
     'latlon2distance',
     'ascii_clean', 'is_hypothetical', 'Newick_Tree', 'parse_dnadist'
