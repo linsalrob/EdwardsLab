@@ -76,3 +76,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     locs = parse_prophage_tbl(args.p)
+    parse_contigs(locs, args.g, args.o)
