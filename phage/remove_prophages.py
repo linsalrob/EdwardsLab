@@ -50,7 +50,7 @@ def parse_contigs(locations, gdir, odir):
 
     p = re.compile('>?(\S+)')
 
-    out = open(os.path.join(odir, "contigs_no_pp.fasta"))
+    out = open(os.path.join(odir, "contigs_no_pp.fasta"), 'w')
     for contig, seq in stream_fasta(os.path.join(gdir, "contigs")):
         if contig not in locations:
             out.write(">{}\n{}\n".format(contig, seq))
