@@ -1,86 +1,78 @@
 """
-Read some directories of files and generate fasta files from genomes that have the
-prophage regions excisesd
+Use the prophage tbl file to acurrately and correctly remove the prophages from a set of genome sequences
 """
 
 import os
 import sys
 import argparse
-import roblib
+from operator import itemgetter
+from roblib import stream_fasta
+import re
 
 
-def next_location(s, start_posn, delimiters):
+def parse_prophage_tbl(phispydir):
     """
-    Find the next instance of the delimiter in the list of delimiters in the string s
-    :param s: a string to search through
-    :param start_posn: current position to start at. Note we start at that posn. 0==start of string
-    :param delimiters: the list of things that may be used to break that string
-    :return: a tuple of the next instance or the length of the string if none of the delimiters found and the
-             and the next place to start looking
+    Parse the prophage table and return a dict of objects
+
+    :param phispydir: The phispy directory to find the results
+    :return: dict
+    """
+    if not os.path.exists(os.path.join(phispydir, "prophage.tbl")):
+        sys.stderr.write("FATAL: The file prophage.tbl does not exist\n")
+        sys.stderr.write("Please run create_prophage_tbl.py -d {}\n".format(phispydir))
+        sys.exit(-1)
+
+    p = re.compile('^(.*)_(\d+)_(\d+)$')
+
+    locations = {}
+    with open(os.path.join(phispydir, "prophage.tbl"), 'r') as f:
+        for l in f:
+            (ppid, location) = l.strip().split("\t")
+            m = p.search(location)
+            (contig, beg, end) = m.groups()
+            if beg > end:
+                (beg, end) = (end, beg)
+            if contig not in locations:
+                locations[contig] = []
+            locations[contig].append((int(beg), int(end)))
+    return locations
+
+
+def parse_contigs(locations, gdir, odir):
+    """
+    Parse the contigs file and print non-prophage regions
+
+    :param locations: the locations hash from the phispy directory
+    :param gdir: the genome directory that contains the contigs file
+    :param odir: the output directory
+    :return: None
     """
 
-    next_match = len(s)
-    enddelim = len(s)
-    for d in delimiters:
-        try:
-            thisposn = s.index(d, start_posn)
-        except ValueError:
-            # this delimiter is not in the string
+    p = re.compile('>?(\S+)')
+
+    out = open(os.path.join(odir, "contigs_no_pp.fasta"))
+    for contig, seq in stream_fasta(os.path.join(gdir, "contigs")):
+        if contig not in locations:
+            out.write(">{}\n{}\n".format(contig, seq))
             continue
-        if thisposn < next_match:
-            next_match = thisposn
-            enddelim = thisposn + len(d)
-
-    return next_match, enddelim, s[start_posn:next_match]
+        m = p.match(contig)
+        tag = m.groups()[0]
+        c = 0
+        ses = sorted(locations[contig], key=itemgetter(0))
+        posn = 0
+        for start, end in ses:
+            c += 1
+            out.write(">{}.{}\n{}\n".format(tag, c, seq[posn:start]))
+            posn = end + 1
+    out.close()
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Generate fasta files without prophages",
-                                     epilog='Note that we expect a seed directory in -s for every phispy directory' +
-                                            ' (in -p) and that the seed directory contains a contigs file')
+    parser = argparse.ArgumentParser(description="Remove prophage sequences from a set of genomes")
     parser.add_argument('-p', help='phispy directory', required=True)
-    parser.add_argument('-s', help='seed directory', required=True)
+    parser.add_argument('-g', help='genome directory (we look for the file "contigs")', required=True)
     parser.add_argument('-o', help='output directory', required=True)
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
 
-    if not os.path.exists(args.o):
-        os.mkdir(args.o)
-
-    # read the directories
-    for phispydir in os.listdir(args.p):
-        if not os.path.exists(os.path.join(args.s, phispydir)):
-            if args.v:
-                sys.stderr.write(
-                    'A seed directory matching the phispy directory {} was not found. Skipped\n'.format(phispydir))
-            continue
-
-        # read the phages
-        phageseqs = []
-        for phagefile in [x for x in os.listdir(os.path.join(args.p, phispydir)) if x.endswith('.fasta')]:
-            for pid, phagecontig in roblib.stream_fasta(os.path.join(args.p, phispydir, phagefile)):
-                phageseqs.append(phagecontig)
-
-        # sort the phages longest to smallest
-        phageseqs = sorted(phageseqs, key=len, reverse=True)
-
-        # now read the sequences and split out on phageseqs
-        if not os.path.exists(os.path.join(args.s, phispydir, "contigs")):
-            sys.stderr.write(
-                "Error: no contigs file was found at {}. Skipped\n".format(os.path.join(args.s, phispydir, "contigs")))
-
-        os.mkdir(os.path.join(args.o, phispydir))
-        out = open(os.path.join(args.o, phispydir, "contigs"), 'w')
-
-        for gid, genomecontig in roblib.stream_fasta(os.path.join(args.s, phispydir, "contigs")):
-            contigcount = 0
-            posn = 0
-            lastposn = posn
-            while posn < len(genomecontig):
-                lowest, posn, ss = next_location(genomecontig, posn, phageseqs)
-                contigcount += 1
-                if args.v and posn != len(genomecontig) - 1:
-                    sys.stderr.write("Removed {} bases from contig {}\n".format(lowest-lastposn, gid))
-                lastposn = posn
-                if len(ss) > 0:
-                    out.write(">{}.{}\n{}\n".format(gid, contigcount, ss))
+    locs = parse_prophage_tbl(args.p)
