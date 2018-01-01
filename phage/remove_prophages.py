@@ -30,11 +30,13 @@ def parse_prophage_tbl(phispydir):
             (ppid, location) = l.strip().split("\t")
             m = p.search(location)
             (contig, beg, end) = m.groups()
+            beg = int(beg)
+            end = int(end)
             if beg > end:
                 (beg, end) = (end, beg)
             if contig not in locations:
                 locations[contig] = []
-            locations[contig].append((int(beg), int(end)))
+            locations[contig].append((beg, end))
     return locations
 
 
