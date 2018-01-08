@@ -23,7 +23,7 @@ if __name__ == '__main__':
     sys.stderr.write("Read taxonomy\n")
     want = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
 
-    with open(args.f, 'r') as f:
+    with open(args.f, 'r', encoding='utf-8') as f:
         for l in f:
             p = l.strip().split("\t")
             while (len(p) <= 68):
