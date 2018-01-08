@@ -91,3 +91,6 @@ cmake_install.cmake
 cmake-build-debug/*
 CMakeCache.txt
 install_manifest.txt
+
+# compiled file
+bin/fastq2fasta
