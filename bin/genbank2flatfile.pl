@@ -46,7 +46,7 @@ foreach my $file (@files)
 		my $seqname=$seq->display_name;
 		$verbose && print STDERR "Parsing $seqname\n";
 		$print_fasta && $sout->write_seq($seq);
-		my @seqdata = ( $seq->display_name.".".$seq->seq_version(), $seq->length(), $seq->desc(), $seq->primary_id());
+		my @seqdata = ( $seq->display_name.".".$seq->seq_version(), $seq->length(), $seq->desc());
 		foreach my $feature ($seq->top_SeqFeatures()) {
 			
 			$c++;
