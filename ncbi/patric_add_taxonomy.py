@@ -47,4 +47,5 @@ if __name__ == '__main__':
                 else:
                     p.append("")
 
-            print("\t".join(p))
+            sys.stdout.write("\t".join(p), encoding='utf-8')
+            sys.stdout.write("\n")
