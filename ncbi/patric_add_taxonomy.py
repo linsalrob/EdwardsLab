@@ -50,4 +50,4 @@ if __name__ == '__main__':
                 else:
                     p.append("")
 
-               print(("\t".join(p)).encode('utf-8'))
+            print(("\t".join(p)).encode('utf-8'))
