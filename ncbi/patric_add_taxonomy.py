@@ -41,10 +41,13 @@ if __name__ == '__main__':
                     level[taxa[tid].rank] = names[tid].name
                 tid = taxa[tid].parent
 
+            sys.stderr.write("{}\t{}".format(p[3], level['genus']))
+
+
             for w in want:
                 if w in level:
                     p.append(level[w])
                 else:
                     p.append("")
 
-            print("\t".join(p).encode('utf-8'))
+               print(("\t".join(p)).encode('utf-8'))
