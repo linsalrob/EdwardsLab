@@ -41,7 +41,7 @@ if __name__ == '__main__':
                     level[taxa[tid].rank] = names[tid].name
                 tid = taxa[tid].parent
 
-            sys.stderr.write("{}\t{}".format(p[3], level['genus']))
+            sys.stderr.write("{}\t{}".format(p[3], tid))
 
 
             for w in want:
