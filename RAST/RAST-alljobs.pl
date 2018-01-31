@@ -9,7 +9,6 @@ use Term::ReadKey;
 use RASTserver;
 
 ## Use RAST test, not regular RAST
-#my $rast=new RASTserver("redwards", "couchman", {"-test"=>1});
 # Now using regular RAST
 
 
