@@ -1,9 +1,35 @@
 """
-Export authors from a bib file.
+You can use this form to update your NSF conflicts form. You'll need to do some editing, but
+this will help.
 
-You can use this to create a new conflicts list for the NSF!
+First, go to Google Scholar, and visit your profile.
 
-Start at Google Scholar, and download all your citations as a bibtex file.
+Select all your references by clicking the square box next to Title
+
+Choose Export --> BibTex and then "All my articles"
+
+That will possibly open in a new window, if so right click and choose "Save As ... " to download the file and call
+it `citations.txt`
+
+If you have a previous conflicts file, take just your conflicts and make a separate file that has five columns as
+in the NSF format:
+[type of conflict, conflict, university, department/email, date].
+
+Don't worry if you dont have date, you can leave that blank. Save the file as "Tab separated text" and call that
+`current_conflicts.txt`
+
+Run this code with python3:
+
+`python3 NSF_conflicts.py -f citations.txt -c current_conflicts.csv > revised_conflicts.tsv`
+
+The first time you run it, it will likely complain of duplicate conflicts. That is an
+issue with Google Scholar, but it breaks everything. Just edit the `citations.txt` file and remove the first
+instance of each of the conflicts.
+
+This will give you a new file called revised_conflicts.tsv that has all your conflicts. You need to go and
+edit that file because you will have duplicates because some of your citations have first names and some just
+have initials.
+
 
 """
 
@@ -33,7 +59,7 @@ if __name__ == "__main__":
                 l = l.replace('@article', '')
                 l = l.replace('@inproceedings', '')
                 if l in entries:
-                    sys.stderr.write("Duplicate entry " + l)
+                    sys.stderr.write("Duplicate entry " + l.replace('{', '').replace(',', ''))
                     dupentries=True
                 entries.add(l)
 
@@ -60,14 +86,19 @@ if __name__ == "__main__":
             for l in cin:
                 l = l.strip()
                 p = l.split("\t")
-                if len(p) > 3:
-                    if p[1] in authoryear and authoryear[p[1]] and authoryear[p[1]] > int(p[3]):
-                        p[3] = authoryear[p[1]]
-                    elif p[3] and int(p[3]) > authoryear.get(p[1], 0):
-                        authoryear[p[1]] = int(p[3])
+                if len(p) > 4:
+                    if '/' in p[4]:
+                        pyr = int(p[4].split('/')[2])
+                    else:
+                        pyr = int(p[4])
+
+                    if p[1] in authoryear and authoryear[p[1]] and authoryear[p[1]] > pyr:
+                        p[4] = "1/1/{}".format(authoryear[p[1]])
+                    elif pyr and pyr > authoryear.get(p[1], 0):
+                        authoryear[p[1]] = pyr
                 elif p[1] in authoryear:
                     p.append("1/1/{}".format(authoryear[p[1]]))
-                known[p[1]] = "\t".join(p)
+                known[p[1]] = "\t".join(map(str, p))
                 authors.add(p[1])
 
     for a in sorted(authors):
@@ -75,7 +106,7 @@ if __name__ == "__main__":
         if a in known:
             toprint = known[a]
         else:
-            toprint = "C:\t{}\tUnknown\t1/1/{}".format(a, authoryear[a])
+            toprint = "C:\t{}\tUnknown\t\t1/1/{}".format(a, authoryear[a])
 
         toprint = toprint.replace(r"{\'e}", u"\u00E9")
         toprint = toprint.replace(r"{\~a}", u"\u00E3")
