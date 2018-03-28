@@ -121,9 +121,9 @@ if __name__ == '__main__':
                 continue
             p=l.strip().split("\t")
             y = 0.125
-            (start, end) = (int(p[2]), int(p[3]))
-            if p[1] == '-':
-                (start, end) = (int(p[3]), int(p[2]))
+            (start, end) = (int(p[1]), int(p[2]))
+            if p[3] == '-':
+                (start, end) = (int(p[2]), int(p[1]))
                 y = 0.075
             start = (1.0 * start / genomelength) * (x1-x0)
             end   = (1.0 * end   / genomelength) * (x1-x0)
