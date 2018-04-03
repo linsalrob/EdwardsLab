@@ -13,7 +13,7 @@ from .dnadist import parse_dnadist
 
 __all__ = [
     'mean', 'median', 'stdev',
-    'read_fasta', 'readFasta', 'stream_fastq', 'stream_fasta'
+    'read_fasta', 'readFasta', 'stream_fastq', 'stream_fasta',
     'rc', 'shannon',
     'latlon2distance',
     'ascii_clean', 'is_hypothetical', 'Newick_Tree', 'parse_dnadist'
