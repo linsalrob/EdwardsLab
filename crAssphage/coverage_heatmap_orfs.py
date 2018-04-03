@@ -70,7 +70,7 @@ if __name__ == '__main__':
     npd = np.array(data)
 
     fig, ax = plt.subplots()
-    ax.xaxis.set_ticks_position('none')
+    ax.xaxis.set_ticks_position('bottom')
     ax.yaxis.set_ticks_position('none')
 
     ax.set_xlim(0, len(data[0]))
