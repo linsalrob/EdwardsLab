@@ -80,8 +80,9 @@ if __name__ == '__main__':
     ax.set_ylabel("Metagenome number")
 
     xlocs = ax.get_xticklabels()
+    sys.stderr.write("There should be {} x-ticks\n".format(len(xlocs)))
     n = int(genomelength/len(xlocs))
-    xlocs = [str(int((n * i)/1000)) for i in range(len(xlocs))]
+    xlocs = [str(int((n * i)/1000)) for i in range(len(xlocs)+1)]
     ax.set_xticklabels(xlocs)
 
     heatmap = ax.pcolormesh(npd, cmap=plt.cm.Blues)
