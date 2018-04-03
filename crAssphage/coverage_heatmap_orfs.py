@@ -104,7 +104,7 @@ if __name__ == '__main__':
 
     # now we make a new axis for the orfs that starts at 00 and goes to 11
     # and has a transparent background
-    ax2 = plt.axes([0,0,1,1], axisbg=(1,1,1,0))
+    ax2 = plt.axes([0,0,1,1], facecolor=(1,1,1,0))
 
     patches = []
     patch = mpatches.Rectangle([x0,0.075], x1-x0, 0.1)
@@ -146,7 +146,7 @@ if __name__ == '__main__':
     for t in texts:
         ax2.text(t[0], t[1], t[2], ha='center', va='center', size='x-small')
 
-    plt.tight_layout()
+    # plt.tight_layout()
     if args.o:
         plt.savefig(args.o)
     else:
