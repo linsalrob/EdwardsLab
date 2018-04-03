@@ -81,11 +81,11 @@ if __name__ == '__main__':
 
     xlocs = ax.get_xticklabels()
     sys.stderr.write("There should be {} x-ticks\n".format(len(xlocs)))
-    n = int((1.0 * genomelength/args.w)/len(xlocs))
+    n = int((1.0 * genomelength/args.w)/(len(xlocs)-1))
     sys.stderr.write("n is: {}\n".format(n))
     sys.stderr.write("g/w is {}\n".format((1.0 * genomelength/args.w)))
     sys.stderr.write("xlocs is {}\n".format(len(xlocs)))
-    xlocs = [str(int((n * i)/1000)) for i in range(len(xlocs))]
+    xlocs = [str(int((n * i))) for i in range(len(xlocs))]
     ax.set_xticklabels(xlocs)
 
     heatmap = ax.pcolormesh(npd, cmap=plt.cm.Blues)
