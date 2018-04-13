@@ -18,6 +18,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', help='include a column with the sum of hits after the name', action='store_true')
     parser.add_argument('-x', help='transpose the output and ommit position information. Use this if you want to combine multiple outputs', action='store_true')
     parser.add_argument('-t', help='print a title that includes the name of the file (e.g. if you want to merge multiple outputs)', action='store_true')
+    parser.add_argument('-z', help='print entries with no hits. Default is to skip those', action='store_true')
     args = parser.parse_args()
 
     coverage = []
@@ -42,9 +43,11 @@ if __name__ == '__main__':
         end = args.e
 
     sum = 0
-    if args.m:
-        for i in range(start, end):
-            sum += coverage[i]
+    for i in range(start, end):
+        sum += coverage[i]
+
+    if not args.z and 0 == sum:
+        sys.exit(0)
 
     if args.x:
         if args.t:
