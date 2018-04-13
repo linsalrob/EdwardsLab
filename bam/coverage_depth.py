@@ -15,6 +15,7 @@ if __name__ == '__main__':
     parser.add_argument('-s', help='start position (default = 0)', default=0, type=int)
     parser.add_argument('-e', help='end position (default = all)', type=int)
     parser.add_argument('-r', help="refefence name for the pileup (optional)", default=None)
+    parser.add_argument('-m', help='include a column with the sum of hits after the name', action='store_true')
     parser.add_argument('-x', help='transpose the output and ommit position information. Use this if you want to combine multiple outputs', action='store_true')
     parser.add_argument('-t', help='print a title that includes the name of the file (e.g. if you want to merge multiple outputs)', action='store_true')
     args = parser.parse_args()
@@ -40,9 +41,20 @@ if __name__ == '__main__':
     if args.e:
         end = args.e
 
+    sum = 0
+    if args.m:
+        for i in range(start, end):
+            sum += coverage[i]
+
     if args.x:
         if args.t:
             sys.stdout.write(args.f)
+            if args.m:
+                sys.stdout.write("\t{}".format(sum))
+        else:
+            # do this twice to get the tab correct
+            if args.m:
+                sys.stdout.write("{}".format(sum))
 
         for i in range(start, end):
             sys.stdout.write("\t{}".format(coverage[i]))
@@ -50,6 +62,8 @@ if __name__ == '__main__':
     else:
         if args.t:
             print("Position\t{}".format(args.f))
+        if args.m:
+            print("Sum\t{}".format(sum))
         for i in range(start, end):
             print("{}\t{}".format(i, coverage[i]))
 
