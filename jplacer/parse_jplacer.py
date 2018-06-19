@@ -136,13 +136,15 @@ def find_a_node(tree, nodeid):
 
     print(tree.write(format=1))
 
-def insert_new_nodes(tree, placements):
+def insert_new_nodes(tree, placements, verbose=False):
     """
     Insert the new nodes in the tree at the correct place
     :param tree: The phylogenetic tree
     :param placements: the list of edges to place in the right place
     :return:
     """
+
+    added = set()
 
     for t in tree.traverse("postorder"):
         m = re.search('{(\d+)}', t.name)
@@ -151,8 +153,14 @@ def insert_new_nodes(tree, placements):
         thisid = int(m.groups()[0])
 
         if thisid in placements:
+            added.add(thisid)
             for n in placements[thisid]:
                 t.add_child(name=n, dist=placements[thisid][n])
+
+    if verbose:
+        for p in placements:
+            if p not in added:
+                sys.stderr.write("We did not find a node to add {}\n".format(p))
 
     return tree
 
@@ -188,6 +196,6 @@ if __name__ == '__main__':
 
     # find_a_node(tree, "2161")
     placements = get_placements(data, args.d)
-    tree = insert_new_nodes(tree, placements)
+    tree = insert_new_nodes(tree, placements, args.v)
 
     write_tree(tree, args.o)
