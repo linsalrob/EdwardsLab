@@ -11,6 +11,7 @@ import json
 import re
 
 from ete3 import Tree
+from ete3.parser.newick import NewickError
 
 
 def load_jplacer(jpf):
@@ -105,7 +106,13 @@ def parse_jplacer_tree(data):
     :return:
     """
 
-    tree = Tree(data['tree'], quoted_node_names=True, format=1)
+
+    try:
+        tree = Tree(data['tree'], quoted_node_names=True, format=1)
+    except NewickError as n:
+        tt = re.sub(r'(\:[\d\.]+){\d+}', r'\1', data['tree'])
+        tt = re.sub(r'{\d+};$', ';', tt)
+        tree = Tree(tt, quoted_node_names=True, format=1)
 
     return tree
 
@@ -169,7 +176,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if args.d not in ['distal_length', 'pendant_length']:
-        sys.stderr.write("sorry, at the moment the -d option must be either distal_length or pendant_length\n")
+        sys.stderr.write("sorry, at the moment the -d option must be either distal_length or pendant_length)\n")
         sys.exit()
 
 
