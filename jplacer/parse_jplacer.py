@@ -164,6 +164,21 @@ def insert_new_nodes(tree, placements, verbose=False):
 
     return tree
 
+def rename_leaves_taxids(tree):
+    """
+    Rename the leaf nodes with just the NCBI taxonomy ID if we have it
+    :param tree: the tree to rename
+    :return: the tree with renamed leaves
+    """
+
+    for n in tree.get_leaves():
+        m = re.search(r'\[(\d+)\]', n.name)
+        if m:
+            n.name = m.groups()[0]
+    return tree
+
+
+def reroot_tree(tree, rootat)
 
 def write_tree(tree, outputf):
     """
@@ -173,7 +188,7 @@ def write_tree(tree, outputf):
     :return:
     """
 
-    tree.write(format=1, outfile=outputf)
+    tree.write(outfile=outputf)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Parse a jplacer file')
@@ -197,5 +212,6 @@ if __name__ == '__main__':
     # find_a_node(tree, "2161")
     placements = get_placements(data, args.d)
     tree = insert_new_nodes(tree, placements, args.v)
+    tree = rename_leaves_taxids(tree)
 
     write_tree(tree, args.o)
