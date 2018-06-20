@@ -4,7 +4,8 @@ import sys
 # the location of the taxonomy files
 #defaultdir = '/home2/db/taxonomy/current/'
 # defaultdir = '/data/ncbi/taxonomy/'
-defaultdir = '/localdata/ncbi/taxonomy/20170814'
+#defaultdir = '/localdata/ncbi/taxonomy/20170814'
+defaultdir = '/raid60/usr/data/NCBI/taxonomy/current/'
 
 '''
 From nodes.dmp

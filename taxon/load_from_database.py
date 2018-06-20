@@ -69,13 +69,21 @@ def get_taxonomy(taxid, conn):
 
     global data
     cur = conn.cursor()
-
     if taxid in data['node']:
-        return data['node'][taxid]
+        return data['node'][taxid], data['name'][taxid]
     else:
-        sys.stderr.write("Trying to find {}\n".format(taxid))
         cur.execute("select * from nodes where tax_id = ?", [taxid])
         p = cur.fetchone()
+        if not p:
+            # check the merged database
+            cur.execute("select new_tax_id from merged where old_tax_id = ?", [taxid])
+            newid = cur.fetchone()
+            if newid[0]:
+                cur.execute("select * from nodes where tax_id = ?", [newid[0]])
+                p = cur.fetchone()
+            else:
+                sys.stderr.write("ERROR: {} is not in the database and not merged\n".format(taxid))
+                return None, None
         t = TaxonNode(*p)
         data['node'][taxid] = t
 
@@ -85,9 +93,8 @@ def get_taxonomy(taxid, conn):
         for p in cur.fetchall():
             if p[2]:
                 n.unique = p[2]
-            else:
-                n.set_name(p[3], p[1])
-        
+            n.set_name(p[3], p[1])
+        data['name'][taxid] = n
         return t, n
 
 

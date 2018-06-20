@@ -41,7 +41,7 @@ class TaxonName:
         self.genbank_acronym = None
         self.genbank_anamorph = None
         self.genbank_common_name = None
-        self.genbank_synonym = {}
+        self.genbank_synonym = []
         self.in_part = []
         self.includes = []
         self.misnomer = []

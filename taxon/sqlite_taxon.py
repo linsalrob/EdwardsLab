@@ -268,7 +268,7 @@ def create_load(conn, datadir, verbose=False):
 
     # the GENETIC CODE table
     if verbose:
-        sys.stderr.write("loading Cgencode table\n")
+        sys.stderr.write("loading gencode table\n")
     conn.execute("CREATE TABLE gencode (genetic_code INTEGER, abbreviation , name TEXT, cde TEXT, starts TEXT)")
     conn.commit()
     with open(os.path.join(datadir, "gencode.dmp"), "r") as f:
@@ -277,6 +277,23 @@ def create_load(conn, datadir, verbose=False):
             p = [x.strip() for x in p]
             try:
                 conn.execute("INSERT INTO gencode VALUES (?, ?, ?, ?, ?)", p)
+            except sqlite3.OperationalError as e:
+                sys.stderr.write("{}".format(e))
+                sys.stderr.write("\nWhile insert on: {}\n".format(p))
+                sys.exit()
+    conn.commit()
+
+    # the MERGED database
+    if verbose:
+        sys.stderr.write("loading merged table\n")
+    conn.execute("CREATE TABLE merged (old_tax_id INTEGER, new_tax_id INTEGER)")
+    conn.commit()
+    with open(os.path.join(datadir, "merged.dmp"), "r") as f:
+        for l in f:
+            p = l.strip().rstrip("|").split('\t|')
+            p = [x.strip() for x in p]
+            try:
+                conn.execute("INSERT INTO merged VALUES (?, ?)", p)
             except sqlite3.OperationalError as e:
                 sys.stderr.write("{}".format(e))
                 sys.stderr.write("\nWhile insert on: {}\n".format(p))
@@ -303,12 +320,12 @@ def create_indices(conn, verbose=False):
             "tiduniname" : ["tax_id", "unique_name"],
             "tidnameuniname" : ["tax_id", "name", "unique_name"]
         },
-        "division": {"divname" : ["division_id", "division_name"]}
+        "division": {"divname" : ["division_id", "division_name"]},
+        "merged" : {"oldnewidx" : ["old_tax_id", "new_tax_id"]}
     }
 
     for t in tables:
         for idx in tables[t]:
-            sys.stderr.write("CREATE INDEX {ix} ON {tn} ({cn})\n".format(ix=idx, tn=t, cn=", ".join(tables[t][idx])))
             conn.execute("CREATE INDEX {ix} ON {tn} ({cn})".format(ix=idx, tn=t, cn=", ".join(tables[t][idx])))
     conn.commit()
 
