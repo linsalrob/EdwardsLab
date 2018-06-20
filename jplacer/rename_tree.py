@@ -89,7 +89,7 @@ def rename_nodes(tree, verbose=False):
         # which is the LOWEST level with a single taxonomy
         for w in wanted_levels:
             if len(taxs[w]) == 1:
-                newname = "{} (rank: {})".format(taxs[w].pop(), w)
+                newname = "{} r_{})".format(taxs[w].pop(), w)
                 if verbose:
                     True
                 sys.stderr.write("Changing name from: {} to {}\n".format(n.name, newname))
@@ -97,8 +97,46 @@ def rename_nodes(tree, verbose=False):
                 break
     return tree
 
-        
+def reroot_tree(tree):
+    """
+    Reroot the tree between bacteria and archaea.
+
+    This will only work after renaming the leaves on the tree.
+
+    :param tree: the tree
+    """
     
+    sys.stderr.write("rerooting\n")
+    for n in tree.traverse("preorder"):
+        childs = n.get_children()
+        cname = ""
+        for c in childs:
+            cname += "| {} |".format(c.name)
+        sys.stderr.write("{}\t{}\t{}\n".format(len(childs), n.name, cname))
+        if len(childs) == 2:
+            if ("Archaea r_superkingdom" in childs[0].name and "Eukaryota r_superkingdom" in childs[1].name) or ("Archaea r_superkingdom" in childs[1].name and "Eukaryota r_superkingdom" in childs[0].name):
+                   tree.set_outgroup(n)
+                   sys.stderr.write("Rerooted on {}\n".format(n.name))
+                   break
+            if "Bacteria r_superkingdom" in childs[0].name and "Archaea r_superkingdom" in childs[1].name:
+                   tree.set_outgroup(childs[0])
+                   sys.stderr.write("Rerooted on {}\n".format(childs[0].name))
+                   break
+            if "Bacteria r_superkingdom" in childs[1].name and "Archaea r_superkingdom" in childs[0].name:
+                   tree.set_outgroup(childs[1])
+                   sys.stderr.write("Rerooted on {}\n".format(childs[1].name))
+                   break
+    return tree
+    
+def write_tree(tree, outputf):
+    """
+    Write the tree to a file.
+    :param tree: The tree to write
+    :param outputf: The output filename
+    :return:
+    """
+    
+    tree.write(outfile=outputf, format=1)
 
 
 
@@ -117,6 +155,6 @@ if __name__ == '__main__':
     tree = parse_jplacer_tree(data, args.v)
 
     tree = rename_nodes(tree, args.v)
-
-
+    tree = reroot_tree(tree)
+    write_tree(tree, args.o)
 
