@@ -24,11 +24,19 @@ if __name__ == '__main__':
     sys.stderr.write("Read taxonomy\n")
     want = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
 
+    # read the file once to figure out the longest line
+    maxp=0
+    with open(args.f, 'r', encoding='utf-8') as f:
+        for l in f:
+            p = l.strip().split("\t")
+            if len(p) > maxp:
+                maxp = len(p)
+
     with open(args.o, 'w', encoding='utf-8') as out: 
         with open(args.f, 'r', encoding='utf-8') as f:
             for l in f:
                 p = l.strip().split("\t")
-                while (len(p) <= 68):
+                while (len(p) < maxp):
                     p.append("")
 
                 if l.startswith("genome_id"):
