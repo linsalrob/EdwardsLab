@@ -7,10 +7,10 @@ import sys
 import sqlite3
 import argparse
 
-from taxonomy import TaxonNode, TaxonName, TaxonDivision
+from .taxonomy import TaxonNode, TaxonName, TaxonDivision
 
 data = {"node": {}, "name": {}, "division": {}}
-
+default_database = "/raid60/usr/data/NCBI/taxonomy/current/taxonomy.sqlite3"
 
 def connect_to_db(dbname, verbose=False):
     """
@@ -47,6 +47,17 @@ def disconnect(conn, verbose=False):
         sys.stderr.write("There was no database connection!\n")
 
 
+
+def get_default_db():
+    """
+    Connect to the default SQLite3 taxonomy database
+    """
+    
+    if os.path.exists(default_database):
+        return connect_to_db(default_database)
+    else:
+        sys.stderr.write("The default database ({}) does not exist. Please create a connection\n".format(default_database))
+        sys.exit(-1)
 
 def get_taxonomy(taxid, conn):
     """
