@@ -158,7 +158,7 @@ def load_tables(conn, datadir, verbose=False):
     """
 
     tables = {
-        "nodes": ["tax_id", "parent", "rank", "embl_code", "division_id", "inherited_div", "genetic_code",
+        "nodesXX": ["tax_id", "parent", "rank", "embl_code", "division_id", "inherited_div", "genetic_code",
                       "inherited_genetic_code", "mitochondrial_genetic_code", "inherited_mito_gc", "genbank_hidden",
                       "hidden_subtree", "comments"],
         "names": ["tax_id", "name", "unique_name", "name_class"],
@@ -174,16 +174,22 @@ def load_tables(conn, datadir, verbose=False):
         vcount = 0
         with open(os.path.join(datadir, "{}.dmp".format(t)), 'r') as f:
             for l in f:
-                p = l.strip().rstrip("|").split('\t|')
-                p = [x.strip().replace('"', '') for x in p]
+                pori = l.strip().rstrip("|").split('\t|')
+                p=[]
+                for i,j in enumerate(pori):
+                    x=j.replace('"', '')
+                    x=x.strip()
+                    p.append(x)
+                sys.stderr.write("{}\n".format(p))
                 # marvel in this json.dumps!
+                maxvcount  = 100
                 if verbose:
                     vcount += 1
-                    if vcount < 20:
+                    if vcount < maxvcount:
                         sys.stderr.write("INSERT INTO {tn} ({cn}) VALUES ({val})\n".format(
                         tn=t, cn=", ".join(tables[t]), val=json.dumps(p).replace('[', '', 1).replace(']', '', 1)))
-                    if vcount == 20:
-                        sys.stderr.write("Only first 20 inputs printed\n\n")
+                    if vcount == maxvcount:
+                        sys.stderr.write("Only first {mv} inputs printed\n\n".format(mv=maxvcount))
                 try:
                     conn.execute("INSERT INTO {tn} ({cn}) VALUES ({val})".format(
                         tn=t, cn=", ".join(tables[t]), val=json.dumps(p).replace('[', '', 1).replace(']', '', 1)
@@ -198,6 +204,87 @@ def load_tables(conn, datadir, verbose=False):
         conn.commit()
     return conn
 
+
+def create_load(conn, datadir, verbose=False):
+    """
+    Create the databases and load the data. This is not generic like the
+    other methods, but it allows for quotes etc in the names. grr.
+    :param conn: the database connection
+    :param datadir: the databae directory
+    """
+
+
+    ## The NODES table
+    if verbose:
+        sys.stderr.write("loading nodes table\n")
+    conn.execute("CREATE TABLE nodes (tax_id INTEGER PRIMARY KEY, parent INTEGER, rank TEXT, embl_code TEXT, division_id INTEGER, inherited_div INTEGER, genetic_code INTEGER, inherited_genetic_code INTEGER, mitochondrial_genetic_code INTEGER, inherited_mito_gc INTEGER, genbank_hidden INTEGER, hidden_subtree INTEGER, comments)")
+    conn.commit()
+    with open(os.path.join(datadir, "nodes.dmp"), "r") as f:
+        for l in f:
+            p = l.strip().rstrip("|").split('\t|')
+            p = [x.strip() for x in p]
+            try:
+                conn.execute("INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", p)
+            except sqlite3.OperationalError as e:
+                sys.stderr.write("{}".format(e))
+                sys.stderr.write("\nWhile insert on: {}\n".format(p))
+                sys.exit()
+    conn.commit()
+
+
+    # the NAMES table
+    if verbose:
+        sys.stderr.write("loading names table\n")
+    conn.execute("CREATE TABLE names (tax_id INTEGER, name TEXT, unique_name TEXT, name_class TEXT)")
+    conn.commit()
+    with open(os.path.join(datadir, "names.dmp"), "r") as f:
+        for l in f:
+            p = l.strip().rstrip("|").split('\t|')
+            p = [x.strip() for x in p]
+            try:
+                conn.execute("INSERT INTO names VALUES (?, ?, ?, ?)", p)
+            except sqlite3.OperationalError as e:
+                sys.stderr.write("{}".format(e))
+                sys.stderr.write("\nWhile insert on: {}\n".format(p))
+                sys.exit()
+    conn.commit()
+
+    # the DIVISION table
+    if verbose:
+        sys.stderr.write("loading division table\n")
+    conn.execute("CREATE TABLE division (division_id INTEGER PRIMARY KEY, division_code TEXT, division_name TEXT, comments)")
+    conn.commit()
+    with open(os.path.join(datadir, "division.dmp"), "r") as f:
+        for l in f:
+            p = l.strip().rstrip("|").split('\t|')
+            p = [x.strip() for x in p]
+            try:
+                conn.execute("INSERT INTO division VALUES (?, ?, ?, ?)", p)
+            except sqlite3.OperationalError as e:
+                sys.stderr.write("{}".format(e))
+                sys.stderr.write("\nWhile insert on: {}\n".format(p))
+                sys.exit()
+    conn.commit()
+
+    # the GENETIC CODE table
+    if verbose:
+        sys.stderr.write("loading Cgencode table\n")
+    conn.execute("CREATE TABLE gencode (genetic_code INTEGER, abbreviation , name TEXT, cde TEXT, starts TEXT)")
+    conn.commit()
+    with open(os.path.join(datadir, "gencode.dmp"), "r") as f:
+        for l in f:
+            p = l.strip().rstrip("|").split('\t|')
+            p = [x.strip() for x in p]
+            try:
+                conn.execute("INSERT INTO gencode VALUES (?, ?, ?, ?, ?)", p)
+            except sqlite3.OperationalError as e:
+                sys.stderr.write("{}".format(e))
+                sys.stderr.write("\nWhile insert on: {}\n".format(p))
+                sys.exit()
+    conn.commit()
+
+    return conn
+
 def create_indices(conn, verbose=False):
     """
     Create some useful indices. Note that the PRIMARY KEY columns are indexed by default!
@@ -205,19 +292,23 @@ def create_indices(conn, verbose=False):
     :param verbose: print addtional output
     :return:
     """
+    
+    if verbose:
+        sys.stderr.write("Creating indices\n")
 
     tables = {
-        "nodes.dmp": {"tidparentrank" : ["tax_id", "parent", "rank"]},
-        "names.dmp": {
+        "nodes": {"tidparentrank" : ["tax_id", "parent", "rank"]},
+        "names": {
             "tidname" : ["tax_id", "name"],
             "tiduniname" : ["tax_id", "unique_name"],
             "tidnameuniname" : ["tax_id", "name", "unique_name"]
         },
-        "division.dmp": {"divname" : ["division_id", "division_name"]}
+        "division": {"divname" : ["division_id", "division_name"]}
     }
 
     for t in tables:
         for idx in tables[t]:
+            sys.stderr.write("CREATE INDEX {ix} ON {tn} ({cn})\n".format(ix=idx, tn=t, cn=", ".join(tables[t][idx])))
             conn.execute("CREATE INDEX {ix} ON {tn} ({cn})".format(ix=idx, tn=t, cn=", ".join(tables[t][idx])))
     conn.commit()
 
@@ -229,14 +320,19 @@ if __name__ == '__main__':
     parser.add_argument('-d', help='directory with tax data', required=True)
     parser.add_argument('-s', help='sqlite file to write',required=True)
     parser.add_argument('-v', help='verbose output', action="store_true")
+    parser.add_argument('-o', help='overwrite any existing databases (otherwise error out)', action="store_true")
     args = parser.parse_args()
 
     if os.path.exists(args.s):
-        sys.stderr.write("{} already exists so we won't overwrite it\n".format(args.s))
-        sys.exit(-1)
+        if args.o:
+            os.remove(args.s)
+        else:
+            sys.stderr.write("{} already exists so we won't overwrite it. Use -o to force overwrite\n".format(args.s))
+            sys.exit(-1)
 
     conn = connect_to_db(args.s, args.v)
-    conn = define_tables(conn, args.v)
-    conn = load_tables(conn, args.d, args.v)
+    # conn = define_tables(conn, args.v)
+    # conn = load_tables(conn, args.d, args.v)
+    conn = create_load(conn, args.d, args.v)
     conn = create_indices(conn, args.v)
     disconnect(conn, args.v)
