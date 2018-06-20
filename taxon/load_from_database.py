@@ -48,7 +48,7 @@ def disconnect(conn, verbose=False):
 
 
 
-def get_default_db():
+def get_taxonomy_db():
     """
     Connect to the default SQLite3 taxonomy database
     """
