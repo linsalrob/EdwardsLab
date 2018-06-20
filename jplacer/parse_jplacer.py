@@ -178,8 +178,6 @@ def rename_leaves_taxids(tree):
     return tree
 
 
-def reroot_tree(tree, rootat)
-
 def write_tree(tree, outputf):
     """
     Write the tree to a file.
