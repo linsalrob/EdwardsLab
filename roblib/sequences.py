@@ -73,7 +73,7 @@ def stream_fastq(fqfile):
         qin = gzip.open(fqfile, 'rb')
         needsdecode = True
     else:
-        qin = open(fqfile, 'r')
+        qin = open(fqfile, 'r', errors='ignore')
 
     while True:
         header = qin.readline()
