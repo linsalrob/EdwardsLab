@@ -246,6 +246,8 @@ def reroot_tree(tree, verbose=False):
     :param tree: the tree
     """
     
+    didreroot = False
+
     if verbose:
         sys.stderr.write("rerooting the tree\n")
     for n in tree.traverse("preorder"):
@@ -257,22 +259,47 @@ def reroot_tree(tree, verbose=False):
             sys.stderr.write("{}\t{}\t{}\n".format(len(childs), n.name, cname))
         if len(childs) == 2:
             if ("Archaea r_superkingdom" in childs[0].name and "Eukaryota r_superkingdom" in childs[1].name) or ("Archaea r_superkingdom" in childs[1].name and "Eukaryota r_superkingdom" in childs[0].name):
-                   tree.set_outgroup(n)
-                   if verbose:
-                       sys.stderr.write("Rerooted on {}\n".format(n.name))
-                   break
+                tree.set_outgroup(n)
+                if verbose:
+                    sys.stderr.write("Rerooted on {}\n".format(n.name))
+                didreroot = True
+                break
             if "Bacteria r_superkingdom" in childs[0].name and "Archaea r_superkingdom" in childs[1].name:
-                   tree.set_outgroup(childs[0])
-                   if verbose:
-                       sys.stderr.write("Rerooted on {}\n".format(childs[0].name))
-                   break
+                tree.set_outgroup(childs[0])
+                if verbose:
+                    sys.stderr.write("Rerooted on {}\n".format(childs[0].name))
+                didreroot = True
+                break
             if "Bacteria r_superkingdom" in childs[1].name and "Archaea r_superkingdom" in childs[0].name:
-                   tree.set_outgroup(childs[1])
-                   if verbose:
-                       sys.stderr.write("Rerooted on {}\n".format(childs[1].name))
-                   break
+                tree.set_outgroup(childs[1])
+                if verbose:
+                    sys.stderr.write("Rerooted on {}\n".format(childs[1].name))
+                didreroot = True
+                break
+
+    if not didreroot:
+        for n in tree.traverse("preorder"):
+            if "Bacteria r_superkingdom" in n.name:
+                tree.set_outgroup(n)
+                if verbose:
+                    sys.stderr.write("Rerooted on {} because it is bacteria\n".format(n.name))
+                break
+
+
     return tree
-    
+
+def write_leaves(tree, outputf):
+    """
+    Write a list of all the leaves, one line per leaf.
+    :param tree: the tree
+    :param outputf: the file to write
+    :return: 
+    """
+
+    with open(outputf, 'w') as out:
+        for n in tree.get_leaves():
+            out.write("{}\n".format(n.name))
+        
 
 def write_tree(tree, outputf):
     """
@@ -289,6 +316,7 @@ if __name__ == '__main__':
     parser.add_argument('-j', help='jplacer file', required=True)
     parser.add_argument('-o', help='output file to write the tree to', required=True)
     parser.add_argument('-n', help='names file for nodes that were placed onto the tree. If provided we write out those names')
+    parser.add_argument('-l', help='filename for a file with a list of all leaf names of the final tree')
     parser.add_argument('-d', help='Distance (can be either distal_length (default) or pendant_length', default='distal_length')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
@@ -311,3 +339,5 @@ if __name__ == '__main__':
     tree = rename_nodes_ncbi(tree, args.v)
     tree = reroot_tree(tree, args.v)
     write_tree(tree, args.o)
+    if args.l:
+        write_leaves(tree, args.l)
