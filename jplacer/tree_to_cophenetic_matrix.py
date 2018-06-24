@@ -51,10 +51,11 @@ from itertools import combinations
 from ete3 import Tree
 
 
-def make_matrix(treefile):
+def make_matrix(treefile, outputf):
     """
     Create a matrix from a tree file
-    :param treefile:
+    :param treefile: the tree file to read
+    :param outputf: the file to write the matrix to 
     :return:
     """
 
@@ -86,20 +87,24 @@ def make_matrix(treefile):
         leaf_distances[leaf1.name][leaf2.name] = leaf_distances[leaf2.name][leaf1.name] = distance
 
     allleaves = sorted(leaf_distances.keys())
-    sys.stdout.write("\t".join([""] + allleaves) + "\n")
-    for n in allleaves:
-        sys.stdout.write(n + "\t")
-        for m in allleaves:
-            if m == n:
-                sys.stdout.write("0\t")
-            else:
-                sys.stdout.write("{}\t".format(leaf_distances[n][m]))
-        sys.stdout.write("\n")
+
+    with open(outputf, 'w') as out:
+        out.write("\t".join([""] + allleaves) + "\n")
+        for n in allleaves:
+            out.write(n + "\t")
+            for m in allleaves:
+                if m == n:
+                    out.write("0\t")
+                else:
+                    out.write("{}\t".format(leaf_distances[n][m]))
+            out.write("\n")
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Convert a tree into a distance matrix')
     parser.add_argument('-t', help='Tree file', required=True)
+    parser.add_argument('-o', help='output file name for the cophenetic matrix', required=True)
+    parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    make_matrix(args.t)
+    make_matrix(args.t)rgs.o
