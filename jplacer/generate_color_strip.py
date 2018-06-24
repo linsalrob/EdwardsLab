@@ -174,11 +174,23 @@ def color_mg(leaff, fqfiles, inneroutputf, outeroutputf, readdeff, verbose=False
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Color a list of metagenomes')
     parser.add_argument('-l', help='leaves list file', required=True)
-    parser.add_argument('-f', help='fastq file(s) upon which to base the coloring', action='append', required=True)
+    parser.add_argument('-d', help='directory of fastq files')
+    parser.add_argument('-f', help='fastq file(s) upon which to base the coloring', action='append')
     parser.add_argument('-i', help='inner circle output filename (the domains)', required=True)
     parser.add_argument('-o', help='outer circle output filename (the metagenomes)', required=True)
     parser.add_argument('-r', help='read domain output filename (to make downstream processing easier)', required=True)
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    color_mg(args.l, args.f, args.i, args.o, args.r, args.v)
+    fqfiles = []
+    if args.f:
+        fqfiles = args.f
+    if args.d:
+        for q in os.listdir(args.d):
+            if q.endswith('fastq'):
+                fqfiles.append(os.path.join(args.d, q))
+    if len(fqfiles) == 0:
+        sys.stderr.write("You must supply some fastq files with either -d (directory) or -f (files)\n")
+        sys.exit(-1)
+
+    color_mg(args.l, fastqfiles, args.i, args.o, args.r, args.v)
