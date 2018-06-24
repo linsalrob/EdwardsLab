@@ -193,4 +193,4 @@ if __name__ == '__main__':
         sys.stderr.write("You must supply some fastq files with either -d (directory) or -f (files)\n")
         sys.exit(-1)
 
-    color_mg(args.l, fastqfiles, args.i, args.o, args.r, args.v)
+    color_mg(args.l, fqfiles, args.i, args.o, args.r, args.v)
