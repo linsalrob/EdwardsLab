@@ -110,7 +110,7 @@ def print_reads(miss, fq1, fq2):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="")
     parser.add_argument('-b', help='blast output files. Please provide exactly two files', nargs=2)
-    parser.add_argument('-q', help='fastq files. Please provide exactly two files', nargs=2)
+    parser.add_argument('-q', help='fastq files. Please provide exactly two files. If these are not supplied we print the unique reads and exit', nargs=2)
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
 
@@ -122,4 +122,5 @@ if __name__ == '__main__':
 
     reads = find_mates(*args.b)
     miss = odd_reads(reads)
-    print_reads(miss, *args.q)
+    if args.q:
+        print_reads(miss, *args.q)
