@@ -20,13 +20,13 @@ def find_mates(blastnf1, blastnf2):
     with open(blastnf1, 'r') as fin:
         for l in fin:
             p = l.strip().split("\t")
-            base = re.sub('\.1$', '', p[0])
+            base = p[0][:p[0].rindex(".1")]
             reads[base] = [p[0], None]
 
     with open(blastnf2, 'r') as fin:
         for l in fin:
             p = l.strip().split("\t")
-            base = re.sub('\.2$', '', p[0])
+            base = p[0][:p[0].rindex(".2")]
             if base not in reads:
                 reads[base] = [None, None]
             reads[base][1] = p[0]
@@ -40,21 +40,20 @@ def odd_reads(reads):
     :return: two sets of reads that are missing, one from read 1 and one from read 2
     """
 
-    m1 = set()
-    m2 = set()
+    miss = set()
     for r in reads:
         if reads[r][0] and not reads[r][1]:
             sys.stderr.write("No read 2: {}\n".format(r))
-            m2.add("{}.2".format(r))
+            miss.add(r)
 
         if not reads[r][0] and reads[r][1]:
             sys.stderr.write("No read 1: {}\n".format(r))
-            m1.add("{}.1".format(r))
+            miss.add(r)
 
-    return m1, m2
+    return miss
 
 
-def print_reads(miss1, miss2, fq1, fq2):
+def print_reads(miss, fq1, fq2):
     """
     Print the missing reads from the two fastq files
     :param miss1: the set of reads missing from fq1
@@ -64,14 +63,49 @@ def print_reads(miss1, miss2, fq1, fq2):
     :return:
     """
 
-    for sid, allid, seq, qual in stream_fastq(fq1):
-        if sid in miss1:
-            sys.stdout.write("@{}\n{}\n+\n{}\n".format(allid, seq, qual))
 
-    for sid, allid, seq, qual in stream_fastq(fq2):
-        if sid in miss2:
-            sys.stdout.write("@{}\n{}\n+\n{}\n".format(allid, seq, qual))
+    bn = re.search('/(\w+)_pass_1.fastq', fq1)
+    if not bn:
+        sys.stderr.write(f"Can't parse the base filename from {fq1}\n")
+        sys.exit(-1)
 
+    fqo1 = bn.groups()[0] + "_missed_1.fastq"
+    fqo2 = bn.groups()[0] + "_missed_2.fastq"
+    if os.path.exists(fqo1):
+        sys.stderr.write(f"Not overwrting {fqo1}\n")
+        sys.exit(-1)
+
+    if os.path.exists(fqo2):
+        sys.stderr.write(f"Not overwrting {fqo2}\n")
+        sys.exit(-1)
+
+    with open(fqo1, 'w') as out:
+        sys.stderr.write("Finding reads from {}\n".format(fq1))
+        c =  0
+        for sid, allid, seq, qual in stream_fastq(fq1):
+            c += 1
+            if not c % 100000:
+                sys.stderr.write(".")
+                sys.stderr.flush()
+            test = sid[:sid.rindex(".1")].replace('@', '', 1)
+            if test in miss:
+                out.write("@{}\n{}\n+\n{}\n".format(allid, seq, qual))
+                out.flush()
+
+    with open(fqo2, 'w') as out:
+        sys.stderr.write("\nFinding reads from {}\n".format(fq2))
+        c=0
+        for sid, allid, seq, qual in stream_fastq(fq2):
+            c += 1
+            if not c % 100000:
+                sys.stderr.write(".")
+                sys.stderr.flush()
+
+            test = sid[:sid.rindex(".2")].replace('@', '', 1)
+            if test in miss:
+                out.write("@{}\n{}\n+\n{}\n".format(allid, seq, qual))
+                out.flush()
+    sys.stderr.write("\n")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="")
@@ -87,5 +121,5 @@ if __name__ == '__main__':
         sys.exit(-1)
 
     reads = find_mates(*args.b)
-    miss1, miss2 = odd_reads(reads)
-    print_reads(miss1, miss2, *args.q)
+    miss = odd_reads(reads)
+    print_reads(miss, *args.q)
