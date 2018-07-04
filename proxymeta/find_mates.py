@@ -43,11 +43,11 @@ def odd_reads(reads):
     miss = set()
     for r in reads:
         if reads[r][0] and not reads[r][1]:
-            sys.stderr.write("No read 2: {}\n".format(r))
+            sys.stderr.write("No read 2: {}.2\n".format(r))
             miss.add(r)
 
         if not reads[r][0] and reads[r][1]:
-            sys.stderr.write("No read 1: {}\n".format(r))
+            sys.stderr.write("No read 1: {}.1\n".format(r))
             miss.add(r)
 
     return miss

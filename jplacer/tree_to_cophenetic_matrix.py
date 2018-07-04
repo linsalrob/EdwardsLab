@@ -79,12 +79,29 @@ def make_matrix(treefile, outputf):
 
     leaf_distances = {x.name:{} for x in leaves}
 
+
     sys.stderr.write("Iterating over the leaves\n")
-    for (leaf1, leaf2) in combinations(leaves, 2):
+    sys.stderr.write("THere are {} leaves\n".format(len(leaves)))
+    combi = combinations(leaves, 2)
+    combidef = int(len(list(combi))/500);
+    sys.stderr.write("There are {} combinations. Each dot is {} combinations\n".format(len(list(combi)), combidef))
+    c=0
+    cc=0
+    for (leaf1, leaf2) in combi:
+        if (c % combidef) == 0:
+            if cc == 5:
+                sys.stdout.write(" ")
+                cc=0
+            sys.stdout.write(".")
+            cc+=1
+            c+=1
+
         # figure out the unique nodes in the path
         uniquenodes = paths[leaf1] ^ paths[leaf2]
         distance = sum(x.dist for x in uniquenodes)
         leaf_distances[leaf1.name][leaf2.name] = leaf_distances[leaf2.name][leaf1.name] = distance
+
+    sys.stdout.write("\n")
 
     allleaves = sorted(leaf_distances.keys())
 
