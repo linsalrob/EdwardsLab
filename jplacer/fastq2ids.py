@@ -118,6 +118,9 @@ def write_output(leaff, fqfiles, classifile, readdeff, verbose=False):
                 dom, nm = determine_phylogeny(l, fqids, verbose)
                 if nm:
                     stypes.add(nm)
+                    if l not in fqids:
+                        sys.stderr.write("Oh no. {} is not in fqids despite dom: {} and nm: {}\n".format(l, dom, nm))
+                        continue
                     # this also means that l is in fqids, so we can get the classification
                     thisfq = fqids[l].split(os.path.sep)[-1]
                     clstr=""
