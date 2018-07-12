@@ -11,7 +11,8 @@ import re
 from roblib import stream_fastq
 from taxon import get_taxonomy_db, get_taxonomy
 
-c = get_taxonomy_db() 
+
+c = get_taxonomy_db()
 
 def fq_ids(fnames, verbose=False):
     """
@@ -66,32 +67,35 @@ def determine_phylogeny(fn, fqids, verbose=False):
     Determine if we know the phylogeny of this thing
     :param fn: the feature name
     :param fqids: the dict of ids->fastq files
-    :return: the type (currently Bacteria, Archaea, Eukaryota, Metagenome, or unknown) and if a metagenome the type of metagenome
+    :return: the type (currently Bacteria, Archaea, Eukaryota, Metagenome, or unknown), the id in the fastq file, and if a metagenome the type of metagenome
     """
 
 
     if fn in fqids:
-        return "Metagenome", fqids[fn]
+        return "Metagenome", fn, fqids[fn]
     m = re.sub('\.\d+\.\d+$', '', fn)
     if m in fqids:
-        return "Metagenome", fqids[m]
+        return "Metagenome", m, fqids[m]
+    m = re.sub('\.[\d\.]+$', '', fn)
+    if m in fqids:
+        return "Metagenome", m, fqids[m]
     m = re.search('\[(\d+)\]', fn)
     if not m:
         if verbose:
             sys.stderr.write("There is no taxid in {} and it is not in the fastq file\n".format(fn))
-        return "Unknown", None
+        return "Unknown", fn, None
 
     tid = m.groups()[0]
     t,n = get_taxonomy(tid, c)
     if not t:
         if verbose:
             sys.stderr.write("Can't find tax for {} in the db\n".format(tid))
-        return "Unknown", None
+        return "Unknown", fn, None
 
     while t.parent > 1 and t.parent != 131567:
         # 131567 is cellular organisms
         t,n = get_taxonomy(t.parent, c)
-    return n.scientific_name, None
+    return n.scientific_name, fn, None
 
 
 def write_output(leaff, fqfiles, classifile, readdeff, verbose=False):
@@ -115,30 +119,18 @@ def write_output(leaff, fqfiles, classifile, readdeff, verbose=False):
         with open(readdeff, 'w') as readout:
             for l in f:
                 l = l.strip()
-                dom, nm = determine_phylogeny(l, fqids, verbose)
-                if nm and l in fqids:
+                dom, id_in_fq, nm = determine_phylogeny(l, fqids, verbose)
+                if nm:
                     # this also means that l is in fqids, so we can get the classification
-                    thisfq = fqids[l].split(os.path.sep)[-1]
+                    thisfq = fqids[id_in_fq].split(os.path.sep)[-1]
                     clstr=""
                     if thisfq not in cl:
                         sys.stderr.write(f"ERROR: {thisfq} not found in the fastq classification file\n")
                     else:
                         clstr = cl[thisfq]
-                    readout.write("{}\t{}\t{}\t{}\n".format(l, dom, nm, clstr))
-                elif nm:
-                    m = re.sub('\.\d+\.\d+$', '', l)
-                    if m not in fqids:
-                        sys.stderr.write("Oh no: neither {} nor {} are in fqids\n".format(l, m))
-                        continue
-                    thisfq = fqids[m].split(os.path.sep)[-1]
-                    clstr=""
-                    if thisfq not in cl:
-                        sys.stderr.write(f"ERROR: {thisfq} not found in the fastq classification file\n")
-                    else:
-                        clstr = cl[thisfq]
-                    readout.write("{}\t{}\t{}\t{}\n".format(m, dom, nm, clstr))
+                    readout.write("{}\t{}\t{}\t{}\t{}\n".format(l, id_in_fq, dom, nm, clstr))
                 else:
-                    readout.write("{}\t{}\n".format(l, dom))
+                    readout.write("{}\t{}\t{}\n".format(l, l, dom))
 
 
 
