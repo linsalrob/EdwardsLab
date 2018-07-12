@@ -116,11 +116,7 @@ def write_output(leaff, fqfiles, classifile, readdeff, verbose=False):
             for l in f:
                 l = l.strip()
                 dom, nm = determine_phylogeny(l, fqids, verbose)
-                if nm:
-                    stypes.add(nm)
-                    if l not in fqids:
-                        sys.stderr.write("Oh no. {} is not in fqids despite dom: {} and nm: {}\n".format(l, dom, nm))
-                        continue
+                if nm and l in fqids:
                     # this also means that l is in fqids, so we can get the classification
                     thisfq = fqids[l].split(os.path.sep)[-1]
                     clstr=""
@@ -129,6 +125,18 @@ def write_output(leaff, fqfiles, classifile, readdeff, verbose=False):
                     else:
                         clstr = cl[thisfq]
                     readout.write("{}\t{}\t{}\t{}\n".format(l, dom, nm, clstr))
+                elif nm:
+                    m = re.sub('\.\d+\.\d+$', '', l)
+                    if m not in fqids:
+                        sys.stderr.write("Oh no: neither {} nor {} are in fqids\n".format(l, m))
+                        continue
+                    thisfq = fqids[m].split(os.path.sep)[-1]
+                    clstr=""
+                    if thisfq not in cl:
+                        sys.stderr.write(f"ERROR: {thisfq} not found in the fastq classification file\n")
+                    else:
+                        clstr = cl[thisfq]
+                    readout.write("{}\t{}\t{}\t{}\n".format(m, dom, nm, clstr))
                 else:
                     readout.write("{}\t{}\n".format(l, dom))
 
