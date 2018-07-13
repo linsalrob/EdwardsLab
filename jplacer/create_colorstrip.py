@@ -39,7 +39,7 @@ def write_output(data, colors, label, outputfile, verbose):
     :return:
     """
 
-    vals = list(data.values())
+    vals = list(set(data.values()))
     if len(vals) > len(colors):
         sys.stderr.write("WARNING: NOT ENOUGH COLORS! We have {} values and {} colors\n".format(len(vals), len(colors)))
         sys.exit(-1)
