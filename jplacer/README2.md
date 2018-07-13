@@ -62,15 +62,20 @@ We can create colorstrips for e.g. Bacteria, Archaea, Metagenomes or for Sharks 
 leaves.labels file that we have just created. e.g. to make a file for the Kingdom, use:
 
 ```
-python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_colorstrip.py -f sharks_stingray.leaves.labels -n 2 -l Kingdom -o sharks_stingray.kingdom.colorstrip
+python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_colorstrip.py -f sharks_stingray.leaves.labels -n 2 -l Kingdom -s 1 -o sharks_stingray.kingdom.colorstrip
 ```
 
 and to create a similar file for shark or fish, use:
 
 ```
-python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_colorstrip.py -f sharks_stingray.leaves.labels -n 4 -l "Fish/Shark" -o sharks_stingray.fish_shark.colorstrip
+python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_colorstrip.py -f sharks_stingray.leaves.labels -n 4 -l "Fish/Shark" -s 2 -o sharks_stingray.fish_shark.colorstrip
 ```
 
+and to create one for each of the fish/shark species we use:
+
+```
+python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_colorstrip.py -f sharks_stingray.leaves.labels -n 5 -l Species -s 3 -o sharks_stingray.species.colorstrip
+```
 
 ## Step four, count the metagenomes at different levels and create multibars
 

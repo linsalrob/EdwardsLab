@@ -23,7 +23,7 @@ def read_labels(lf, col, verbose=False):
                 continue
             if not p[col]:
                 continue
-            ret[p[0]] = p[col]
+            ret[p[0]] = p[col].replace(' ', '_')
     return ret
 
 
