@@ -2,12 +2,21 @@
 
 This is experimental code written by Rob Edwards and Mike Doane.
 
+### What we need
+
 Before we begin, we need three things:
 
 - a directory of fastq files
 - a classification file that has the fastq file name and then an arbitrary number of classifications. Each 
 classification should be tab-separated.
 - the jplacer output file from [phylosift](https://github.com/gjospin/PhyloSift)
+
+### What we will produce
+
+We will output several files that you can import into [itol](https://itol.embl.de)
+
+- a newick file with just the tree, with the metagenomes integrated into the leaves
+- multibar files
 
 ## Step one, integrate the leaves into the tree
 
@@ -42,4 +51,10 @@ This step also requires access to the [SQLite3 taxnomy database](https://github.
 
 We generate a file that has all the leaves found in the tree, including the reference sequences, and whether they are 
 bacteria, archaea, eukarya, or from your metagenomes. We also append all the classification information you provide.
+
+````
+python3 ~redwards/GitHubs/EdwardsLab/jplacer/fastq2ids.py -l sharks_stingray.leaves -c ../fastq_classification.tsv -d ../fastq -o sharks_stingray.leaves.labels -v 2> err
+````
+
+## Step three, count the metagenomes at different levels
 
