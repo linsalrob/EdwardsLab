@@ -40,7 +40,7 @@ def write_output(data, colors, label, outputfile, verbose):
 
     vals = list(data.values())
     if len(vals) > len(colors):
-        sys.stderr.write("WARNING: NOT ENOUGH COLORS! We have {} values and {} colors\n".format(len(vals), len(cols)))
+        sys.stderr.write("WARNING: NOT ENOUGH COLORS! We have {} values and {} colors\n".format(len(vals), len(colors)))
         sys.exit(-1)
 
     valcols = {v:colors[vals.index(v)] for v in vals}
