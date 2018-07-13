@@ -28,9 +28,9 @@ def fq_ids(fnames, verbose=False):
     for f in fnames:
         for seqid, fullid, seq, qual in stream_fastq(f):
             # note we store several versions of the id as phylosift does some munging on them
-            fqids[fullid] = f
+            fqids[fullid] = f.split(os.path.sep)[-1]
             fullid = fullid.replace(' ', '_')
-            fqids[fullid] = f
+            fqids[fullid] = f.split(os.path.sep)[-1]
 
     return fqids
 
@@ -122,7 +122,7 @@ def write_output(leaff, fqfiles, classifile, readdeff, verbose=False):
                 dom, id_in_fq, nm = determine_phylogeny(l, fqids, verbose)
                 if nm:
                     # this also means that l is in fqids, so we can get the classification
-                    thisfq = fqids[id_in_fq].split(os.path.sep)[-1]
+                    thisfq = fqids[id_in_fq]
                     print("Looking for thisfq: {}".format(thisfq))
                     clstr=""
                     if thisfq not in cl:
