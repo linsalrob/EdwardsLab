@@ -65,7 +65,7 @@ def write_output(data, colors, label, outputfile, verbose):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Create a color strip file")
     parser.add_argument('-f', help='The labeled leaves file from fastq2ids.py', required=True)
-    parser.add_argument('-n', help='Column in the labeled leaves file to use. 0 indexed', required=True)
+    parser.add_argument('-n', help='Column in the labeled leaves file to use. 0 indexed', required=True, type=int)
     parser.add_argument('-l', help='color strip legend (e.g. Kingdom, Fish, Species', required=True)
     parser.add_argument('-o', help='Output file', required=True)
     parser.add_argument('-c', help='Colors to use. These will be prepended to our default list', action='append')
