@@ -56,5 +56,23 @@ bacteria, archaea, eukarya, or from your metagenomes. We also append all the cla
 python3 ~redwards/GitHubs/EdwardsLab/jplacer/fastq2ids.py -l sharks_stingray.leaves -c ../fastq_classification.tsv -d ../fastq -o sharks_stingray.leaves.labels -v 2> err
 ````
 
-## Step three, count the metagenomes at different levels
+## Step three, create color strips for different taxonomic levels
+
+We can create colorstrips for e.g. Bacteria, Archaea, Metagenomes or for Sharks and Fish based on the data in our 
+leaves.labels file that we have just created. e.g. to make a file for the Kingdom, use:
+
+```
+python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_colorstrip.py -f sharks_stingray.leaves.labels -n 2 -l Kingdom -o sharks_stingray.kingdom.colorstrip
+```
+
+and to create a similar file for shark or fish, use:
+
+```
+python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_colorstrip.py -f sharks_stingray.leaves.labels -n 4 -l "Fish/Shark" -o sharks_stingray.fish_shark.colorstrip
+```
+
+
+## Step four, count the metagenomes at different levels and create multibars
+
+
 

@@ -27,12 +27,13 @@ def read_labels(lf, col, verbose=False):
     return ret
 
 
-def write_output(data, colors, label, outputfile, verbose):
+def write_output(data, colors, label, lshape, outputfile, verbose):
     """
     Write the colorstrip file
     :param data: the data dict of leaves and valus
     :param colors: the array of colors
     :param label: the label for the color strip
+    :param lshape: the label shape
     :param outputfile: the file to write
     :param verbose: more output
     :return:
@@ -52,7 +53,7 @@ def write_output(data, colors, label, outputfile, verbose):
         out.write("COLOR #ff0000\n")
         out.write(f"LEGEND_TITLE {label}\n")
         out.write("LEGEND_COLORS {}\n".format(" ".join(valcols.values())))
-        out.write("LEGEND_SHAPES {}\n".format(" ".join(["1" for v in valcols.values()])))
+        out.write("LEGEND_SHAPES {}\n".format(" ".join([lshape for v in valcols.values()])))
         out.write("LEGEND_LABELS {}\n".format(" ".join(vals)))
         out.write("STRIP_WIDTH 25\n")
         out.write("COLOR_BRANCHES 1\n")
@@ -68,6 +69,7 @@ if __name__ == '__main__':
     parser.add_argument('-n', help='Column in the labeled leaves file to use. 0 indexed', required=True, type=int)
     parser.add_argument('-l', help='color strip legend (e.g. Kingdom, Fish, Species', required=True)
     parser.add_argument('-o', help='Output file', required=True)
+    parser.add_argument('-s', help='Legend shape (a number). Default = 1', default="1", type=str)
     parser.add_argument('-c', help='Colors to use. These will be prepended to our default list', action='append')
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
@@ -77,4 +79,4 @@ if __name__ == '__main__':
         colors = args.c + colors
 
     data = read_labels(args.f, args.n, args.v)
-    write_output(data, colors, args.l, args.o, args.v)
+    write_output(data, colors, args.l, args.s, args.o, args.v)
