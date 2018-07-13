@@ -23,7 +23,6 @@ def read_labels(lf, col, verbose=False):
                 continue
             if not p[col]:
                 continue
-            sys.stderr.write("Saving {}\n".format(p[col]))
             ret[p[0]] = p[col]
     return ret
 
