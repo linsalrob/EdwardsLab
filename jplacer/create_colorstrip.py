@@ -23,7 +23,7 @@ def read_labels(lf, col, verbose=False):
                 continue
             if not p[col]:
                 continue
-            ret[p[0]] = p[col].replace(' ', '_')
+            ret[p[0]] = p[col]
     return ret
 
 
@@ -48,18 +48,18 @@ def write_output(data, colors, label, lshape, outputfile, verbose):
 
     with open(outputfile, 'w') as out:
         out.write("DATASET_COLORSTRIP\n")
-        out.write("SEPARATOR SPACE\n")
-        out.write(f"DATASET_LABEL {label}\n")
-        out.write("COLOR #ff0000\n")
-        out.write(f"LEGEND_TITLE {label}\n")
-        out.write("LEGEND_COLORS {}\n".format(" ".join(valcols.values())))
-        out.write("LEGEND_SHAPES {}\n".format(" ".join([lshape for v in valcols.values()])))
-        out.write("LEGEND_LABELS {}\n".format(" ".join(vals)))
-        out.write("STRIP_WIDTH 25\n")
-        out.write("COLOR_BRANCHES 1\n")
+        out.write("SEPARATOR COMMA\n")
+        out.write(f"DATASET_LABEL,{label}\n")
+        out.write("COLOR,#ff0000\n")
+        out.write(f"LEGEND_TITLE,{label}\n")
+        out.write("LEGEND_COLORS,{}\n".format(",".join(valcols.values())))
+        out.write("LEGEND_SHAPES,{}\n".format(",".join([lshape for v in valcols.values()])))
+        out.write("LEGEND_LABELS,{}\n".format(",".join(vals)))
+        out.write("STRIP_WIDTH,25\n")
+        out.write("COLOR_BRANCHES,1\n")
         out.write("DATA\n")
         for d in data:
-            out.write("{} {} {}\n".format(d, valcols[data[d]], data[d]))
+            out.write("{},{},{}\n".format(d, valcols[data[d]], data[d]))
 
 
 

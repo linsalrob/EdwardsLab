@@ -1,5 +1,6 @@
 """
-Create a multibar file from our labeled file
+Create a multibar file from our labeled file and our tree. We can do this at different taxonomic levels
+and different label levels.
 """
 
 import os
@@ -23,8 +24,12 @@ def read_labels(lf, col, verbose=False):
                 continue
             if not p[col]:
                 continue
-            ret[p[0]] = p[col]
+            ret[p[0]] = p[col].replace(' ', '_')
     return ret
+
+
+
+
 
 
 
