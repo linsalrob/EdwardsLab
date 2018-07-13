@@ -123,6 +123,7 @@ def write_output(leaff, fqfiles, classifile, readdeff, verbose=False):
                 if nm:
                     # this also means that l is in fqids, so we can get the classification
                     thisfq = fqids[id_in_fq].split(os.path.sep)[-1]
+                    print("Looking for thisfq: {}".format(thisfq))
                     clstr=""
                     if thisfq not in cl:
                         sys.stderr.write(f"ERROR: {thisfq} not found in the fastq classification file\n")
