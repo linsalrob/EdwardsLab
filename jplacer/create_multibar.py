@@ -25,13 +25,9 @@ def read_labels(lf, col, verbose=False):
     with open(lf, 'r') as f:
         for l in f:
             p = l.strip().split("\t")
-            if len(p) < col:
+            if len(p) <= col:
                 continue
-            try:
-                if not p[col]:
-                    continue
-            except:
-                sys.stderr.write("Error with: {} and col: {}\n".format(l.strip(), col))
+            if not p[col]:
                 continue
             ret[p[0]] = p[col]
             counts[p[col]] = counts.get(p[col], 0) + 1
