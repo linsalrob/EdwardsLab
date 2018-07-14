@@ -94,6 +94,10 @@ def write_directory(treefile, data, counts, taxa, outputdir, colors, legend, leg
                     for l in n.get_leaves():
                         if l.name in data and data[l.name] == k:
                             leafcount += 1
+                        elif l.name in data:
+                            sys.stderr.write("Skipped {} as it is a {} and we're a {}\n".format(l.name, data[l.name], k))
+                        else:
+                            sys.stderr.write("No {}\n".format(l.name))
                     if proportions:
                         leafcount /= counts[k]
                     out.write("{},{}\n".format(n.name, leafcount))
