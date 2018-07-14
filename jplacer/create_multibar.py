@@ -27,7 +27,11 @@ def read_labels(lf, col, verbose=False):
             p = l.strip().split("\t")
             if len(p) < col:
                 continue
-            if not p[col]:
+            try:
+                if not p[col]:
+                    continue
+            except:
+                sys.stderr.write("Error with: {} and col: {}\n".format(l.strip(), col))
                 continue
             ret[p[0]] = p[col]
             counts[p[col]] = counts.get(p[col], 0) + 1
