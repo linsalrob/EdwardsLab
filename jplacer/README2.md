@@ -32,7 +32,7 @@ visualization it provides us what we need.
 
 Use the command:
 ```
-python3 ~redwards/EdwardsLab/jplacer/parse_rename_write.py -j sharks_fish.jplace -o sharks_fish.nwk -l sharks_fish.leaves
+python3 ~redwards/EdwardsLab/jplacer/parse_rename_write.py -j sharks_stingray.jplace -o sharks_stingray.nwk -l sharks_stingray.leaves
 ```
 
 to parse the jplace file and create (a) the tree for itol (sharks_fish.nwk), and (b) a list of all the leaves
@@ -58,9 +58,9 @@ This step also requires access to the [SQLite3 taxnomy database](https://github.
 We generate a file that has all the leaves found in the tree, including the reference sequences, and whether they are 
 bacteria, archaea, eukarya, or from your metagenomes. We also append all the classification information you provide.
 
-````
-python3 ~redwards/GitHubs/EdwardsLab/jplacer/fastq2ids.py -l sharks_stingray.leaves -c ../fastq_classification.tsv -d ../fastq -o sharks_stingray.leaves.labels -v 2> err
-````
+```
+python3 ~redwards/GitHubs/EdwardsLab/jplacer/fastq2ids.py -l sharks_stingray.leaves -c ../fastq_classification.tsv -d ../fastq -o sharks_stingray.leaves.labels
+```
 
 ## Step three, create color strips for different taxonomic levels
 
@@ -83,7 +83,22 @@ and to create one for each of the fish/shark species we use:
 python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_colorstrip.py -f sharks_stingray.leaves.labels -n 5 -l Species -s 3 -o sharks_stingray.species.colorstrip
 ```
 
+or, just do them all at once and output everything to a directory:
+```angular2html
+mkdir colorstrip/
+python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_colorstrip.py -f sharks_stingray.leaves.labels -n 2 -l Kingdom -s 1 -o colorstrip/sharks_stingray.kingdom.colorstrip
+python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_colorstrip.py -f sharks_stingray.leaves.labels -n 4 -l "Fish/Shark" -s 2 -o colorstrip/sharks_stingray.fish_shark.colorstrip
+python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_colorstrip.py -f sharks_stingray.leaves.labels -n 5 -l Species -s 3 -o colorstrip/sharks_stingray.species.colorstrip
+```
+
+
 ## Step four, count the metagenomes at different levels and create multibars
+
+This creates a directory with a file for each of the bars we need to plot.
+
+```angular2html
+
+```
 
 
 
