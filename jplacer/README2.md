@@ -15,8 +15,14 @@ classification should be tab-separated.
 
 We will output several files that you can import into [itol](https://itol.embl.de)
 
-- a newick file with just the tree, with the metagenomes integrated into the leaves
-- multibar files
+- a newick file with just the tree, with the metagenomes integrated into the leaves. Note that the tree is rerooted
+so that the root is between Archaea and Bacteria or Archaea and Eukarya (depending exactly on the topology of your tree
+and where the shared nodes are)
+- colorstrip files: These files make the strips around the outside of the images.
+  - Kingdom: Whether the sample is from Archaea, Metagenome, Eukaryota, Bacteria, Unknown
+  - Species: this file has all the species in the samples.
+- multibar files:
+
 
 ## Step one, integrate the leaves into the tree
 
