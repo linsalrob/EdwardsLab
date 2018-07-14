@@ -58,6 +58,16 @@ def explore_jplacer(data):
         print("\n".join(d.keys()))
 
     """
+def clean_newick_id(name):
+    """
+    Return a version of name suitable for placement in a newick file
+    :param name: The name to clean up
+    :return: a name with no colons, spaces, etc
+    """
+    name = name.replace(' ', '_')
+    name = name.replace(':', '_')
+
+    return name
 
 def get_placements(data, distmeasure):
     """
@@ -95,7 +105,8 @@ def get_placements(data, distmeasure):
             if edge_num not in placements:
                 placements[edge_num] = {}
             for thisid in multiplier:
-                placements[edge_num][thisid] = multiplier[thisid] * distance * 1.0
+                newid = clean_newick_id(thisid)
+                placements[edge_num][newid] = multiplier[thisid] * distance * 1.0
 
     return placements
 
@@ -132,7 +143,7 @@ def find_a_node(tree, nodeid):
     for t in tree.traverse("preorder"):
         if "{{{}}}".format(nodeid) in t.name:
             print("Found {}".format(t.name))
-            t.add_child(name="NEW CHILDE")
+            t.add_child(name="NEW CHILD")
 
 
     print(tree.write(format=1))
