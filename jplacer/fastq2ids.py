@@ -14,6 +14,17 @@ from taxon import get_taxonomy_db, get_taxonomy
 
 c = get_taxonomy_db()
 
+def clean_newick_id(name):
+    """
+    Return a version of name suitable for placement in a newick file
+    :param name: The name to clean up
+    :return: a name with no colons, spaces, etc
+    """
+    name = name.replace(' ', '_')
+    name = name.replace(':', '_')
+
+    return name
+
 def fq_ids(fnames, verbose=False):
     """
     Get a list of fastq ids for each of the files in fnames
@@ -29,7 +40,7 @@ def fq_ids(fnames, verbose=False):
         for seqid, fullid, seq, qual in stream_fastq(f):
             # note we store several versions of the id as phylosift does some munging on them
             fqids[fullid] = f.split(os.path.sep)[-1]
-            fullid = fullid.replace(' ', '_')
+            fullid = clean_newick_id(fullid)
             fqids[fullid] = f.split(os.path.sep)[-1]
 
     return fqids
