@@ -72,7 +72,8 @@ def write_directory(treefile, data, counts, taxa, outputdir, colors, legend, leg
         sys.stderr.write(f"Creating output files in {outputdir}\n")
 
     for k in counts:
-        outputf = os.path.join(outputdir, k + ".multibar.txt")
+        fnme = k.replace(' ', '_')
+        outputf = os.path.join(outputdir, fnme + ".multibar.txt")
 
         with open(outputf, 'w') as out:
             out.write("DATASET_MULTIBAR\nSEPARATOR COMMA\n")
