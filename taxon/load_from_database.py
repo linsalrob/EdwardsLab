@@ -78,7 +78,7 @@ def get_taxonomy(taxid, conn):
             # check the merged database
             cur.execute("select new_tax_id from merged where old_tax_id = ?", [taxid])
             newid = cur.fetchone()
-            if newid[0]:
+            if newid and newid[0]:
                 cur.execute("select * from nodes where tax_id = ?", [newid[0]])
                 p = cur.fetchone()
             else:
