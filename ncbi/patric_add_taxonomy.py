@@ -39,7 +39,7 @@ if __name__ == '__main__':
                     out.write("{}\t{}\n".format(l.strip(), "\t".join(want)))
                     continue
 
-                tid = p[3]
+                tid = p[args.c]
 
                 level = {}
 
