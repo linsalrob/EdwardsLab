@@ -11,8 +11,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Append taxonomy to the patric metadata file. This adds it at column 67")
     parser.add_argument('-f', help='patric metadata file', required=True)
     parser.add_argument('-o', help='output file', required=True)
-    parser.add_argument('-t', help='taxonomy directory (default=/home2/db/taxonomy/current/)',
-                        default='/home2/db/taxonomy/current/')
+    parser.add_argument('-t', help='taxonomy directory (or we will use default)')
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
 
