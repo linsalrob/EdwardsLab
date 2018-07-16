@@ -2,8 +2,10 @@ import gzip
 import sys
 import os
 
-import .config
-defaultdir = getattr(config, 'defaultdir')
+defaultdir = '/data/ncbi/taxonomy/current'
+
+# import .config
+# defaultdir = getattr(config, 'defaultdir')
 
 if not os.path.exists(defaultdir):
     sys.stderr.write("ERROR: Directory: {} specified in config.py does not exist. Please check the location\n".format(defaultdir))
