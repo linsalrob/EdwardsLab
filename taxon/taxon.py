@@ -2,7 +2,7 @@ import gzip
 import sys
 import os
 
-import config
+import .config
 defaultdir = getattr(config, 'defaultdir')
 
 if not os.path.exists(defaultdir):
