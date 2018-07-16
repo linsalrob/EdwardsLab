@@ -44,7 +44,7 @@ if __name__ == '__main__':
 
                 t, n = get_taxonomy(tid, c)
 
-                while t.parent > 1 and t.parent != 131567:
+                while t and t.parent > 1 and t.parent != 131567:
                     # 131567 is cellular organisms
                     if t.rank in want:
                         level[t.rank] = n.scientific_name

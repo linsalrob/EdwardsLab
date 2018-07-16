@@ -2,7 +2,7 @@ import gzip
 import sys
 import os
 
-defaultdir = '/data/ncbi/taxonomy/current'
+defaultdir = '/raid60/usr/data/NCBI/taxonomy/current/'
 
 # import .config
 # defaultdir = getattr(config, 'defaultdir')
