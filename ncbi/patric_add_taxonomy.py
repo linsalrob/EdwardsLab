@@ -55,6 +55,6 @@ if __name__ == '__main__':
                         p.append(level[w])
                     else:
                         p.append("")
-
-                out.write("\t".join(p))
+                if p:
+                    out.write("\t".join(p))
                 out.write("\n")
