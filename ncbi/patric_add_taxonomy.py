@@ -5,7 +5,9 @@ Add the taxonomy to the patric metadata file
 import os
 import sys
 import argparse
-import taxon
+from taxon import get_taxonomy_db, get_taxonomy
+
+c = get_taxonomy_db()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Append taxonomy to the patric metadata file. This adds it at column 67")
@@ -15,12 +17,6 @@ if __name__ == '__main__':
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
 
-    sys.stderr.write("Reading taxonomy\n")
-    taxa = taxon.read_nodes(directory=args.t)
-    names, blastname = taxon.read_names(directory=args.t)
-    divs = taxon.read_divisions(directory=args.t)
-
-    sys.stderr.write("Read taxonomy\n")
     want = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
 
     # read the file once to figure out the longest line
@@ -45,11 +41,14 @@ if __name__ == '__main__':
                 tid = p[3]
 
                 level = {}
-                while tid != '0' and tid != '1' and tid in taxa and taxa[tid].parent != '1':
-                    if taxa[tid].rank in want:
-                        level[taxa[tid].rank] = names[tid].name
-                    tid = taxa[tid].parent
 
+                t, n = get_taxonomy(tid, c)
+
+                while t.parent > 1 and t.parent != 131567:
+                    # 131567 is cellular organisms
+                    if t.rank in want:
+                        level[t.rank] = t.name
+                    t, n = get_taxonomy(t.parent, c)
 
                 for w in want:
                     if w in level:

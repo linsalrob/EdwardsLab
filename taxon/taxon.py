@@ -1,11 +1,14 @@
 import gzip
 import sys
+import os
 
-# the location of the taxonomy files
-#defaultdir = '/home2/db/taxonomy/current/'
-# defaultdir = '/data/ncbi/taxonomy/'
-#defaultdir = '/localdata/ncbi/taxonomy/20170814'
-defaultdir = '/raid60/usr/data/NCBI/taxonomy/current/'
+import config
+defaultdir = getattr(config, 'defaultdir')
+
+if not os.path.exists(defaultdir):
+    sys.stderr.write("ERROR: Directory: {} specified in config.py does not exist. Please check the location\n".format(defaultdir))
+
+
 
 '''
 From nodes.dmp
@@ -90,6 +93,10 @@ def read_nodes(directory=defaultdir):
     """
     Read the node information from the default location
     """
+
+    if not directory:
+        directory = defaultdir
+
     taxa = {}
     fin = open(directory + '/nodes.dmp', 'r')
     for line in fin:
@@ -107,6 +114,10 @@ def extended_names(directory=defaultdir):
     "scientific name" and "blast name". Because we are reading more
     names it is slower and consumes more memory
     """
+
+    if not directory:
+        directory = defaultdir
+
     names = {}
     blastname = {}
     genbankname = {}
@@ -133,6 +144,10 @@ def read_names(directory=defaultdir):
     """
     Read the name information from the default location
     """
+
+    if not directory:
+        directory = defaultdir
+
     names = {}
     blastname = {}
     fin = open(directory + '/names.dmp', 'r')
@@ -152,6 +167,10 @@ def read_divisions(directory=defaultdir):
     """
     Read the divisions.dmp file
     """
+
+    if not directory:
+        directory = defaultdir
+
     divs = {}
     fin = open(directory + '/division.dmp', 'r')
     for line in fin:
@@ -171,6 +190,10 @@ def read_gi_tax_id(dtype='nucl', directory=defaultdir):
 
     Returns a hash of gi and taxid
     """
+
+    if not directory:
+        directory = defaultdir
+
     if dtype != 'nucl' and dtype != 'prot':
         sys.stderr.write("Type must be either nucl or prot, not " + dtype + "\n")
         sys.exit(-1)
@@ -197,6 +220,10 @@ def read_tax_id_gi(dtype='nucl', directory=defaultdir):
 
     Returns a hash of taxid and gi
     """
+
+    if not directory:
+        directory = defaultdir
+
     if dtype != 'nucl' and dtype != 'prot':
         sys.stderr.write("Type must be either nucl or prot, not " + dtype + "\n")
         sys.exit(-1)
