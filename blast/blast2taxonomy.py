@@ -107,3 +107,5 @@ if __name__ == '__main__':
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
 
+
+    taxa_sets(args.b, args.e, args.v)
