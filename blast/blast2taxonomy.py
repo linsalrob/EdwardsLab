@@ -55,7 +55,7 @@ def tid_to_tax_set(tid, verbose=False):
     # connect to the SQL dataabase
     c = get_taxonomy_db()
 
-    wanted_levels = {'superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies'}
+    wanted_levels = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies']
     taxonomy = set()
     t, n = get_taxonomy(tid, c)
     if not t:
@@ -65,7 +65,7 @@ def tid_to_tax_set(tid, verbose=False):
 
     while t.parent != 1 and t.taxid != 1:
         if t.rank in wanted_levels:
-            taxonomy.add(n.scientific_name)
+            taxonomy.add(n.scientific_name + ":" + t.rank)
         t, n = get_taxonomy(t.parent, c)
 
     return taxonomy
@@ -91,7 +91,14 @@ def taxa_sets(blastf, eval, verbose):
 
         if query != lastquery:
             if lastquery and taxset:
-                print("\t".join([lastquery, "; ".join(taxset)]))
+                wanted_levels = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies']
+                taxalist = wanted_levels
+                for i, w in enumerate(wanted_levels):
+                    for t in taxset:
+                        if f":{w}" in t:
+                            taxalist[i] = t.replace(f":{w}", "")
+
+                print("\t".join([lastquery, "; ".join(taxalist)]))
             taxset = ts
             lastquery = query
             continue
