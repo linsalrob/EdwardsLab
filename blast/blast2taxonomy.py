@@ -31,7 +31,7 @@ def id_from_blastfile(blastfile, evalue, verbose=False):
         p = l.strip().split("\t")
         if float(p[10]) > evalue:
             continue
-        m = re.search('fig\|(\d+\.\d+)', p[1])
+        m = re.search('fig\|(\d+)\.\d+', p[1])
         if not m:
             sys.stderr.write("Can't parse a taxonomy from {}\n".format(p[1]))
             continue
