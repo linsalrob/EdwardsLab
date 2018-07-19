@@ -65,7 +65,7 @@ def tid_to_tax_set(tid, verbose=False):
 
     while t.parent != 1 and t.taxid != 1:
         if t.rank in wanted_levels:
-            taxonomy.add(n.scientific_name + ":" + t.rank)
+            taxonomy.add("{}:{}".format(n.scientific_name, t.rank))
         t, n = get_taxonomy(t.parent, c)
 
     return taxonomy
@@ -92,7 +92,7 @@ def taxa_sets(blastf, eval, verbose):
         if query != lastquery:
             if lastquery and taxset:
                 wanted_levels = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies']
-                taxalist = wanted_levels
+                taxalist = ['', '', '', '', '', '', '', '']
                 for i, w in enumerate(wanted_levels):
                     for t in taxset:
                         if f":{w}" in t:
