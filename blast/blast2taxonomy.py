@@ -98,7 +98,7 @@ def taxa_sets(blastf, eval, verbose):
                         if f":{w}" in t:
                             taxalist[i] = t.replace(f":{w}", "")
 
-                print("\t".join([lastquery, "; ".join(taxalist)]))
+                print("\t".join([lastquery] + taxalist))
             taxset = ts
             lastquery = query
             continue
