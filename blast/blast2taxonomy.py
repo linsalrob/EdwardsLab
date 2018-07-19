@@ -115,4 +115,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
 
+    print("\t".join(['sequence ID', 'superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies']))
     taxa_sets(args.b, args.e, args.v)
