@@ -31,7 +31,7 @@ def print_tax(tid, verbose=False):
         if t.rank in wanted_levels:
             taxlist[wanted_levels.index(t.rank)] = n.scientific_name
         t, n = get_taxonomy(t.parent, c)
-    print("\t".join([tid]+[taxlist]))
+    print("\t".join([tid]+taxlist))
 
 
 if __name__ == '__main__':
