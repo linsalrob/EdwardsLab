@@ -40,7 +40,7 @@ def id_from_blastfile(blastfile, evalue, verbose=False):
             if verbose:
                 sys.stderr.write("Skipped {}\n".format(tid))
             continue
-        yield p[0], tid
+        yield p[0], tid, float(p[10])
 
 
 
@@ -82,7 +82,10 @@ def taxa_sets(blastf, eval, verbose):
 
     taxset = set()
     lastquery = None
-    for query, tid in id_from_blastfile(blastfile=blastf, evalue=eval, verbose=verbose):
+    for query, tid, myeval in id_from_blastfile(blastfile=blastf, evalue=eval, verbose=verbose):
+        if myeval > eval:
+            sys.stderr.write("Yielded an eval of {}\n".format(myeval))
+            continue
         ts = tid_to_tax_set(tid=tid, verbose=verbose)
         if None == ts:
             if verbose:
