@@ -99,8 +99,8 @@ def taxa_sets(blastf, eval, verbose):
                 taxalist = ['', '', '', '', '', '', '', '']
                 for i, w in enumerate(wanted_levels):
                     for t in taxset:
-                        if f":{w}" in t:
-                            taxalist[i] = t.replace(f":{w}", "")
+                        if ":{}".format(w) in t:
+                            taxalist[i] = t.replace(":{}".format(w), "")
 
                 print("\t".join([lastquery] + taxalist))
             taxset = ts
@@ -113,8 +113,8 @@ def taxa_sets(blastf, eval, verbose):
         taxalist = ['', '', '', '', '', '', '', '']
         for i, w in enumerate(wanted_levels):
             for t in taxset:
-                if f":{w}" in t:
-                    taxalist[i] = t.replace(f":{w}", "")
+                if ":{}".format(w) in t:
+                    taxalist[i] = t.replace(":{}".format(w), "")
 
         print("\t".join([lastquery] + taxalist))
 
