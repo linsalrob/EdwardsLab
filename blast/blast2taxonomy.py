@@ -82,6 +82,8 @@ def taxa_sets(blastf, eval, verbose):
 
     taxset = set()
     lastquery = None
+    wanted_levels = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies']
+
     for query, tid, myeval in id_from_blastfile(blastfile=blastf, evalue=eval, verbose=verbose):
         if myeval > eval:
             sys.stderr.write("Yielded an eval of {}\n".format(myeval))
@@ -94,7 +96,6 @@ def taxa_sets(blastf, eval, verbose):
 
         if query != lastquery:
             if lastquery and taxset:
-                wanted_levels = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies']
                 taxalist = ['', '', '', '', '', '', '', '']
                 for i, w in enumerate(wanted_levels):
                     for t in taxset:
@@ -108,6 +109,14 @@ def taxa_sets(blastf, eval, verbose):
 
         taxset = taxset & ts
 
+    if lastquery and taxset:
+        taxalist = ['', '', '', '', '', '', '', '']
+        for i, w in enumerate(wanted_levels):
+            for t in taxset:
+                if f":{w}" in t:
+                    taxalist[i] = t.replace(f":{w}", "")
+
+        print("\t".join([lastquery] + taxalist))
 
 
 if __name__ == '__main__':
