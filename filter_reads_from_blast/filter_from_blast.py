@@ -20,7 +20,7 @@ def filter_reads(blastf, eval, bitscore, verbose=False):
     blast = set()
     if verbose:
         sys.stderr.write(f"Parsing {blastf}\n")
-    for br in stream_blast_results(blastf):
+    for br in stream_blast_results(blastf, verbose):
         if br.evalue > eval:
             continue
         if br.bitscore < bitscore:
@@ -40,6 +40,8 @@ def read_fastq(fqfile, blast, verbose=False):
     """
 
     for seqid, fullid, seq, qual in stream_fastq(fqfile):
+        if seqid.startswith('@'):
+            seqid = seqid[1:]
         if seqid in blast or fullid in blast:
             continue
         print("@{}\n{}\n+\n{}".format(fullid, seq, qual))
@@ -56,3 +58,4 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     reads = filter_reads(args.f, args.e, args.b, args.v)
+    read_fastq(args.q, reads)

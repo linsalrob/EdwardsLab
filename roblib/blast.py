@@ -21,13 +21,15 @@ class BlastResult():
         self.db_start = int(db_start)
         self.db_end = int(db_end)
         self.evalue = float(evalue)
-        self.bitscore = int(bitscore)
-        self.query_length = int(query_length)
-        self.subject_length = int(subject_length)
+        self.bitscore = float(bitscore)
+        if query_length:
+            self.query_length = int(query_length)
+        if subject_length:
+            self.subject_length = int(subject_length)
 
 
 
-def stream_blast_results(blastf):
+def stream_blast_results(blastf, verbose=False):
     """
     Parse a tab-separated blast file and stream the results
     :param blastf: the file to stream
@@ -44,6 +46,8 @@ def stream_blast_results(blastf):
         if not l:
             break
         p = l.strip().split("\t")
+        #if verbose:
+        #    sys.stderr.write("LINE: {}\n".format(p))
         br = BlastResult(*p)
         yield br
 
