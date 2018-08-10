@@ -24,9 +24,12 @@ def read_blast_file(bf, evalue, verbose=False):
         if br.query not in results:
             results[br.query] = { '-ve' : set(), '+ve' : set() }
         strand = '+ve'
+        (s, e) = (br.query_start, br.query_end)
         if br.query_end < br.query_start:
             strand = '-ve'
-        results[br.query][strand] = results[br.query][strand] | set(range(br.query_start, br.query_end))
+            (s, e) = (br.query_end, br.query_start)
+            
+        results[br.query][strand] = results[br.query][strand] | set(range(s, e))
     return results
 
 
@@ -51,11 +54,12 @@ def find_gene(brs):
 
     contigs = brs.keys()
     if len(contigs) == 1:
-        sys.stderr.write("There was only one contig with a match ({})\n".format(contigs[0]))
+        sys.stderr.write("There was only one contig with a match ({})\n".format(list(contigs)[0]))
     else:
         sys.stderr.write("Multiple contigs had matches: {}\n".format(contigs))
 
     for c in contigs:
+        sys.stderr.write(f"{c}\n")
         for strand in ['-ve', '+ve']:
             if len(brs[c][strand]) == 0:
                 continue
