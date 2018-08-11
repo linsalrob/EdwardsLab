@@ -118,7 +118,7 @@ def introduce_break(fastaf, lsgenes, ssgenes, numbp, verbose=False):
                     if ssgenes[seqid]['-ve'][1] + numbp > breakat:
                         breakat = ssgenes[seqid]['-ve'][1] + numbp
                         if verbose:
-                            sys.stderr.write("Because we have a small subunit at {} we moved the start\n".format(ssgenes[seqid]['+ve'][0]))
+                            sys.stderr.write("Because we have a small subunit at {} we moved the start\n".format(ssgenes[seqid]['-ve'][0]))
             else:
                 sys.stderr.write("No terminase found in {}\n".format(seqid))
 
