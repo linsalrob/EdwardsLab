@@ -124,6 +124,7 @@ def introduce_break(fastaf, lsgenes, ssgenes, numbp, verbose=False):
 
             newseq = seq
             if breakat > 0:
+                sys.stderr.write("Reformating the sequence {}\n".format(seqid))
                 newseq = seq[breakat:] + seq[0:breakat]
                 if dorc:
                     newseq = rc(newseq)
