@@ -36,7 +36,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Trim a fasta file")
     parser.add_argument('-f', help='fasta file to trim')
     parser.add_argument('-b', help='optional first base', default=0, type=int)
-    parser.add_argument('-e', help='optional last base', default=None, type=int)
+    parser.add_argument('-e', help='optional last base. Note that this is inclusive, so if you are trying to trim to 3409 as the first base of a repeat use 3408 as your coordinate', default=None, type=int)
     parser.add_argument('-c', help='optional contig name. Otherwise we just trim all the contigs', default=None)
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
