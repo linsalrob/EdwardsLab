@@ -53,10 +53,12 @@ def is_consecutive(l):
     mathsum = len(l) * (min(l) + max(l)) / 2
     return total == mathsum
 
-def find_gene(brs, verbose=False):
+def find_gene(brs, force, verbose=False):
     """
     Test for where the genes are
     :param brs: The blast results
+    :param force: force a gene, even if there are multiple discontinuous genes
+    :param verbose: more output
     :return:
     """
 
@@ -103,6 +105,13 @@ def find_gene(brs, verbose=False):
                     sys.stderr.write("Min: {} Max: {}\n".format(min(brs[c][strand]), max(brs[c][strand])))
                     sys.stderr.write("List of starts and stops: {}\n".format(startstops))
                 sys.stderr.write("There are multiple discontinuous matches to {}. Try adjusting the evalue\n".format(c))
+                if force:
+                    sys.stderr.write("***** WARNING: We are forcing a gene from {} to {}\n".format(min(brs[c][strand]), max(brs[c][strand])))
+                    if c not in genes:
+                        genes[c] = {strand: [min(brs[c][strand]), max(brs[c][strand])]}
+                    else:
+                        sys.stderr.write("Warning: two hits on different strands for {}\n".format(c))
+                        genes[c][strand] = [min(brs[c][strand]), max(brs[c][strand])]
 
     return genes
 
@@ -163,6 +172,7 @@ if __name__ == '__main__':
     parser.add_argument('-s', help='blast output compared to terminase SMALL gene')
     parser.add_argument('-e', help='evalue cutoff (default=all)', type=int, default=100)
     parser.add_argument('-n', help='number of bp from the end of the terminase to introduce the break (default=100)', type=int, default=100)
+    parser.add_argument('--force', help='Force the rotation, even if there is more than one gene. In this case, we use the longest possible gene!', action='store_true')
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
 
@@ -170,10 +180,10 @@ if __name__ == '__main__':
     if args.s:
         sys.stderr.write("Parsing small subunit\n")
         ss = read_blast_file(args.s, args.e, args.v)
-        ssgenes = find_gene(ss, args.v)
+        ssgenes = find_gene(ss, args.force, args.v)
 
     sys.stderr.write("Parsing large subunit\n")
     ls = read_blast_file(args.l, args.e, args.v)
-    lsgenes = find_gene(ls, args.v)
+    lsgenes = find_gene(ls, args.force,  args.v)
 
     introduce_break(args.f, lsgenes, ssgenes, args.n, args.v)
