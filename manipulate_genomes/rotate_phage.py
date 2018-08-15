@@ -163,10 +163,10 @@ if __name__ == '__main__':
     if args.s:
         sys.stderr.write("Parsing small subunit\n")
         ss = read_blast_file(args.s, args.e, args.v)
-        ssgenes = find_gene(ss)
+        ssgenes = find_gene(ss, args.v)
 
     sys.stderr.write("Parsing large subunit\n")
     ls = read_blast_file(args.l, args.e, args.v)
-    lsgenes = find_gene(ls)
+    lsgenes = find_gene(ls, args.v)
 
     introduce_break(args.f, lsgenes, ssgenes, args.n, args.v)
