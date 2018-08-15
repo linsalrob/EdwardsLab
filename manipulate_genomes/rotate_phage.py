@@ -86,14 +86,21 @@ def find_gene(brs, verbose=False):
                     stop = start
                     curr = start
                     while curr <= max(brs[c][strand]):
-                        if curr not in brs[c][strand]:
+                        #sys.stderr.write("{}\t{}\t{}\n".format(curr, start, stop, curr in brs[c][strand]))
+                        if curr in brs[c][strand]:
+                            stop = curr
+                            if not start:
+                                start = curr
+                        else:
                             if start:
                                 startstops.append([start, stop])
                                 start = None
                                 stop = None
-                        else:
-                            stop = curr
-                            curr += 1
+                        curr += 1
+                    if start:
+                        startstops.append([start, stop])
+
+                    sys.stderr.write("Min: {} Max: {}\n".format(min(brs[c][strand]), max(brs[c][strand])))
                     sys.stderr.write("List of starts and stops: {}\n".format(startstops))
                 sys.stderr.write("There are multiple discontinuous matches to {}. Try adjusting the evalue\n".format(c))
 
