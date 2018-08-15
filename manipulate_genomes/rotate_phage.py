@@ -53,7 +53,7 @@ def is_consecutive(l):
     mathsum = len(l) * (min(l) + max(l)) / 2
     return total == mathsum
 
-def find_gene(brs):
+def find_gene(brs, verbose=False):
     """
     Test for where the genes are
     :param brs: The blast results
@@ -80,6 +80,21 @@ def find_gene(brs):
                     sys.stderr.write("Warning: two hits on different strands for {}\n".format(c))
                     genes[c][strand]  = [min(brs[c][strand]), max(brs[c][strand])]
             else:
+                if verbose:
+                    startstops = []
+                    start = min(brs[c][strand])
+                    stop = start
+                    curr = start
+                    while curr <= max(brs[c][strand]):
+                        if curr not in brs[c][strand]:
+                            if start:
+                                startstops.append([start, stop])
+                                start = None
+                                stop = None
+                        else:
+                            stop = curr
+                            curr += 1
+                    sys.stderr.write("List of starts and stops: {}\n".format(startstops))
                 sys.stderr.write("There are multiple discontinuous matches to {}. Try adjusting the evalue\n".format(c))
 
     return genes
