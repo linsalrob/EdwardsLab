@@ -96,7 +96,10 @@ def introduce_break(fastaf, lsgenes, ssgenes, numbp, verbose=False):
     :return:
     """
 
-    for seqid, seq in stream_fasta(fastaf):
+    for seqdef, seq in stream_fasta(fastaf):
+        seqid = seqdef.split(" ")[0]
+        if verbose:
+            sys.stderr.write(f"Looking for {seqid}\n")
         if seqid in lsgenes:
             breakat = 0
             dorc = False
@@ -128,7 +131,7 @@ def introduce_break(fastaf, lsgenes, ssgenes, numbp, verbose=False):
                 newseq = seq[breakat:] + seq[0:breakat]
                 if dorc:
                     newseq = rc(newseq)
-            print(">{}\n{}".format(seqid, newseq))
+            print(">{}\n{}".format(seqdef, newseq))
 
 
 if __name__ == '__main__':
