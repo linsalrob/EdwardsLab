@@ -80,8 +80,6 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Separate prophage and non prophage DNA")
     parser.add_argument('-l', help='locations in tsv format directory', required=True)
     parser.add_argument('-c', help='contigs directory', required=True)
-    parser.add_argument('-n', help='name of directory to write non-prophage sequences', required=True)
-    parser.add_argument('-p', help='name of directory to write prophage sequences', required=True)
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
 
