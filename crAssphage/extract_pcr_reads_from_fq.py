@@ -55,6 +55,13 @@ def read_fastqs(fastqdir, fname, seqids, verbose=True):
             if verbose:
                 sys.stderr.write("Reading {}\n".format(os.path.join(fastqdir, f)))
             for seqid, header, seq, qualscores in stream_fastq(os.path.join(fastqdir, f)):
+                if 'ERR011141.5879583' in seqid:
+                    sys.stderr.write("Found |{}|\n".format(seqid))
+                    sys.stderr.write("Potential matches:\n")
+                    for t in wanted:
+                        if 'ERR011141.5879583' in t:
+                            sys.stderr.write("\t{}\n".format(t))
+                    sys.stderr.write("\n")
                 if seqid in wanted:
                     if seqid.endswith('.1'):
                         seqs[s][0] = seq
