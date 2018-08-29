@@ -64,6 +64,7 @@ def read_fastqs(fastqdir, fname, seqids, verbose=True):
                     sys.stderr.write("\n")
                 if seqid in wanted:
                     s = re.sub('.\d$', '', seqid)
+                    s = s.replace('@', '', 1)
                     if seqid.endswith('.1'):
                         seqs[s][0] = seq
                         seqs[s][1] = qualscores
