@@ -49,7 +49,7 @@ def read_fastqs(fastqdir, fname, seqids, verbose=True):
     for f in os.listdir(fastqdir):
         if fname in f:
             if verbose:
-                sys.stderr.write(f"Reading {f}"\n)
+                sys.stderr.write(f"Reading {f}\n")
             for seqid, header, seq, qualscores in stream_fastq(os.path.join(fastqdir, f)):
                 s = re.sub('.\d$', '', seqid)
                 if s in seqids:
