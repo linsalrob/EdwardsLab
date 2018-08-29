@@ -94,11 +94,15 @@ python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_colorstrip.py -f sharks_stin
 
 ## Step four, count the metagenomes at different levels and create multibars
 
-This creates a directory with a file for each of the bars we need to plot.
-
-```angular2html
+This creates a directory with a file for each of the bars we need to plot. The first command normalizes the data to percentages. The second command gives you raw counts.
 
 ```
+python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_multibar.py -f sharks_stingray.leaves.labels -t sharks_stingray.nwk -d multibar -n 5 -l Species -x family -s 3 -p
+python3 ~redwards/GitHubs/EdwardsLab/jplacer/create_multibar.py -f sharks_stingray.leaves.labels -t sharks_stingray.nwk -d multibarnp -n 5 -l Species -x family -s 3
+```
+
+
+
 
 
 

@@ -8,6 +8,10 @@ import argparse
 import sqlite3
 import json
 
+from config import get_db_dir
+
+defaultdir = get_db_dir()
+
 def connect_to_db(dbname, verbose=False):
     """
     Connect to the database
@@ -17,9 +21,10 @@ def connect_to_db(dbname, verbose=False):
     """
 
     try:
-        conn = sqlite3.connect(dbname)
+        conn = sqlite3.connect(os.path.join(defaultdir, dbname))
     except sqlite3.Error as e:
-        print(e)
+        sys.stderr.write("ERROR Creating database: {}\n".format(os.path.join(defaultdir, dbname)))
+        sys.stderr.write(e)
         sys.exit(-1)
 
     if verbose:
