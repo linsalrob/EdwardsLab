@@ -17,6 +17,8 @@ def read_readids(regionsf, verbose=True):
     """
 
     sequences = {}
+    if verbose:
+        sys.stderr.write(f"Reading {regionsf}\n")
     with open(regionsf, 'r') as f:
         for l in f:
             p = l.strip().split("\t")
@@ -28,6 +30,9 @@ def read_readids(regionsf, verbose=True):
                     sequences[s], p[0], s
                 ))
             sequences[s] = p[0]
+    if verbose:
+        sys.stderr.write("Read {} sequences\n".format(len(sequences)))
+
     return sequences
 
 def read_fastqs(fastqdir, fname, seqids, verbose=True):
@@ -43,6 +48,8 @@ def read_fastqs(fastqdir, fname, seqids, verbose=True):
     seqs = {x:[None, None, None, None] for x in seqids}
     for f in os.listdir(fastqdir):
         if fname in f:
+            if verbose:
+                sys.stderr.write(f"Reading {f}"\n)
             for seqid, header, seq, qualscores in stream_fastq(os.path.join(fastqdir, f)):
                 s = re.sub('.\d$', '', seqid)
                 if s in seqids:
