@@ -46,13 +46,16 @@ def read_fastqs(fastqdir, fname, seqids, verbose=True):
     """
 
     seqs = {x:[None, None, None, None] for x in seqids}
+    wanted = set()
+    for s in seqids:
+        wanted.add(f"{s}.1")
+        wanted.add(f"{s}.2")
     for f in os.listdir(fastqdir):
         if fname in f:
             if verbose:
                 sys.stderr.write(f"Reading {f}\n")
             for seqid, header, seq, qualscores in stream_fastq(os.path.join(fastqdir, f)):
-                s = re.sub('.\d$', '', seqid)
-                if s in seqids:
+                if seqid in wanted:
                     if seqid.endswith('.1'):
                         seqs[s][0] = seq
                         seqs[s][1] = qualscores
