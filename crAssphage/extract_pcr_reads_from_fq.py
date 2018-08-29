@@ -48,14 +48,13 @@ def read_fastqs(fastqdir, fname, seqids, verbose=True):
     seqs = {x:[None, None, None, None] for x in seqids}
     wanted = set()
     for s in seqids:
-        wanted.add(f"{s}.1")
-        wanted.add(f"{s}.2")
+        wanted.add(f"@{s}.1")
+        wanted.add(f"@{s}.2")
     for f in os.listdir(fastqdir):
         if fname in f:
             if verbose:
                 sys.stderr.write("Reading {}\n".format(os.path.join(fastqdir, f)))
             for seqid, header, seq, qualscores in stream_fastq(os.path.join(fastqdir, f)):
-                sys.stderr.write("CHECKING |{}|\n".format(seqid))
                 if seqid in wanted:
                     if seqid.endswith('.1'):
                         seqs[s][0] = seq
