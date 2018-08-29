@@ -53,8 +53,9 @@ def read_fastqs(fastqdir, fname, seqids, verbose=True):
     for f in os.listdir(fastqdir):
         if fname in f:
             if verbose:
-                sys.stderr.write(f"Reading {f}\n")
+                sys.stderr.write("Reading {}\n".format(os.path.join(fastqdir, f)))
             for seqid, header, seq, qualscores in stream_fastq(os.path.join(fastqdir, f)):
+                sys.stderr.write("CHECKING |{}|\n".format(seqid))
                 if seqid in wanted:
                     if seqid.endswith('.1'):
                         seqs[s][0] = seq
@@ -66,7 +67,7 @@ def read_fastqs(fastqdir, fname, seqids, verbose=True):
                         sys.stderr.write("ERR: Not sure about sequence ID {}\n".format(seqid))
     return seqs
 
-def write_fastq(seqids, seqs, fname, verbose=False):
+def write_fastq(seqids, seqs, fname, outdir, verbose=False):
     """
     Write the fastq files
     :param seqids: sequence ids and the primers to which they belong
@@ -76,9 +77,9 @@ def write_fastq(seqids, seqs, fname, verbose=False):
     :return: nothing
     """
     for primer in ['A', 'B', 'C']:
-        lft = open("{}_Primer{}_1.fastq".format(fname, primer), 'w')
-        rht = open("{}_Primer{}_2.fastq".format(fname, primer), 'w')
-        sng = open("{}_Primer{}_single.fastq".format(fname, primer), 'w')
+        lft = open(os.path.join(outdir, "{}_Primer{}_1.fastq".format(fname, primer)), 'w')
+        rht = open(os.path.join(outdir, "{}_Primer{}_2.fastq".format(fname, primer)), 'w')
+        sng = open(os.path.join(outdir, "{}_Primer{}_single.fastq".format(fname, primer)), 'w')
         for s in seqids:
             if seqids[s] == 'Primer{}'.format(primer):
                 if seqs[s][0] and seqs[s][2]:
@@ -120,4 +121,4 @@ if __name__ == '__main__':
 
     seqids = read_readids(args.l, args.v)
     seqs = read_fastqs(args.d, basefile, seqids, args.v)
-    write_fastq(seqids, seqs, basefile, args.v)
+    write_fastq(seqids, seqs, basefile, args.o, args.v)
