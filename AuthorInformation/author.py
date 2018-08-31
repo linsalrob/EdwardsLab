@@ -271,7 +271,7 @@ class Author:
         """
         toreturn = "{}, {}".format(self.lastname, self.firstname)
         if self.middleinitial:
-            toreturn = "{}.{}".format(toreturn, self.middleinitial)
+            toreturn = "{} {}.".format(toreturn, self.middleinitial)
         return toreturn
 
     def get_name(self):
