@@ -19,6 +19,8 @@ def split_contigs(inf, outf, length, verbose=False):
 
     with open(outf, 'w') as out:
         for seqid, seq in stream_fasta(inf, True):
+            if verbose:
+                sys.stderr.write("{}\n".format(seqid))
             posn=0
             seqcounter=0
             seqidparts = seqid.split(" ")
@@ -28,14 +30,14 @@ def split_contigs(inf, outf, length, verbose=False):
                     out.write(">{}_{} {}\n".format(seqidparts[0], seqcounter, "".join(seqidparts[1:])))
                 else:
                     out.write(">{}_{}\n".format(seqidparts[0], seqcounter))
-                out.write("{}".format(seq[posn:posn+length]))
+                out.write("{}\n".format(seq[posn:posn+length]))
                 posn += length
             seqcounter += 1
             if len(seqidparts) == 1:
                 out.write(">{}_{} {}\n".format(seqidparts[0], seqcounter, "".join(seqidparts[1:])))
             else:
                 out.write(">{}_{}\n".format(seqidparts[0], seqcounter))
-            out.write("{}".format(seq[posn:]))
+            out.write("{}\n".format(seq[posn:]))
 
 
 if __name__ == '__main__':
