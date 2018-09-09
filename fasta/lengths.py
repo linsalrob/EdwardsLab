@@ -14,4 +14,4 @@ parser.add_argument('-v', help='verbose output', action="store_true")
 args = parser.parse_args()
 
 for seqid, seq in stream_fasta(args.f, args.w):
-    print("{}\t{}").format(seqid, len(seq))
+    print("{}\t{}".format(seqid, len(seq)))

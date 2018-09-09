@@ -32,7 +32,11 @@ def print_lens(lengths, verbose=False):
     :return:
     """
 
-    alllens = sorted(list(set([lengths[x].keys() for x in lengths])))
+    lenset = set()
+    for x in lengths:
+        lenset.update([k for k in lengths[x].keys()])
+
+    alllens = sorted(list(lenset))
     fafs = lengths.keys()
 
     print("\t{}".format("\t".join(fafs)))
@@ -52,3 +56,4 @@ if __name__ == "__main__":
     lengths = {}
     for faf in args.f:
         lengths[faf] = count_len(faf)
+    print_lens(lengths)

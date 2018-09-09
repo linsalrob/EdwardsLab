@@ -21,9 +21,9 @@ def read_phage_locations(locf, verbose=False):
     contigs = {}
     with open(locf, 'r') as f:
         for l in f:
-            if p.endswith('Status'):
-                continue
             p=l.strip().split("\t")
+            if p[1] == 'Start':
+                continue
             if p[1] > p[2]:
                 (p[1], p[2]) = (p[2], p[1])
             if p[0] not in contigs:
@@ -63,15 +63,15 @@ def write_seqs(seqs, locations, phagef, nonphagef, verbose=False):
                     ses = sorted(locations[s], key=itemgetter(0))
                     posn = 0
                     for start, end, numgenes in ses:
-                        nonphagef.write(">{}\n{}\n".format("_".join(map(str, [s, posn, start-1])),
+                        nonphageout.write(">{}\n{}\n".format("_".join(map(str, [s, posn, start-1])),
                                                            seqs[s][posn:start]))
-                        phagef.write(">{} [predicted by PhiSpy to have {} genes]\n{}\n".
-                                     format("_".join(map(str, [s, start, end])), numgenes, seqs[s][start,end]))
+                        phageout.write(">{} [predicted by PhiSpy to have {} genes]\n{}\n".
+                                       format("_".join(map(str, [s, start, end])), numgenes, seqs[s][start:end]))
                         posn=end+1
-                    nonphagef.write(">{}\n{}\n".format("_".join(map(str, [s, posn, len(seqs[s])])),
+                    nonphageout.write(">{}\n{}\n".format("_".join(map(str, [s, posn, len(seqs[s])])),
                                                        seqs[s][posn:]))
                 else:
-                    nonphagef.write(">{}\n{}\n".format("_".join(map(str, [s, 0, len(seqs[s])])),
+                    nonphageout.write(">{}\n{}\n".format("_".join(map(str, [s, 0, len(seqs[s])])),
                                                        seqs[s]))
 
 
@@ -91,7 +91,7 @@ if __name__ == '__main__':
     os.mkdir('nonprophage_seqs')
 
     for f in os.listdir(args.l):
-        if os.path.exists(os.path.join(args.c. f)):
-            loc = read_phage_locations(os.path.join(args.l. f))
-            dna = read_sequence(os.path.join(args.c. f))
+        if os.path.exists(os.path.join(args.c, f"{f}.fna")):
+            loc = read_phage_locations(os.path.join(args.l, f))
+            dna = read_sequence(os.path.join(args.c, f"{f}.fna"))
             write_seqs(dna, loc, os.path.join("prophage_seqs", f), os.path.join("nonprophage_seqs", f))
