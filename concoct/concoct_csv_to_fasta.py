@@ -22,8 +22,8 @@ def read_csv(csvf, verbose=False):
         for l in f:
             p = l.strip().split(",")
             bins[p[0]]=int(p[1])
-            if p[1] > x:
-                x = p[1]
+            if int(p[1]) > x:
+                x = int(p[1])
     return bins, x
 
 
@@ -38,8 +38,11 @@ def write_fasta_files(faf, odir, bins, maxb, verbose=False):
     :return: nada
     """
 
+    if not os.path.exists(odir):
+        os.mkdir(odir)
+    
     outputfiles = []
-    for i in range(maxb):
+    for i in range(maxb+1):
         outputfiles.append(open(os.path.join(odir, f"bin_{i}.fna"), 'w'))
 
     written_to=set()
@@ -56,7 +59,7 @@ def write_fasta_files(faf, odir, bins, maxb, verbose=False):
     for o in outputfiles:
         o.close()
 
-    for i in range(maxb):
+    for i in range(maxb+1):
         if i not in written_to:
             os.remove(os.path.join(odir, f"bin_{i}.fna"))
 
