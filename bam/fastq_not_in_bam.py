@@ -20,6 +20,8 @@ def reads_from_bam(bamf, verbose=False):
     bamfile = pysam.AlignmentFile(bamf, "rb")
     for read in bamfile.fetch(until_eof=True):
         reads.add(read.query_name)
+    if verbose:
+        sys.stderr.write("There are {} reads in the bamfile\n".format(len(reads)))
     return reads
 
 def extract_fastq(fqf, reads, verbose):
@@ -35,7 +37,11 @@ def extract_fastq(fqf, reads, verbose):
         if sid.startswith('@'):
             sid = sid[1:]
         if sid not in reads:
+            if verbose:
+                sys.stderr.write("Keeping: {}  -->  {}\n".format(sid, label))
             print("@{}\n{}\n+\n{}".format(label, seq, qual))
+        elif verbose:
+            sys.stderr.write("Skipping: {}  -->  {}\n".format(sid, label))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Extract fastq reads that are not in the bamfile")
