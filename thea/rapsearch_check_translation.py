@@ -83,7 +83,7 @@ def is_dna(counts, rpfile, verbose=False):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-f', help='rapsearch output file', required=True)
-    parser.add_argument('-l', help='number of lines to search (default = 2000)', default=2000)
+    parser.add_argument('-l', help='number of lines to search (default = 2000)', default=2000, type=int)
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
