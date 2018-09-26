@@ -83,10 +83,7 @@ def stream_fastq(fqfile):
         seq = qin.readline()
         seq = seq.strip()
         qualheader = qin.readline()
-        qualscores = qin.readline()
-        if needsdecode:
-            qualscores = qualscores.decode('UTF-8')
-        qualscores = qualscores.strip()
+        qualscores = qin.readline().strip()
         header = header.replace('@', '', 1)
         yield seqid, header, seq, qualscores
 
