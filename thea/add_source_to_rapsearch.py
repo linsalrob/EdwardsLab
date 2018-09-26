@@ -45,8 +45,8 @@ def read_rapsearch_out(source, rpfile, ofile, verbose=False):
                 continue
             p=l.strip().split("\t")
             if p[1] not in source:
-                sys.stderr.write("No source for {}\n".format(p[1]))
-                out.write("\t{}".format(l))
+                sys.stderr.write("No source for {}. Skipped\n".format(p[1]))
+                #out.write("\t{}".format(l))
                 continue
             out.write("{}\t{}".format(source[p[1]], l))
     qin.close()
