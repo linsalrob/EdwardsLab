@@ -67,18 +67,18 @@ def is_dna(counts, rpfile, verbose=False):
         counts.discard(bp)
 
     if not counts:
-        return True
+        return "DNA"
 
     # letters that are ONLY amino acids: E, F, I, L, P, Q
 
     for aa in 'efilpq':
         if aa in counts:
-            return False
+            return "PROTEIN"
 
     if verbose:
         sys.stderr.write("AMBIGUOUS. Not sure what to report for {}\n".format(rpfile))
 
-    return False
+    return "AMBIGUOUS"
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
@@ -88,7 +88,4 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     counts= count_bases(args.f, args.l, args.v)
-    if is_dna(counts, args.v):
-        print("{}\tDNA".format(args.f))
-    else:
-        print("{}\tPROTEIN".format(args.f))
+    print("{}\t{}".format(args.f, is_dna(counts, args.f, args.v)))
