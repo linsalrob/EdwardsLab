@@ -41,12 +41,13 @@ if __name__ == "__main__":
                 elif s.endswith('_f2'):
                     start += 2
                     frame = 2
-                    end = start + (3 * len(orf))
+                    end = start + (3 * len(orf)) - 1
                 elif s.endswith('_f3'):
                     start += 3
                     frame = 3
-                    end = start + (3 * len(orf))
+                    end = start + (3 * len(orf)) - 1
                 elif s.endswith('_r1'):
+                    sys.stderr.write("Frame -1: start is {} len seq is {}\n".format(start, len(seqs[s])))
                     start = (len(seqs[s]) - start) + 1
                     frame = -1
                     end = start - (3 * len(orf))
