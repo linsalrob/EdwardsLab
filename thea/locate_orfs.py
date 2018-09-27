@@ -37,13 +37,13 @@ if __name__ == "__main__":
                     # first frame, this is easy
                     start += 1 # index is 0 indexed!
                     frame = 1
-                    end = start + (3 * len(orf))
+                    end = start + (3 * len(orf)) - 1 # if the aa string includes * this will too.
                 elif s.endswith('_f2'):
                     start += 2
                     frame = 2
                     end = start + (3 * len(orf))
                 elif s.endswith('_f3'):
-                    start += 2
+                    start += 3
                     frame = 3
                     end = start + (3 * len(orf))
                 elif s.endswith('_r1'):
