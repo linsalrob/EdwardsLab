@@ -35,7 +35,7 @@ if __name__ == "__main__":
                 # shit, now we have to figure out frames!
                 if s.endswith('_f1'):
                     # first frame, this is easy
-                    start = += 1 # index is 0 indexed!
+                    start += 1 # index is 0 indexed!
                     frame = 1
                     end = start + (3 * len(orf))
                 elif s.endswith('_f2'):
