@@ -1,4 +1,9 @@
 
+import sys
+
+"""
+Translate and back translate DNA to protein
+"""
 
 
 aa_1_letter_order = "A C D E F G H I K L M N P Q R S T V W Y".split()  # Alpha by 1 letter
@@ -86,3 +91,23 @@ amino_acid_codons_DNA = {
         "w": "tgg".split(),
         '*': "TAA TAG TGA".split()
 }
+
+
+def translate_dna(sequence, verbose=False):
+    """
+    Translate a DNA sequence and return a protein string
+    :param sequence: The DNA sequence to translate
+    :param verbose: More output
+    :return: a protein string
+    """
+
+    posn=0
+    trans=""
+    while posn < len(sequence)-3:
+        codon = sequence[posn:posn+3]
+        if codon not in genetic_code:
+            sys.stderr.write("Uknown codon: {}\n".format(codon))
+            trans += "X"
+            continue
+        trans += genetic_code[codon]
+    return trans

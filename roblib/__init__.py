@@ -11,6 +11,7 @@ from .functions import is_hypothetical
 from .newick import Newick_Tree
 from .dnadist import parse_dnadist
 from .blast import stream_blast_results
+from .translate import translate_dna
 
 __all__ = [
     'mean', 'median', 'stdev',
@@ -18,5 +19,6 @@ __all__ = [
     'rc', 'shannon',
     'latlon2distance',
     'ascii_clean', 'is_hypothetical', 'Newick_Tree', 'parse_dnadist',
-    'stream_blast_results'
+    'stream_blast_results',
+    'translate_dna'
     ]
