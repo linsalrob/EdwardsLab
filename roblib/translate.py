@@ -110,4 +110,5 @@ def translate_dna(sequence, verbose=False):
             trans += "X"
             continue
         trans += genetic_code[codon]
+        posn += 3
     return trans
