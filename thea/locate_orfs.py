@@ -19,35 +19,23 @@ if __name__ == "__main__":
     # generate the six frame translations
     seqs = {}
     for seqid, seq in stream_fasta(args.f):
-        if args.v:
-            sys.stderr.write("Translating frame 1\n")
         seqs["{}_f1".format(seqid)] = translate_dna(seq, args.v)
-        if args.v:
-            sys.stderr.write("Translating frame 2\n")
         seqs["{}_f2".format(seqid)] = translate_dna(seq[1:], args.v)
-        if args.v:
-            sys.stderr.write("Translating frame 3\n")
         seqs["{}_f3".format(seqid)] = translate_dna(seq[2:], args.v)
         rcseq = rc(seq)
-        if args.v:
-            sys.stderr.write("Translating frame -1\n")
         seqs["{}_r1".format(seqid)] = translate_dna(rcseq, args.v)
-        if args.v:
-            sys.stderr.write("Translating frame -2\n")
         seqs["{}_r2".format(seqid)] = translate_dna(rcseq[1:], args.v)
-        if args.v:
-            sys.stderr.write("Translating frame -3\n")
         seqs["{}_r3".format(seqid)] = translate_dna(rcseq[2:], args.v)
 
     for orfid, orf in stream_fasta(args.o):
         for s in seqs:
             if orf in seqs[s]:
-                start = seqs[s].index(orf)
+                start = seqs[s].index(orf) * 3 # convert from aa to bp!
                 frame = 0
                 # shit, now we have to figure out frames!
                 if s.endswith('_f1'):
                     # first frame, this is easy
-                    start += 1 # index is 0 indexed!
+                    start = += 1 # index is 0 indexed!
                     frame = 1
                     end = start + (3 * len(orf))
                 elif s.endswith('_f2'):
