@@ -37,9 +37,10 @@ if __name__ == "__main__":
     # generate the six frame translations
     seqs = {}
     lengths = {}
-    for seqid, seq in stream_fasta(args.f):
+    for seqid, seq in stream_fasta(args.f, False):
         seq = seq.upper()
         lengths[seqid] = len(seq)
+        seqs[seqid] = {}
         seqs[seqid]["f1"] = translate_dna(seq, args.v)
         seqs[seqid]["f2"] = translate_dna(seq[1:], args.v)
         seqs[seqid]["f3"] = translate_dna(seq[2:], args.v)
