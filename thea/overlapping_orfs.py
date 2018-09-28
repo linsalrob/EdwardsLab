@@ -12,8 +12,12 @@ lengths = {}
 with open('locations.txt', 'r') as f:
     for l in f:
         p = l.strip().split("\t")
+        if "UNKNOWN" == p[0]:
+            continue
         if p[2] not in locations:
             locations[p[2]] = {"THEA" : [], "NONE": [], "ANY" : []}
+        p[3] = int(p[3])
+        p[4] = int(p[4])
         locations[p[2]][p[0]].append(p)
         lengths[p[2]] = int(p[6])
 
