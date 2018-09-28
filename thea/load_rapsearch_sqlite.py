@@ -88,7 +88,7 @@ def load_data(genomeid, filename, conn, verbose=False):
     """
 
     if verbose:
-        sys.stderr.write("Adding data for {}\n".formnat(genomeid))
+        sys.stderr.write("Adding data for {}\n".format(genomeid))
 
     if filename.endswith('.gz'):
         qin = gzip.open(filename, 'rt')
