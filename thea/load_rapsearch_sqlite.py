@@ -93,7 +93,8 @@ def load_data(filename, conn, verbose=False):
         for i in [3, 4, 5, 6, 7, 8, 9]:
             p[i] = int(p[i])
         """
-        c = "INSERT INTO rapsearch (query, subject, identity, len, mismatch, gap_open, query_start, query_end, subject_start, subject_end, e_value, bitscore)".format(tn=genomeid)
+
+        c = "INSERT INTO rapsearch (query, subject, identity, len, mismatch, gap_open, query_start, query_end, subject_start, subject_end, e_value, bitscore)"
         c += "values ('{val}')".format(val="', '".join(p))
 
         try:
