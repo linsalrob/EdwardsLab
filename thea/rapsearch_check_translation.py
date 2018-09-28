@@ -87,5 +87,8 @@ if __name__ == "__main__":
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
+    sys.stderr.write("DO NOT USE THIS CODE: There is a bug where if there is <2000 lines, you will never finish!\n")
+    sys.exit(0)
+
     counts= count_bases(args.f, args.l, args.v)
     print("{}\t{}".format(args.f, is_dna(counts, args.f, args.v)))
