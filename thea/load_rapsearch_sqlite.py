@@ -108,7 +108,10 @@ def load_data(filename, conn, verbose=False):
             sys.exit(-1)
 
         conn.commit()
-        return conn
+
+    qin.close()
+
+    return conn
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
@@ -121,4 +124,5 @@ if __name__ == "__main__":
     create_table(conn, args.v)
 
     for f in os.listdir(args.d):
-        load_data(os.path.join(args.d, f), conn, args.v)
+        conn = load_data(os.path.join(args.d, f), conn, args.v)
+    disconnect(conn)
