@@ -54,15 +54,15 @@ if __name__ == "__main__":
                     sys.stderr.write("Frame -1: start is {} len seq is {}\n".format(start, lengths[s]))
                     start = (lengths[s] - start)
                     frame = -1
-                    end = start - (3 * len(orf))
+                    end = start - (3 * len(orf)) + 1
                 elif s.endswith('_r2'):
                     start = (lengths[s] - (start+1))
                     frame = -2
-                    end = start - (3 * len(orf))
+                    end = start - (3 * len(orf)) + 1
                 elif s.endswith('_r3'):
                     start = (lengths[s] - (start+2))
                     frame = -3
-                    end = start - (3 * len(orf))
+                    end = start - (3 * len(orf)) + 1
 
                 print("\t".join(map(str, [orfid, start, end, frame])))
                 break
