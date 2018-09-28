@@ -47,7 +47,7 @@ for contig in locations:
             (o[4], o[3]) = (o[3], o[4])
         for z in range(o[3], o[4] + 1):
             overlaps.update(posn[z])
-        print("\t".join(map(str, ["ANY", o[1], list(overlaps)])))
+        print("\t".join(map(str, ["ANY", o[1]] + list(overlaps))))
         seen.update(overlaps)
 
     # finally print out the NONE with no overlaps
