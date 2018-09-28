@@ -78,6 +78,9 @@ def load_data(filename, conn, verbose=False):
     :return:
     """
 
+    if verbose:
+        sys.stderr.write("Parsing {}\n".format(filename))
+
     if filename.endswith('.gz'):
         qin = gzip.open(filename, 'rt')
     else:
