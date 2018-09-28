@@ -52,15 +52,15 @@ if __name__ == "__main__":
                     end = start + (3 * len(orf)) - 1
                 elif s.endswith('_r1'):
                     sys.stderr.write("Frame -1: start is {} len seq is {}\n".format(start, lengths[s]))
-                    start = (len(seqs[s]) - start) + 1
+                    start = (lengths[s] - start) + 1
                     frame = -1
                     end = start - (3 * len(orf))
                 elif s.endswith('_r2'):
-                    start = (len(seqs[s]) - start) + 2
+                    start = (lengths[s] - start) + 2
                     frame = -2
                     end = start - (3 * len(orf))
                 elif s.endswith('_r3'):
-                    start = (len(seqs[s]) - start) + 3
+                    start = (lengths[s] - start) + 3
                     frame = -3
                     end = start - (3 * len(orf))
 
