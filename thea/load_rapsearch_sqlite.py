@@ -62,8 +62,7 @@ def create_table(conn, verbose=False):
         sys.stderr.write("{}\n".format(cl))
 
     conn.execute(cl)
-    conn.execute("CREATE INDEX rapsearchQIndex on rapsearch(query)")
-    conn.execute("CREATE INDEX rapsearchSIndex on rapsearch(subject)")
+
 
     conn.commit()
 
@@ -125,4 +124,8 @@ if __name__ == "__main__":
 
     for f in os.listdir(args.d):
         conn = load_data(os.path.join(args.d, f), conn, args.v)
+
+    sys.stderr.write("Loading complete. Indexing\n")
+    conn.execute("CREATE INDEX rapsearchQIndex on rapsearch(query)")
+    conn.execute("CREATE INDEX rapsearchSIndex on rapsearch(subject)")
     disconnect(conn)
