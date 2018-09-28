@@ -20,6 +20,7 @@ if __name__ == "__main__":
     seqs = {}
     lengths = {}
     for seqid, seq in stream_fasta(args.f):
+        seq = seq.upper()
         # this is a total hack to avoid having to recreate the original seqid
         lengths["{}_f1".format(seqid)] = lengths["{}_f2".format(seqid)] = lengths["{}_f3".format(seqid)] = len(seq)
         lengths["{}_r1".format(seqid)] = lengths["{}_r2".format(seqid)] = lengths["{}_r3".format(seqid)] = len(seq)
@@ -51,7 +52,6 @@ if __name__ == "__main__":
                     frame = 3
                     end = start + (3 * len(orf)) - 1
                 elif s.endswith('_r1'):
-                    sys.stderr.write("Frame -1: start is {} len seq is {}\n".format(start, lengths[s]))
                     start = (lengths[s] - start)
                     frame = -1
                     end = start - (3 * len(orf)) + 1
