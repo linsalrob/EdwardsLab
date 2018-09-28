@@ -56,11 +56,11 @@ if __name__ == "__main__":
                     frame = -1
                     end = start - (3 * len(orf))
                 elif s.endswith('_r2'):
-                    start = (lengths[s] - start) + 2
+                    start = (lengths[s] - start)
                     frame = -2
                     end = start - (3 * len(orf))
                 elif s.endswith('_r3'):
-                    start = (lengths[s] - start) + 3
+                    start = (lengths[s] - start)
                     frame = -3
                     end = start - (3 * len(orf))
 
