@@ -53,7 +53,7 @@ def create_table(conn, verbose=False):
     :return: the database connection
     """
 
-    rows =  'query TEXT PRIMARY KEY, subject TEXT, identity REAL, len INTEGER, mismatch INTEGER,'
+    rows =  'query TEXT, subject TEXT, identity REAL, len INTEGER, mismatch INTEGER,'
     rows += ' gap_open INTEGER, query_start INTEGER, query_end INTEGER, subject_start INTEGER,'
     rows += ' subject_end INTEGER, e_value REAL, bitscore REAL'
 
