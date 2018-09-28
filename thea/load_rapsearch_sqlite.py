@@ -107,7 +107,7 @@ def load_data(genomeid, filename, conn, verbose=False):
             p[i] = int(p[i])
         """
         c = "INSERT INTO {tn} (query subject identity len mismatch gap_open query_start query_end subject_start subject_end e_value bitscore)".format(tn=genomeid)
-        c += "values ({val})".format(val=" ".join(p))
+        c += "values ('{val}')".format(val="', ".join(p))
         try:
             conn.execute(c)
         except sqlite3.OperationalError as e:
