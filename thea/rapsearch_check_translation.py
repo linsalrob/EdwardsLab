@@ -11,10 +11,11 @@ import gzip
 
 __author__ = 'Rob Edwards'
 
-def stream_rapsearch_aln(rpfile, verbose=False):
+def read_rapsearch_aln(rpfile, linestocount, verbose=False):
     """
-    Stream the rapsearch file and just return the query lines
-    :param rpfile: rapsearch file to stream
+    Read the rapsearch file and just return the query lines
+    :param rpfile: rapsearch file to read
+    :param linestocount: how many query lines to count
     :param verbose: more output
     :return: a query line
     """
@@ -24,26 +25,29 @@ def stream_rapsearch_aln(rpfile, verbose=False):
     else:
         qin = open(rpfile, 'r')
 
-    while True:
-        l = qin.readline()
+    lines = []
+    for l in qin:
         if l.startswith('Query:'):
-            yield l
+            lines.append(l)
+            if len(lines) > linestocount:
+                break
+
+    qin.close()
+
+    return lines
 
 def count_bases(rpfile, linestocount, verbose=False):
     """
     Count the alphabet in the query lines of a rapsearch file
     :param rpfile: the rapsearch aln file
-    :param linestocount: how many query lines to count
     :param verbose: more output
     :return: a set of the letters
     """
 
     counts = set()
     counter = 0
-    for l in stream_rapsearch_aln(rpfile, verbose):
-        counter += 1
-        if counter > linestocount:
-            break
+    lines = read_rapsearch_aln(rpfile, linestocount, verbose)
+    for l in lines:
         p = l.split()
         if len(p) > 4:
             sys.stderr.write("Split wasn't magic on |{}|\n".format(l))
