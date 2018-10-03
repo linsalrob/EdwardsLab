@@ -17,6 +17,11 @@ int main (int argc, char* argv[]) {
         return 1;
     }
 
+    // split the input file name so we can get an output filename
+    string ofname = (string) argv[1];
+    auto pos = ofname.rfind('/');
+    if (pos != string::npos)
+        ofname = ofname.substr(pos+1, string::npos);
 
     ifstream counts;
     counts.open(argv[1]);
@@ -37,7 +42,7 @@ int main (int argc, char* argv[]) {
     counts.close();
 
     ostringstream p;
-    p << argv[2] << '/' << argv[1];
+    p << argv[2] << '/' << ofname;
     ofstream outs(p.str());
     if (!outs) {
         cerr << "Unable to open the output file " << p.str() << endl;
