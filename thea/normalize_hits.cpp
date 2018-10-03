@@ -7,6 +7,7 @@
 #include <string>
 #include <cstring>
 #include <sstream>
+#include <map>
 using namespace std;
 
 int main (int argc, char* argv[]) {
@@ -24,31 +25,31 @@ int main (int argc, char* argv[]) {
         return 1;
     }
 
-    string line;
+    int total=0;
+    map<string, int> pegcounts;
+    int c; string peg;
+    // read each line and split into two tokens
+    while (counts >> c >> peg)
+    {
+        pegcounts[peg] = c;
+        total += c;
+    }
+    counts.close();
+
     ostringstream p;
-    p << argv[2] << '/' << argv[1] << endl;
+    p << argv[2] << '/' << argv[1];
     ofstream outs(p.str());
     if (!outs) {
-        cerr << "Unable to open the output file " << p.str();
+        cerr << "Unable to open the output file " << p.str() << endl;
         argv[1];
         return 2;
     }
 
-
-    int c=0;
-
-    while (counts >> line)
+    for( auto const& [key, val] : pegcounts )
     {
-        // note this makes a stream from the string
-        istringstream iss(line);
-        cout << " read: " << line;
-        int c;
-        string peg;
-        iss >> c;
-        iss >> peg;
-        cout << " peg : " << peg << " count: " << c;
-
+        outs << key << " " << (float) val/ (float) total << endl;
     }
+    outs.close();
 
     return 0;
 }
