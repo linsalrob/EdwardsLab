@@ -45,9 +45,9 @@ int main (int argc, char* argv[]) {
         return 2;
     }
 
-    for( auto const& [key, val] : pegcounts )
+    for( auto const& x : pegcounts )
     {
-        outs << key << " " << (float) val/ (float) total << endl;
+        outs << x.first << " " << (float) x.second/ (float) total << endl;
     }
     outs.close();
 
