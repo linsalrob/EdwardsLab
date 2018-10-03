@@ -11,8 +11,6 @@
 #include <map>
 using namespace std;
 
-
-
 int main (int argc, char* argv[]) {
 
     if ( argc < 2) {
@@ -29,17 +27,18 @@ int main (int argc, char* argv[]) {
     map<string, int> total;
     for(auto& filename : boost::make_iterator_range(boost::filesystem::directory_iterator(argv[1]), {})) {
         ifstream reader;
-        reader.open(filename);
+        reader.open(filename.path().string());
         if (!reader) {
-            cerr << "Unable to open the input file" << argv[1];
+            cerr << "Unable to open the input file" << filename << endl;
             return 1;
         }
         float c; string peg;
         // read each line and split into two tokens
-        while (counts >> peg >> c) {
+        while (reader >> peg >> c) {
             counts[peg] += c;
             total[peg]++;
         }
+        reader.close();
     }
 
     for( auto const& x : counts )
