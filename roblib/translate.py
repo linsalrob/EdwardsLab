@@ -6,6 +6,10 @@ Translate and back translate DNA to protein
 """
 
 
+aa_1_to_3_letter ={"A" : "Ala", "C" : "Cys", "D" : "Asp", "E" : "Glu", "F" : "Phe", "G" : "Gly", "H" : "His",
+                   "I" : "Ile", "K" : "Lys", "L" : "Leu", "M" : "Met", "N" : "Asn", "P" : "Pro", "Q" : "Gln",
+                   "R" : "Arg", "S" : "Ser", "T" : "Thr", "V" : "Val", "W" : "Trp", "Y" : "Tyr", "*" : "Stop"}
+
 aa_1_letter_order = "A C D E F G H I K L M N P Q R S T V W Y".split()  # Alpha by 1 letter
 aa_3_letter_order = "A R N D C Q E G H I L K M F P S T W Y V".split()  # PAM matrix order
 aa_n_codon_order  = "L R S A G P T V I C D E F H K N Q Y M W".split()
@@ -112,3 +116,21 @@ def translate_dna(sequence, verbose=False):
         trans += genetic_code[codon]
         posn += 3
     return trans
+
+def print_codon_table(ambiguous=False):
+    """
+    Print the codon usage table
+    :param ambiguous: Print codons with ambiguous bases
+    :return:
+    """
+
+    c = sorted(genetic_code.keys())
+    for codon in c:
+        test = codon.replace('A', '')
+        test = test.replace('G', '')
+        test = test.replace('C', '')
+        test = test.replace('T', '')
+        if test and not ambiguous:
+            continue
+
+        print("{}\t{}".format(codon, aa_1_to_3_letter[genetic_code[codon]]))
