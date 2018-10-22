@@ -27,6 +27,7 @@ int main (int argc, char* argv[]) {
         return 1;
     }
 
+    cout << "Filename\tpeg\tcounts\ttotal per mg\tnormalized" << endl;
     map<string, float> counts;
     map<string, int> total;
     for (auto &filename : boost::make_iterator_range(boost::filesystem::directory_iterator(argv[1]), {})) {
@@ -58,7 +59,7 @@ int main (int argc, char* argv[]) {
         file.close();
 
         for (auto const& x : counts)
-            cout << filename.path().string() << "\t" <<  x.first << "\t" << float(x.second) / total << endl;
+            cout << filename.path().string() << "\t" <<  x.first << "\t" << x.second << "\t" << total << "\t" << float(x.second) / total << endl;
 
     }
 }
