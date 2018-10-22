@@ -9,6 +9,7 @@
 #include <cstring>
 #include <sstream>
 #include <map>
+#include <gzstream>
 using namespace std;
 
 int main (int argc, char* argv[]) {

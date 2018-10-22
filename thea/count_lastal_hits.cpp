@@ -53,6 +53,10 @@ int main (int argc, char* argv[]) {
             }
         }
 
+
+        boost::iostreams::close(inbuf);
+        file.close();
+
         for (auto const& x : counts)
             cout << filename.path().string() << "\t" <<  x.first << "\t" << float(x.second) / total << endl;
 
