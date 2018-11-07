@@ -17,7 +17,12 @@ if __name__ == '__main__':
     sss = set()
     for infile in os.listdir(args.d):
         with open(os.path.join(args.d, infile), 'r') as f:
-            (lvl, sample) = f.readline().strip().split("\t")
+            try:
+                l = f.readline()
+                (lvl, sample) = l.strip().split("\t")
+            except:
+                sys.stderr.write("Can't split: |{}|\n".format(l))
+                sys.exit(-1)
             sample = sample.replace('superfocus.bins/', '')
             data[sample] = {}
             for l in f:
