@@ -92,7 +92,7 @@ if __name__ == '__main__':
     lvlchoices = ['1', '2', '3', 'fn']
     lvlchoicesstr = "'".join(lvlchoices)
     parser = argparse.ArgumentParser(description="Summarize the superfocus output")
-    parser.add_argument('-d', help='Directory with all the results')
+    parser.add_argument('-d', help='Directory with all the results', required=True)
     parser.add_argument('-l', help='Subsystem level. Must be one of {}. Default = 1'.format(lvlchoicesstr), default='1')
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
