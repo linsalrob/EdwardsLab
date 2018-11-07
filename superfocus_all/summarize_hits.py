@@ -28,8 +28,9 @@ def read_counts(rdir, verbose=False):
         seqlen[seq1] = int(t)
         while n and '--' not in n:
             n = f.readline()
+        n = f.readline()
         if n:
-            seq2 = f.readline().strip().split("/")[-1]
+            seq2 = n.strip().split("/")[-1]
             n = f.readline()
             t = f.readline().split()[-1]
             seqlen[seq2] = int(t)
@@ -122,7 +123,7 @@ if __name__ == '__main__':
         for s in avcounts:
             sys.stdout.write("{}\t{}\n".format(s, avcounts[s]))
     elif len(counts) == 1:
-        k1 = counts.keys()
+        k1 = list(counts.keys())[0]
         for s in counts[k1]:
             sys.stdout.write("{}\t{}\n".format(s, (1.0 * counts[k1][s] / seqlen[k1])))
     else:
