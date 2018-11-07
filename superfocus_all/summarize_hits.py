@@ -74,7 +74,11 @@ def read_bins(rdir, lvl, verbose=False):
         p = r.strip().split("\t")
         if p[0] not in counts:
             counts[p[0]] = {}
-        counts[p[0]][p[lvl]] = counts[p[0]].get(p[lvl], 0) + float(p[7])
+        thislvl = p[lvl]
+        if 3 == lvl:
+            # confusingly, this is level 2!
+            thislvl = p[2] + " :: " + p[3]
+        counts[p[0]][thislvl] = counts[p[0]].get(thislvl, 0) + float(p[7])
 
     if verbose:
         for s in counts:
@@ -113,13 +117,13 @@ if __name__ == '__main__':
         for s in counts[k1]:
             if s not in counts[k2]:
                 sys.stderr.write("WARNING: Only found {} in one of the read files. So we use that number, and don't average it. This is probably wrong!\n".format(s))
-                avcounts[s] = counts[k1]
+                avcounts[s] = counts[k1][s]
             else:
                 avcounts[s] = ((1.0 * counts[k1][s] / seqlen[k1]) + (1.0 * counts[k2][s] / seqlen[k2])) / 2
         for s in counts[k2]:
             if s not in counts[k1]:
                 sys.stderr.write("WARNING: Only found {} in one of the read files. So we use that number, and don't average it. This is probably wrong!\n".format(s))
-                avcounts[s] = counts[k2]
+                avcounts[s] = counts[k2][s]
         for s in avcounts:
             sys.stdout.write("{}\t{}\n".format(s, avcounts[s]))
     elif len(counts) == 1:
