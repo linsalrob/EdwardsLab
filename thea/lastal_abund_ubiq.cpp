@@ -49,8 +49,11 @@ int main (int argc, char* argv[]) {
         total[peg]++;
     }
 
-    if (reader.fail())
+    if (reader.fail()) {
         cerr << "Reading the file " << argv[1] << " failed" << endl;
+    	cerr << "Error: " << strerror(errno) << endl;
+    }
+
 
     reader.close();
 
