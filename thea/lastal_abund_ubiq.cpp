@@ -52,6 +52,9 @@ int main (int argc, char* argv[]) {
     if (reader.fail()) {
         cerr << "Reading the file " << argv[1] << " failed" << endl;
     	cerr << "Error: " << strerror(errno) << endl;
+	cerr << "Bad bit: " << reader.bad() << endl;
+	cerr << "Fail bit: " << reader.fail() << endl;
+	cerr << "Good bit: " << reader.good() << endl;
     }
 
 
