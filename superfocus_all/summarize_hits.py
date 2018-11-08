@@ -116,13 +116,13 @@ if __name__ == '__main__':
         (k1,k2) = counts.keys()
         for s in counts[k1]:
             if s not in counts[k2]:
-                sys.stderr.write("WARNING: Only found {} in one of the read files. So we use that number, and don't average it. This is probably wrong!\n".format(s))
+                # sys.stderr.write("WARNING: Only found {} in one of the read files. So we use that number, and don't average it. This is probably wrong!\n".format(s))
                 avcounts[s] = counts[k1][s]
             else:
                 avcounts[s] = ((1.0 * counts[k1][s] / seqlen[k1]) + (1.0 * counts[k2][s] / seqlen[k2])) / 2
         for s in counts[k2]:
             if s not in counts[k1]:
-                sys.stderr.write("WARNING: Only found {} in one of the read files. So we use that number, and don't average it. This is probably wrong!\n".format(s))
+                # sys.stderr.write("WARNING: Only found {} in one of the read files. So we use that number, and don't average it. This is probably wrong!\n".format(s))
                 avcounts[s] = counts[k2][s]
         for s in avcounts:
             sys.stdout.write("{}\t{}\n".format(s, avcounts[s]))

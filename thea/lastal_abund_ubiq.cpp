@@ -35,9 +35,9 @@ int main (int argc, char* argv[]) {
         return 1;
     }
 
-    float c; string peg; string mg;
-    // read each line and split into three tokens
-    while (reader >> mg >> peg >> c) {
+    int n; int tot; float c; string peg; string mg;
+    // read each line and split into five tokens
+    while (reader >> mg >> peg >> n >> tot >> c) {
         counts[peg] += c;
         total[peg]++;
     }

@@ -36,6 +36,7 @@ if __name__ == '__main__':
     allss = sorted(sss)
     samples = sorted(data.keys())
     with open(args.o, 'w') as out:
+        out.write("\t")
         out.write("\t".join(samples))
         out.write("\n")
         for ss in allss:
