@@ -37,10 +37,22 @@ int main (int argc, char* argv[]) {
 
     int n; int tot; float c; string peg; string mg;
     // read each line and split into five tokens
-    while (reader >> mg >> peg >> n >> tot >> c) {
+    @TODO NEED TO CONVERT THIS TO IGNORE FIRST LINE!
+
+    while (reader >> mg) {
+        if ("Filename" == mg) {
+            while ("normalized" != mg)
+                reader >> mg;
+            reader >> mg;
+        }
+        reader >> peg >> n >> tot >> c;
         counts[peg] += c;
         total[peg]++;
     }
+
+    if (reader.fail())
+        cerr << "Reading the file " << argv[1] << " failed" << endl;
+
     reader.close();
 
     for( auto const& x : counts )
