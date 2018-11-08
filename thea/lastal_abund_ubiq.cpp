@@ -37,7 +37,6 @@ int main (int argc, char* argv[]) {
 
     int n; int tot; float c; string peg; string mg;
     // read each line and split into five tokens
-    @TODO NEED TO CONVERT THIS TO IGNORE FIRST LINE!
 
     while (reader >> mg) {
         if ("Filename" == mg) {
