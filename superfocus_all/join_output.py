@@ -17,9 +17,12 @@ if __name__ == '__main__':
     sss = set()
     for infile in os.listdir(args.d):
         with open(os.path.join(args.d, infile), 'r') as f:
+            l = f.readline().strip()
+            if not l:
+                continue
+
             try:
-                l = f.readline()
-                (lvl, sample) = l.strip().split("\t")
+                (lvl, sample) = l.split("\t")
             except:
                 sys.stderr.write("Can't split: |{}|\n".format(l))
                 sys.exit(-1)
