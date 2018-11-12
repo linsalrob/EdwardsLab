@@ -91,3 +91,6 @@ install_manifest.txt
 
 # compiled file
 bin/fastq2fasta
+
+# a virtual environment for anthill
+venv_anthill/
