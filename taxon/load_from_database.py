@@ -130,13 +130,22 @@ def gi_to_taxonomy(gi, conn, protein=False, verbose=False):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Get data from the database")
-    parser.add_argument('-s', help='sqlite file to write',required=True)
+    parser.add_argument('-s', help='sqlite database file',required=True)
     parser.add_argument('-t', help='taxid to get')
+    parser.add_argument('-g', help='gi to get')
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
 
     conn = connect_to_db(args.s)
-    t,n = get_taxonomy(args.t, conn)
+
+    if args.t:
+        t,n = get_taxonomy(args.t, conn)
+    elif args.g:
+        t,n = gi_to_taxonomy(args.g, conn)
+    else:
+        sys.stderr.write("Please provide one of either -t or -g")
+        sys.exit(-1)
+
     print("{}".format(t.rank))
     print("{}: scientific: {} common: {} blast: {}\n".format(
         n.taxid, n.scientific_name, n.common_name, n.blast_name))
