@@ -22,6 +22,8 @@ def connect_to_db(dbname, verbose=False):
     """
 
     try:
+        if verbose:
+            sys.stderr.write("Connecting to {}\n".format(os.path.join(defaultdir, dbname)))
         conn = sqlite3.connect(os.path.join(defaultdir, dbname))
     except sqlite3.Error as e:
         sys.stderr.write("ERROR Creating database: {}\n".format(os.path.join(defaultdir, dbname)))
@@ -245,7 +247,7 @@ def create_indices(conn, verbose=False):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Convert NCBI taxonomy to SQLite3 database")
     parser.add_argument('-d', help='directory with tax data', required=True)
-    parser.add_argument('-s', help='sqlite file to write',required=True)
+    parser.add_argument('-s', help='sqlite file to write (default=taxonomy.sqlite3)',default="taxonomy.sqlite3")
     parser.add_argument('-v', help='verbose output', action="store_true")
     parser.add_argument('-o', help='overwrite any existing databases (otherwise error out)', action="store_true")
     args = parser.parse_args()
