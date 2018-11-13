@@ -143,7 +143,7 @@ if __name__ == '__main__':
     if args.t:
         t,n = get_taxonomy(args.t, conn, args.v)
     elif args.g:
-        t,n = gi_to_taxonomy(args.g, conn, args.v)
+        t,n = gi_to_taxonomy(args.g, conn, verbose=args.v)
     else:
         sys.stderr.write("Please provide one of either -t or -g")
         sys.exit(-1)
