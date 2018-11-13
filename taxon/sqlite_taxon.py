@@ -180,7 +180,7 @@ def create_load(conn, datadir, verbose=False):
     conn.commit()
     with gzip.open(dbfile, "rt") as f:
         for l in f:
-            p = l.strip().rstrip("|").split('\t|')
+            p = l.strip().split('\t')
             p = [x.strip() for x in p]
             try:
                 conn.execute("INSERT INTO merged VALUES (?, ?)", p)
@@ -201,7 +201,7 @@ def create_load(conn, datadir, verbose=False):
     conn.commit()
     with gzip.open(dbfile, "rt") as f:
         for l in f:
-            p = l.strip().rstrip("|").split('\t|')
+            p = l.strip().split('\t')
             p = [x.strip() for x in p]
             try:
                 conn.execute("INSERT INTO merged VALUES (?, ?)", p)
