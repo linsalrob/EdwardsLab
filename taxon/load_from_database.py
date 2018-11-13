@@ -9,7 +9,7 @@ import argparse
 
 from taxonomy import TaxonNode, TaxonName, TaxonDivision
 
-data = {"node": {}, "name": {}, "division": {}}
+data = {"node": {}, "name": {}, "division": {}, "gi2tax": {}}
 # default_database = "/raid60/usr/data/NCBI/taxonomy/current/taxonomy.sqlite3"
 default_database = "/data/ncbi/taxonomy/20180620/taxonomy.sqlite"
 
