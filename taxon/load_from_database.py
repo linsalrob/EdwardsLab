@@ -7,7 +7,7 @@ import sys
 import sqlite3
 import argparse
 
-from .taxonomy import TaxonNode, TaxonName, TaxonDivision
+from taxonomy import TaxonNode, TaxonName, TaxonDivision
 
 data = {"node": {}, "name": {}, "division": {}}
 # default_database = "/raid60/usr/data/NCBI/taxonomy/current/taxonomy.sqlite3"
