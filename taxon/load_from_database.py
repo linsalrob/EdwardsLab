@@ -118,7 +118,8 @@ def gi_to_taxonomy(gi, conn, protein=False, verbose=False):
     db = "gi_taxid_nucl"
     if protein:
         db = "gi_taxid_prot"
-    cur.execute("select tax_id from ? where gi = ?", [db, gi])
+    sqlexe="select tax_id from {} where gi = ?".format(db)
+    cur.execute(sqlexe, [gi])
     p = cur.fetchone()
     data['gi2tax'][gi] = p
     if verbose:
