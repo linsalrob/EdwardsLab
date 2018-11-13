@@ -62,7 +62,7 @@ def create_load(conn, datadir, verbose=False):
 
 
     ## The NODES table
-    dbfile = os.path.join(datadir, "nodes.dmp.gz")
+    dbfile = os.path.join(datadir, "nodes.dmp")
     if verbose:
         sys.stderr.write("loading NODES table: {}\n".format(dbfile))
     if not os.path.exists(dbfile):
@@ -70,7 +70,7 @@ def create_load(conn, datadir, verbose=False):
         sys.exit(-1)
     conn.execute("CREATE TABLE nodes (tax_id INTEGER PRIMARY KEY, parent INTEGER, rank TEXT, embl_code TEXT, division_id INTEGER, inherited_div INTEGER, genetic_code INTEGER, inherited_genetic_code INTEGER, mitochondrial_genetic_code INTEGER, inherited_mito_gc INTEGER, genbank_hidden INTEGER, hidden_subtree INTEGER, comments)")
     conn.commit()
-    with gzip.open(dbfile, "rt") as f:
+    with open(dbfile, "r") as f:
         for l in f:
             p = l.strip().rstrip("|").split('\t|')
             p = [x.strip() for x in p]
@@ -84,7 +84,7 @@ def create_load(conn, datadir, verbose=False):
 
 
     # the NAMES table
-    dbfile = os.path.join(datadir, "names.dmp.gz")
+    dbfile = os.path.join(datadir, "names.dmp")
     if verbose:
         sys.stderr.write("loading NAMES table: {}\n".format(dbfile))
     if not os.path.exists(dbfile):
@@ -92,7 +92,7 @@ def create_load(conn, datadir, verbose=False):
         sys.exit(-1)
     conn.execute("CREATE TABLE names (tax_id INTEGER, name TEXT, unique_name TEXT, name_class TEXT)")
     conn.commit()
-    with gzip.open(dbfile, "rt") as f:
+    with open(dbfile, "r") as f:
         for l in f:
             p = l.strip().rstrip("|").split('\t|')
             p = [x.strip() for x in p]
@@ -105,7 +105,7 @@ def create_load(conn, datadir, verbose=False):
     conn.commit()
 
     # the DIVISION table
-    dbfile = os.path.join(datadir, "division.dmp.gz")
+    dbfile = os.path.join(datadir, "division.dmp")
     if verbose:
         sys.stderr.write("loading DIVISION table: {}\n".format(dbfile))
     if not os.path.exists(dbfile):
@@ -113,7 +113,7 @@ def create_load(conn, datadir, verbose=False):
         sys.exit(-1)
     conn.execute("CREATE TABLE division (division_id INTEGER PRIMARY KEY, division_code TEXT, division_name TEXT, comments)")
     conn.commit()
-    with gzip.open(dbfile, "rt") as f:
+    with open(dbfile, "r") as f:
         for l in f:
             p = l.strip().rstrip("|").split('\t|')
             p = [x.strip() for x in p]
@@ -126,7 +126,7 @@ def create_load(conn, datadir, verbose=False):
     conn.commit()
 
     # the GENETIC CODE table
-    dbfile = os.path.join(datadir, "gencode.dmp.gz")
+    dbfile = os.path.join(datadir, "gencode.dmp")
     if verbose:
         sys.stderr.write("loading GENETIC CODE table: {}\n".format(dbfile))
     if not os.path.exists(dbfile):
@@ -134,7 +134,7 @@ def create_load(conn, datadir, verbose=False):
         sys.exit(-1)
     conn.execute("CREATE TABLE gencode (genetic_code INTEGER, abbreviation , name TEXT, cde TEXT, starts TEXT)")
     conn.commit()
-    with gzip.open(dbfile, "rt") as f:
+    with open(dbfile, "r") as f:
         for l in f:
             p = l.strip().rstrip("|").split('\t|')
             p = [x.strip() for x in p]
@@ -147,7 +147,7 @@ def create_load(conn, datadir, verbose=False):
     conn.commit()
 
     # the MERGED database
-    dbfile = os.path.join(datadir, "merged.dmp.gz")
+    dbfile = os.path.join(datadir, "merged.dmp")
     if verbose:
         sys.stderr.write("loading MERGED table: {}\n".format(dbfile))
     if not os.path.exists(dbfile):
@@ -155,7 +155,7 @@ def create_load(conn, datadir, verbose=False):
         sys.exit(-1)
     conn.execute("CREATE TABLE merged (old_tax_id INTEGER, new_tax_id INTEGER)")
     conn.commit()
-    with gzip.open(dbfile, "rt") as f:
+    with open(dbfile, "r") as f:
         for l in f:
             p = l.strip().rstrip("|").split('\t|')
             p = [x.strip() for x in p]
