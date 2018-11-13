@@ -183,7 +183,7 @@ def create_load(conn, datadir, verbose=False):
             p = l.strip().split('\t')
             p = [x.strip() for x in p]
             try:
-                conn.execute("INSERT INTO merged VALUES (?, ?)", p)
+                conn.execute("INSERT INTO gi_taxid_nucl VALUES (?, ?)", p)
             except sqlite3.OperationalError as e:
                 sys.stderr.write("{}".format(e))
                 sys.stderr.write("\nWhile insert on: {}\n".format(p))
@@ -204,7 +204,7 @@ def create_load(conn, datadir, verbose=False):
             p = l.strip().split('\t')
             p = [x.strip() for x in p]
             try:
-                conn.execute("INSERT INTO merged VALUES (?, ?)", p)
+                conn.execute("INSERT INTO gi_taxid_prot VALUES (?, ?)", p)
             except sqlite3.OperationalError as e:
                 sys.stderr.write("{}".format(e))
                 sys.stderr.write("\nWhile insert on: {}\n".format(p))
