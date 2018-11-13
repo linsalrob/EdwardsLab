@@ -60,11 +60,12 @@ def get_taxonomy_db():
         sys.stderr.write("The default database ({}) does not exist. Please create a connection\n".format(default_database))
         sys.exit(-1)
 
-def get_taxonomy(taxid, conn):
+def get_taxonomy(taxid, conn, verbose=False):
     """
     Retrieve a TaxonNode object for a given taxonomy ID
     :param taxid: the taxonomy id
     :param conn: the database connection
+    :param verbose: more output
     :return: a TaxonNode and TaxonName object
     """
 
@@ -140,9 +141,9 @@ if __name__ == '__main__':
     conn = connect_to_db(args.s)
 
     if args.t:
-        t,n = get_taxonomy(args.t, conn)
+        t,n = get_taxonomy(args.t, conn, args.v)
     elif args.g:
-        t,n = gi_to_taxonomy(args.g, conn)
+        t,n = gi_to_taxonomy(args.g, conn, args.v)
     else:
         sys.stderr.write("Please provide one of either -t or -g")
         sys.exit(-1)
