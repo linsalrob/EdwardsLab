@@ -72,31 +72,59 @@ def get_taxonomy(taxid, conn):
     cur = conn.cursor()
     if taxid in data['node']:
         return data['node'][taxid], data['name'][taxid]
-    else:
-        cur.execute("select * from nodes where tax_id = ?", [taxid])
-        p = cur.fetchone()
-        if not p:
-            # check the merged database
-            cur.execute("select new_tax_id from merged where old_tax_id = ?", [taxid])
-            newid = cur.fetchone()
-            if newid and newid[0]:
-                cur.execute("select * from nodes where tax_id = ?", [newid[0]])
-                p = cur.fetchone()
-            else:
-                sys.stderr.write("ERROR: {} is not in the database and not merged\n".format(taxid))
-                return None, None
-        t = TaxonNode(*p)
-        data['node'][taxid] = t
+
+    cur.execute("select * from nodes where tax_id = ?", [taxid])
+    p = cur.fetchone()
+    if not p:
+        # check the merged database
+        cur.execute("select new_tax_id from merged where old_tax_id = ?", [taxid])
+        newid = cur.fetchone()
+        if newid and newid[0]:
+            cur.execute("select * from nodes where tax_id = ?", [newid[0]])
+            p = cur.fetchone()
+        else:
+            sys.stderr.write("ERROR: {} is not in the database and not merged\n".format(taxid))
+            return None, None
+    t = TaxonNode(*p)
+    data['node'][taxid] = t
 
 
-        cur.execute("select * from names where tax_id = ?", [taxid])
-        n = TaxonName(taxid)
-        for p in cur.fetchall():
-            if p[2]:
-                n.unique = p[2]
-            n.set_name(p[3], p[1])
-        data['name'][taxid] = n
-        return t, n
+    cur.execute("select * from names where tax_id = ?", [taxid])
+    n = TaxonName(taxid)
+    for p in cur.fetchall():
+        if p[2]:
+            n.unique = p[2]
+        n.set_name(p[3], p[1])
+    data['name'][taxid] = n
+    return t, n
+
+
+def gi_to_taxonomy(gi, conn, protein=False, verbose=False):
+    """
+    Convert an NCBI gi to a taxonomy object
+    :param gi: The NCBI gi number
+    :param conn: the database connection
+    :param protein: Whether the object refers to protein (True) or DNA (False). Default=DNA
+    :param verbose: More output
+    :return: A taxonomy object
+    """
+
+    global data
+    cur = conn.cursor()
+    if gi in data['gi2tax']:
+        taxid = data['gi2tax']
+        return data['node'][taxid], data['name'][taxid]
+
+    db = "gi_taxid_nucl"
+    if protein:
+        db = "gi_taxid_prot"
+    cur.execute("select tax_id from ? where gi = ?", [db, gi])
+    p = cur.fetchone()
+    data['gi2tax'][gi] = p
+    if verbose:
+        sys.stderr.write("GI: {} Taxonomy: {}\n".format(gi, p))
+    return get_taxonomy(p, conn)
+
 
 
 
