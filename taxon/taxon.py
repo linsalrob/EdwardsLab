@@ -2,7 +2,7 @@ import gzip
 import sys
 import os
 
-from .config import get_db_dir
+from config import get_db_dir
 
 defaultdir = get_db_dir()
 

@@ -121,7 +121,7 @@ def gi_to_taxonomy(gi, conn, protein=False, verbose=False):
         db = "gi_taxid_prot"
     sqlexe="select tax_id from {} where gi = ?".format(db)
     cur.execute(sqlexe, [gi])
-    p = cur.fetchone()
+    p = cur.fetchone()[0]
     data['gi2tax'][gi] = p
     if verbose:
         sys.stderr.write("GI: {} Taxonomy: {}\n".format(gi, p))
@@ -134,7 +134,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Get data from the database")
     parser.add_argument('-s', help='sqlite database file',required=True)
     parser.add_argument('-t', help='taxid to get')
-    parser.add_argument('-g', help='gi to get')
+    parser.add_argument('-g', help='gi to get', type=int)
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
 
