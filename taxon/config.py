@@ -2,8 +2,8 @@
 
 """
 
-# defaultdir = '/raid60/usr/data/NCBI/taxonomy/current/'
-defaultdir = '/data/ncbi/taxonomy/current'
+defaultdir = '/raid60/usr/data/NCBI/taxonomy/current/'
+# defaultdir = '/data/ncbi/taxonomy/current'
 
 def get_db_dir():
     """

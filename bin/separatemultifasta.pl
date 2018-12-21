@@ -20,6 +20,7 @@ while (my $seq=$sio->next_seq)
  my $outfn = $id;
  $outfn =~ s/\|/_/g;
  $outfn =~ s/\_$//;
+ $outfn =~ s/\//_/g;
  my $fout=Bio::SeqIO->new(-file=>">$dir/$outfn.fasta", -format=>"fasta");
  $seen{$id}=1;
  $fout->write_seq($seq);
