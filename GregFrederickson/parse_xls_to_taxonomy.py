@@ -169,6 +169,8 @@ def print_out(data, tids, taxonomy, verbose=False, nocolor=False):
     :return:
     """
 
+    print("\t".join(['Sample', 'TaxID', 'superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'gp', 'mr', 'mp']))
+
     for s in data:
         for t in data[s]:
             tid = tids[t]

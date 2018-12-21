@@ -7,7 +7,7 @@ import sys
 import sqlite3
 import argparse
 
-from taxonomy import TaxonNode, TaxonName, TaxonDivision
+from .taxonomy import TaxonNode, TaxonName, TaxonDivision
 
 class bcolors:
     HEADER = '\033[95m'
@@ -70,7 +70,6 @@ def get_taxonomy_db():
         sys.stderr.write("The default database ({}) does not exist. Please create a connection\n".format(default_database))
         sys.exit(-1)
 
-<<<<<<< HEAD
 def get_taxid_for_name(name, conn, verbose=False):
     """
     Retrieve the taxnomy ID for a scientific name
@@ -91,10 +90,7 @@ def get_taxid_for_name(name, conn, verbose=False):
         return None
 
 
-def get_taxonomy(taxid, conn):
-=======
 def get_taxonomy(taxid, conn, verbose=False):
->>>>>>> 81179f06f0f9b10f131f90a0b60016865bd1e4bd
     """
     Retrieve a TaxonNode object for a given taxonomy ID
     :param taxid: the taxonomy id
