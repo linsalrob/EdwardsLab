@@ -9,6 +9,17 @@ import argparse
 
 from .taxonomy import TaxonNode, TaxonName, TaxonDivision
 
+
+class bcolors:
+    HEADER = '\033[95m'
+    OKBLUE = '\033[94m'
+    OKGREEN = '\033[92m'
+    WARNING = '\033[93m'
+    FAIL = '\033[91m'
+    ENDC = '\033[0m'
+    BOLD = '\033[1m'
+    UNDERLINE = '\033[4m'
+
 data = {"node": {}, "name": {}, "division": {}}
 # default_database = "/raid60/usr/data/NCBI/taxonomy/current/taxonomy.sqlite3"
 default_database = "/data/ncbi/taxonomy/20180620/taxonomy.sqlite"
@@ -59,6 +70,26 @@ def get_taxonomy_db():
     else:
         sys.stderr.write("The default database ({}) does not exist. Please create a connection\n".format(default_database))
         sys.exit(-1)
+
+def get_taxid_for_name(name, conn, verbose=False):
+    """
+    Retrieve the taxnomy ID for a scientific name
+    :param name: The name to look up
+    :param conn: The database connection
+    :param verbose: more output
+    :return: The taxonomy ID
+    """
+
+    cur = conn.cursor()
+    cur.execute("select tax_id from names where name = ?", [name])
+
+    newid = cur.fetchone()
+    if newid and newid[0]:
+        return newid[0]
+    else:
+        sys.stderr.write(f"{bcolors.FAIL}ERROR:{bcolors.ENDC}: {name} is not in the database\n")
+        return None
+
 
 def get_taxonomy(taxid, conn):
     """
