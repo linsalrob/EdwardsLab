@@ -37,7 +37,7 @@ def print_tax(tid, verbose=False):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Print taxonomy strings by id")
     parser.add_argument('-f', help='file of taxon ids, one per line')
-    parser.add_argument('-t', help='taxonomy ID')
+    parser.add_argument('-t', help='taxonomy ID', action='append') 
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
 
@@ -45,10 +45,11 @@ if __name__ == '__main__':
         sys.stderr.write("One of -t or -d are required.\n")
         sys.exit(-1)
 
-    print("\t".join(['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies']))
+    print("\t".join(['taxid', 'superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies']))
 
     if args.t:
-        print_tax(args.t, args.v)
+        for t in args.t:
+            print_tax(t, args.v)
 
     if args.f:
         with open(args.f, 'r') as f:
