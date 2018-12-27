@@ -12,6 +12,7 @@ from .newick import Newick_Tree
 from .dnadist import parse_dnadist
 from .blast import stream_blast_results
 from .translate import translate_dna
+from .bcolors import bcolors
 
 __all__ = [
     'mean', 'median', 'stdev',
@@ -20,5 +21,6 @@ __all__ = [
     'latlon2distance',
     'ascii_clean', 'is_hypothetical', 'Newick_Tree', 'parse_dnadist',
     'stream_blast_results',
-    'translate_dna'
+    'translate_dna',
+    'bcolors'
     ]
