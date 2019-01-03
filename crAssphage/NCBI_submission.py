@@ -305,21 +305,15 @@ def fix_data(data, verbose=False):
         
     return data
 
-def print_all_old(data, outputf, verbose=False):
+def print_everything(data, outputf, verbose=False):
     """
-    Print out everything. This is the old version that does not remove empty columns
-
-    Note that biosamples are limited to 1,000 entries per time, so we need to make
-    three files.
-
+    Print out everything. This includes the sample ID and title
+    
     :param data: the dict of data
     :param outputf: the file to write
     :param verbose: more output
     :return:
     """
-
-    # note we need to have a unique field that does not include
-    # (excluding sample name, title, bioproject accession and description).
 
     order = ["sample_name", "bioproject_accession", "organism", "collection_date", \
             "env_broad_scale", "env_local_scale", "env_medium", "geo_loc_name", "sample", "host", "lat_lon"]
@@ -329,49 +323,22 @@ def print_all_old(data, outputf, verbose=False):
     for d in data:
         ak.update(data[d].keys())
     [ak.remove(x) for x in order if x in ak]
-    # not including a sample title.
-    ak.remove('sample_title')
-    # these are being stored for convenience so we can print them out
-    ak.remove('src')
-    ak.remove('sra_id')
     otherkeys = sorted(ak)
 
-
-    seen = set()
-
-    if '.tsv' in outputf:
-        outputf = outputf.replace('.tsv', '')
-
-    filecount = 0
-    out = open(f"{outputf}.{filecount}.tsv", "w")
-    out.write("{}\t{}\n".format("\t".join(order), "\t".join(otherkeys)))
-    linecount = 0
-    for d in data:
-        if linecount >= 900:
-            linecount = 0
-            filecount += 1
-            out.close()
-            out = open(f"{outputf}.{filecount}.tsv", "w")
-            out.write("{}\t{}\n".format("\t".join(order), "\t".join(otherkeys)))
-
-        # out.write(d)
-        if data[d]['sample_name'] in seen:
-            continue
-        data[d]['sample_title'] = re.sub('primer\s*[abc]', '', data[d]['sample_title'], flags=re.I)
-        data[d]['sample_title'] = data[d]['sample_title'].replace('  ', ' ')
-        for i, o in enumerate(order):
-            if o not in data[d]:
-                data[d][o] = ""
-            if i > 0:
-                out.write("\t")
-            out.write(f"{data[d][o]}")
-        for o in otherkeys:
-            if o not in data[d]:
-                data[d][o] = ""
-            out.write(f"\t{data[d][o]}")
-        out.write("\n")
-        linecount += 1
-        seen.add(data[d]['sample_name'])
+    with open(outputf, "w") as out:
+        out.write("sample ID\t{}\n".format("\t".join(order + otherkeys)))
+        for d in data:
+            out.write(d)
+            data[d]['sample_title'] = data[d]['sample_title'].replace('  ', ' ')
+            for i, o in enumerate(order):
+                if o not in data[d]:
+                    data[d][o] = ""
+                out.write(f"\t{data[d][o]}")
+            for o in otherkeys:
+                if o not in data[d]:
+                    data[d][o] = ""
+                out.write(f"\t{data[d][o]}")
+            out.write("\n")
 
     return data
 
@@ -446,7 +413,6 @@ def print_all(data, outputf, verbose=False):
     for d in data:
         if data[d]['sample_name'] in seen:
             continue
-        data[d]['sample_title'] = re.sub('primer\s*[abc]', '', data[d]['sample_title'], flags=re.I)
         data[d]['sample_title'] = data[d]['sample_title'].replace('  ', ' ')
         thisoutput = []
         for i, o in enumerate(order):
@@ -490,6 +456,7 @@ if __name__ == "__main__":
     parser.add_argument('-d', help='directory of csv files', required=True)
     parser.add_argument('-n', help='biosample file to write to submit to the NCBI', required=True)
     parser.add_argument('-a', help="sra attributes file, default=attributes.txt")
+    parser.add_argument('-e', help='file to print everything to')
     parser.add_argument('-i', help='id/biosample name mapping file to go back to the sequences', required=True)
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
@@ -518,3 +485,6 @@ if __name__ == "__main__":
 
     data = print_all(data, args.n, args.v)
     print_sample_id_name(data, args.i, args.v)
+
+    if args.e:
+        print_everything(data, args.e, args.v)
