@@ -61,7 +61,7 @@ if __name__ == '__main__':
                         continue
                     total += s[i]
                     counter += 1
-                    if counter == args.w:
+                    if counter >= args.w:
                         n = 1.0 * total/counter
                         if args.m and n > args.m:
                             n = args.m
@@ -77,6 +77,7 @@ if __name__ == '__main__':
                                 thisrow.append(0)
                         counter = 0
                         total = 0
+                sys.stderr.write(f"Appending {thisrow}\n")
                 data.append(thisrow)
 
     data = data[::-1]
