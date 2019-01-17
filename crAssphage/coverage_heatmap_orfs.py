@@ -160,14 +160,18 @@ if __name__ == '__main__':
             end   = (1.0 * end   / genomelength) * (x1-x0)
             width = (end - start)
             start += x0
-            patch = mpatches.Rectangle([start, 0.005], width, 0.01, ec='Black', fc="Black", lw=1)
+            patch = mpatches.Rectangle([start, 0.01], width, 0.01, ec='Black', fc="Black", lw=1)
             patches.append(patch)
+        ax2.text(x1 + 0.25, 0.01, "Amplicon regions")
 
     collection = PatchCollection(patches, match_original=True)
     ax2.add_collection(collection)
 
     for t in texts:
         ax2.text(t[0], t[1], t[2], ha='center', va='center', size='x-small')
+
+    ax2.text(x1+0.25, 0.15, "+ve strand ORFs")
+    ax2.text(x1+0.25, 0.10, "-ve strand ORFs")
 
     # plt.tight_layout()
     if args.o:
