@@ -161,6 +161,7 @@ if __name__ == '__main__':
             width = (end - start)
             start += x0
             patch = mpatches.Rectangle([start, 0.005], width, 0.01, ec='Black', fc="Black", lw=1)
+            patches.append(patch)
 
     collection = PatchCollection(patches, match_original=True)
     ax2.add_collection(collection)
