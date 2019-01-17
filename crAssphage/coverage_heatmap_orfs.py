@@ -22,6 +22,8 @@ if __name__ == '__main__':
     parser.add_argument('-w', help='window to use (default=1000)', default=1000, type=int)
     parser.add_argument('-n', help="column number to start at (default = 1; 0 indexed)", default=1, type=int)
     parser.add_argument('-l', help="Log normalize the data", action="store_true")
+    parser.add_argument('-s', help='Start position in the genome (everything before this is ignored)', type=int)
+    parser.add_argument('-e', help='End position in the genome (everything before this is ignored)', type=int)
     parser.add_argument('-o', help='output file to save figure')
     parser.add_argument('-m', help='maximum value to use for any average', type=float)
     parser.add_argument('-p', help="draw primer regions. Be sure to include two -p for each primer indicating start and stop", action='append')
@@ -53,6 +55,10 @@ if __name__ == '__main__':
                 total = 0
                 thisrow = []
                 for i in range(args.n, len(s)):
+                    if args.s and i < args.s:
+                        continue
+                    if args.e and i > args.e:
+                        continue
                     total += s[i]
                     counter += 1
                     if counter == args.w:
@@ -88,12 +94,21 @@ if __name__ == '__main__':
 
     xlocs = ax.get_xticklabels()
     sys.stderr.write("There should be {} x-ticks\n".format(len(xlocs)))
-    n = int((1.0 * genomelength/args.w)/(len(xlocs)-1))
-    sys.stderr.write("n is: {}\n".format(n))
-    sys.stderr.write("g/w is {}\n".format((1.0 * genomelength/args.w)))
-    sys.stderr.write("xlocs is {}\n".format(len(xlocs)))
-    xlocs = [str(int((n * i))) for i in range(len(xlocs))]
-    ax.set_xticklabels(xlocs)
+    if args.s:
+        endpos = genomelength
+        if args.e:
+            endpos = args.e
+        n = int((1.0 * endpos / 1000) / (len(xlocs) - 1))
+        sys.stderr.write("The xaxis label will be {} kbp\n".format(n))
+        sys.stderr.write("The number of x locations are {}\n".format(len(xlocs)))
+        xlocs = [str(int((n * i)) + args.s) for i in range(len(xlocs))]
+        ax.set_xticklabels(xlocs)
+    else:
+        n = int((1.0 * genomelength/1000)/(len(xlocs)-1))
+        sys.stderr.write("The xaxis label will be {} kbp\n".format(n))
+        sys.stderr.write("The number of x locationss are {}\n".format(len(xlocs)))
+        xlocs = [str(int((n * i))) for i in range(len(xlocs))]
+        ax.set_xticklabels(xlocs)
 
     heatmap = ax.pcolormesh(npd, cmap=plt.cm.Blues)
     # heatmap = ax.pcolor(allxlabelsd, npd)
