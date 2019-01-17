@@ -145,7 +145,7 @@ if __name__ == '__main__':
             patch = mpatches.Rectangle([start, y], width, 0.05, ec='Black', fc="DeepSkyBlue", lw=1)
             if width > 0.02:
                 # we don't want to label boxes that are too small
-                texts.append([start+(width/2), y + 0.025, p[0]])
+                texts.append([start+(width/2), y + 0.015, p[0]])
             # print("{}\t{}".format(p[0], width))
             patches.append(patch)
 
@@ -160,9 +160,9 @@ if __name__ == '__main__':
             end   = (1.0 * end   / genomelength) * (x1-x0)
             width = (end - start)
             start += x0
-            patch = mpatches.Rectangle([start, 0.01], width, 0.01, ec='Black', fc="Black", lw=1)
+            patch = mpatches.Rectangle([start, 0.04], width, 0.01, ec='Black', fc="Black", lw=1)
             patches.append(patch)
-        ax2.text(x1 + 0.25, 0.01, "Amplicon regions")
+        ax2.text(x1 + 0.03, 0.04, "Amplicon regions")
 
     collection = PatchCollection(patches, match_original=True)
     ax2.add_collection(collection)
@@ -170,8 +170,8 @@ if __name__ == '__main__':
     for t in texts:
         ax2.text(t[0], t[1], t[2], ha='center', va='center', size='x-small')
 
-    ax2.text(x1+0.25, 0.15, "+ve strand ORFs")
-    ax2.text(x1+0.25, 0.10, "-ve strand ORFs")
+    ax2.text(x1+0.03, 0.14, "+ve strand ORFs")
+    ax2.text(x1+0.03, 0.09, "-ve strand ORFs")
 
     # plt.tight_layout()
     if args.o:
