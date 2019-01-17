@@ -24,8 +24,15 @@ if __name__ == '__main__':
     parser.add_argument('-l', help="Log normalize the data", action="store_true")
     parser.add_argument('-o', help='output file to save figure')
     parser.add_argument('-m', help='maximum value to use for any average', type=float)
+    parser.add_argument('-p', help="draw primer regions. Be sure to include two -p for each primer indicating start and stop", action='append')
     parser.add_argument('-g', help='file of THEA ORF calls', required=True)
     args = parser.parse_args()
+
+    #here we just check we have an equal number of start/stop for the primers
+    if args.p:
+        if len(args.p) / 2 != len(args.p) // 2:
+            sys.stderr.write(f"FATAL: It appears that you have an unequal number of starts and stops in the primers: {args.p}\n")
+            sys.exit(-1)
 
     header = None
     data = []
@@ -143,6 +150,17 @@ if __name__ == '__main__':
             patches.append(patch)
 
     #p = mpatches.Rectangle([x0, 0.1], 0.5, 0.5)
+
+    if args.p:
+        sys.stderr.write(f"Adding primer sequences: {args.p}\n")
+        while args.p:
+            end = int(args.p.pop())
+            start = int(args.p.pop())
+            start = (1.0 * start / genomelength) * (x1-x0)
+            end   = (1.0 * end   / genomelength) * (x1-x0)
+            width = (end - start)
+            start += x0
+            patch = mpatches.Rectangle([start, 0.005], width, 0.01, ec='Black', fc="Black", lw=1)
 
     collection = PatchCollection(patches, match_original=True)
     ax2.add_collection(collection)
