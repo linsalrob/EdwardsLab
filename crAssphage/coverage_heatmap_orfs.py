@@ -27,7 +27,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', help='output file to save figure')
     parser.add_argument('-m', help='maximum value to use for any average', type=float)
     parser.add_argument('-p', help="draw primer regions. Be sure to include two -p for each primer indicating start and stop", action='append')
-    parser.add_argument('-g', help='file of THEA ORF calls', required=True)
+    parser.add_argument('-g', help='file of THEA ORF calls')
     args = parser.parse_args()
 
     #here we just check we have an equal number of start/stop for the primers
@@ -77,7 +77,6 @@ if __name__ == '__main__':
                                 thisrow.append(0)
                         counter = 0
                         total = 0
-                sys.stderr.write(f"Appending {thisrow}\n")
                 data.append(thisrow)
 
     data = data[::-1]
@@ -90,7 +89,6 @@ if __name__ == '__main__':
     ax.set_xlim(0, len(data[0]))
     ax.set_ylim(0, len(data))
 
-    ax.set_xlabel("Position in genome (kbp)")
     ax.set_ylabel("Metagenome number")
 
     xlocs = ax.get_xticklabels()
@@ -99,17 +97,19 @@ if __name__ == '__main__':
         endpos = genomelength
         if args.e:
             endpos = args.e
-        n = int((1.0 * endpos / 1000) / (len(xlocs) - 1))
+        n = int((1.0 * (endpos - args.s)) / (len(xlocs) - 1))
         sys.stderr.write("The xaxis label will be {} kbp\n".format(n))
         sys.stderr.write("The number of x locations are {}\n".format(len(xlocs)))
         xlocs = [str(int((n * i)) + args.s) for i in range(len(xlocs))]
         ax.set_xticklabels(xlocs)
+        ax.set_xlabel("Position in genome (bp)")
     else:
         n = int((1.0 * genomelength/1000)/(len(xlocs)-1))
         sys.stderr.write("The xaxis label will be {} kbp\n".format(n))
         sys.stderr.write("The number of x locationss are {}\n".format(len(xlocs)))
         xlocs = [str(int((n * i))) for i in range(len(xlocs))]
         ax.set_xticklabels(xlocs)
+        ax.set_xlabel("Position in genome (kbp)")
 
     heatmap = ax.pcolormesh(npd, cmap=plt.cm.Blues)
     # heatmap = ax.pcolor(allxlabelsd, npd)
@@ -142,30 +142,31 @@ if __name__ == '__main__':
 
     # read in the ORF locations
     texts = []
-    with open(args.g, 'r') as f:
-        for l in f:
-            if l.startswith('#') or l.startswith('Gene'):
-                continue
-            p=l.strip().split("\t")
-            y = 0.125
-            (start, end) = (int(p[1]), int(p[2]))
-            if p[3] == '-':
-                (start, end) = (int(p[2]), int(p[1]))
-                y = 0.075
-            start = (1.0 * start / genomelength) * (x1-x0)
-            end   = (1.0 * end   / genomelength) * (x1-x0)
-            width = (end - start)
-            start += x0
-            # sys.stderr.write("Start: {} End: {} Width: {}\n".format(start, end, width))
-            # Rectangle([startx, starty], width, height
-            patch = mpatches.Rectangle([start, y], width, 0.05, ec='Black', fc="DeepSkyBlue", lw=1)
-            if width > 0.02:
-                # we don't want to label boxes that are too small
-                texts.append([start+(width/2), y + 0.015, p[0]])
-            # print("{}\t{}".format(p[0], width))
-            patches.append(patch)
+    if args.g:
+        with open(args.g, 'r') as f:
+            for l in f:
+                if l.startswith('#') or l.startswith('Gene'):
+                    continue
+                p=l.strip().split("\t")
+                y = 0.125
+                (start, end) = (int(p[1]), int(p[2]))
+                if p[3] == '-':
+                    (start, end) = (int(p[2]), int(p[1]))
+                    y = 0.075
+                start = (1.0 * start / genomelength) * (x1-x0)
+                end   = (1.0 * end   / genomelength) * (x1-x0)
+                width = (end - start)
+                start += x0
+                # sys.stderr.write("Start: {} End: {} Width: {}\n".format(start, end, width))
+                # Rectangle([startx, starty], width, height
+                patch = mpatches.Rectangle([start, y], width, 0.05, ec='Black', fc="DeepSkyBlue", lw=1)
+                if width > 0.02:
+                    # we don't want to label boxes that are too small
+                    texts.append([start+(width/2), y + 0.015, p[0]])
+                # print("{}\t{}".format(p[0], width))
+                patches.append(patch)
 
-    #p = mpatches.Rectangle([x0, 0.1], 0.5, 0.5)
+        #p = mpatches.Rectangle([x0, 0.1], 0.5, 0.5)
 
     if args.p:
         sys.stderr.write(f"Adding primer sequences: {args.p}\n")
@@ -183,11 +184,11 @@ if __name__ == '__main__':
     collection = PatchCollection(patches, match_original=True)
     ax2.add_collection(collection)
 
-    for t in texts:
-        ax2.text(t[0], t[1], t[2], ha='center', va='center', size='x-small')
-
-    ax2.text(x1+0.03, 0.14, "+ve strand ORFs")
-    ax2.text(x1+0.03, 0.09, "-ve strand ORFs")
+    if args.g:
+        for t in texts:
+            ax2.text(t[0], t[1], t[2], ha='center', va='center', size='x-small')
+        ax2.text(x1+0.03, 0.14, "+ve strand ORFs")
+        ax2.text(x1+0.03, 0.09, "-ve strand ORFs")
 
     # plt.tight_layout()
     if args.o:
