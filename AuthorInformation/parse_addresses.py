@@ -278,12 +278,28 @@ def email_list(authors):
     print()
 
 
+def orcid_list(authors):
+    """
+    Print the author list in the correct order, but print their orcid
+    :param authors: the set of authors
+    :return:
+    """
+
+    for a in sorted(authors, key=operator.attrgetter('order', 'lastnamelower', 'firstnamelower')):
+        orcid = a.orcid
+        nm = a.get_name()
+        if orcid:
+            print(f"{orcid}\t{nm}")
+        else:
+            sys.stderr.write("No ORCID for {}\n".format(nm))
+            print(nm)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Parse the author information from our google doc for the crAssphage paper")
     parser.add_argument('-f', help='Google doc of author information', required=True)
     parser.add_argument('-t', help="test validity of the author information", action='store_true')
     parser.add_argument('-d', help='check for duplicate entries', action='store_true')
+    parser.add_argument('-o', help='print the author list as ORCids in the correct order', action='store_true')
     parser.add_argument('-n', help='print the author list suitable for cutting and pasting to nature', action='store_true')
     parser.add_argument('-s', help='print the author list to add to the science bulk upload', action='store_true')
     parser.add_argument('-e', help='print the author list to use sending emails', action='store_true')
@@ -312,6 +328,9 @@ if __name__ == '__main__':
         email_list(authors)
         sys.exit(0)
 
+    if args.o:
+        orcid_list(authors)
+        sys.exit(0)
 
     print_author_list(authors)
     print_author_contributions(authors)
