@@ -80,6 +80,7 @@ def stream_fastq(fqfile):
         header = header.strip()
         seqidparts = header.split(' ')
         seqid = seqidparts[0]
+        seqid = seqid.replace('@', '')
         seq = qin.readline()
         seq = seq.strip()
         qualheader = qin.readline()
