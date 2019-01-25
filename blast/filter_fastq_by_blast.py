@@ -24,7 +24,7 @@ def read_blast(blastf, maxeval, minlen, minid, verbose=False):
 
     results = set()
 
-    for b in stream_blast_results(blfile, verbose=verbose):
+    for b in stream_blast_results(blastf, verbose=verbose):
         if b.alignment_length < minlen:
             continue
         if b.evalue > maxeval:
