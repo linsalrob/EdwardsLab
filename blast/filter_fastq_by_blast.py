@@ -52,7 +52,6 @@ def filter_fastq(fqf, br, matchout=None, nomatchout=None, verbose=False):
     matches = 0
     nonmatches = 0
     for sid, allid, seq, qual in stream_fastq(fqf):
-        sys.stderr.write(f"Checking {sid}\n")
         if sid in br:
             if matchout:
                 mo.write(f"@{allid}\nseq\n+\n{qual}\n")
