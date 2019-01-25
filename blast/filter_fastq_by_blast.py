@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 Filter a fastq file from a blast results file. The fastq file must be the query sequence.
 """
