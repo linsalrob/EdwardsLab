@@ -75,7 +75,7 @@ if __name__ == "__main__":
     parser.add_argument('-n', help='file to write the sequences that DO NOT match the blast file to')
     parser.add_argument('-e', help='Maximum E value cut off (default={})'.format(maxeval), default=maxeval)
     parser.add_argument('-l', help='Minimum alignment length cut off (default={})'.format(minlen), default=minlen)
-    parser.add_argument('-p', help='Minimum percent id cut off (default={})'.format(minid), default=minid)
+    parser.add_argument('-i', help='Minimum percent id cut off (default={})'.format(minid), default=minid)
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
