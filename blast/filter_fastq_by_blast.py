@@ -54,11 +54,11 @@ def filter_fastq(fqf, br, matchout=None, nomatchout=None, verbose=False):
     for sid, allid, seq, qual in stream_fastq(fqf):
         if sid in br:
             if matchout:
-                mo.write(f"@{allid}\nseq\n+\n{qual}\n")
+                mo.write(f"@{allid}\n{seq}\n+\n{qual}\n")
             matches += 1
         else:
             if nomatchout:
-                nmo.write(f"@{allid}\nseq\n+\n{qual}\n")
+                nmo.write(f"@{allid}\n{seq}\n+\n{qual}\n")
                 nonmatches += 1
     sys.stderr.write(f"{bcolors.GREEN}FINISHED:{bcolors.ENDC} Sequences Matched: {matches} Sequences without match {nonmatches}\n")
 
