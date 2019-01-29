@@ -44,7 +44,7 @@ def parse_file(filename):
                 if p[5]:
                     auth.middleinitial = p[5]
                 if p[6]:
-                    auth.email = p[6]
+                    auth.email = p[6].replace(' ', '')
                 if p[14]:
                     auth.order = int(p[14])
                 if p[15]:
