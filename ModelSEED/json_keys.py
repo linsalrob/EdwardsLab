@@ -20,7 +20,5 @@ if __name__ == "__main__":
 
     akeys = set()
     t = json.load(open(args.f, 'r'))
-    for k in t:
-        akeys.update(k)
 
-    print("{}".format("\n".join(akeys)))
+    print("{}".format("\n".join(t.keys())))
