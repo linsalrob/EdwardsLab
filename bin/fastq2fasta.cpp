@@ -42,5 +42,10 @@ int main (int argc, char* argv[]) {
     if ( c == 4) { c=0 ;}
   }
 
+  if ( c != 0 ) {
+	  cerr << "ERROR: There appears to be the wrong number of lines in your file!" << endl;
+	return 1;
+  }
+
   return 0;
 }
