@@ -108,7 +108,7 @@ if __name__ == "__main__":
         else:
             toprint = "C:\t{}\tUnknown\t\t1/1/{}".format(a, authoryear[a])
 
-        toprint = toprint.replace(r"{\'e}", u"\u00E9")
+        toprint = toprint.replace(r'{\'e}', u"\u00E9")
         toprint = toprint.replace(r"{\~a}", u"\u00E3")
         toprint = toprint.replace(r'{\"u}', u"\u00FC")
         toprint = toprint.replace(r'{\'a}', u"\u00E1")
