@@ -20,6 +20,21 @@ my %grade = (
 	"F" => 0,
 );
 
+
+# we merge if the number and title is the same.
+my %same = (
+	"CS600" =>   ["METHDS BIOINFORMATICS MED", "BIOMI600"],
+	"BIOL568" => ["BIOINFORMATICS", "BIOMI568"],
+	"CS609" =>   ["COMPUTATIONAL GENOMICS", "BIOMI609"],
+	"BIOL596" => ["ECOLOGICAL METAGENOMICS", "BIOL562"],
+	"CS596" =>   ["PARALLEL COMPUTING", "CS505"],
+	"CS596" =>   ["COMPUTATIONAL GENOMICS", "BIOMI609"]
+);
+
+
+
+	
+
 my $f = shift || die "File to open";
 open(IN, $f) || die "$f";
 my $count;
@@ -36,6 +51,8 @@ my $gotcredit;
 while (<IN>) {
 	chomp;
 	my @a=split /\t/;
+	if ($same{$a[3]} && $same{$a[3]}[0] eq $a[4]) {$a[3] = $same{$a[3]}[1]}
+
 	unless ($a[6]) {
 		# print STDERR "No grade found in $_\n";
 		# These are usually classes in the POS that people are currently taking
@@ -67,7 +84,8 @@ print("Class\tTitle\tNo.Students\tAv. grade\tCredit\n");
 foreach my $c (keys %$credit) {
 	if (defined $count->{$c}) {
 		my $n = $credit->{$c} + length($count->{$c});
-		print join("\t", $c, $n, $rob->mean($count->{$c}), $gotcredit->{$c}), "\n";
+		my $av = sprintf("%.2f", $rob->mean($count->{$c}));
+		print join("\t", $c, $n, $av, $gotcredit->{$c}), "\n";
 		delete $count->{$c};
 	} else {
 		print join("\t", $c, $gotcredit->{$c}, 0, $gotcredit->{$c}), "\n";
@@ -77,5 +95,6 @@ foreach my $c (keys %$credit) {
 
 foreach my $c (keys %$count) {
 	my $n = $#{$count->{$c}} + 1;
-	print join("\t", $c, $n, $rob->mean($count->{$c}), 0), "\n";
+	my $av = sprintf("%.2f", $rob->mean($count->{$c}));
+	print join("\t", $c, $n, $av, 0), "\n";
 }
