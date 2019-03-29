@@ -30,5 +30,5 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     count = countcpgs(args.f)
-    for c in count:
+    for c in sorted(list(count.keys())):
         print(f"{c}\t{count[c]}")
