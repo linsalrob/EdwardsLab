@@ -24,6 +24,9 @@ if __name__ == '__main__':
             if args.v:
                 sys.stderr.write(f"Skipped {f}\n")
             continue
+        if args.v:
+            sys.stderr.write(f"Reading {f}\n")
+
         bam = pysam.AlignmentFile(os.path.join(args.d, f), 'rb')
 
         for p in bam.pileup():
