@@ -53,7 +53,7 @@ def pairwise(data, headers):
 
     for i, j in combinations(cols, 2):
         d = distance.euclidean(data[i], data[j])
-        print("{}\t{}\t{}\t{}".format(headers[i], headers[j], d))
+        print("{}\t{}\t{}".format(headers[i], headers[j], d))
 
 
 def plot_pairs(data, headers):
