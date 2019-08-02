@@ -22,20 +22,23 @@ if __name__ == '__main__':
         found = False
         if not f.endswith('.bam'):
             if args.v:
-                sys.stderr.write("SKipped {}\n".format(f))
+                sys.stderr.write(f"Skipped {f}\n")
             continue
+        if args.v:
+            sys.stderr.write(f"Reading {f}\n")
+
         bam = pysam.AlignmentFile(os.path.join(args.d, f), 'rb')
 
         for p in bam.pileup():
             for pilups in p.pileups:
                 if pilups.alignment.query_length < args.l:
                     if args.v:
-                        sys.stderr.write("Query length too short ({}) in {}\n".format(pilups.alignment.query_length, f))
+                        sys.stderr.write(f"Query length too short ({pilups.alignment.query_length}) in {f}\n")
                     continue
                 alignment_frac = 1.0 * pilups.alignment.query_alignment_length / pilups.alignment.query_length
                 if alignment_frac <= args.c:
                     if args.v:
-                        sys.stderr.write("Alignment fraction too short ({}) in {}\n".format(alignment_frac, f))
+                        sys.stderr.write(f"Alignment fraction too short ({alignment_frac}) in {f}\n")
                     continue
                 count[pilups.alignment.reference_name] = count.get(pilups.alignment.reference_name, 0) + 1
                 found = True
@@ -43,4 +46,4 @@ if __name__ == '__main__':
 
         if found:
             for q in count:
-                print("{}\t{}\t{}".format(f, q, count[q]))
+                print(f"{f}\t{q}\t{count[q]}")

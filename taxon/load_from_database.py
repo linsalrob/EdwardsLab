@@ -8,20 +8,13 @@ import sqlite3
 import argparse
 
 from .taxonomy import TaxonNode, TaxonName, TaxonDivision
+from roblib import bcolors
 
-class bcolors:
-    HEADER = '\033[95m'
-    OKBLUE = '\033[94m'
-    OKGREEN = '\033[92m'
-    WARNING = '\033[93m'
-    FAIL = '\033[91m'
-    ENDC = '\033[0m'
-    BOLD = '\033[1m'
-    UNDERLINE = '\033[4m'
 
 data = {"node": {}, "name": {}, "division": {}}
-# default_database = "/raid60/usr/data/NCBI/taxonomy/current/taxonomy.sqlite3"
-default_database = "/data/ncbi/taxonomy/20180620/taxonomy.sqlite"
+default_database = "/raid60/usr/data/NCBI/taxonomy/current/taxonomy.sqlite3"
+conn = None
+#default_database = "/data/ncbi/taxonomy/20180620/taxonomy.sqlite"
 
 def connect_to_db(dbname, verbose=False):
     """
@@ -30,6 +23,10 @@ def connect_to_db(dbname, verbose=False):
     :param verbose: print addtional output
     :return: the database connection
     """
+
+    global conn
+    if conn:
+        return conn
 
     try:
         conn = sqlite3.connect(dbname)
@@ -156,6 +153,64 @@ def gi_to_taxonomy(gi, conn, protein=False, verbose=False):
     if verbose:
         sys.stderr.write("GI: {} Taxonomy: {}\n".format(gi, p))
     return get_taxonomy(p, conn)
+
+def taxonomy_hierarchy(tid, verbose=False):
+    """
+    Get the taxonomical hierarchy for a tax id. Yields so you can call this in a while loop
+    Note we just yield the id
+    :param tid: taxonomy ID
+    :param verbose: More output
+    """
+
+    global data
+    global conn
+
+
+    while tid != 1: 
+        if tid == 1:
+            if verbose:
+                sys.stderr.write(f"{bcolors.RED}Taxonomy ID 1 found{bcolors.ENDC}\n")
+            raise StopIteration
+        if not tid:
+            if verbose:
+                sys.stderr.write(f"{bcolors.RED}No tid{bcolors.ENDC}\n")
+            raise StopIteration
+
+        if tid not in data['node']:
+            get_taxonomy(tid, conn, verbose)
+
+        if verbose:
+            sys.stderr.write(f"{bcolors.GREEN}tid: {tid} parent: {data['node'][tid].parent}{bcolors.ENDC}\n")
+        yield data['node'][tid].parent
+        tid = data['node'][tid].parent
+
+def all_ids(conn, protein=False, verbose=False):
+    """
+    Get all the available IDs in the database
+    :param conn: the database connection
+    :param protein: Whether the object refers to protein (True) or DNA (False). Default=DNA
+    :param verbose: More output
+    :param verbose: More output
+    :return: A list of taxonomy ids
+    """
+    global data
+    cur = conn.cursor()
+
+    cur.execute("select * from nodes")
+    sys.stderr.write(f"{bcolors.YELLOW}Collecting all the data. Please stand by.\n{bcolors.ENDC}")
+    sys.stderr.write(f"{bcolors.RED}Warning, this will take a long time!!.\n{bcolors.ENDC}")
+    for p in cur.fetchall():
+        t = TaxonNode(*p)
+        data['node'][p[0]] = t
+        cur.execute("select * from names where tax_id = ?", [p[0]])
+        n = TaxonName(p[0])
+        for r in cur.fetchall():
+            if r[2]:
+                n.unique = r[2]
+            n.set_name(r[3], r[1])
+        data['name'][p[0]] = n
+    sys.stderr.write(f"{bcolors.GREEN}Done.\n{bcolors.ENDC}")
+    return t, n
 
 
 

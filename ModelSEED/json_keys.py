@@ -5,8 +5,6 @@ Read some json files and print all keys
 import os
 import sys
 import argparse
-
-from roblib import bcolors
 import json
 
 
