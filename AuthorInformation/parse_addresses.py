@@ -266,6 +266,18 @@ def science_list(authors):
     for a in sorted(authors, key=operator.attrgetter('order', 'lastnamelower', 'firstnamelower')):
         print("\t".join(map(str, [a.firstname, a.lastname, a.email])))
 
+def comma_list(authors):
+    """
+    Print a list of the authors with first MI last,
+    :param authors: the set of authors
+    :return:
+    """
+    for a in sorted(authors, key=operator.attrgetter('order', 'lastnamelower', 'firstnamelower')):
+        if a.middleinitial:
+            print(" ".join(map(str, [a.firstname, a.middleinitial + ".", a.lastname])), end=", ")
+        else:
+            print(" ".join(map(str, [a.firstname, a.lastname])), end=", ")
+
 
 def email_list(authors):
     """
@@ -302,6 +314,7 @@ if __name__ == '__main__':
     parser.add_argument('-o', help='print the author list as ORCids in the correct order', action='store_true')
     parser.add_argument('-n', help='print the author list suitable for cutting and pasting to nature', action='store_true')
     parser.add_argument('-s', help='print the author list to add to the science bulk upload', action='store_true')
+    parser.add_argument('-c', help='print the author list comma separated', action='store_true')
     parser.add_argument('-e', help='print the author list to use sending emails', action='store_true')
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
@@ -322,6 +335,11 @@ if __name__ == '__main__':
 
     if args.s:
         science_list(authors)
+        sys.exit(0)
+
+    if args.c:
+        comma_list(authors)
+        print()
         sys.exit(0)
 
     if args.e:
