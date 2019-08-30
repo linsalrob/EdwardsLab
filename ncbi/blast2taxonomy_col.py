@@ -7,8 +7,7 @@ import sys
 import argparse
 import gzip
 from roblib import bcolors
-from taxon import get_taxonomy_db, get_taxonomy, taxonomy_hierarchy
-from .Error import EntryNotInDatabaseError
+from taxon import get_taxonomy_db, get_taxonomy, taxonomy_hierarchy, Error
 
 taxa = {}
 
