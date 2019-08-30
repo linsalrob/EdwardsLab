@@ -9,7 +9,7 @@ import argparse
 
 from .taxonomy import TaxonNode, TaxonName, TaxonDivision
 from roblib import bcolors
-
+from Error import EntryNotInDatabaseError
 
 data = {"node": {}, "name": {}, "division": {}}
 default_database = "/raid60/usr/data/NCBI/taxonomy/current/taxonomy.sqlite3"
@@ -111,8 +111,8 @@ def get_taxonomy(taxid, conn, verbose=False):
             cur.execute("select * from nodes where tax_id = ?", [newid[0]])
             p = cur.fetchone()
         else:
-            sys.stderr.write("ERROR: {} is not in the database and not merged\n".format(taxid))
-            return None, None
+            raise EntryNotInDatabaseError("ERROR: {} is not in the database and not merged\n".format(taxid))
+
     t = TaxonNode(*p)
     data['node'][taxid] = t
 
