@@ -5,7 +5,7 @@
 import os
 import sys
 import argparse
-
+import gzip
 from roblib import bcolors
 from taxon import get_taxonomy_db, get_taxonomy, taxonomy_hierarchy
 
@@ -27,8 +27,18 @@ def taxstring(tid, verbose=False):
     c = get_taxonomy_db()
     for p in taxonomy_hierarchy(tid, verbose=False):
         m,n = get_taxonomy(p, c)
+        thisname = n.blast_name
+        if not thisname:
+            thisname = n.scientific_name
+        if not thisname:
+            thisname = n.common_name
+        if not thisname:
+            thisname = n.equivalent_name
+        if not thisname:
+            sys.stderr.write(f"{bcolors.RED}No name for {tid}. Skipped\n{bcolors.ENDC}")
+            continue
         if m.rank in want:
-            thistaxa[want.index(m.rank)] = n.blast_name[0].upper() + n.blast_name[1:]
+            thistaxa[want.index(m.rank)] = thisname[0].upper() + thisname[1:]
     taxa[tid] = thistaxa
     return taxa[tid]
 
@@ -44,8 +54,8 @@ def parse_blast(bf, taxcol, verbose=False):
 
     lastcol = -1
     if bf.endswith('.gz'):
-        f = open(bf, 'rt')
-    else
+        f = gzip.open(bf, 'rt')
+    else:
         f = open(bf, 'r')
     for l in f:
         p = l.strip().split("\t")
