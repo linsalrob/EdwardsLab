@@ -178,7 +178,12 @@ def taxonomy_hierarchy(tid, verbose=False):
             raise StopIteration
 
         if tid not in data['node']:
-            get_taxonomy(tid, conn, verbose)
+            try:
+                get_taxonomy(tid, conn, verbose)
+            except EntryNotInDatabaseError:
+                if verbose:
+                    sys.stderr.write(f"{bcolors.RED}{tid} is not in database. Can not continue{bcolors.ENDC}\n")
+                raise StopIteration
 
         if verbose:
             sys.stderr.write(f"{bcolors.GREEN}tid: {tid} parent: {data['node'][tid].parent}{bcolors.ENDC}\n")

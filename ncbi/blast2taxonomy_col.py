@@ -26,10 +26,7 @@ def taxstring(tid, verbose=False):
     thistaxa = ['', '', '', '', '', '', '']
     c = get_taxonomy_db()
     for p in taxonomy_hierarchy(tid, verbose=False):
-        try:
-            m,n = get_taxonomy(p, c)
-        except Error.EntryNotInDatabaseError:
-            continue
+        m,n = get_taxonomy(p, c)
         thisname = n.blast_name
         if not thisname:
             thisname = n.scientific_name
