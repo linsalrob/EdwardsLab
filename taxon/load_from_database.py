@@ -7,7 +7,8 @@ import sys
 import sqlite3
 import argparse
 
-from .taxonomy import TaxonNode, TaxonName, TaxonDivision, Error
+from .taxonomy import TaxonNode, TaxonName, TaxonDivision
+from .Error import EntryNotInDatabaseError
 from roblib import bcolors
 
 
@@ -111,7 +112,7 @@ def get_taxonomy(taxid, conn, verbose=False):
             cur.execute("select * from nodes where tax_id = ?", [newid[0]])
             p = cur.fetchone()
         else:
-            raise Error.EntryNotInDatabaseError(f"ERROR: {taxid} is not in the database and not merged\n")
+            raise EntryNotInDatabaseError(f"ERROR: {taxid} is not in the database and not merged\n")
 
     t = TaxonNode(*p)
     data['node'][taxid] = t

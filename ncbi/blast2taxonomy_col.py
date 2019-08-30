@@ -8,7 +8,7 @@ import argparse
 import gzip
 from roblib import bcolors
 from taxon import get_taxonomy_db, get_taxonomy, taxonomy_hierarchy
-from taxonomy import Error
+from .Error import EntryNotInDatabaseError
 
 taxa = {}
 
@@ -29,7 +29,7 @@ def taxstring(tid, verbose=False):
     for p in taxonomy_hierarchy(tid, verbose=False):
         try:
             m,n = get_taxonomy(p, c)
-        except Error.EntryNotInDatabaseError:
+        except EntryNotInDatabaseError:
             continue
         thisname = n.blast_name
         if not thisname:
