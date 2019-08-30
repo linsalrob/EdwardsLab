@@ -28,7 +28,7 @@ def taxstring(tid, verbose=False):
     for p in taxonomy_hierarchy(tid, verbose=False):
         try:
             m,n = get_taxonomy(p, c)
-        except EntryNotInDatabaseError:
+        except Error.EntryNotInDatabaseError:
             continue
         thisname = n.blast_name
         if not thisname:
