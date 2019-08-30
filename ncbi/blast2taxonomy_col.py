@@ -7,7 +7,7 @@ import sys
 import argparse
 
 from roblib import bcolors
-from taxon import get_taxonomy_db, get_taxonomy, get_taxid_for_name, taxonomy_hierarchy
+from taxon import get_taxonomy_db, get_taxonomy, taxonomy_hierarchy
 
 taxa = {}
 
@@ -43,17 +43,21 @@ def parse_blast(bf, taxcol, verbose=False):
     """
 
     lastcol = -1
-    with open(bf, 'r') as f:
-        for l in f:
-            p = l.strip().split("\t")
-            if lastcol == -1:
-                lastcol = len(p)
-            if len(p) != lastcol:
-                sys.stderr.write(f"{bcolors.RED}FATAL: Uneven number of columns. We had {lastcol} but now {len(p)}\n")
-                sys.exit(-1)
+    if bf.endswith('.gz'):
+        f = open(bf, 'rt')
+    else
+        f = open(bf, 'r')
+    for l in f:
+        p = l.strip().split("\t")
+        if lastcol == -1:
+            lastcol = len(p)
+        if len(p) != lastcol:
+            sys.stderr.write(f"{bcolors.RED}FATAL: Uneven number of columns. We had {lastcol} but now {len(p)}\n")
+            sys.exit(-1)
 
-            t = taxstring(p[taxcol], verbose)
-            print("\t".join(p+t))
+        t = taxstring(p[taxcol], verbose)
+        print("\t".join(p+t))
+    f.close()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='')
