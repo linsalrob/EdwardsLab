@@ -11,6 +11,17 @@ from taxon import get_taxonomy_db, get_taxonomy, taxonomy_hierarchy, Error
 
 taxa = {}
 
+def choosename(n, verbose=True):
+    if n.blast_name:
+        return n.blast_name
+    if n.scientific_name:
+        return n.scientific_name
+    if n.common_name:
+        return n.common_name
+    if n.equivalent_name:
+        return n.equivalent_name
+    return None
+
 def taxstring(tid, verbose=False):
     """
 
@@ -25,18 +36,17 @@ def taxstring(tid, verbose=False):
     want = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
     thistaxa = ['', '', '', '', '', '', '']
     c = get_taxonomy_db()
+    m, n = get_taxonomy(tid,c)
+    thisname = choosename(n, verbose)
+    if thisname:
+        if m.rank in want:
+            thistaxa[want.index(m.rank)] = thisname[0].upper() + thisname[1:]
     for p in taxonomy_hierarchy(tid, verbose=False):
         m,n = get_taxonomy(p, c)
-        thisname = n.blast_name
+        thisname = choosename(n, verbose)
         if not thisname:
-            thisname = n.scientific_name
-        if not thisname:
-            thisname = n.common_name
-        if not thisname:
-            thisname = n.equivalent_name
-        if not thisname:
-            sys.stderr.write(f"{bcolors.RED}No name for {tid}. Skipped\n{bcolors.ENDC}")
-            continue
+            sys.stderr.write(f"{bcolors.RED}ERROR: No name for {tid}{bcolors.ENDC}\n")
+            return
         if m.rank in want:
             thistaxa[want.index(m.rank)] = thisname[0].upper() + thisname[1:]
     taxa[tid] = thistaxa
