@@ -8,6 +8,7 @@ import argparse
 import gzip
 from roblib import bcolors
 from taxon import get_taxonomy_db, get_taxonomy, taxonomy_hierarchy, Error
+from taxon.Error import EntryNotInDatabaseError
 
 taxa = {}
 
@@ -36,7 +37,13 @@ def taxstring(tid, verbose=False):
     want = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
     thistaxa = ['', '', '', '', '', '', '']
     c = get_taxonomy_db()
-    m, n = get_taxonomy(tid,c)
+    try:
+        m, n = get_taxonomy(tid,c)
+    except EntryNotInDatabaseError:
+        sys.stderr.write(f"{bcolors.RED}{tid} not in database.Skipped line{bcolors.ENDC}\n")
+        taxa[tid] = thistaxa
+        return taxa[tid]
+
     thisname = choosename(n, verbose)
     if thisname:
         if m.rank in want:
