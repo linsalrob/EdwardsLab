@@ -9,7 +9,7 @@ import argparse
 
 from .taxonomy import TaxonNode, TaxonName, TaxonDivision
 from roblib import bcolors
-from Error import EntryNotInDatabaseError
+from .Error import EntryNotInDatabaseError
 
 data = {"node": {}, "name": {}, "division": {}}
 default_database = "/raid60/usr/data/NCBI/taxonomy/current/taxonomy.sqlite3"
