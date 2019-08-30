@@ -111,7 +111,7 @@ def get_taxonomy(taxid, conn, verbose=False):
             cur.execute("select * from nodes where tax_id = ?", [newid[0]])
             p = cur.fetchone()
         else:
-            raise EntryNotInDatabaseError("ERROR: {} is not in the database and not merged\n".format(taxid))
+            raise EntryNotInDatabaseError(f"ERROR: {} is not in the database and not merged\n".format(taxid))
 
     t = TaxonNode(*p)
     data['node'][taxid] = t
