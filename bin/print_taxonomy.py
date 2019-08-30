@@ -42,7 +42,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     if not args.t and not args.f:
-        sys.stderr.write("One of -t or -d are required.\n")
+        sys.stderr.write("One of -t or -f are required.\n")
         sys.exit(-1)
 
     print("\t".join(['taxid', 'superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies']))
