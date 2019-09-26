@@ -16,6 +16,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-f', help='fasta file', required=True)
     parser.add_argument('-l', help='list the lengths for each sequence (default = not to)', action='store_true')
+    parser.add_argument('-t', help='tab separated output', action='store_true')
     args = parser.parse_args()
 
     fa=read_fasta(args.f)
@@ -40,6 +41,9 @@ if __name__ == "__main__":
         if not n75 and len_so_far >= length * 0.75:
             n75 = i
 
-    print("Number of sequences: {}\nTotal length: {}\nShortest: {}\nLongest: {}\nN50: {}\nN75: {}".format(
-        len(lens), length, lens[0], lens[-1], n50, n75,
-    ))
+    if args.t:
+        print("\t".join(map(str, [args.f, len(lens), length, lens[0], lens[-1], n50, n75])))
+    else:
+        print("Number of sequences: {}\nTotal length: {}\nShortest: {}\nLongest: {}\nN50: {}\nN75: {}".format(
+            len(lens), length, lens[0], lens[-1], n50, n75,
+        ))
