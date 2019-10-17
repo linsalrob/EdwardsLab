@@ -8,6 +8,7 @@ import argparse
 
 from roblib import bcolors
 import json
+import pprint
 
 def list_keys(gto, verbose=False):
     """
@@ -16,7 +17,6 @@ def list_keys(gto, verbose=False):
     :param verbose: more output
     :return:
     """
-
     print("{}".format("\n".join(gto.keys())))
 
 def dump_json(gto, k, verbose=False):
@@ -28,13 +28,14 @@ def dump_json(gto, k, verbose=False):
     :return:
     """
 
+    pp = pprint.PrettyPrinter(indent=4)
     if k:
         if k in gto:
-            print(f"{gto[k]}")
+            pp.pprint(f"{gto[k]}")
         else:
             sys.stderr.write(f"{bcolors.RED}ERROR: {k} not found.{bcolors.ENDC}\n")
     else:
-        print(f"{gto}")
+        pp.pprint(f"{gto}")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Plot a heatmap")
