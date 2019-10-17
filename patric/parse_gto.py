@@ -30,11 +30,11 @@ def dump_json(gto, k, verbose=False):
 
     if k:
         if k in gto:
-            print(json.dumps(gto, indent=4))
+            print(json.dumps(gto[k], indent=4))
         else:
             sys.stderr.write(f"{bcolors.RED}ERROR: {k} not found.{bcolors.ENDC}\n")
     else:
-        pp.pprint(f"{gto}")
+        print(json.dumps(gto, indent=4))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Plot a heatmap")
