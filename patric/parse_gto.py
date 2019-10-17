@@ -17,7 +17,7 @@ def list_keys(gto, verbose=False):
     :return:
     """
 
-    print("{}".format("\n".join(t.keys())))
+    print("{}".format("\n".join(gto.keys())))
 
 def dump_json(gto, k, verbose=False):
     """
