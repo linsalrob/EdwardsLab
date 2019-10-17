@@ -8,7 +8,7 @@ import argparse
 
 from roblib import bcolors
 import json
-import pprint
+
 
 def list_keys(gto, verbose=False):
     """
@@ -28,10 +28,9 @@ def dump_json(gto, k, verbose=False):
     :return:
     """
 
-    pp = pprint.PrettyPrinter(indent=4)
     if k:
         if k in gto:
-            pp.pprint(f"{gto[k]}")
+            print(json.dumps(gto, indent=4))
         else:
             sys.stderr.write(f"{bcolors.RED}ERROR: {k} not found.{bcolors.ENDC}\n")
     else:
