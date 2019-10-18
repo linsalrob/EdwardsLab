@@ -36,11 +36,27 @@ def dump_json(gto, k, verbose=False):
     else:
         print(json.dumps(gto, indent=4))
 
+def feature_tbl(gto, verbose=False):
+    """
+    Print a tab separated feature table
+    :param gto: the json gto
+    :param verbose: more output
+    :return:
+    """
+
+    for peg in gto['features']:
+        data = [
+            peg['id'],
+            peg['function']
+        ]
+        print("\t".join(data))
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Plot a heatmap")
     parser.add_argument('-f', help='gto file', required=True)
     parser.add_argument('-l', help='list the primary keys and exit', action='store_true')
     parser.add_argument('-d', help='dump some part of the json object', action='store_true')
+    parser.add_argument('-p', help='print protein feature table', action='store_true')
     parser.add_argument('-k', help='json primary key (e.g. for dumping, etc)')
     parser.add_argument('-o', help='output file')
     parser.add_argument('-v', help='verbose output', action='store_true')
@@ -54,4 +70,9 @@ if __name__ == '__main__':
 
     if args.d:
         dump_json(gto, args.k, args.v)
+        sys.exit(0)
+
+    if args.p:
+        feature_tbl(gto, args.v)
+        sys.exit(0)
 
