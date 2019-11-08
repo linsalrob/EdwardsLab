@@ -3,12 +3,14 @@ use strict;
 use LWP::Simple;
 use Data::Dumper;
 
-my $range=shift || die "$0 <range> <number to get (default=100)>\nFor the range use something like this example AAVX02000001-AAVX02067420";
+my $range=shift || die "$0 <range> <number to get (default=10)> <output file>\nFor the range use something like this example AAVX02000001-AAVX02067420\nOutput file is optional";
 my $n = shift;
+my $outf = shift;
 chomp $n;
-unless ($n) {$n=100}
+chomp $outf;
+unless ($n) {$n=10}
 
-if ($n > 250) {die "Sorry. That number ($n) is too many, and you won't get any results. Please try a smaller number. It should probably be about 250 or less\n"}
+if ($n > 100) {die "Sorry. That number ($n) is too many, and you won't get any results. Please try a smaller number. It should probably be about 100 or less\n"}
 
 
 my ($from, $to)=split /\-/, $range;
@@ -26,9 +28,11 @@ print "About to retrieve ", $end-$beg, " sequences.\n";
 #chomp($in);
 #exit if (lc($in) =~ /^n/);
 
-open(OUT, ">${id}_sequences.gbk") || die "Can't write to ${id}_sequences.gbk";
+unless (defined $outf) {$outf = "${id}_sequences.gbk"}
+
+open(OUT, ">$outf") || die "Can't write to $outf";
 my $time=time;
-my $url='http://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&retmode=text&rettype=gb&id=';
+my $url='https://eutils.ncbi.nlm.nih.gov/entrez/eutils/efetch.fcgi?db=nucleotide&retmode=text&rettype=gb&id=';
 my $urlid=$url;
 my $added=0;
 for (my $i=$beg; $i<=$end; $i++)
@@ -42,7 +46,7 @@ for (my $i=$beg; $i<=$end; $i++)
                 $urlid =~ s/,$//;
                 while (time-$time < 3) {sleep 1}
                 $time=time;
-                #print STDERR $urlid;
+		# print STDERR $urlid;
                 print OUT get($urlid);
                 $urlid=$url;
         }
@@ -51,6 +55,7 @@ for (my $i=$beg; $i<=$end; $i++)
 print STDERR "Getting sequences upto $added\n";
 $urlid =~ s/,$//;
 while (time-$time < 3) {sleep 1}
+# print STDERR $urlid;
 print OUT get($urlid);
 
 exit 0;
