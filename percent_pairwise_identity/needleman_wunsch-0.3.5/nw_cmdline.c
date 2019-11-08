@@ -221,7 +221,7 @@ void align(char *seq_a, char *seq_b,
       }
     }
     pid = 200.0*id/((strlen(seq_a)+strlen(seq_b)));
-    printf("%.2f\n",pid); 
+    printf("%s\t%s\t%.2f\n",seq_a_name, seq_b_name, pid); 
     return;
   }
   if(print_colour)
