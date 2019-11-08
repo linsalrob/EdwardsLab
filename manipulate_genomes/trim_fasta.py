@@ -60,13 +60,13 @@ def trim_seq(faf, start=0, end=None, seqid=None, verbose=False):
         if seqid and seqname != seqid:
             continue
 
-        print(">{}\n{}".format(sid, seq[start:end]))
+        print(">{}_{}_{}\n{}".format(sid, start, end, seq[start:end]))
         if verbose:
             sys.stderr.write("Trimmed {}. Next stretch is {}\n".format(sid, seq[end:end+20]))
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Trim a fasta file")
-    parser.add_argument('-f', help='fasta file to trim')
+    parser.add_argument('-f', help='fasta file to trim', required=True)
     parser.add_argument('-b', help='optional first base', default=0, type=int)
     parser.add_argument('-e', help='optional last base. Note that this is inclusive, so if you are trying to trim to 3409 as the first base of a repeat use 3408 as your coordinate', default=None, type=int)
     parser.add_argument('-c', help='optional contig name. Otherwise we just trim all the contigs', default=None)
