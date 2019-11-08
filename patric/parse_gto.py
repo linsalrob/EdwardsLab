@@ -76,3 +76,4 @@ if __name__ == '__main__':
         feature_tbl(gto, args.v)
         sys.exit(0)
 
+    sys.stderr.write(f"{bcolors.RED}ERROR: You did not specify a command to run{bcolors.ENDC}\n")
