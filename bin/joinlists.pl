@@ -21,7 +21,7 @@ unless (scalar(@files) > 1) {
 
 $0 -h -t <files>
 
-Join two lists from two files. Anything with the same keys will be merged. 
+Join two or more lists from two files. Anything with the same keys will be merged. 
 This assumes there are two separated by tabs, and the first column is the key and 
 the rest of the columns the values
 
