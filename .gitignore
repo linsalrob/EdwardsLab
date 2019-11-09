@@ -94,3 +94,6 @@ bin/fastq2fasta
 
 # a virtual environment for anthill
 venv_anthill/
+
+# compiled version of the nw code
+percent_pairwise_identity/needleman_wunsch-0.3.5/needleman_wunsch
