@@ -1,3 +1,7 @@
+#!/usr/bin/env perl
+# convert a file with [id1, id2, score] to an id x id matrix. 
+# assumes the score is a % and sets id1==id2 to 100
+
 use strict;
 use Getopt::Std;
 use Data::Dumper;
