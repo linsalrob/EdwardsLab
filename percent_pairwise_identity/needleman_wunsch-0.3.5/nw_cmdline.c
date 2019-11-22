@@ -39,18 +39,15 @@
 #include "needleman_wunsch.h"
 
 // For this run
+// Alignment results stored here. I don't think these should be global!
+char *alignment_a = NULL, *alignment_b = NULL;
+t_buf_pos alignment_max_length;
 int i;
-int id = 0;
-double pid;
 char* cmd;
 char print_colour = 0, print_pretty = 0, print_scores = 0,
      print_fasta = 0, print_zam = 0, print_pid = 0, print_files = 0;
 
 SCORING_SYSTEM* scoring = NULL;
-
-// Alignment results stored here
-char *alignment_a = NULL, *alignment_b = NULL;
-t_buf_pos alignment_max_length;
 
 
 void set_default_scoring()
@@ -138,6 +135,7 @@ void print_usage(char* err_fmt, ...)
 
 void align_zam(char *seq_a, char *seq_b)
 {
+
   needleman_wunsch(seq_a, seq_b, alignment_a, alignment_b, scoring);
 
   // Swap '-' for '_'
@@ -213,6 +211,7 @@ void align(char *seq_a, char *seq_b,
 
   if(print_pid)
   {
+    int id = 0;
     for (i = 0; i < strlen(alignment_a); i++)
     {
       if(alignment_a[i] == alignment_b[i])
@@ -220,8 +219,9 @@ void align(char *seq_a, char *seq_b,
         id++;
       }
     }
-    pid = 200.0*id/((strlen(seq_a)+strlen(seq_b)));
-    printf("%.2f\n",pid); 
+    double pid = 200.0*id/((strlen(seq_a)+strlen(seq_b)));
+    printf("%s\t%s\t%.2f\t%i\t%zd\t%zd\n",seq_a_name, seq_b_name, pid, id, strlen(seq_a), strlen(seq_b)); 
+    // printf("%s\t%s\t%.2f\n",seq_a_name, seq_b_name, pid); 
     return;
   }
   if(print_colour)

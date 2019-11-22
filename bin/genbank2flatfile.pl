@@ -4,6 +4,7 @@
 
 use Bio::SeqIO;
 use strict;
+use Try::Tiny;
 use Rob;
 my $rob = new Rob;
 
@@ -99,7 +100,12 @@ foreach my $file (@files)
 				$verbose && print STDERR "No product for $np\n";
 				$prod="hypothetical protein";
 			}
-			my $dna = $seq->subseq($feature->start, $feature->end);
+			my $dna = "";
+			try {
+				$dna = $seq->subseq($feature->start, $feature->end);
+			} catch {
+				print STDERR "Warning: $file: feature overlapping join point: ", $feature->start, " to ", $feature->end, ". Bio::Perl can't hande this DNA sequence so ommitted\n";
+			};
 			if ($feature->strand == -1) {$dna=$rob->rc($dna)}
 			print TB join("\t", $seqname, $fastafile, @seqdata, $np, $feature->start, $feature->end, $feature->strand, $trans, $dna, $prod, $oids), "\n";
 			# print TB join("\t", $feature->start, $feature->end, $feature->strand, $dna), "\n\n";

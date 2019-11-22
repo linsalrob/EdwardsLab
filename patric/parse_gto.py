@@ -45,9 +45,27 @@ def feature_tbl(gto, verbose=False):
     """
 
     for peg in gto['features']:
+        if 'location' not in peg:
+            sys.stderr.write(f"{bcolors.RED}Error: no location found\n{bcolors.PINK}{peg}{bcolors.ENDC}\n")
+            continue
+
+        locs = []
+        for l in peg['location']:
+            start = int(l[1])
+            if l[2] == '+':
+                stop = (start + int(l[3])) - 1
+            elif l[2] == '-':
+                start  = (start - int(l[3])) + 1
+                stop = int(l[1])
+            else:
+                sys.stderr.write(f"{bcolors.RED}Error: Don't know location l[2]\n{bcolors.ENDC}")
+                continue
+            locs.append(f"{l[0]} {start} - {stop} ({l[2]})")
+
         data = [
             peg['id'],
-            peg['function']
+            peg['function'],
+            "; ".join(locs)
         ]
         print("\t".join(data))
 
