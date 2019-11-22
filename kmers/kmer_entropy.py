@@ -24,12 +24,14 @@ def count_kmers(faf, k, verbose=False):
     if verbose:
         sys.stderr.write(f"{bcolors.GREEN}Counting kmers (k={k}) in {faf}\n")
 
-    kmers = {"".join(x) : 0 for x in product("ATGC", repeat=k)}
+    kmers = {}
+
     for id, seq in stream_fasta(faf):
         rcseq = rc(seq)
-        for x in kmers.keys():
-            kmers[x] += seq.upper().count(x)
-            kmers[x] += rcseq.upper().count(x)
+        posn = 0
+        while posn < len(seq) - k - 1:
+            kmers[seq[posn:posn+k]] = kmers.get(seq[posn:posn+k], 0) + 1
+            kmers[rcseq[posn:posn + k]] = kmers.get(rcseq[posn:posn + k], 0) + 1
 
     if verbose:
         sys.stderr.write(f"{bcolors.BLUE}\tDone counting kmers (k={k}) in {faf}\n")
