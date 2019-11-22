@@ -32,6 +32,7 @@ def count_kmers(faf, k, verbose=False):
         while posn < len(seq) - k - 1:
             kmers[seq[posn:posn+k]] = kmers.get(seq[posn:posn+k], 0) + 1
             kmers[rcseq[posn:posn + k]] = kmers.get(rcseq[posn:posn + k], 0) + 1
+        posn += 1
 
     if verbose:
         sys.stderr.write(f"{bcolors.BLUE}\tDone counting kmers (k={k}) in {faf}\n")
