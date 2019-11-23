@@ -44,7 +44,7 @@ def read_df(f, sample=None, verbose=False):
     if verbose:
         sys.stderr.write(f"{bcolors.GREEN}Removing outliers\n{bcolors.ENDC}")
 
-    for outlier in ['NC_021866', 'AH004327', 'AB830321']:
+    for outlier in ['NC_021866', 'AH004327', 'AB830321', 'NC_042059']:
         dfa = dfa[dfa['file'] != f"fasta/{outlier}.fasta"]
 
     if sample:
