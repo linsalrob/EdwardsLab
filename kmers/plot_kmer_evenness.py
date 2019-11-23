@@ -43,16 +43,17 @@ def read_df(f, sample=None, verbose=False):
     o = dfa.shape
     if verbose:
         sys.stderr.write(f"{bcolors.GREEN}Removing outliers\n{bcolors.ENDC}")
-    dfa = dfa[dfa['file'] != "fasta/AH004327.fasta"]
-    dfa = dfa[dfa['file'] != 'fasta/AB830321.fasta']
+
+    for outlier in ['NC_021866', 'AH004327', 'AB830321']:
+        dfa = dfa[dfa['file'] != f"fasta/{outlier}.fasta"]
 
     if sample:
         dfa = dfa.sample(n=sample)
-        dftest = dfa[dfa['kmer'] == 77]
-        sys.stderr.write(f"{bcolors.BLUE}Sampled {sample} entries. We have {dftest.shape[0]} genomes\n")
 
     n = dfa.shape
-    print(f"{bcolors.GREEN}Original dataframe was {o[0]} entries. After filtering we have {n[0]} entries\n{bcolors.ENDC}")
+    sys.stderr.write(f"{bcolors.GREEN}Original dataframe was {o[0]} entries. After filtering we have {n[0]} entries\n{bcolors.ENDC}")
+    dftest = dfa[dfa['kmer'] == 77]
+    sys.stderr.write(f"{bcolors.BLUE}We have {dftest.shape[0]} genomes\n")
     return dfa
 
 
@@ -86,7 +87,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Plot a heatmap")
     parser.add_argument('-f', help='kmer_entropy.py file', required=True)
     parser.add_argument('-o', help='output image file basename', required=True)
-    parser.add_argument('-s', help='subsample data to make quicker smaller plots')
+    parser.add_argument('-s', help='subsample data to make quicker smaller plots', type=int)
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
