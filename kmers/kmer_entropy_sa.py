@@ -132,6 +132,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Count the kmers in a file and report entropy and eveness')
     parser.add_argument('-f', help='fasta file to count the entropy/evenness', required=True)
     parser.add_argument('-k', help='kmer size', required=True, type=int)
+    parser.add_argument('-t', help='print field titles in output', action='store_true')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
@@ -139,4 +140,6 @@ if __name__ == '__main__':
     H = shannon(kmers, args.v)
     e = evenness(kmers, H, args.v)
 
+    if args.t:
+        print("File\tK-mer size\tShannon's Entropy\tEvenness")
     print(f"{args.f}\t{args.k}\t{H}\t{e}")
