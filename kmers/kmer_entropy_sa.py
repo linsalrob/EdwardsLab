@@ -219,5 +219,5 @@ if __name__ == '__main__':
     e,s = evenness(kmers, H, args.v)
 
     if args.t:
-        print("File\tK-mer size\tShannon's Entropy\tEvenness")
+        print("File\tK-mer size\tShannon's Entropy\tRichness\tEvenness")
     print(f"{args.f}\t{args.k}\t{H}\t{s}\t{e}")
