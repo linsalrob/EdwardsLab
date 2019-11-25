@@ -207,10 +207,13 @@ if __name__ == '__main__':
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
+    filename = None
     if args.q:
         kmers = count_kmers_fastq(args.q, args.k, args.v)
+        filename = args.q
     elif args.f:
         kmers = count_kmers(args.f, args.k, args.v)
+        filename = args.f
     else:
         sys.stderr.write(f"{RED}FATAL: Either -f (fasta) or -q (fastq) must be specified\n{ENDC}")
         sys.exit(2)
@@ -220,4 +223,4 @@ if __name__ == '__main__':
 
     if args.t:
         print("File\tK-mer size\tShannon's Entropy\tRichness\tEvenness")
-    print(f"{args.f}\t{args.k}\t{H}\t{s}\t{e}")
+    print(f"{filename}\t{args.k}\t{H}\t{s}\t{e}")
