@@ -13,6 +13,7 @@ from math import log2
 BLUE = '\033[94m'
 GREEN = '\033[92m'
 ENDC = '\033[0m'
+RED = '\033[91m'
 
 def rc(dna):
     """
@@ -36,6 +37,10 @@ def stream_fasta(fastafile,):
     :return:The ID, and a single read
     :rtype:str, str
     """
+
+    if not os.path.exists(fastafile):
+        sys.stderr.write(f"{RED}FATAL: {fastafile} does not exist\n{ENDC}")
+        sys.exit(2)
 
     try:
         if fastafile.endswith('.gz'):
