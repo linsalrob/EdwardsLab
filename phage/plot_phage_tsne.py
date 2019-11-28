@@ -109,22 +109,30 @@ def counts_to_df(counts, kmer, verbose=False):
     if verbose:
         sys.stderr.write(f"{bcolors.GREEN}Making possibilities{bcolors.ENDC}\n")
 
-    iupac= ["".join(tple) for tple in itertools.product('ACDEFGHIKLMNPQRSTVWY', repeat=kmer)]
+    # this works for K< 7
+    # iupac= ["".join(tple) for tple in itertools.product('ACDEFGHIKLMNPQRSTVWY', repeat=kmer)]
+
+    allmers = set()
+    for s in counts:
+        allmers.update(counts[s].keys())
 
     if verbose:
         sys.stderr.write(f"{bcolors.GREEN}Converting to matrix {bcolors.ENDC}\n")
 
+    aml = list(allmers)
+    aml.sort()
+
     pc = {}
     for sid in counts:
         pc[sid] = []
-        for aa in iupac:
+        for aa in aml:
             pc[sid].append(counts[sid].get(aa, 0))
 
 
     if verbose:
         sys.stderr.write(f"{bcolors.GREEN}Converting to dataframe{bcolors.ENDC}\n")
 
-    df = pd.DataFrame.from_dict(pc, orient='index', columns=iupac)
+    df = pd.DataFrame.from_dict(pc, orient='index', columns=aml)
     return df
 
 def unique_functions(fns, verbose=False):
@@ -165,12 +173,13 @@ def create_tSNE(df, fnar, tout, verbose):
 
     tsne = TSNE(n_components=3)
     X = tsne.fit_transform(df)
-    data = {
-        'tSNE' : X.tolist(),
-        'functions' : fnar
-    }
-    with open(tout, 'w') as out:
-        json.dump(data, out)
+    if tout:
+        data = {
+            'tSNE' : X.tolist(),
+            'functions' : fnar
+        }
+        with open(tout, 'w') as out:
+            json.dump(data, out)
     
     return X
 
@@ -255,7 +264,8 @@ if __name__ == "__main__":
     parser.add_argument('-f', help='fasta input file', required=True)
     parser.add_argument('-k', help='kmer size (default=2)', default=2, type=int)
     parser.add_argument('-p', help='png output file', required=True)
-    parser.add_argument('-t', help='tSNE output file', required=True)
+    parser.add_argument('-t', help='tSNE output file')
+    parser.add_argument('-d', help="dataframe tsv output file")
     parser.add_argument('-n', help='functions file. If not provided will try and extract from fasta file')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
@@ -267,10 +277,17 @@ if __name__ == "__main__":
     else:
         counts, fns = count_pairwise(args.f, args.k, args.v)
 
-    dfz = counts_to_df(counts, args.k, args.v)
-    df = filternz(dfz, True)
-    if args.v:
-        sys.stderr.write(f"{bcolors.BLUE}Shape before removing zeros: {dfz.shape} and after: {df.shape}\n")
+    df = counts_to_df(counts, args.k, args.v)
+    # Since we only make the df with non zero entries, don't need to do this
+    # but should perhaps filter for correlated values
+    # df = filternz(dfz, True)
+    # if args.v:
+    #     sys.stderr.write(f"{bcolors.BLUE}Shape before removing zeros: {dfz.shape} and after: {df.shape}\n")
+
+
+    if args.d:
+        with open(args.d, 'w') as out:
+            df.to_csv(out, "\t")
 
     numcol = unique_functions(fns, args.v)
     palette = sns.color_palette("bright", numcol)
@@ -281,9 +298,9 @@ if __name__ == "__main__":
     outpng = args.p.replace('.png', '')
     plot_2d(tsne, fnar, palette, outpng, args.v)
 
-    plot_2d_sz(tsne, fnar, palette, outpng, args.v)
+    # plot_2d_sz(tsne, fnar, palette, outpng, args.v)
 
-    plot_3d(tsne, fnar, palette, outpng, args.v)
+    # plot_3d(tsne, fnar, palette, outpng, args.v)
 
 
 
