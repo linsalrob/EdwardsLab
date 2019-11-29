@@ -177,7 +177,7 @@ def create_tSNE(df, fnar, tout, verbose):
     if verbose:
         sys.stderr.write(f"{bcolors.GREEN}Generating tSNE {bcolors.ENDC}\n")
 
-    tsne = TSNE(n_components=10, perplexity=50)
+    tsne = TSNE(n_components=3, perplexity=50, n_iter=5000)
     X = tsne.fit_transform(df)
     if tout:
         data = {
