@@ -55,8 +55,8 @@ def count_pairwise(faf, kmer, verbose=True):
             count[sid][seq[posn:posn+kmer]] = count[sid].get(seq[posn:posn+kmer], 0)+1
             posn += 1
         # normalize by protein length
-        for kmer in count[sid]:
-            count[sid][kmer] /= len(seq)
+        for aa in count[sid]:
+            count[sid][aa] /= len(seq)
     if verbose:
         sys.stderr.write(f"{bcolors.GREEN}Read {faf}{bcolors.ENDC}\n")
 
@@ -82,8 +82,8 @@ def count_pairwise_no_fn(faf, kmer, verbose=True):
             count[sid][seq[posn:posn+kmer]] = count[sid].get(seq[posn:posn+kmer], 0)+1
             posn += 1
         # normalize by protein length
-        for kmer in count[sid]:
-            count[sid][kmer] /= len(seq)
+        for aa in count[sid]:
+            count[sid][aa] /= len(seq)
     return count
 
 
