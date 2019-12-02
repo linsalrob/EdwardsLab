@@ -39,7 +39,7 @@ def count_kmers(faf, k, jsonout=None, verbose=False):
         if verbose:
             sys.stderr.write(f"{bcolors.BLUE}\tWriting to {jsonout}\n")
         with open(jsonout, 'w') as out:
-            json.dump(kmers, out)
+            json.dump({faf : kmers}, out)
 
     if verbose:
         sys.stderr.write(f"{bcolors.BLUE}\tDone counting kmers (k={k}) in {faf}\n")
