@@ -1,6 +1,6 @@
 """
 Count the kmers in a file and report entropy and eveness.
-This version should run anywhere
+This version should run anywhere (stand alone - does not require roblib)
 """
 
 import os

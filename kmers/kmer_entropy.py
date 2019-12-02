@@ -9,10 +9,11 @@ import argparse
 from roblib import bcolors
 from itertools import product
 
+import json
 from math import log2
 from roblib import stream_fasta, rc, bcolors
 
-def count_kmers(faf, k, verbose=False):
+def count_kmers(faf, k, jsonout=None, verbose=False):
     """
     Count the kmers
     :param faf: fasta file
@@ -33,6 +34,12 @@ def count_kmers(faf, k, verbose=False):
             kmers[seq[posn:posn+k]] = kmers.get(seq[posn:posn+k], 0) + 1
             kmers[rcseq[posn:posn + k]] = kmers.get(rcseq[posn:posn + k], 0) + 1
             posn += 1
+
+    if jsonout:
+        if verbose:
+            sys.stderr.write(f"{bcolors.BLUE}\tWriting to {jsonout}\n")
+        with open(jsonout, 'w') as out:
+            json.dump(kmers, out)
 
     if verbose:
         sys.stderr.write(f"{bcolors.BLUE}\tDone counting kmers (k={k}) in {faf}\n")
@@ -74,10 +81,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Count the kmers in a file and report entropy and eveness')
     parser.add_argument('-f', help='fasta file to count the entropy/evenness', required=True)
     parser.add_argument('-k', help='kmer size', required=True, type=int)
+    parser.add_argument('-j', help='json output for kmer counts')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    kmers = count_kmers(args.f, args.k, args.v)
+    kmers = count_kmers(args.f, args.k, args.j, args.v)
     H = shannon(kmers, args.v)
     e = evenness(kmers, H, args.v)
 
