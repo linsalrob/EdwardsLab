@@ -18,19 +18,38 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-f', help='input file', required=True)
     parser.add_argument('-o', help='output file', required=True)
+    parser.add_argument('-i', help='id mapping file', required=True)
     parser.add_argument('-n', help='number to start from. Default: 1', type=int, default=1)
     parser.add_argument('-x', help='maximum number of sequences to write out', type=int)
     args = parser.parse_args()
 
 
     counter = args.n - 1
-    fa = read_fasta(args.f)
-    with open(args.o, 'w') as out:
-        for id in fa:
-            counter += 1
-            out.write(">{}\n{}\n".format(counter, fa[id]))
-            if args.x and (counter - (args.n-2)) > args.x:
-                break
 
-    print("The last ID written to the file {} was {}".format(args.o, counter))
+    idmap = open(args.i, 'w')
 
+    if args.f:
+        fa = read_fasta(args.f)
+        with open(args.o, 'w') as out:
+            for id in fa:
+                counter += 1
+                out.write(">{}\n{}\n".format(counter, fa[id]))
+                idmap.write("{}\t{}\t{}".format(f, id, counter))
+                if args.x and (counter - (args.n-2)) > args.x:
+                    break
+
+        print("The last ID written to the file {} was {}".format(args.o, counter))
+
+    if args.d:
+        for f in os.listdir(args.d):
+            fa = read_fasta(os.path.join(args.d, f))
+            with open(args.o, 'w') as out:
+                for id in fa:
+                    counter += 1
+                    out.write(">{}\n{}\n".format(counter, fa[id]))
+                    idmap.write("{}\t{}\t{}".format(f, id, counter))
+                    if args.x and (counter - (args.n - 2)) > args.x:
+                        break
+
+
+    idmap.close()
