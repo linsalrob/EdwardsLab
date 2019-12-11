@@ -34,16 +34,16 @@ if __name__ == "__main__":
             for id in fa:
                 counter += 1
                 out.write(">{}\n{}\n".format(counter, fa[id]))
-                idmap.write("{}\t{}\t{}".format(f, id, counter))
+                idmap.write("{}\t{}\t{}".format(args.f, id, counter))
                 if args.x and (counter - (args.n-2)) > args.x:
                     break
 
         print("The last ID written to the file {} was {}".format(args.o, counter))
 
     if args.d:
-        for f in os.listdir(args.d):
-            fa = read_fasta(os.path.join(args.d, f))
-            with open(args.o, 'w') as out:
+        with open(args.o, 'w') as out:
+            for f in os.listdir(args.d):
+                fa = read_fasta(os.path.join(args.d, f))
                 for id in fa:
                     counter += 1
                     out.write(">{}\n{}\n".format(counter, fa[id]))
