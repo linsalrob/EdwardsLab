@@ -26,13 +26,17 @@ if __name__ == '__main__':
 
     files = {}
     for i in range(1, args.n+1):
+        if args.v:
+            sys.stderr.write(f"{bcolors.GREEN}FILE: {i}{bcolors.ENDC}\n")
         files[i] = [
-            open(os.path.join(args.d, args.o + ".R1." + i), 'w'),
-            open(os.path.join(args.d, args.o + ".R2." + i), 'w')
+            open(os.path.join(args.d, args.o + ".R1." + str(i)) + ".fastq", 'w'),
+            open(os.path.join(args.d, args.o + ".R2." + str(i)) + ".fastq", 'w')
         ]
 
     for seqid, header1, seq1, qualscores1, header2, seq2, qualscores2 in stream_paired_fastq(args.l, args.r):
-        outint = randint(1, args.n+1)
+        outint = randint(1, args.n)
+        if args.v:
+            sys.stderr.write(f"{bcolors.PINK}FILE: {outint}{bcolors.ENDC}\n")
         files[outint][0].write(f"@{header1}\n{seq1}\n+\n{qualscores1}\n")
         files[outint][1].write(f"@{header2}\n{seq2}\n+\n{qualscores2}\n")
 
