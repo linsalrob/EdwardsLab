@@ -3,6 +3,8 @@ import sys
 import gzip
 
 import subprocess
+from .rob_error import SequencePairError, FastqFormatError
+from .bcolors import bcolors
 
 __author__ = 'Rob Edwards'
 
@@ -80,7 +82,7 @@ def stream_fastq(fqfile):
         if not header:
             break
         if not header.startswith("@"):
-            raise IOError(f"The file does not appear to be a four-line fastq file at line {linecounter}")
+            raise FastqFormatError(f"The file does not appear to be a four-line fastq file at line {linecounter}")
         header = header.strip()
         seqidparts = header.split(' ')
         seqid = seqidparts[0]
@@ -89,14 +91,102 @@ def stream_fastq(fqfile):
         linecounter += 1
         qualheader = qin.readline()
         if not qualheader.startswith("+"):
-            raise IOError(f"The file does not appear to be a four-line fastq file at line {linecounter}")
+            raise FastqFormatError(f"The file does not appear to be a four-line fastq file at line {linecounter}")
         linecounter += 1
         qualscores = qin.readline().strip()
         linecounter += 1
         header = header.replace('@', '', 1)
         if len(qualscores) != len(seq):
-            raise IOError(f"The sequence and qual scores are not the same length at line {linecounter}")
+            raise FastqFormatError(f"The sequence and qual scores are not the same length at line {linecounter}")
         yield seqid, header, seq, qualscores
+
+
+
+def stream_paired_fastq(fqfile1, fqfile2):
+    """Read paired fastq files and provide an iterable of the sequence ID, the
+    full header, the sequence, and the quaity scores for the left and right pairs
+
+    Note that the sequence ID is the header up until the first space,
+    while the header is the whole header.
+
+    Should accomodate both /1 /2 // _1 _2 and [space]1 [space]2
+    """
+
+    if fqfile1.endswith('.gz'):
+        qin1 = gzip.open(fqfile1, 'rt')
+    else:
+        qin1 = open(fqfile1, 'r')
+
+    if fqfile2.endswith('.gz'):
+        qin2 = gzip.open(fqfile2, 'rt')
+    else:
+        qin2 = open(fqfile2, 'r')
+
+    linecounter = 0
+    while True:
+        linecounter += 1
+        header1 = qin1.readline().strip()
+        header2 = qin2.readline().strip()
+        if not header1 and not header2:
+            break
+
+        if not header1.startswith("@"):
+            raise FastqFormatError(f"The file {fqfile1} does not appear to be a four-line fastq file at line {linecounter}")
+        if not header2.startswith("@"):
+            raise FastqFormatError(f"The file {fqfile2} does not appear to be a four-line fastq file at line {linecounter}")
+
+        header1 = header1.replace('@', '', 1)
+        header2 = header2.replace('@', '', 1)
+
+        seqidparts1 = header1.split(' ')
+        seqidparts2 = header2.split(' ')
+
+        seqid1 = seqidparts1[0]
+        seqid2 = seqidparts2[0]
+
+        # test for appropriate matching names
+        if seqid1.endswith('/1') and seqid2.endswith('/2'):
+            seqid1 = seqid1.replace('/1', '')
+            seqid2 = seqid2.replace('/2', '')
+        elif seqid1.endswith('_1') and seqid2.endswith('_2'):
+            seqid1 = seqid1.replace('_1', '')
+            seqid2 = seqid2.replace('_2', '')
+        elif seqidparts1[1].startswith('1') and seqidparts2[1].startswith('2'):
+            # the sequence names contain [space]1 and [space]2
+            True
+        else:
+            raise SequencePairError(f"{bcolors.RED}We can not match the forward/reverse reads in\n{header1} (seqid: {seqid1})\n{header2} (seqid: {seqid2}){bcolors.ENDC}\n")
+
+        if seqid1 != seqid2:
+            raise SequencePairError(f"{bcolors.RED}The sequence IDs {seqid1} and {seqid2} do not match and are not paired{bcolors.ENDC}\n")
+
+        seqid = seqid1.replace('@', '')
+        seq1 = qin1.readline().strip()
+        linecounter += 1
+        qualheader1 = qin1.readline()
+        linecounter += 1
+        qualscores1 = qin1.readline().strip()
+        linecounter += 1
+
+
+        seq2 = qin2.readline().strip()
+        qualheader2 = qin2.readline()
+        qualscores2 = qin2.readline().strip()
+
+        if not qualheader1.startswith("+"):
+            raise FastqFormatError(f"The file {fqfile1} does not appear to be a four-line fastq file at line {linecounter}")
+        if not qualheader2.startswith("+"):
+            raise FastqFormatError(f"The file {fqfile2} does not appear to be a four-line fastq file at line {linecounter}")
+
+        if len(qualscores1) != len(seq1):
+            raise FastqFormatError(f"The sequence and qual scores in {fqfile1} are not the same length at line {linecounter}")
+        if len(qualscores2) != len(seq2):
+            raise FastqFormatError(f"The sequence and qual scores in {fqfile2} are not the same length at line {linecounter}")
+
+        yield seqid, header1, seq1, qualscores1, header2, seq2, qualscores2
+
+
+
 
 
 def stream_fasta(fastafile, whole_id=True):
@@ -145,3 +235,5 @@ def stream_fasta(fastafile, whole_id=True):
                 break
         f.seek(posn)
         yield idline, seq
+
+
