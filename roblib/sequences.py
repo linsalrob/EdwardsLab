@@ -73,19 +73,29 @@ def stream_fastq(fqfile):
     else:
         qin = open(fqfile, 'r')
 
+    linecounter = 0
     while True:
         header = qin.readline()
+        linecounter += 1
         if not header:
             break
+        if not header.startswith("@"):
+            raise IOError(f"The file does not appear to be a four-line fastq file at line {linecounter}")
         header = header.strip()
         seqidparts = header.split(' ')
         seqid = seqidparts[0]
         seqid = seqid.replace('@', '')
-        seq = qin.readline()
-        seq = seq.strip()
+        seq = qin.readline().strip()
+        linecounter += 1
         qualheader = qin.readline()
+        if not qualheader.startswith("+"):
+            raise IOError(f"The file does not appear to be a four-line fastq file at line {linecounter}")
+        linecounter += 1
         qualscores = qin.readline().strip()
+        linecounter += 1
         header = header.replace('@', '', 1)
+        if len(qualscores) != len(seq):
+            raise IOError(f"The sequence and qual scores are not the same length at line {linecounter}")
         yield seqid, header, seq, qualscores
 
 
