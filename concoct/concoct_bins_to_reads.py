@@ -75,6 +75,9 @@ def write_sequences(reads, outdir, leftfq, rightfq, singlefq = None, verbose = F
     :return:
     """
 
+    if verbose:
+        sys.stderr.write(f"{bcolors.GREEN}Writing sequences\n{bcolors.ENDC}")
+
     if not os.path.exists(outdir):
         os.mkdir(outdir)
 
