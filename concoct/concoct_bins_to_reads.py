@@ -50,17 +50,33 @@ def contig_reads(bamdir, clusters, verbose=False):
         sys.stderr.write(f"{bcolors.GREEN}Converting bams to read clusters{bcolors.ENDC}\n")
 
     reads = {}
+    allbamfs = os.listdir(bamdir)
+    totalf = len(allbamfs)
+    fc = 0
+    if verbose:
+        sys.stderr.write(f"{bcolors.BLUE}")
     for bamf in os.listdir(bamdir):
         if not bamf.endswith('.bam'):
             continue
-
+        fc += 1
+        if verbose:
+            sys.stderr.write(f"\tProcessing file {fc} of {totalf}\r")
+            sys.stderr.flush()
         bam = pysam.AlignmentFile(os.path.join(bamdir, bamf), 'rb')
-        for c in clusters:
-            for rds in bam.fetch(c):
+        # find the reference names
+        for s in bam.get_index_statistics():
+            if s.contig not in clusters:
+                continue
+            for rds in bam.fetch(s.contig):
                 if rds.qname in reads:
                     sys.stderr.write(f"{bcolors.PINK}WARNING: {rds.qname} mapped to two different locations{bcolors.ENDC}\n")
                     continue
-                reads[rds.qname] = clusters[c]
+                reads[rds.qname] = clusters[s.contig]
+
+    if verbose:
+        # finish the writing
+        sys.stderr.write(f"{bcolors.ENDC}\n")
+
     return reads
 
 def write_sequences(reads, outdir, leftfq, rightfq, singlefq = None, verbose = False):
@@ -117,7 +133,8 @@ def write_sequences(reads, outdir, leftfq, rightfq, singlefq = None, verbose = F
 
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Concoct to reads")
+    parser = argparse.ArgumentParser(description="Convert concoct to reads",
+        epilog="The concoct clusters file is ususally called clustering_merged.csv.")
     parser.add_argument('-c', help='concoct merged clusters file', required=True)
     parser.add_argument('-b', help='directory of indexed bam files', required=True)
     parser.add_argument('-l', help='left reads', required=True)
