@@ -68,6 +68,8 @@ def contig_reads(bamdir, clusters, verbose=False):
             if s.contig not in clusters:
                 continue
             for rds in bam.fetch(s.contig):
+                if rds.qname in reads and rds.qname == clusters[s.contig]:
+                    continue
                 if rds.qname in reads:
                     sys.stderr.write(f"{bcolors.PINK}WARNING: {rds.qname} mapped to two different locations{bcolors.ENDC}\n")
                     continue
