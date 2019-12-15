@@ -68,12 +68,10 @@ def contig_reads(bamdir, clusters, verbose=False):
             if s.contig not in clusters:
                 continue
             for rds in bam.fetch(s.contig):
-                if rds.qname in reads and rds.qname == clusters[s.contig]:
-                    continue
-                if rds.qname in reads:
-                    sys.stderr.write(f"{bcolors.PINK}WARNING: {rds.qname} mapped to two different locations{bcolors.ENDC}\n")
-                    continue
-                reads[rds.qname] = clusters[s.contig]
+                if rds.qname not in reads:
+                    reads[rds.qname] = {clusters[s.contig]}
+                else:
+                    reads[rds.qname].add(clusters[s.contig])
 
     if verbose:
         # finish the writing
@@ -104,13 +102,14 @@ def write_sequences(reads, outdir, leftfq, rightfq, singlefq = None, verbose = F
     psc = 0
     for seqid, header1, seq1, qualscores1, header2, seq2, qualscores2 in stream_paired_fastq(leftfq, rightfq):
         if seqid in reads:
-            if reads[seqid] not in files:
-                files[reads[seqid]] = [
-                    open(os.path.join(outdir, reads[seqid] + ".R1.fastq"), 'w'),
-                    open(os.path.join(outdir, reads[seqid] + ".R2.fastq"), 'w')
-                ]
-            files[reads[seqid]][0].write(f"@{header1}\n{seq1}\n+\n{qualscores1}\n")
-            files[reads[seqid]][1].write(f"@{header2}\n{seq2}\n+\n{qualscores2}\n")
+            for clst in reads[seqid]:
+                if clst not in files:
+                    files[clst] = [
+                        open(os.path.join(outdir, clst + ".R1.fastq"), 'w'),
+                        open(os.path.join(outdir, clst + ".R2.fastq"), 'w')
+                    ]
+                files[clst][0].write(f"@{header1}\n{seq1}\n+\n{qualscores1}\n")
+                files[clst][1].write(f"@{header2}\n{seq2}\n+\n{qualscores2}\n")
             psc += 1
 
     singlefiles = {}
@@ -118,9 +117,10 @@ def write_sequences(reads, outdir, leftfq, rightfq, singlefq = None, verbose = F
     if singlefq:
         for seqid, header, seq, qualscores in stream_fastq(singlefq):
             if seqid in reads:
-                if reads[seqid] not in singlefiles:
-                    singlefiles[reads[seqid]] = open(os.path.join(outdir, reads[seqid] + ".single.fastq"), 'w')
-            singlefiles[reads[seqid]].write(f"@{header}\n{seq}\n+\n{qualscores}\n")
+                for clst in reads[seqid]:
+                    if clst not in singlefiles:
+                        singlefiles[clst] = open(os.path.join(outdir, clst + ".single.fastq"), 'w')
+                singlefiles[clst].write(f"@{header}\n{seq}\n+\n{qualscores}\n")
             sc += 1
 
     for f in files:
