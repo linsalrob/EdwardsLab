@@ -27,7 +27,7 @@ if __name__ == '__main__':
     for i in range(1, args.n+1):
         if args.v:
             sys.stderr.write(f"{bcolors.GREEN}FILE: {i}{bcolors.ENDC}\n")
-        files[i] = open(os.path.join(args.d, args.o + str(i)) + ".fastq", 'w')
+        files[i] = open(os.path.join(args.d, args.o + "." + str(i)) + ".fastq", 'w')
 
     for seqid, header, seq, qualscores in stream_fastq(args.f):
         outint = randint(1, args.n)
