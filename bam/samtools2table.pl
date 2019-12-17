@@ -10,7 +10,7 @@ with an echo, e.g. for parsing a whole directory
 use strict;
 
 
-my $dir = shift || die "directory of samtools coverage output with an additional first line in each file that indicates the filename";
+my $dir = shift || die "$0 <directory of samtools coverage output>";
 opendir(DIR, $dir) || die "$! $dir";
 my @allfs;
 my %allrs;
