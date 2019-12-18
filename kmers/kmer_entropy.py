@@ -11,12 +11,13 @@ from itertools import product
 
 import json
 from math import log2
-from roblib import stream_fasta, rc, bcolors
+from roblib import stream_fasta, rc, bcolors, stream_fastq
 
-def count_kmers(faf, k, jsonout=None, verbose=False):
+def count_kmers(faf, type, k, jsonout=None, verbose=False):
     """
     Count the kmers
     :param faf: fasta file
+    :param type: str either fasta or fastq
     :param k: kmer size
     :param verbose: more output
     :return: a dict of kmers
@@ -27,13 +28,23 @@ def count_kmers(faf, k, jsonout=None, verbose=False):
 
     kmers = {}
 
-    for id, seq in stream_fasta(faf):
-        rcseq = rc(seq)
-        posn = 0
-        while posn < len(seq) - k - 1:
-            kmers[seq[posn:posn+k]] = kmers.get(seq[posn:posn+k], 0) + 1
-            kmers[rcseq[posn:posn + k]] = kmers.get(rcseq[posn:posn + k], 0) + 1
-            posn += 1
+    if type == "fasta":
+        for id, seq in stream_fasta(faf):
+            rcseq = rc(seq)
+            posn = 0
+            while posn < len(seq) - k - 1:
+                kmers[seq[posn:posn+k]] = kmers.get(seq[posn:posn+k], 0) + 1
+                kmers[rcseq[posn:posn + k]] = kmers.get(rcseq[posn:posn + k], 0) + 1
+                posn += 1
+
+    if type == "fastq":
+        for id, fullid, seq, qual in stream_fastq(faf):
+            rcseq = rc(seq)
+            posn = 0
+            while posn < len(seq) - k - 1:
+                kmers[seq[posn:posn+k]] = kmers.get(seq[posn:posn+k], 0) + 1
+                kmers[rcseq[posn:posn + k]] = kmers.get(rcseq[posn:posn + k], 0) + 1
+                posn += 1
 
     if jsonout:
         if verbose:
@@ -79,13 +90,21 @@ def evenness(kmers, H=None, verbose=False):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Count the kmers in a file and report entropy and eveness')
-    parser.add_argument('-f', help='fasta file to count the entropy/evenness', required=True)
+    parser.add_argument('-f', help='fasta file to count the entropy/evenness')
+    parser.add_argument('-q', help='fastq file to count the entropy/evenness')
     parser.add_argument('-k', help='kmer size', required=True, type=int)
     parser.add_argument('-j', help='json output for kmer counts')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    kmers = count_kmers(args.f, args.k, args.j, args.v)
+    if args.f:
+        kmers = count_kmers(args.f, 'fasta', args.k, args.j, args.v)
+    elif args.q:
+        kmers = count_kmers(args.q, 'fastq', args.k, args.j, args.v)
+    else:
+        sys.stderr.write(f"{bcolors.RED}FATAL: Please supply either a fasta file or a fastq file{bcolors.ENDC}\n")
+        sys.exit(-1)
+
     H = shannon(kmers, args.v)
     e = evenness(kmers, H, args.v)
 
