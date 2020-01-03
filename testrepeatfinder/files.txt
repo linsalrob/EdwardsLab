@@ -1,0 +1,2 @@
+/home/redwards/.local/lib/python3.7/site-packages/repeatFinder.cpython-37m-x86_64-linux-gnu.so
+/home/redwards/.local/lib/python3.7/site-packages/repeatfinder-1.0.0.egg-info
