@@ -9,7 +9,7 @@ use Rob;
 my $rob = new Rob;
 
 my $usage=<<EOF;
-$0 [-f print whole DNA fasta] [-v verbose] <list of genbankfiles>
+$0 [-f print whole DNA fasta] [-v verbose]  [-o output file] <list of genbankfiles> 
 
 EOF
 
@@ -19,10 +19,13 @@ die $usage unless ($ARGV[0]);
 my @files = ();
 my $verbose = 0;
 my $print_fasta  = 0;
+my $outf = "tbl";
 
-foreach my $t (@ARGV) {
+while (@ARGV) {
+	my $t = shift @ARGV;
 	if ($t eq "-f") {$print_fasta = 1}
 	elsif ($t eq "-v") {$verbose = 1}
+	elsif ($t eq "-o") {$outf = shift @ARGV}
 	elsif (-e $t) {push @files, $t}
 	else {
 		print STDERR "DOn't understand command line argument $t and it is not a file. Skipped\n";
@@ -30,7 +33,7 @@ foreach my $t (@ARGV) {
 }
 
 
-open(TB, ">tbl") || die "can't open tbl";
+open(TB, ">$outf") || die "can't open $outf";
 
 my $c;
 foreach my $file (@files)
@@ -58,6 +61,9 @@ foreach my $file (@files)
 			eval {$locus = join " ", $feature->each_tag_value("locus_tag")};
 			eval {$trans = join " ", $feature->each_tag_value("translation")};
 			eval {$np = join " ", $feature->each_tag_value("protein_id")};
+			if (!$np) {
+				eval {$np = join " ", $feature->each_tag_value("db_xref")};
+			}
 			if (!$np) {
 				eval {$np = join " ", $feature->each_tag_value("product")};
 			}
@@ -89,7 +95,7 @@ foreach my $file (@files)
 
 			eval {$prod  = join " ", $feature->each_tag_value("product")};
 
-			my $oids = "locus:$locus"; 
+			my $oids = "locus:$locus;"; 
 			($geneid)  && ($oids.="$geneid;");
 			($gi)      && ($oids.="$gi;");
 			$oids =~ s/\;$//;
