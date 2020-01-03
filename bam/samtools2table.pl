@@ -39,6 +39,7 @@ foreach my $f (grep {$_ !~ /^\./} readdir(DIR)) {
 my @allrs = sort {$a cmp $b} keys %allrs;
 print join("\t", "", @allrs), "\n";
 foreach my $f (@allfs) {
+	chomp($f);
 	print $f;
 	map {
 		$data->{$f}->{$_} ? print "\t". $data->{$f}->{$_} : print "\t0";
