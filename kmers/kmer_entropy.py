@@ -108,4 +108,7 @@ if __name__ == '__main__':
     H = shannon(kmers, args.v)
     e = evenness(kmers, H, args.v)
 
-    print(f"{args.f}\t{args.k}\t{H}\t{e}")
+    if args.f:
+        print(f"{args.f}\t{args.k}\t{H}\t{e}")
+    else:
+        print(f"{args.q}\t{args.k}\t{H}\t{e}")
