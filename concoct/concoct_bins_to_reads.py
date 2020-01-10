@@ -56,9 +56,9 @@ def contig_reads(bamdir, clusters, verbose=False):
     if verbose:
         sys.stderr.write(f"{bcolors.BLUE}")
     for bamf in os.listdir(bamdir):
+        fc += 1
         if not bamf.endswith('.bam'):
             continue
-        fc += 1
         if verbose:
             sys.stderr.write(f"\tProcessing file {fc} of {totalf}\r")
             sys.stderr.flush()
@@ -120,7 +120,7 @@ def write_sequences(reads, outdir, leftfq, rightfq, singlefq = None, verbose = F
                 for clst in reads[seqid]:
                     if clst not in singlefiles:
                         singlefiles[clst] = open(os.path.join(outdir, clst + ".single.fastq"), 'w')
-                singlefiles[clst].write(f"@{header}\n{seq}\n+\n{qualscores}\n")
+                    singlefiles[clst].write(f"@{header}\n{seq}\n+\n{qualscores}\n")
             sc += 1
 
     for f in files:
