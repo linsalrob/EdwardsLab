@@ -16,6 +16,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-f', help='fasta file', required=True)
     parser.add_argument('-l', help='list the lengths for each sequence (default = not to)', action='store_true')
+    parser.add_argument('-m', help='minimum length fo be inclued', type=int, default=0)
     parser.add_argument('-t', help='tab separated output', action='store_true')
     args = parser.parse_args()
 
@@ -26,7 +27,8 @@ if __name__ == "__main__":
             print("{}\t{}".format(i, len(fa[i])))
         print()
 
-    lens=[len(fa[i]) for i in fa]
+    lensall=[len(fa[i]) for i in fa]
+    lens = list(filter(lambda x: x > args.m, lensall))
     lens.sort()
     length=sum(lens)
 
