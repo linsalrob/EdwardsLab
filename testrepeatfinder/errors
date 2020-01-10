@@ -1,0 +1,55 @@
+running install
+running build
+running build_ext
+building 'RobRepeatFinder' extension
+creating build
+creating build/temp.linux-x86_64-3.7
+x86_64-linux-gnu-gcc -pthread -Wno-unused-result -Wsign-compare -DNDEBUG -g -fwrapv -O2 -Wall -g -fstack-protector-strong -Wformat -Werror=format-security -g -fwrapv -O2 -g -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 -fPIC -I/usr/include/python3.7m -c repeatFinder.cpp -o build/temp.linux-x86_64-3.7/repeatFinder.o
+repeatFinder.cpp: In function ‘void input()’:
+repeatFinder.cpp:53:8: warning: unused variable ‘my_new_check’ [-Wunused-variable]
+   53 |  char *my_new_check = fgets(dna,INIT_DNA_LEN,f);
+      |        ^~~~~~~~~~~~
+repeatFinder.cpp: In function ‘void find_repeats()’:
+repeatFinder.cpp:72:39: warning: array subscript has type ‘char’ [-Wchar-subscripts]
+   72 |   key = (key<<2) + converter[dna[start]];
+      |                              ~~~~~~~~~^
+repeatFinder.cpp:77:71: warning: array subscript has type ‘char’ [-Wchar-subscripts]
+   77 |   key = ((key&((1<<keylen)-1))<< 2) + converter[dna[start+REPEAT_LEN-1]];
+      |                                                 ~~~~~~~~~~~~~~~~~~~~~~^
+repeatFinder.cpp:84:50: warning: array subscript has type ‘char’ [-Wchar-subscripts]
+   84 |   key = (key<<2) + converter[complement[dna[start]]];
+      |                                         ~~~~~~~~~^
+repeatFinder.cpp:89:80: warning: array subscript has type ‘char’ [-Wchar-subscripts]
+   89 |   key= ((key&((1<<keylen)-1))<<2) + converter[complement[dna[start-REPEAT_LEN+1]]];
+      |                                                          ~~~~~~~~~~~~~~~~~~~~~~^
+repeatFinder.cpp: In function ‘void find_maxlen_rev(int, int)’:
+repeatFinder.cpp:132:40: warning: array subscript has type ‘char’ [-Wchar-subscripts]
+  132 |   if(dna[fst-1] == complement[dna[sec+1]])
+      |                               ~~~~~~~~~^
+repeatFinder.cpp:138:33: warning: array subscript has type ‘char’ [-Wchar-subscripts]
+  138 |   if (dna[i] == complement[dna[j]])
+      |                            ~~~~~^
+repeatFinder.cpp: In function ‘void extend_repeats()’:
+repeatFinder.cpp:158:35: warning: array subscript has type ‘char’ [-Wchar-subscripts]
+  158 |   key = (key<<2) + converter[dna[i]];
+      |                              ~~~~~^
+repeatFinder.cpp:159:11: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  159 |  for(j=0;j<allrepeats[key].size();j++)
+      |          ~^~~~~~~~~~~~~~~~~~~~~~~
+repeatFinder.cpp:166:67: warning: array subscript has type ‘char’ [-Wchar-subscripts]
+  166 |   key = ((key&((1<<keylen)-1))<< 2) + converter[dna[i+REPEAT_LEN-1]];
+      |                                                 ~~~~~~~~~~~~~~~~~~^
+repeatFinder.cpp:167:12: warning: comparison of integer expressions of different signedness: ‘int’ and ‘std::vector<int>::size_type’ {aka ‘long unsigned int’} [-Wsign-compare]
+  167 |   for(j=0;j<allrepeats[key].size();j++)
+      |           ~^~~~~~~~~~~~~~~~~~~~~~~
+repeatFinder.cpp: In function ‘void print_output()’:
+repeatFinder.cpp:231:10: warning: unused variable ‘k’ [-Wunused-variable]
+  231 |  int i,j,k;
+      |          ^
+creating build/lib.linux-x86_64-3.7
+x86_64-linux-gnu-g++ -pthread -shared -Wl,-O1 -Wl,-Bsymbolic-functions -Wl,-Bsymbolic-functions -Wl,-z,relro -Wl,-Bsymbolic-functions -Wl,-z,relro -g -fstack-protector-strong -Wformat -Werror=format-security -Wdate-time -D_FORTIFY_SOURCE=2 build/temp.linux-x86_64-3.7/repeatFinder.o -o build/lib.linux-x86_64-3.7/RobRepeatFinder.cpython-37m-x86_64-linux-gnu.so
+running install_lib
+copying build/lib.linux-x86_64-3.7/RobRepeatFinder.cpython-37m-x86_64-linux-gnu.so -> /home/redwards/.local/lib/python3.7/site-packages
+running install_egg_info
+Removing /home/redwards/.local/lib/python3.7/site-packages/RobRepeatFinder-1.0.0.egg-info
+Writing /home/redwards/.local/lib/python3.7/site-packages/RobRepeatFinder-1.0.0.egg-info

@@ -6,6 +6,7 @@
 #include <iostream>
 #include <string>
 #include <vector>
+#include "repeatFinder.h"
 
 using namespace std;
 
@@ -49,7 +50,7 @@ void input()
 		printf("Can not find input file %s\n",inputfile);
 		exit(0);
 	}
-	char *my_new_check = fgets(dna,INIT_DNA_LEN,f);
+	char *my_new_check  [[maybe_unused]] = fgets(dna,INIT_DNA_LEN,f);
 	
 	strcpy(dna,"");
 	while(fscanf(f, "%s", dna+dna_len)==1) {
@@ -68,24 +69,24 @@ void find_repeats()
 
 	key = 0;
 	for(start = 0;start < REPEAT_LEN; start++)
-		key = (key<<2) + converter[dna[start]];
+		key = (key<<2) + converter[(int) dna[start]];
 	allrepeats[key].push_back(0);
 
 	for(start = 1;start < dna_len-REPEAT_LEN+1; start++)
 	{
-		key = ((key&((1<<keylen)-1))<< 2) + converter[dna[start+REPEAT_LEN-1]];
+		key = ((key&((1<<keylen)-1))<< 2) + converter[(int) dna[start+REPEAT_LEN-1]];
 		allrepeats[key].push_back(start);
 	}
 
 	//find reverse repeat
 	key = 0;
 	for(start = dna_len-1;start >dna_len-1-REPEAT_LEN; start--)
-		key = (key<<2) + converter[complement[dna[start]]];
+		key = (key<<2) + converter[complement[(int) dna[start]]];
 	allrepeats[key].push_back((dna_len-1)*(-1));
 	
 	for(start = dna_len-2;start >REPEAT_LEN-2; start--)
 	{
-		key= ((key&((1<<keylen)-1))<<2) + converter[complement[dna[start-REPEAT_LEN+1]]];
+		key= ((key&((1<<keylen)-1))<<2) + converter[complement[(int) dna[start-REPEAT_LEN+1]]];
 		allrepeats[key].push_back(start*(-1));
 	}
 }
@@ -128,13 +129,13 @@ void find_maxlen_rev(int fst, int sec)
 		return;
 	
 	if (fst >0 && sec < dna_len-1 )
-		if(dna[fst-1] == complement[dna[sec+1]])
+		if(dna[fst-1] == complement[(int) dna[sec+1]])
 			return;
 ///////////////
 
 	k=0;
 	for(i = REPEAT_LEN+fst, j = sec - REPEAT_LEN ; i<dna_len && j>-1 && i<j; i++, j--)
-		if (dna[i] == complement[dna[j]])
+		if (dna[i] == complement[(int) dna[j]])
 			k++;
 		else 
 			break;
@@ -154,16 +155,16 @@ void extend_repeats()
 
 	key = 0;
 	for(i = 0;i < REPEAT_LEN; i++)
-		key = (key<<2) + converter[dna[i]];
-	for(j=0;j<allrepeats[key].size();j++)
+		key = (key<<2) + converter[(int) dna[i]];
+	for(j=0;j<(int) allrepeats[key].size();j++)
 		if(allrepeats[key][j]<0)
 			find_maxlen_rev(0,allrepeats[key][j]);
 		else
 			find_maxlen(0,allrepeats[key][j]);
 
 	for(i =1;i<dna_len-REPEAT_LEN+1;i++){
-		key = ((key&((1<<keylen)-1))<< 2) + converter[dna[i+REPEAT_LEN-1]];
-		for(j=0;j<allrepeats[key].size();j++)
+		key = ((key&((1<<keylen)-1))<< 2) + converter[(int) dna[i+REPEAT_LEN-1]];
+		for(j=0;j<(int) allrepeats[key].size();j++)
 			if(allrepeats[key][j]<0)
 				find_maxlen_rev(i,allrepeats[key][j]);
 			else
@@ -227,7 +228,7 @@ void extend_gapped_repeat()
 
 void print_output()
 {
-	int i,j,k;
+	int i,j;
 	FILE *f;
 	char outputfile[256];
 
@@ -328,8 +329,10 @@ int main(int argc, char **argv)
 static PyObject *
 python_input(PyObject *self, PyObject *args) {
     /* Parse arguments */
-    if(!PyArg_ParseTuple(args, "si", &dna, &gap_len))
+    if(!PyArg_ParseTuple(args, "si", &dna, &gap_len)) {
+        PyErr_SetString(PyExc_RuntimeError, "Could not parse the arguments to python_input");
         return NULL;
+    }
     dna_len = strlen(dna);
     run();
 
@@ -368,19 +371,7 @@ python_input(PyObject *self, PyObject *args) {
     return result;
 }
 
-static PyMethodDef repeatFinderMethods[] = {
-    {"repeatFinder", python_input, METH_VARARGS, "Python interface for repeatFinder"},
-    {NULL, NULL, 0, NULL}
-};
 
-static struct PyModuleDef repeatFinderModule = {
-    PyModuleDef_HEAD_INIT,
-    "repeatFinder",
-    "Python interface for repeatFinder",
-    -1,
-    repeatFinderMethods
-};
-
-PyMODINIT_FUNC PyInit_repeatFinder(void) {
-    return PyModule_Create(&repeatFinderModule);
+PyMODINIT_FUNC PyInit_RobRepeatFinder(void) {
+    return PyModule_Create(&PhiSpyRepeatFinderModule);
 }
