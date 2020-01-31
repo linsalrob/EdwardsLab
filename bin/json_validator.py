@@ -1,20 +1,25 @@
 """
-
+A very simple JSON validator. We read the JSON file in and print it out using pprint.
 """
 
-import os
 import sys
 import json 
 import pprint
-import argparse
-from roblib import bcolors
 __author__ = 'Rob Edwards'
 
-pp = pprint.PrettyPrinter(indent=4)
-f='process_metagenomes.json'
 
-with open(f, 'r') as fin:
-    j = json.load(fin)
+h = "A very simple JSON validator. We read the JSON file in and print it out using pprint.\n"
+h += f"\nUsage: {sys.argv[0]} <json file>\n"
+
+
+if len(sys.argv) < 2:
+    sys.exit(h)
+
+
+pp = pprint.PrettyPrinter(indent=4)
+
+with open(sys.argv[1], 'r') as f:
+    j = json.load(f)
 
 pp.pprint(j)
 
