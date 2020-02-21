@@ -36,7 +36,7 @@ if __name__ == "__main__":
         if not n75 and len_so_far >= length * 0.75:
             n75 = i
 
-    if args.s:
+    if args.s or args.t:
         print("{}\t{}\t{}\t{}\t{}\t{}\t{}".format(args.f, len(lens), length, lens[0], lens[-1], n50, n75))
     else:
         print("Number of sequences: {}\nTotal length: {}\nShortest: {}\nLongest: {}\nN50: {}\nN75: {}".format(
