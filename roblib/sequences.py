@@ -237,3 +237,30 @@ def stream_fasta(fastafile, whole_id=True):
         yield idline, seq
 
 
+def stream_gfa_sequences(gfafile):
+    """
+    Stream the sequences from a GFA file. At the moment we ignore the 
+    rest of the information. This is not supposed to be a parser
+    :param gfafile: the gfa file to read
+    """
+
+    try:
+        if gfafile.endswith('.gz'):
+            f = gzip.open(gfafile, 'rt')
+        elif gfafile.endswith('.lrz'):
+            f = subprocess.Popen(['/usr/bin/lrunzip', '-q', '-d', '-f', '-o-', gfafile], stdout=subprocess.PIPE).stdout
+        else:
+            f = open(gfafile, 'r')
+    except IOError as e:
+        sys.stderr.write(str(e) + "\n")
+        sys.stderr.write("Message: \n" + str(e.message) + "\n")
+        sys.exit("Unable to open file " + gfafile)
+
+    while f:
+        l = f.readline()
+        if not l:
+            break
+        if not l.startswith("S"):
+            continue
+        p = l.strip().split("\t")
+        yield p[1], p[2]
