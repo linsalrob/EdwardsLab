@@ -18,6 +18,7 @@ import re
 
 READDIR = "fastq_pass"
 OUTDIR = "assembly"
+STATS = "stats"
 
 # a couple of REs used in filtering the files
 barcodere = re.compile(r'^barcode\d+$')
@@ -63,39 +64,53 @@ rule all:
         # expand(os.path.join(OUTDIR, "{barcode}.fastq.gz"), barcode=BARCODES)
         # expand(os.path.join(OUTDIR, "{barcode}.filtlong.fastq.gz"), barcode=BARCODES)
         # expand(os.path.join(OUTDIR, "{barcode}.overlaps.paf"), barcode=BARCODES)
-        # expand(os.path.join(OUTDIR, "{barcode}.gfa"), barcode=BARCODES)
+        # expand(os.path.join(OUTDIR, "{barcode}.miniasm.gfa"), barcode=BARCODES)
         # expand(os.path.join(OUTDIR, "{barcode}.polished.gfa"), barcode=BARCODES)
         # expand(expand(os.path.join(OUTDIR, "{barcode}.fasta"), barcode=BARCODES)
-        expand(os.path.join(OUTDIR, "{barcode}.assembly.stats.tsv"), barcode=BARCODES)
+        # expand(os.path.join(STATS, "{barcode}.assembly.stats.tsv"), barcode=BARCODES),
+        os.path.join(STATS, "all_statistics.tsv")
+
+
+"""
+NOTE ABOUT THE OUTPUTS:
+
+    The fasta/fastq files are named with the {barcode}.[\d+]
+
+    The numbers are the step numbers. This enables natural sorting of
+    the statistics at the end. Basically, everything is sorted by barcode
+    and then by number to be in the right order!
+
+    Add a number on your output files
+"""
 
 
 rule concat:
     input:
         fqf = get_fastq_files
     output:
-        o = os.path.join(OUTDIR, "{barcode}.fastq.gz")
+        o = os.path.join(OUTDIR, "{barcode}.1.fastq.gz")
     shell:
         "cat {input.fqf} | gzip >  {output.o}"
 
 
 rule filtlong:
     input:
-        os.path.join(OUTDIR, "{barcode}.fastq.gz")
+        os.path.join(OUTDIR, "{barcode}.1.fastq.gz")
     params:
         min_length = 2000,
         keep_percent = 90,
-        target_bases = 3000000
+        target_bases = 300000000
     output:
-        os.path.join(OUTDIR, "{barcode}.filtlong.fastq.gz")
+        os.path.join(OUTDIR, "{barcode}.2.filtlong.fastq.gz")
     shell:
         "filtlong --min_length {params.min_length} --keep_percent {params.keep_percent} --target_bases {params.target_bases} {input} | gzip > {output}"
 
 
 rule minimap:
     input:
-        os.path.join(OUTDIR, "{barcode}.filtlong.fastq.gz")
+        os.path.join(OUTDIR, "{barcode}.2.filtlong.fastq.gz")
     output:
-        os.path.join(OUTDIR, "{barcode}.overlaps.paf")
+        os.path.join(OUTDIR, "{barcode}.3.overlaps.paf")
     threads: 1
     # threads: workflow.cores * 0.50
     shell:
@@ -103,39 +118,83 @@ rule minimap:
 
 rule miniasm:
     input:
-        fq = os.path.join(OUTDIR, "{barcode}.filtlong.fastq.gz"),
-        paf = os.path.join(OUTDIR, "{barcode}.overlaps.paf")
+        fq = os.path.join(OUTDIR, "{barcode}.2.filtlong.fastq.gz"),
+        paf = os.path.join(OUTDIR, "{barcode}.3.overlaps.paf")
     output:
-        os.path.join(OUTDIR, "{barcode}.gfa")
+        os.path.join(OUTDIR, "{barcode}.4.miniasm.gfa")
     shell:
         "miniasm -f {input.fq} {input.paf} > {output}"
 
 rule minipolish:
     input:
-        flfq = os.path.join(OUTDIR, "{barcode}.filtlong.fastq.gz"),
-        gfa = os.path.join(OUTDIR, "{barcode}.gfa")
+        flfq = os.path.join(OUTDIR, "{barcode}.2.filtlong.fastq.gz"),
+        gfa = os.path.join(OUTDIR, "{barcode}.4.miniasm.gfa")
     output:
-        os.path.join(OUTDIR, "{barcode}.polished.gfa")
+        os.path.join(OUTDIR, "{barcode}.5.polished.gfa")
     shell:
         'minipolish {input.flfq} {input.gfa} > {output}'
 
 rule gfa2fasta:
     input:
-        os.path.join(OUTDIR, "{barcode}.polished.gfa")
+        os.path.join(OUTDIR, "{barcode}.5.polished.gfa")
     output:
-        os.path.join(OUTDIR, "{barcode}.fasta")
+        os.path.join(OUTDIR, "{barcode}.6.fasta")
     params:
         b = '{barcode}'
     shell:
         "awk '/^S/{{print \">{params.b}_\"$2\"\\n\"$3}}' {input} > {output}"
 
+## Statistics on the sequences
+rule count_concat_fastq:
+    input:
+        os.path.join(OUTDIR, "{barcode}.1.fastq.gz")
+    output:
+        os.path.join(STATS, "{barcode}_combined.tsv")
+    shell:
+        "python3 ~/EdwardsLab/bin/countfastq.py -t -f {input} > {output}"
+
+rule count_filtlong:
+    input:
+        os.path.join(OUTDIR, "{barcode}.2.filtlong.fastq.gz")
+    output:
+        os.path.join(STATS, "{barcode}.filtlong.tsv")
+    shell:
+        "python3 ~/EdwardsLab/bin/countfastq.py -t -f {input} > {output}"
+
+
+rule count_miniasm:
+    input:
+        os.path.join(OUTDIR, "{barcode}.4.miniasm.gfa")
+    output:
+        os.path.join(STATS, "{barcode}.miniasm.tsv")
+    shell:
+        "python3 ~/EdwardsLab/bin/countgfa.py -f {input} -t -v > {output}"
+
+rule count_minipolish:
+    input:
+        os.path.join(OUTDIR, "{barcode}.5.polished.gfa")
+    output:
+        os.path.join(STATS, "{barcode}.polished.tsv")
+    shell:
+        "python3 ~/EdwardsLab/bin/countgfa.py -f {input} -t -v > {output}"
+
 rule assembly_stats:
     input:
-        os.path.join(OUTDIR, "{barcode}.fasta")
+        os.path.join(OUTDIR, "{barcode}.6.fasta")
     output:
-        os.path.join(OUTDIR, "{barcode}.assembly.stats.tsv")
+        os.path.join(STATS, "{barcode}.assembly.stats.tsv")
     shell:
         'python3 ~/bin/countfasta.py -t -f {input} > {output}'
 
-
+rule combine_stats:
+    input:
+        expand(os.path.join(STATS, "{barcode}_combined.tsv"), barcode=BARCODES),
+        expand(os.path.join(STATS, "{barcode}.filtlong.tsv"), barcode=BARCODES),
+        expand(os.path.join(STATS, "{barcode}.miniasm.tsv"), barcode=BARCODES),
+        expand(os.path.join(STATS, "{barcode}.polished.tsv"), barcode=BARCODES),
+        expand(os.path.join(STATS, "{barcode}.assembly.stats.tsv"), barcode=BARCODES)
+    output:
+        os.path.join(STATS, "all_statistics.tsv")
+    shell:
+        "cat {input} >> {output}"
 
