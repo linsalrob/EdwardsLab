@@ -21,7 +21,7 @@ print(f"SAMPLES: {SAMPLES}")
 
 rule all:
     input:
-        expand(join(READDIR, '{sample}.fasta'),  sample=SAMPLES)
+        expand(join(READDIR, '{sample}.assembly.stats.tsv'),  sample=SAMPLES)
 
 rule minimap:
     input:
@@ -62,5 +62,13 @@ rule gfa2fasta:
     shell:
         "awk '/^S/{{print \">{params.s}_\"$2\"\\n\"$3}}' {input} > {output}"
 
+
+rule assembly_stats:
+    input:
+        '{sample}.fasta'
+    output:
+        '{sample}.assembly.stats.tsv'
+    shell:
+        'python3 ~/bin/countfasta.py -t -f {input} > {output}'
 
 
