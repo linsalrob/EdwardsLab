@@ -15,7 +15,8 @@ __author__ = 'Rob Edwards'
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-f', help='fasta file', required=True)
-    parser.add_argument('-s', help='one line summmary of name, total len, shortest, longest, n50, n75', action="store_true")
+    parser.add_argument('-t', help='tab separated summmary of name, total len, shortest, longest, n50, n75', action="store_true")
+    parser.add_argument('-s', help='(deprecated). Same as -t', action="store_true")
     args = parser.parse_args()
 
     lens = []

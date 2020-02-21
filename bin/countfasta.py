@@ -22,6 +22,10 @@ if __name__ == "__main__":
 
     fa=read_fasta(args.f)
 
+    if len(fa.keys()) == 1 and list(fa.keys())[0] == '':
+        sys.stderr.write(f"No sequences found in {args.f}\n")
+        sys.exit(0)
+
     if args.l:
         for i in fa:
             print("{}\t{}".format(i, len(fa[i])))
