@@ -17,7 +17,7 @@ if __name__ == '__main__':
     parser.add_argument('-s', help='start position (default = 0)', default=0, type=int)
     parser.add_argument('-e', help='end position (default = all)', type=int)
     parser.add_argument('-r', help="refefence name for the pileup (optional)", default=None)
-    parser.add_argument('-t', help='print a title that includes the name of the file (e.g. if you want to merge multiple outputs)', action='store_true')
+    parser.add_argument('-c', help='print column names for the output', action='store_true')
     args = parser.parse_args()
 
     coverage = []
@@ -56,7 +56,12 @@ if __name__ == '__main__':
 
     k -= 3
 
+
     if args.r:
-        print(f"{args.f}\t{args.r}\t{average}\t{k}")
+        if args.c:
+            print("Filename\tReference\tAverage\tStDev\tKurtosis")
+        print(f"{args.f}\t{args.r}\t{av}\t{st}\t{k}")
     else:
-        print(f"{args.f}\t{average}\t{k}")
+        if args.c:
+            print("Filename\tAverage\tStDev\tKurtosis")
+        print(f"{args.f}\t{av}\t{st}\t{k}")
