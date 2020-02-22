@@ -1,86 +1,148 @@
 """
-Snake file to make mummerplots for all the fasta files. 
+A snakefile to make a set of all vs. all pairwise
+comparisons using mummer, and plot the images.
 
-We need to do a couple of things to read the fasta files and get their
-lengths to make the mummer plots.
+To run this snakefile you will need:
+
+    - [mummer](http://mummer.sourceforge.net/)
+    - [snakemake](https://snakemake.readthedocs.io/)
+    - [imagemagick](https://imagemagick.org/index.php) for the montage command
+    - probably gnuplot
+
 """
 
 import os
 import re
 
+## User configurable options
+# directory with the fasta files, one per genome
+# currently we do not support gzipped fasta files
+# though I could add that if required.
+FASTADIR = "fasta" 
+# ouput directory for the mummer intermediary files
+OUTDIR   = "mummer" 
+# output directory for the images from mummerplot.
+PNGDIR = "mummer_png"
+# the filename for the final image that will be a montage
+# of all the mummer plots
+outputfilename = "mummer_montage.png"
+
+
+# The only bit that is tricky is that your fasta filenames
+# - must end .fasta (not .fna or .fa)
+# - must (currently) not have any periods in them.
+# There is an issue with how snakemake handles
+# wildcards that I am still resolving, and
+# this is the simplest solution!
+
+
+# define fastafilename to be only ^\w+.fasta$. This is important to stop cyclic 
+# use of the wildcard as files are created.
+wildcard_constraints:
+    faf1 = '\w+',
+    faf2 = '\w+'
+
+
+
+# mummer needs to know the length of the genome
+# to appropriately set the x- and y- axis of the plot
 # figure out the fasta files and the size of the genomes
 
 genome_len = {}
-
-ASSDIR = "assembly"
-OUTDIR = "mummer"
-PNGDIR = "mummer_png"
-
-fastare = re.compile(r'\.fasta$')
-
-# define barcode to be only ^\w+$. This is important to stop cyclic 
-# use of the wildcard as files are created.
-wildcard_constraints:
-   barcode1 = '\w+',
-   barcode2 = '\w+'
-
-
+filename = {}
 def fasta_len(faf):
-    """ calculate the length of sequence in the file to ensure > 0"""
+    """
+    calculate the length of sequence in the file
+        - we pass this to mummer
+        - we also filter to remove any empty fasta files 
+               (yes, my assembly pipeline can make those!)
+    Note that in this step, we trim the .fasta, .fna, or .fa
+    extension off of the file, and so we also store the file
+    name to use in the first step
+    """
     seqlen = 0
     global genome_len
-    with open(os.path.join(ASSDIR, faf), 'r') as f:
+    global filename
+    with open(os.path.join(FASTADIR, f"{faf}.fasta"), 'r') as f:
         for l in f:
             if not l.startswith('>'):
                 seqlen += len(l.strip())
-    print(f"GENOME LEN {faf} {seqlen}")
     bc = faf.replace('.fasta', '')
+    filename[bc] = faf
     genome_len[bc] = seqlen
+    print(f"GENOME LEN {faf} {bc} {seqlen}")
     return seqlen
 
 
-# find all the fasta files
-def fasta_filter(faf):
-    if not fastare.search(faf):
-        return False
-    return True
+# a simple function to convert a wildcard into a filename
+# we just have to do this to dereference the hash
+def wc2fn1(wildcards):
+    return filename[wildcards.faf1]
+def wc2fn2(wildcards):
+    return filename[wildcards.faf2]
 
 
-ALLFAFILES = list(filter(fasta_filter, os.listdir(ASSDIR)))
-lengths = list(map(fasta_len, ALLFAFILES))
 
-# now find the non empty fasta files
+FASTA, = glob_wildcards(os.path.join(FASTADIR, '{fasta}.fasta'))
+# now calculate the lengths of those sequences
+lengths = list(map(fasta_len, FASTA))
+
+# now find the non empty fasta files and remove them
 FA = [fa[0] for fa in filter(lambda g: g[1] > 0, genome_len.items())]
+FA.sort()
 
-print(f"BC: {FA}")
 
+# this is the rule that calls everything
 rule all:
     input:
-        expand(os.path.join(PNGDIR, "{barcode1}.{barcode2}.png"), barcode1 = FA, barcode2 = FA),
-        os.path.join(PNGDIR, "montage.png")
+        # this runs mummer and then mummerplot of all fasta files against each other
+        expand(os.path.join(PNGDIR, "{faf1}.{faf2}.png"), faf1 = FA, faf2 = FA),
+        # this creates the final montage
+        os.path.join(PNGDIR, outputfilename)
 
 
 rule run_mummer:
+    """
+    Here, we run mummer on each of the files.
+    Remember, we trimmed the extension off earlier, so here we need the
+    real file name.
+    """
     input:
-        ref = os.path.join(ASSDIR, "{barcode1}.fasta"),
-        test = os.path.join(ASSDIR, "{barcode2}.fasta")
+        ref = os.path.join(FASTADIR, "{faf1}.fasta"),
+        test = os.path.join(FASTADIR, "{faf2}.fasta")
     output:
-        mums = os.path.join(OUTDIR, "{barcode1}.{barcode2}.mums")
+        mums = os.path.join(OUTDIR, "{faf1}.{faf2}.mums")
     shell:
         "mummer -mum -b -c {input.ref} {input.test} > {output.mums}"
 
 
 rule make_plot:
+    """
+    Take the mummer output and make a plot of it.
+    gp is the gnuplot file
+    png is the png file
+
+    There is a little bit of magic in this, because
+    if the file doesn't exist (i.e. the sequence 
+    was empty or there are no mums between the two
+    sequences), we just make a white square
+    for that space. This happens when mummerplot
+    exits with a code of 25.
+
+    We also add a label to the png file that
+    is used in the montage.
+    See https://www.imagemagick.org/Usage/montage/#label
+    """
     input:
-        mums = os.path.join(OUTDIR, "{barcode1}.{barcode2}.mums")
+        mums = os.path.join(OUTDIR, "{faf1}.{faf2}.mums")
     output:
-        fp  = os.path.join(OUTDIR, "{barcode1}.{barcode2}.gp"),
-        png = os.path.join(PNGDIR, "{barcode1}.{barcode2}.png")
+        fp  = os.path.join(OUTDIR, "{faf1}.{faf2}.gp"),
+        png = os.path.join(PNGDIR, "{faf1}.{faf2}.png")
     params:
-        g1 = lambda wildcards: genome_len[wildcards.barcode1],
-        g2 = lambda wildcards: genome_len[wildcards.barcode2],
-        label = "{barcode1} {barcode2}",
-        outbase = os.path.join(OUTDIR, "{barcode1}.{barcode2}")
+        g1 = lambda wildcards: genome_len[wildcards.faf1],
+        g2 = lambda wildcards: genome_len[wildcards.faf2],
+        label = "{faf1} {faf2}",
+        outbase = os.path.join(OUTDIR, "{faf1}.{faf2}")
     shell:
         """
         set +e
@@ -98,9 +160,12 @@ rule make_plot:
         """
 
 rule montage:
+    """
+    Combine all the mummerplots into a single montage
+    """
     input:
         sorted(expand(os.path.join(PNGDIR, "{bc1}.{bc2}.png"), bc1 = FA, bc2 = FA))
     output:
-        os.path.join(PNGDIR, "montage.png")
+        os.path.join(PNGDIR, outputfilename)
     shell:
         "montage {input} {output}"
