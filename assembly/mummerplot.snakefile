@@ -81,9 +81,11 @@ def wc2fn1(wildcards):
 def wc2fn2(wildcards):
     return filename[wildcards.faf2]
 
-
-
+# find the fasta files
 FASTA, = glob_wildcards(os.path.join(FASTADIR, '{fasta}.fasta'))
+# if your files end .fna use this line instead
+# FASTA, = glob_wildcards(os.path.join(FASTADIR, '{fasta}.fna'))
+
 # now calculate the lengths of those sequences
 lengths = list(map(fasta_len, FASTA))
 
