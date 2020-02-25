@@ -39,3 +39,20 @@ c++ -o repeatFinder -I/usr/include/python3.7m -I/usr/include/x86_64-linux-gnu/py
 ```
 
 
+## For debugging
+
+First, check `ulimit` and `appreport` as described on [the lab website](https://edwards.sdsu.edu/research/enabling-c-debugging-in-centos/)
+
+Then, you will need to compile with the `-g` flag. CentOS also enforces the `-D_GLIBCXX_ASSERTIONS` flag so you should add that:
+
+```
+c++ -g -o repeatFinder -I/usr/include/python3.7m -I/usr/include/x86_64-linux-gnu/python3.7m  ./repeatFinder.cpp -lpython3.7m -D_GLIBCXX_ASSERTIONS
+```
+
+Then you can crash repeatFinder and use:
+
+```
+gdb repeatFinder core
+```
+
+
