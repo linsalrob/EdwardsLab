@@ -9,11 +9,22 @@ To run this snakefile you will need:
     - [imagemagick](https://imagemagick.org/index.php) for the montage command
     - probably gnuplot
 
+To run the command, you will need the mummerplot.yaml. I recommend
+you copy that to your local directory and use that version of it.
+
+Then you can run this file with
+
+snakemake --configfile mummerplot.yaml mummerplot.snakefile
+
 """
 
 import os
 import re
 
+# please define your inputs and outputs in this
+# yaml file. That way, you can copy that file
+# to any directory, and run this same
+# snakefile
 configfile: "mummerplot.yaml"
 
 ## User configurable options
