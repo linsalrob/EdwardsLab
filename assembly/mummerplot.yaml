@@ -1,0 +1,16 @@
+# YAML config file for the mummerplot snakefile
+
+#directory where the fasta files reside
+fasta: fasta_rc
+
+# where to write the mummer output (*.mums)
+mummer_output: mummer
+
+# where to write the png files
+mummer_png: mummer_png
+
+# final montage output plot
+montage: "mummer_montage.png"
+
+
+
