@@ -14,19 +14,21 @@ To run this snakefile you will need:
 import os
 import re
 
+configfile: "mummerplot.yaml"
+
 ## User configurable options
 # directory with the fasta files, one per genome
 # currently we do not support gzipped fasta files
 # though I could add that if required.
-FASTADIR = "fasta" 
+FASTADIR = config['fasta']
 # ouput directory for the mummer intermediary files
-OUTDIR   = "mummer" 
+OUTDIR   = config['mummer_output']
 # output directory for the images from mummerplot.
-PNGDIR = "mummer_png"
+PNGDIR = config["mummer_png"]
 # the filename for the final image that will be a montage
 # of all the mummer plots
-outputfilename = "mummer_montage.png"
 
+outputfilename = config['montage']
 
 # The only bit that is tricky is that your fasta filenames
 # - must end .fasta (not .fna or .fa)
