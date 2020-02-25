@@ -1,7 +1,10 @@
 # YAML config file for the mummerplot snakefile
 
 #directory where the fasta files reside
-fasta: fasta_rc
+fasta: fasta
+
+# the directory for reverse complemented fasta files as required
+fasta_rc: fasta_rc
 
 # where to write the mummer output (*.mums)
 mummer_output: mummer
