@@ -38,6 +38,7 @@ MIN_LENGTH = 2000,
 KEEP_PERCENT = 90,
 TARGET_BASES = 30000000
 
+MINIPOLISH_ROUNDS = 10
 
 # get a list of the fastq files
 FASTQ, = glob_wildcards(os.path.join(READDIR, '{fastq}.fastq.gz'))
@@ -112,8 +113,10 @@ rule minipolish:
         gfa = os.path.join(OUTDIR, "{sample}.4.miniasm.gfa")
     output:
         os.path.join(OUTDIR, "{sample}.5.polished.gfa")
+    params:
+        rds = MINIPOLISH_ROUNDS
     shell:
-        'minipolish {input.flfq} {input.gfa} > {output}'
+        'minipolish --rounds {params.rds} {input.flfq} {input.gfa} > {output}'
 
 rule gfa2fasta:
     input:
