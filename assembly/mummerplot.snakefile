@@ -25,13 +25,17 @@ import re
 # yaml file. That way, you can copy that file
 # to any directory, and run this same
 # snakefile
-configfile: "mummerplot.yaml"
+
+# please then define it on the command line as above
+# configfile: "mummerplot.yaml"
 
 ## User configurable options
 # directory with the fasta files, one per genome
 # currently we do not support gzipped fasta files
 # though I could add that if required.
 FASTADIR = config['fasta']
+# this is a directory for all the reverse complemented fasta files (as necessary)
+FASTARCDIR = config['fasta_rc']
 # ouput directory for the mummer intermediary files
 OUTDIR   = config['mummer_output']
 # output directory for the images from mummerplot.
@@ -110,11 +114,27 @@ FA.sort()
 # this is the rule that calls everything
 rule all:
     input:
+        # this figures out the rc as necessary
+        expand(os.path.join(FASTARCDIR, "{sample}.fasta"), sample=FA),
         # this runs mummer and then mummerplot of all fasta files against each other
         expand(os.path.join(PNGDIR, "{faf1}.{faf2}.png"), faf1 = FA, faf2 = FA),
         # this creates the final montage
         os.path.join(PNGDIR, outputfilename)
 
+
+
+rule reverse_complement:
+    """
+    test if we need to reverse complement some sequences
+    """
+    input:
+        expand(os.path.join(FASTADIR, "{sample}.fasta"), sample=FA)
+    output:
+        expand(os.path.join(FASTARCDIR, "{sample}.fasta"), sample=FA)
+    shell:
+        """
+        python3 /home3/redwards/GitHubs/EdwardsLab/mummer/reverse_complement_fasta.py -d {FASTADIR} -k 6 -o {FASTARCDIR} -v
+        """
 
 rule run_mummer:
     """
@@ -123,8 +143,8 @@ rule run_mummer:
     real file name.
     """
     input:
-        ref = os.path.join(FASTADIR, "{faf1}.fasta"),
-        test = os.path.join(FASTADIR, "{faf2}.fasta")
+        ref = os.path.join(FASTARCDIR, "{faf1}.fasta"),
+        test = os.path.join(FASTARCDIR, "{faf2}.fasta")
     output:
         mums = os.path.join(OUTDIR, "{faf1}.{faf2}.mums")
     shell:
