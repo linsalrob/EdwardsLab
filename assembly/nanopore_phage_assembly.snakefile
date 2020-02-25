@@ -106,7 +106,9 @@ rule miniasm:
 
 rule minipolish:
     input:
-        flfq = os.path.join(OUTDIR, "{sample}.2.filtlong.fastq.gz"),
+        # we run this with the original reads not the filtlong reads
+        flfq = os.path.join(READDIR, "{sample}.fastq.gz"),
+        #flfq = os.path.join(OUTDIR, "{sample}.2.filtlong.fastq.gz"),
         gfa = os.path.join(OUTDIR, "{sample}.4.miniasm.gfa")
     output:
         os.path.join(OUTDIR, "{sample}.5.polished.gfa")
