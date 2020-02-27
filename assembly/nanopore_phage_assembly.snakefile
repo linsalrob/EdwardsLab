@@ -46,7 +46,7 @@ FASTQ, = glob_wildcards(os.path.join(READDIR, '{fastq}.fastq.gz'))
 
 rule all:
     input:
-        expand(os.path.join(OUTDIR, "{sample}.6.fasta"), sample=FASTQ),
+        expand(os.path.join(OUTDIR, "{sample}_6.fasta"), sample=FASTQ),
         os.path.join(STATS, "all_statistics.tsv")
 
 
@@ -57,7 +57,10 @@ NOTE ABOUT THE OUTPUTS:
     the statistics at the end. Basically, everything is sorted by sample
     and then by number to be in the right order!
 
-    Add a number on your output files
+    Add a number on your output files.
+
+    In addition, we add the number with _1 _2, etc so that we can
+    use them later in the analysis without having to change their names.
 """
 
 
@@ -68,29 +71,29 @@ rule remove_host:
     input:
         os.path.join(READDIR, "{sample}.fastq.gz")
     output:
-        os.path.join(OUTDIR, "{sample}.1.host_removed.fq.gz")
+        os.path.join(OUTDIR, "{sample}_1.host_removed.fq.gz")
     shell:
         "minimap2 -ax map-ont {BACTERIALDNA} {input} | samtools fastq -f 4 | gzip > {output}"
 
 
 rule filtlong:
     input:
-        os.path.join(OUTDIR, "{sample}.1.host_removed.fq.gz")
+        os.path.join(OUTDIR, "{sample}_1.host_removed.fq.gz")
     params:
         min_length = MIN_LENGTH, 
         keep_percent = KEEP_PERCENT,
         target_bases = TARGET_BASES
     output:
-        os.path.join(OUTDIR, "{sample}.2.filtlong.fastq.gz")
+        os.path.join(OUTDIR, "{sample}_2.filtlong.fastq.gz")
     shell:
         "filtlong --min_length {params.min_length} --keep_percent {params.keep_percent} --target_bases {params.target_bases} {input} | gzip > {output}"
 
 
 rule minimap:
     input:
-        os.path.join(OUTDIR, "{sample}.2.filtlong.fastq.gz")
+        os.path.join(OUTDIR, "{sample}_2.filtlong.fastq.gz")
     output:
-        os.path.join(OUTDIR, "{sample}.3.overlaps.paf")
+        os.path.join(OUTDIR, "{sample}_3.overlaps.paf")
     threads: 1
     # threads: workflow.cores * 0.50
     shell:
@@ -98,10 +101,10 @@ rule minimap:
 
 rule miniasm:
     input:
-        fq = os.path.join(OUTDIR, "{sample}.2.filtlong.fastq.gz"),
-        paf = os.path.join(OUTDIR, "{sample}.3.overlaps.paf")
+        fq = os.path.join(OUTDIR, "{sample}_2.filtlong.fastq.gz"),
+        paf = os.path.join(OUTDIR, "{sample}_3.overlaps.paf")
     output:
-        os.path.join(OUTDIR, "{sample}.4.miniasm.gfa")
+        os.path.join(OUTDIR, "{sample}_4.miniasm.gfa")
     shell:
         "miniasm -f {input.fq} {input.paf} > {output}"
 
@@ -110,9 +113,9 @@ rule minipolish:
         # we run this with the original reads not the filtlong reads
         flfq = os.path.join(READDIR, "{sample}.fastq.gz"),
         #flfq = os.path.join(OUTDIR, "{sample}.2.filtlong.fastq.gz"),
-        gfa = os.path.join(OUTDIR, "{sample}.4.miniasm.gfa")
+        gfa = os.path.join(OUTDIR, "{sample}_4.miniasm.gfa")
     output:
-        os.path.join(OUTDIR, "{sample}.5.polished.gfa")
+        os.path.join(OUTDIR, "{sample}_5.polished.gfa")
     params:
         rds = MINIPOLISH_ROUNDS
     shell:
@@ -120,9 +123,9 @@ rule minipolish:
 
 rule gfa2fasta:
     input:
-        os.path.join(OUTDIR, "{sample}.5.polished.gfa")
+        os.path.join(OUTDIR, "{sample}_5.polished.gfa")
     output:
-        os.path.join(OUTDIR, "{sample}.6.fasta")
+        os.path.join(OUTDIR, "{sample}_6.fasta")
     params:
         b = '{sample}'
     shell:
@@ -131,7 +134,7 @@ rule gfa2fasta:
 ## Statistics on the sequences
 rule count_concat_fastq:
     input:
-        os.path.join(OUTDIR, "{sample}.1.host_removed.fq.gz")
+        os.path.join(OUTDIR, "{sample}_1.host_removed.fq.gz")
     output:
         os.path.join(STATS, "{sample}_combined.tsv")
     shell:
@@ -139,7 +142,7 @@ rule count_concat_fastq:
 
 rule count_filtlong:
     input:
-        os.path.join(OUTDIR, "{sample}.2.filtlong.fastq.gz")
+        os.path.join(OUTDIR, "{sample}_2.filtlong.fastq.gz")
     output:
         os.path.join(STATS, "{sample}.filtlong.tsv")
     shell:
@@ -148,7 +151,7 @@ rule count_filtlong:
 
 rule count_miniasm:
     input:
-        os.path.join(OUTDIR, "{sample}.4.miniasm.gfa")
+        os.path.join(OUTDIR, "{sample}_4.miniasm.gfa")
     output:
         os.path.join(STATS, "{sample}.miniasm.tsv")
     shell:
@@ -156,7 +159,7 @@ rule count_miniasm:
 
 rule count_minipolish:
     input:
-        os.path.join(OUTDIR, "{sample}.5.polished.gfa")
+        os.path.join(OUTDIR, "{sample}_5.polished.gfa")
     output:
         os.path.join(STATS, "{sample}.polished.tsv")
     shell:
@@ -164,7 +167,7 @@ rule count_minipolish:
 
 rule assembly_stats:
     input:
-        os.path.join(OUTDIR, "{sample}.6.fasta")
+        os.path.join(OUTDIR, "{sample}_6.fasta")
     output:
         os.path.join(STATS, "{sample}.assembly.stats.tsv")
     shell:
