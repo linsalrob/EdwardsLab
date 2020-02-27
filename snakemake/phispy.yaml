@@ -1,0 +1,5 @@
+directories:
+        fasta_files: fasta
+        genbank_files: genbank
+        phispy_files: phispy
+        gto_files : gto
