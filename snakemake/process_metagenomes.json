@@ -14,6 +14,7 @@
         "assembly_output" : "megahit.assembly",
         "contig_read_mapping" : "reads.contigs.bam",
         "unassembled_reads" : "unassembled_reads",
+        "reassembled_reads" : "reassembled_reads",
         "testdir" : "testdir"
     }
 }
