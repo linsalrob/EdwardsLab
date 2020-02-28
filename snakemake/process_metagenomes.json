@@ -1,0 +1,20 @@
+{
+    "tatabox_executables" : {
+        "assembler" : "/usr/local/genome/megahit/current/bin/megahit",
+        "mmseqs"  : "/usr/local/genome/mmseqs2/mmseqs/bin/mmseqs"
+    },
+    "anth_executables" : {
+        "assembler" : "/home3/redwards/opt/megahit/current/bin/megahit",
+        "mmseqs"  : "/home3/redwards/opt/mmseqs/current/bin/mmseqs",
+        "bowtie2-build" : "/usr/local/bowtie2/bin/bowtie2-build",
+        "bowtie2" : "/usr/local/bowtie2/bin/bowtie2"
+    },
+    "directories" : {
+        "Reads" : "Reads",
+        "assembly_output" : "megahit.assembly",
+        "contig_read_mapping" : "reads.contigs.bam",
+        "unassembled_reads" : "unassembled_reads",
+        "testdir" : "testdir"
+    }
+}
+
