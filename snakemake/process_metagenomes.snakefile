@@ -77,7 +77,7 @@ rule megahit_assemble:
     params:
         odir = directory(os.path.join(ASSDIR, '{sample}')),
     shell:
-        '{config[executables][assembler]} -1 {input.r1} -2 {input.r2} -o {params.odir}'
+        'rmdir {params.odir}; {config[executables][assembler]} -1 {input.r1} -2 {input.r2} -o {params.odir}'
 
 rule combine_contigs:
     """
@@ -211,7 +211,7 @@ rule assemble_unassembled:
     params:
         odir = os.path.join(REASSM, "{sample}")
     shell:
-        '{config[executables][assembler]} -1 {input.r1} -2 {input.r2} -r {input.s0} -o {params.odir}'
+        'rmdir {params.odir}; {config[executables][assembler]} -1 {input.r1} -2 {input.r2} -r {input.s0} -o {params.odir}'
 
 """
 Start round 2.
