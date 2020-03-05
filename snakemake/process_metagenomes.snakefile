@@ -11,6 +11,10 @@ datasets.
 
 A work in progress...
 
+To run on the cluster use this command:
+
+snakemake --configfile process_metagenomes.json -s ~/GitHubs/EdwardsLab/snakemake/process_metagenomes.snakefile --cluster 'qsub -cwd -o sge_out -e sge_err -V -pe make 8 -q default'  -j 200 --latency-wait 120
+
 """
 
 import os
@@ -71,13 +75,15 @@ rule megahit_assemble:
         os.path.join(ASSDIR, "{sample}/final.contigs.fa"),
         os.path.join(ASSDIR, "{sample}/checkpoints.txt"),
         os.path.join(ASSDIR, "{sample}/done"),
-        os.path.join(ASSDIR, "{sample}/intermediate_contigs"),
+        directory(os.path.join(ASSDIR, "{sample}/intermediate_contigs")),
         os.path.join(ASSDIR, "{sample}/log"),
         os.path.join(ASSDIR, "{sample}/options.json")
     params:
-        odir = directory(os.path.join(ASSDIR, '{sample}')),
+        odir = directory(os.path.join(ASSDIR, '{sample}'))
+    threads:
+        8
     shell:
-        'rmdir {params.odir}; {config[executables][assembler]} -1 {input.r1} -2 {input.r2} -o {params.odir}'
+        'rmdir {params.odir}; {config[executables][assembler]} -1 {input.r1} -2 {input.r2} -o {params.odir} -t {threads}'
 
 rule combine_contigs:
     """
@@ -110,11 +116,13 @@ rule index_contigs:
         idx4 = os.path.join(CRMDIR, "round1_contigs.4.bt2l"),
         ridx1 = os.path.join(CRMDIR, "round1_contigs.rev.1.bt2l"),
         ridx2 = os.path.join(CRMDIR, "round1_contigs.rev.2.bt2l")
+    threads:
+        8
     shell:
         # note that we build a large index by default, because
         # at some point we will end up doing that, and so this
         # always makes a large index
-        'bowtie2-build --large-index {input} {params.baseoutput}'
+        'bowtie2-build --threads {threads} --large-index {input} {params.baseoutput}'
         
 
 rule map_reads:
@@ -134,8 +142,10 @@ rule map_reads:
         contigs = os.path.join(CRMDIR, "round1_contigs")
     output:
         os.path.join(CRMDIR, "{sample}.contigs.bam") 
+    threads:
+        8
     shell:
-        'bowtie2 -x {params.contigs} -1 {params.r1} -2 {params.r2} | samtools view -bh | samtools sort -o {output} -'
+        'bowtie2 -x {params.contigs} -1 {params.r1} -2 {params.r2} --threads {threads} | samtools view -bh | samtools sort -o {output} -'
 
 """
 Using samtools to extract unmapped reads from the bam files
@@ -192,29 +202,71 @@ rule umapped_single_reads:
     shell:
             "samtools fastq -f 4 -F 1 {input} > {output}"
 
+"""
+We concatanate the unassembled reads into separate R1/R2/s files so
+we can assmble them all together.
+
+We also do this in 3 separate threads to take advantage of parallelization
+and to make the command easier
+"""
+
+rule concatenate_R1_unassembled:
+    """
+    Start with R1 reads
+    """
+    input:
+        expand(os.path.join(UNASSM, "{sample}.unassembled.R1.fastq"), sample=SAMPLES)
+    output:
+        os.path.join(UNASSM, "R1.unassembled.fastq")
+    shell:
+        "cat {input} > {output}"
+
+rule concatenate_R2_unassembled:
+    """
+    Concat R2 reads
+    """
+    input:
+        expand(os.path.join(UNASSM, "{sample}.unassembled.R2.fastq"), sample=SAMPLES)
+    output:
+        os.path.join(UNASSM, "R2.unassembled.fastq")
+    shell:
+        "cat {input} > {output}"
+
+rule concatenate_single_unassembled:
+    """
+    Concate singletons
+    """
+    input:
+        expand(os.path.join(UNASSM, "{sample}.unassembled.singles.fastq"),sample=SAMPLES)
+    output:
+        os.path.join(UNASSM, "single.unassembled.fastq")
+    shell:
+        "cat {input} > {output}"
 
 rule assemble_unassembled:
     """
     assemble the unassembled reads
     """
     input:
-        r1 = os.path.join(UNASSM, "{sample}.unassembled.R1.fastq"),
-        r2 = os.path.join(UNASSM, "{sample}.unassembled.R2.fastq"),
-        s0 = os.path.join(UNASSM, "{sample}.unassembled.singles.fastq")
+        r1 = os.path.join(UNASSM, "R1.unassembled.fastq"),
+        r2 = os.path.join(UNASSM, "R2.unassembled.fastq"),
+        s0 = os.path.join(UNASSM, "single.unassembled.fastq")
     output:
-        os.path.join(REASSM, "{sample}/final.contigs.fa"),
-        os.path.join(REASSM, "{sample}/checkpoints.txt"),
-        os.path.join(REASSM, "{sample}/done"),
-        os.path.join(REASSM, "{sample}/intermediate_contigs"),
-        os.path.join(REASSM, "{sample}/log"),
-        os.path.join(REASSM, "{sample}/options.json")
+        os.path.join(REASSM, "final.contigs.fa"),
+        os.path.join(REASSM, "checkpoints.txt"),
+        os.path.join(REASSM, "done"),
+        directory(os.path.join(REASSM, "intermediate_contigs")),
+        os.path.join(REASSM, "log"),
+        os.path.join(REASSM, "options.json")
     params:
-        odir = os.path.join(REASSM, "{sample}")
+        odir = os.path.join(REASSM)
+    threads:
+        8
     shell:
-        'rmdir {params.odir}; {config[executables][assembler]} -1 {input.r1} -2 {input.r2} -r {input.s0} -o {params.odir}'
+        'rmdir {params.odir}; {config[executables][assembler]} -1 {input.r1} -2 {input.r2} -r {input.s0} -o {params.odir} -t {threads}'
 
 """
-Start round 2.
+Start mapping round 2.
 
 Now we are going to repeat combining the contigs and mapping the sequences again
 """
@@ -228,12 +280,12 @@ rule concatentate_all_assemblies:
     """
 
     input:
-        new = expand(os.path.join(REASSM, "{sample}/final.contigs.fa"), sample=SAMPLES)
+        new = os.path.join(REASSM, "final.contigs.fa")
     output:
         contigs = os.path.join(REASSM, "round2_contigs.fa"),
         ids = os.path.join(REASSM, "round2_contigs.ids") 
     shell:
-        'python3 ~/bin/renumber_merge_fasta.py -f {input.ori} {input.new} -o {output.contigs} -i {output.ids} -v'
+        'python3 ~/bin/renumber_merge_fasta.py -f {input.new} -o {output.contigs} -i {output.ids} -v'
 
 
 rule index_contigs_round2:
@@ -251,11 +303,13 @@ rule index_contigs_round2:
         idx4 = os.path.join(RECRM, "round2_contigs.4.bt2l"),
         ridx1 = os.path.join(RECRM, "round2_contigs.rev.1.bt2l"),
         ridx2 = os.path.join(RECRM, "round2_contigs.rev.2.bt2l")
+    threads:
+        8
     shell:
         # note that we build a large index by default, because
         # at some point we will end up doing that, and so this
         # always makes a large index
-        'bowtie2-build --large-index {input} {params.baseoutput}'
+        'bowtie2-build --threads {threads} --large-index {input} {params.baseoutput}'
         
 
 rule map_reads_round2:
@@ -275,8 +329,10 @@ rule map_reads_round2:
         contigs = os.path.join(RECRM, "round2_contigs")
     output:
         os.path.join(RECRM, "{sample}.contigs.bam") 
+    threads:
+        8
     shell:
-        'bowtie2 -x {params.contigs} -1 {params.r1} -2 {params.r2} | samtools view -bh | samtools sort -o {output} -'
+        'bowtie2 -x {params.contigs} -1 {params.r1} -2 {params.r2} --threads {threads} | samtools view -bh | samtools sort -o {output} -'
 
 
 
