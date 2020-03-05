@@ -3,3 +3,5 @@ directories:
         genbank_files: genbank
         phispy_files: phispy
         gto_files : gto
+number_of_genomes : 200
+
