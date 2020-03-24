@@ -14,9 +14,9 @@ with open("genome_ids.txt", 'r') as f:
         IDS.append(l.strip())
 
 
-# choose 10 ids at random
+# choose some ids at random
 shuffle(IDS)
-IDS = IDS[0:10]
+IDS = IDS[0:config['number_of_genomes']]
 
 
 
