@@ -20,7 +20,7 @@ import urllib.request
 from bs4 import BeautifulSoup
 
 # Extract cases and deaths and align day 0 to first date of detection or death
-def extractAligned(covidData, country):
+def extractAligned(covidData, country, noAlignFlag):
     print("Country: " + country)
 
                     # Extract the data for the required country
@@ -52,20 +52,26 @@ def extractAligned(covidData, country):
     indexNames = countryData[ countryData['Cases_Cumulative'] == 0 ].index
                     # Delete these row indexes from dataFrame
     ecnlz = countryData.drop(indexNames)
-    ecnlz = ecnlz.reset_index()
+    if noAlignFlag == True:
+        ecnlz.index = pd.to_datetime(ecnlz.index)
+    else:
+        ecnlz = ecnlz.reset_index()
 
                     # Remove leading zeros from Cumulative_Deaths
                     # Get names of indexes for which column Deaths_Cumulative has value 0
     indexNames = countryData[ countryData['Deaths_Cumulative'] == 0 ].index
                     # Delete these row indexes from dataFrame
     ednlz = countryData.drop(indexNames)
-    ednlz = ednlz.reset_index()
+    if noAlignFlag == True:
+        ednlz.index = pd.to_datetime(ednlz.index)
+    else:
+        ednlz = ednlz.reset_index()
 
     return country, ecnlz, ednlz;
 
 
 # main
-def main(useCachedFileFlag, cumulativeResultsFlag):
+def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag):
 
     cachedFilePresentFlag = False
 
@@ -100,11 +106,11 @@ def main(useCachedFileFlag, cumulativeResultsFlag):
         covidData = pd.read_excel(localFileName, index_col=0)
 
                     # DateRep	Day	Month	Year	Cases	Deaths	Countries and territories	GeoId
-        cn_country, cn_ecnlz, cn_ednlz = extractAligned(covidData, "China")
-        de_country, de_ecnlz, de_ednlz = extractAligned(covidData, "Germany")
-        it_country, it_ecnlz, it_ednlz = extractAligned(covidData, "Italy")
-        uk_country, uk_ecnlz, uk_ednlz = extractAligned(covidData, "United_Kingdom")
-        us_country, us_ecnlz, us_ednlz = extractAligned(covidData, "United_States_of_America")
+        cn_country, cn_ecnlz, cn_ednlz = extractAligned(covidData, "China", noAlignFlag)
+        de_country, de_ecnlz, de_ednlz = extractAligned(covidData, "Germany", noAlignFlag)
+        it_country, it_ecnlz, it_ednlz = extractAligned(covidData, "Italy", noAlignFlag)
+        uk_country, uk_ecnlz, uk_ednlz = extractAligned(covidData, "United_Kingdom", noAlignFlag)
+        us_country, us_ecnlz, us_ednlz = extractAligned(covidData, "United_States_of_America", noAlignFlag)
 
                     # Find out which sequence is longest
         clen = cn_ecnlz.shape[0]
@@ -196,12 +202,14 @@ def main(useCachedFileFlag, cumulativeResultsFlag):
 
 
 if __name__ == '__main__':
-    useCachedFileFlag     = False
-    cumulativeResultsFlag = False
+    useCachedFileFlag       = False
+    cumulativeResultsFlag   = False
+    noAlignFlag             = False
 
     parser = argparse.ArgumentParser(description='Covid-19 Visualizer')
     parser.add_argument("-c", "--cumulative", action="store_true", help="Display cumulative results")
     parser.add_argument("-l", "--local",      action="store_true", help="Use local cached Covid-19.xlsx")
+    parser.add_argument("-n", "--noalign",    action="store_true", help="Do not align first instance dates - all graphs start 2019-12-31")
     args = parser.parse_args()
 
     if (args.cumulative):
@@ -212,4 +220,8 @@ if __name__ == '__main__':
         useCachedFileFlag = True
         print("Use cached file = True")
 
-    main(useCachedFileFlag, cumulativeResultsFlag)
+    if (args.noalign):
+        noAlignFlag = True
+        print("Do not align first instance date = True")
+
+    main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag)
