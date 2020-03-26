@@ -27,8 +27,8 @@ from bs4 import BeautifulSoup
 topLevelPage  = "https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide"
 localFileName = "Covid-19.xlsx"
 
-countries = ["China","Germany","Italy","United_Kingdom","United_States_of_America"]
-colours   = ["red",  "black",  "green","blue",          "orange"]
+countries = ["China","Germany","Italy","United_Kingdom","United_States_of_America", "Australia"]
+colours   = ["red",  "black",  "green","blue",          "orange",                   "pink"]
 
 # Extract cases and deaths and align day 0 to first date of detection or death
 def extractAligned(covidData, country, noAlignFlag):
