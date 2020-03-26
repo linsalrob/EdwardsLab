@@ -25,4 +25,16 @@ Simply call it with your flavor of python and you will see a plot of the latest 
 python3 nCoV-Viz.py
 ```
 
+The downloaded spreadsheet is stored locally in Covid-19.xlsx
+To use cached local spreadsheet, use "-l" option
+
+Intermediate data for Cases/Deaths and also for each country are stored in relevant .csv files
+
+All plots can be aligned to :
+  First date of detection or death, in that country (default)
+  First date of detection in China, 2019-12-31 (-n)
+
+Data can be plotted as daily values (default) cumulative values (-c)
+
+Countries to plot and line colours are specified in the appropriate tables at the top of this file
 
