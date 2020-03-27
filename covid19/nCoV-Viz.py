@@ -3,9 +3,9 @@
 # Download WHO geographic distribution of COVID-19 cases worldwide
 # Source : European Centre for Disease Prevention and Control
 # Plot cases and deaths for selected countries
-# The downloaded spreadsheet is stored locally in Covid-19.xlsx
+# The downloaded spreadsheet is stored locally in Covid-19.csv
 # To use cached local spreadsheet, use "-l" option
-# Intermediate data for Cases/Deaths and also for each country are stored in relevant .csv files
+# Intermediate data for cases/deaths and also for each country are stored in relevant .csv files
 # All plots can be aligned to :
 #   First date of detection or death, in that country (default)
 #   First date of detection in China, 2019-12-31 (-n)
@@ -25,73 +25,84 @@ from bs4 import BeautifulSoup
 
 
 topLevelPage  = "https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide"
-localFileName = "Covid-19.xlsx"
+localFileName = "Covid-19.csv"
 
 countries = ["China","Germany","Italy","United_Kingdom","United_States_of_America"]
 colours   = ["red",  "black",  "green","blue",          "orange"]
 
 # Extract cases and deaths and align day 0 to first date of detection or death
-def extractAligned(covidData, country, noAlignFlag):
+def extractAligned(covidData, country, dates, noAlignFlag):
     print("Country: " + country)
 
+    countryData  = pd.DataFrame(index = dates)      # Create dataframe for country data
+
                     # Extract the data for the required country
-    countryData = covidData[covidData["Countries and territories"].str.match(country)]
-    countryData = countryData.iloc[::-1]
+                    # We need to copy it to the new countryData array so that dates are pre-pended back to 2019-12-31
+    countryData_tmp = covidData[covidData["countriesAndTerritories"].str.match(country)]
+    countryData_tmp = countryData_tmp.iloc[::-1]            # Invert table - top to bottom
+    countryData[list(countryData_tmp.columns.values)] = countryData_tmp[list(countryData_tmp.columns.values)]
+    countryData=countryData.fillna(0)                       # Replace NaN with 0
 
-                    # Create cumulative Cases column and cumulative Deaths column - Rename column titles
+                                    # Fill columns : countriesAndTerritories geoId countryterritoryCode  popData2018
+    countryData['countriesAndTerritories'] = countryData['countriesAndTerritories'].iloc[-1]
+    countryData['geoId']                   = countryData['geoId'].iloc[-1]
+    countryData['countryterritoryCode']    = countryData['countryterritoryCode'].iloc[-1]
+    countryData['popData2018']             = countryData['popData2018'].iloc[-1]
+
+                                    # Create cumulative cases column and cumulative deaths column - Rename column titles
     countryDataCS = countryData.cumsum(axis = 0)
-    countryDataCS = countryDataCS.rename(columns={"Cases": "Cases_Cumulative", "Deaths": "Deaths_Cumulative"})
+    countryDataCS = countryDataCS.rename(columns={"cases": "casesCumulative", "deaths": "deathsCumulative"})
 
-                    # Copy cumulative columns to countryData
-    countryData['Cases_Cumulative']  = countryDataCS['Cases_Cumulative']
-    countryData['Deaths_Cumulative'] = countryDataCS['Deaths_Cumulative']
+                                    # Copy cumulative columns to countryData
+    countryData['casesCumulative']  = countryDataCS['casesCumulative']
+    countryData['deathsCumulative'] = countryDataCS['deathsCumulative']
 
+                                    # Replace NaN with 0
+    countryData=countryData.fillna(0)
 
     outputFileName = country + ".csv"
-    countryData.to_csv(outputFileName, index=False)
+    countryData.to_csv(outputFileName, index=True)
 
-                    # Print first data of Cases
-    dc = countryData.index[countryData['Cases'] != 0].tolist()
+                                    # Print first data of cases
+    dc = countryData.index[countryData['cases'] != 0].tolist()
     print("First Case            : " + str(dc[0]).replace(' 00:00:00',''))
 
-                    # Print first data of Deaths
-    dd = countryData.index[countryData['Deaths'] != 0].tolist()
+                                    # Print first data of deaths
+    dd = countryData.index[countryData['deaths'] != 0].tolist()
     print("First Death           : " + str(dd[0]).replace(' 00:00:00',''))
 
-                    # Remove leading zeros from Cumulative_Cases
-                    # Get names of indexes for which column Cases_Cumulative has value 0
-    indexNames = countryData[ countryData['Cases_Cumulative'] == 0 ].index
-                    # Delete these row indexes from dataFrame
-    ecnlz = countryData.drop(indexNames)
-    if noAlignFlag == True:
-        ecnlz.index = pd.to_datetime(ecnlz.index)
-    else:
-        ecnlz = ecnlz.reset_index()
-
-                    # Remove leading zeros from Cumulative_Deaths
-                    # Get names of indexes for which column Deaths_Cumulative has value 0
-    indexNames = countryData[ countryData['Deaths_Cumulative'] == 0 ].index
-                    # Delete these row indexes from dataFrame
-    ednlz = countryData.drop(indexNames)
-    if noAlignFlag == True:
-        ednlz.index = pd.to_datetime(ednlz.index)
-    else:
-        ednlz = ednlz.reset_index()
-
-    totalCases=countryData['Cases_Cumulative'].iloc[-1]
-    totalDeaths=countryData['Deaths_Cumulative'].iloc[-1]
+    totalCases=countryData['casesCumulative'].iloc[-1]
+    totalDeaths=countryData['deathsCumulative'].iloc[-1]
     fatalityRate=totalDeaths*100./totalCases
 
 
-    print('Total number of Cases : ' + str(totalCases))
-    print('Total number of Deaths: ' + str(totalDeaths))
+    print('Total number of cases : ' + str(totalCases))
+    print('Total number of deaths: ' + str(totalDeaths))
     print("Fatality rate         : %.2f %%" % (fatalityRate))
     print('')
-    return country, ecnlz, ednlz;
+
+                    # If we are not aligning first case or death then just return the data
+    if noAlignFlag == True:
+        return country, countryData, countryData;
+
+                    # Align to first case or death by removing leading zeros and resetting index
+                    # Get names of indexes for which column casesCumulative has value 0
+    else:
+                                    # Remove leading zeros from cases
+        indexNames = countryData[ countryData['casesCumulative'] == 0 ].index
+        extractedCases = countryData.drop(indexNames)
+        extractedCases = extractedCases.reset_index()
+
+                                    # Remove leading zeros from deaths
+        indexNames = countryData[ countryData['deathsCumulative'] == 0 ].index
+        extractedDeaths = countryData.drop(indexNames)
+        extractedDeaths = extractedDeaths.reset_index()
+
+        return country, extractedCases, extractedDeaths;
 
 
 # main
-def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag):
+def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
 
     cachedFilePresentFlag = False
 
@@ -103,19 +114,19 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag):
         cachedFilePresentFlag = False
 
 
-                    # If cached file not present or we have requested to refresh then get the file
+                                    # If cached file not present or we have requested to refresh then get the file
     if (cachedFilePresentFlag == False) or (useCachedFileFlag == False):
         resp = urllib.request.urlopen(topLevelPage)
         soup = BeautifulSoup(resp, "html.parser", from_encoding=resp.info().get_param('charset'))
 
         for link in soup.find_all('a', href=True):
             # print(link['href'])
-            if (".xlsx" in link['href']):
+            if ("csv" in link['href']):
                 # print(link['href'])
-                xlsxfileurl = link['href']
+                csvfileurl = link['href']
 
-        if (xlsxfileurl):
-            urllib.request.urlretrieve(xlsxfileurl, localFileName)
+        if (csvfileurl):
+            urllib.request.urlretrieve(csvfileurl, localFileName)
             cachedFilePresentFlag = True
             print("Cached file updated")
         else:
@@ -124,100 +135,75 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag):
 
     numberOfCountries = len(countries)
 
-    ecountry = {}   # Create empty dictionaries to store result data frames for each country
-    ecnlz = {}
-    ednlz = {}
+    extractedCountry = {}           # Create empty dictionaries to store result data frames for each country
+    extractedCases = {}
+    extractedDeaths = {}
 
     if (cachedFilePresentFlag == True):
-        covidData = pd.read_excel(localFileName, index_col=0)
+        covidData = pd.read_csv(localFileName, index_col=0, encoding="iso8859_1")
                     # Spreadsheet columns :
-                    # DateRep	Day	Month	Year	Cases	Deaths	Countries and territories	GeoId
+                    # dateRep	day	month	year	cases	deaths	countriesAndTerritories	geoId	countryterritoryCode	popData2018
 
-        clen = 0    # For longest sequency
+        covidData=covidData.fillna(0)               # Replace NaN with 0
+
+        clen = 0                    # For longest sequency
         dlen = 0
 
-        countryIndex = 0
-        for country in countries:
-                    # For each country - extract the aligned data
-                    # Data can be aligned on 2019-12-29 or first instance
-            ecountry[countryIndex], ecnlz[countryIndex], ednlz[countryIndex] = extractAligned(covidData, country, noAlignFlag)
-
-            clen = np.maximum(clen, ecnlz[countryIndex].shape[0])
-            dlen = np.maximum(dlen, ednlz[countryIndex].shape[0])
-
-            countryIndex = countryIndex+1
-
-
-                    # Create DataFrame of countries cases and deaths
-        if noAlignFlag == True:
-            dl=ecnlz[0].filter(['DateRep'], axis=1)         # Extract dates to create index
-            dl=dl.reset_index()
-            dates=list(dl['DateRep'])
-
-            combinedCases  = pd.DataFrame(index = dates)    # Create dataframes
-            combinedDeaths = pd.DataFrame(index = dates)
-
-        else:
-            c_idx = np.arange(0, clen, 1)
-            d_idx = np.arange(0, dlen, 1)
-
-            combinedCases  = pd.DataFrame(index = c_idx)    # Create dataframes
-            combinedDeaths = pd.DataFrame(index = d_idx)
-
-        if (cumulativeResultsFlag == True):         # Select daily or cumulative results
-            casesType  = 'Cases_Cumulative'
-            deathsType = 'Deaths_Cumulative'
-        else:
-            casesType  = 'Cases'
-            deathsType = 'Deaths'
-
+                                                    # Extract Chinese dates to create index - this allows for countries that do not have full data supplied
+        dates_tmp = covidData[covidData["countriesAndTerritories"].str.match("China")]
+        dates_tmp = dates_tmp.iloc[::-1]            # Invert table - top to bottom
+        dates_tmp=dates_tmp.reset_index()
+        dates=list(dates_tmp['dateRep'])
 
         countryIndex = 0
         for country in countries:
-                    # Copy Cases and Deaths columns to summary DataFrame
-            combinedCases [ecountry[countryIndex]] = ecnlz[countryIndex][casesType]
-            combinedDeaths[ecountry[countryIndex]] = ednlz[countryIndex][deathsType]
+                                    # For each country - extract the aligned data
+                                    # Data can be aligned on 2019-12-29 or first instance
+            extractedCountry[countryIndex], extractedCases[countryIndex], extractedDeaths[countryIndex] = \
+                extractAligned(covidData, country, dates, noAlignFlag)
+
+            clen = np.maximum(clen, extractedCases[countryIndex].shape[0])
+            dlen = np.maximum(dlen, extractedDeaths[countryIndex].shape[0])
+
             countryIndex = countryIndex+1
 
+        if noPlotFlag == False:     # Plot the data
+                                    # Select daily or cumulative results
+            if (cumulativeResultsFlag == True):
+                casesType  = 'casesCumulative'
+                deathsType = 'deathsCumulative'
+            else:
+                casesType  = 'cases'
+                deathsType = 'deaths'
 
-                    # Write data to .csv files
-        if (cumulativeResultsFlag == True):
-            combinedCases.to_csv("cumulativeCases.csv",   index=False)
-            combinedDeaths.to_csv("cumulativeDeaths.csv", index=False)
-        else:
-            combinedCases.to_csv("dailyCases.csv",   index=False)
-            combinedDeaths.to_csv("dailyDeaths.csv", index=False)
+                                    # Get last date in combinedCases
+            lastDate = str(covidData.first_valid_index())
+            lastDate = lastDate.replace(' 00:00:00','')
 
+                                    # Plot results
+            if (cumulativeResultsFlag == True):
+                titleStr='Covid-19 Cumulative Cases: ' + str(lastDate)
+            else:
+                titleStr='Covid-19 Daily Cases: ' + str(lastDate)
 
-                    # Get last date in combinedCases
-        lastDate = str(covidData.first_valid_index())
-        lastDate = lastDate.replace(' 00:00:00','')
+            ax = plt.gca()          # Create plot - get current axis
+            countryIndex = 0
+            for country in countries:
+                extractedCases[countryIndex].plot(kind='line',y=casesType,title=titleStr,label=extractedCountry[countryIndex],color=colours[countryIndex],ax=ax)
+                countryIndex = countryIndex+1
+            plt.show()
 
+            if (cumulativeResultsFlag == True):
+                titleStr='Covid-19 Cumulative Deaths: ' + str(lastDate)
+            else:
+                titleStr='Covid-19 Daily Deaths: ' + str(lastDate)
 
-                    # Print columns of countries cases and deaths
-        if (cumulativeResultsFlag == True):
-            titleStr='Covid-19 Cumulative Cases: ' + str(lastDate)
-        else:
-            titleStr='Covid-19 Daily Cases: ' + str(lastDate)
-
-        ax = plt.gca()          # Create plot - get current axis
-        countryIndex = 0
-        for country in countries:
-            ecnlz[countryIndex].plot(kind='line',y=casesType,title=titleStr,label=ecountry[countryIndex],color=colours[countryIndex], ax=ax)
-            countryIndex = countryIndex+1
-        plt.show()
-
-        if (cumulativeResultsFlag == True):
-            titleStr='Covid-19 Cumulative Deaths: ' + str(lastDate)
-        else:
-            titleStr='Covid-19 Daily Deaths: ' + str(lastDate)
-
-        ax = plt.gca()          # Create plot - get current axis
-        countryIndex = 0
-        for country in countries:
-            ednlz[countryIndex].plot(kind='line',y=deathsType,title=titleStr,label=ecountry[countryIndex],color=colours[countryIndex], ax=ax)
-            countryIndex = countryIndex+1
-        plt.show()
+            ax = plt.gca()          # Create plot - get current axis
+            countryIndex = 0
+            for country in countries:
+                extractedDeaths[countryIndex].plot(kind='line',y=deathsType,title=titleStr,label=extractedCountry[countryIndex],color=colours[countryIndex],ax=ax)
+                countryIndex = countryIndex+1
+            plt.show()
 
     else:
         print("Cached spreadsheet file not found on computer")
@@ -228,6 +214,7 @@ if __name__ == '__main__':
     useCachedFileFlag       = False
     cumulativeResultsFlag   = False
     noAlignFlag             = False
+    noPlotFlag              = False
 
     if len(countries) != len(colours):
         print("The number of colours must equal the number of countries")
@@ -236,8 +223,9 @@ if __name__ == '__main__':
 
     parser = argparse.ArgumentParser(description='Covid-19 Visualizer')
     parser.add_argument("-c", "--cumulative", action="store_true", help="Display cumulative results")
-    parser.add_argument("-l", "--local",      action="store_true", help="Use local cached Covid-19.xlsx")
+    parser.add_argument("-l", "--local",      action="store_true", help="Use local cached Covid-19.csv")
     parser.add_argument("-n", "--noalign",    action="store_true", help="Do not align first instance dates - all graphs start 2019-12-31")
+    parser.add_argument("-q", "--quiet",      action="store_true", help="Quiet - Do not plot graphs")
     args = parser.parse_args()
 
     if (args.cumulative):
@@ -252,4 +240,8 @@ if __name__ == '__main__':
         noAlignFlag = True
         print("Do not align first instance date = True")
 
-    main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag)
+    if (args.quiet):
+        noPlotFlag = True
+        print("Do not plot graphs = True")
+
+    main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag)
