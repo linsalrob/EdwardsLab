@@ -61,6 +61,15 @@ def extractAligned(covidData, country, dates, noAlignFlag):
                                     # Replace NaN with 0
     countryData=countryData.fillna(0)
 
+                                    # Calculate fatality rates and clip to 100%
+    countryData['fatalityPercentage'] = countryData['deaths'] * 100./countryData['cases']
+    countryData['fatalityPercentage']=countryData['fatalityPercentage'].where(countryData['fatalityPercentage'] <= 100., 100.)
+    countryData.loc[countryData.cases == 0, "fatalityPercentage"] = 0                           # When cases 0= 0 set percentage to 0
+
+    countryData['fatalityPercentageCumulative'] = countryData['deathsCumulative'] * 100./countryData['casesCumulative']
+    countryData['fatalityPercentageCumulative']=countryData['fatalityPercentageCumulative'].where(countryData['fatalityPercentageCumulative'] <= 100., 100.)
+    countryData.loc[countryData.casesCumulative == 0, "fatalityPercentageCumulative"] = 0       # When cases 0= 0 set percentage to 0
+
     outputFileName = country + ".csv"
     countryData.to_csv(outputFileName, index=True)
 
@@ -129,12 +138,14 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
                 urllib.request.urlretrieve(csvfileurl, localFileName)
                 cachedFilePresentFlag = True
                 print("Cached file updated")
+                break
             elif ("xlsx" in link['href']):              # If data in .xlsx format then retrieve and store as local .csv format
                 xlsxfileurl = link['href']
                 xlsx_tmp = pd.read_excel(xlsxfileurl, index_col=0)
                 xlsx_tmp.to_csv(localFileName, index=True)
                 cachedFilePresentFlag = True
                 print("Cached file updated")
+                break
 
         if (cachedFilePresentFlag == False):
             print("No spreadsheet found at the URL")
@@ -177,11 +188,13 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
         if noPlotFlag == False:     # Plot the data
                                     # Select daily or cumulative results
             if (cumulativeResultsFlag == True):
-                casesType  = 'casesCumulative'
-                deathsType = 'deathsCumulative'
+                casesType      = 'casesCumulative'
+                deathsType     = 'deathsCumulative'
+                percentageType = 'fatalityPercentageCumulative'
             else:
-                casesType  = 'cases'
-                deathsType = 'deaths'
+                casesType      = 'cases'
+                deathsType     = 'deaths'
+                percentageType = 'fatalityPercentage'
 
                                     # Get last date in combinedCases
             lastDate = str(covidData.first_valid_index())
@@ -217,6 +230,23 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
             countryIndex = 0
             for country in countries:
                 extractedDeaths[countryIndex].plot(kind='line',y=deathsType,title=titleStr,label=extractedCountry[countryIndex],color=colours[countryIndex],ax=ax)
+                countryIndex = countryIndex+1
+            plt.show()
+
+
+            if (noAlignFlag == True):
+                titleStr=''
+            else:
+                titleStr='Aligned '
+            if (cumulativeResultsFlag == True):
+                titleStr=titleStr + 'Covid-19 Cumulative Fatality Percentage: ' + str(lastDate)
+            else:
+                titleStr=titleStr + 'Covid-19 Daily Fatality Percentage: ' + str(lastDate)
+
+            ax = plt.gca()          # Create plot - get current axis
+            countryIndex = 0
+            for country in countries:
+                extractedDeaths[countryIndex].plot(kind='line',y=percentageType,title=titleStr,label=extractedCountry[countryIndex],color=colours[countryIndex],ax=ax)
                 countryIndex = countryIndex+1
             plt.show()
 
