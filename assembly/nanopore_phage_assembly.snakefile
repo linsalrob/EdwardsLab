@@ -27,7 +27,9 @@ import os
 
 READDIR = "fastq"
 OUTDIR = "assembly"
+FLYDIR = "flye"
 STATS = "stats"
+
 
 # this should be a path to your bacterial genomes that you want removed.
 BACTERIALDNA = os.path.join(os.environ['HOME'], "phage/Sequencing/BacterialGenomes/Bacteria.fna")
@@ -46,7 +48,7 @@ FASTQ, = glob_wildcards(os.path.join(READDIR, '{fastq}.fastq.gz'))
 
 rule all:
     input:
-        expand(os.path.join(OUTDIR, "{sample}_6.fasta"), sample=FASTQ),
+        expand(os.path.join(OUTDIR, "{sample}_7.bam"), sample=FASTQ),
         os.path.join(STATS, "all_statistics.tsv")
 
 
@@ -131,6 +133,83 @@ rule gfa2fasta:
     shell:
         "awk '/^S/{{print \">{params.b}_\"$2\"\\n\"$3}}' {input} > {output}"
 
+
+rule map_reads_to_contigs:
+    input:
+        reads = os.path.join(READDIR, "{sample}.fastq.gz"),
+        conts = os.path.join(OUTDIR, "{sample}_6.fasta")
+    output:
+        os.path.join(OUTDIR, "{sample}_7.bam")
+    shell:
+        """
+        minimap2 -a {input.conts} {input.reads} | \
+        samtools view -bh | samtools sort -o {output} -
+        """
+
+
+rule flye_assembly:
+    input:
+        os.path.join(OUTDIR, "{sample}_1.host_removed.fq.gz")
+    output:
+        os.path.join(FLYDIR, "{sample}", "assembly.fasta")
+    params:
+        odir = os.path.join(FLYDIR, "{sample}")
+    shell:
+        """
+        flye --nano-raw {input} --asm-coverage 50 --genome-size 100k -o {params.odir} || touch {output}
+        """
+
+
+rule map_for_racon_polish_flye:
+    """
+    This was recommended by Ryan Wick. 
+
+    First, we use minimap2 to map our original reads to the contigs, 
+    and then we use racon to polish the contigs
+    """
+    input:
+        reads = os.path.join(READDIR, "{sample}.fastq.gz"),
+        conts = os.path.join(FLYDIR, "{sample}", "assembly.fasta")
+    output:
+        os.path.join(FLYDIR, "{sample}", "mapped_reads.paf")
+    shell:
+        """
+        if [ -s {input.conts} ]; then
+            minimap2 {input.conts} {input.reads} > {output}
+        else
+            touch {output}
+        fi
+        """
+
+rule racon_polish_flye:
+    input:
+        reads = os.path.join(READDIR, "{sample}.fastq.gz"),
+        conts = os.path.join(FLYDIR, "{sample}", "assembly.fasta"),
+        maps  = os.path.join(FLYDIR, "{sample}", "mapped_reads.paf")
+    output:
+        os.path.join(FLYDIR, "{sample}", "polished_assembly.fasta")
+    shell:
+        """
+        if [ -s {input.conts} ]; then
+            racon {input.reads} {input.maps} {input.conts} > {output}
+        else
+            touch {output}
+        fi
+        """
+
+rule move_flye_assemblies:
+    input:
+        r = os.path.join(FLYDIR, "{sample}", "assembly.fasta"),
+        p = os.path.join(FLYDIR, "{sample}", "polished_assembly.fasta")
+    output:
+        r = os.path.join(OUTDIR, "{sample}_9_flye.fasta"),
+        p = os.path.join(OUTDIR, "{sample}_9_flye_polished.fasta")
+    shell:
+        "cp {input.r} {output.r} && cp {input.p} {output.p}"
+
+
+
+
 ## Statistics on the sequences
 rule count_concat_fastq:
     input:
@@ -173,13 +252,33 @@ rule assembly_stats:
     shell:
         'python3 ~/bin/countfasta.py -t -f {input} > {output}'
 
+rule count_flye:
+    input:
+        os.path.join(OUTDIR, "{sample}_9_flye.fasta"),
+    output:
+        os.path.join(STATS, "{sample}.flye.assembly.stats.tsv")
+    shell:
+        'python3 ~/bin/countfasta.py -t -f {input} > {output}'
+   
+rule count_polished_flye:
+    input:
+        os.path.join(OUTDIR, "{sample}_9_flye_polished.fasta")
+    output:
+        os.path.join(STATS, "{sample}.flye.polished.stats.tsv")
+    shell:
+        'python3 ~/bin/countfasta.py -t -f {input} > {output}'
+
+
+
 rule combine_stats:
     input:
         expand(os.path.join(STATS, "{sample}_combined.tsv"), sample=FASTQ),
         expand(os.path.join(STATS, "{sample}.filtlong.tsv"), sample=FASTQ),
         expand(os.path.join(STATS, "{sample}.miniasm.tsv"), sample=FASTQ),
         expand(os.path.join(STATS, "{sample}.polished.tsv"), sample=FASTQ),
-        expand(os.path.join(STATS, "{sample}.assembly.stats.tsv"), sample=FASTQ)
+        expand(os.path.join(STATS, "{sample}.assembly.stats.tsv"), sample=FASTQ),
+        expand(os.path.join(STATS, "{sample}.flye.assembly.stats.tsv"), sample=FASTQ),
+        expand(os.path.join(STATS, "{sample}.flye.polished.stats.tsv"), sample=FASTQ)
     output:
         os.path.join(STATS, "all_statistics.tsv")
     shell:
