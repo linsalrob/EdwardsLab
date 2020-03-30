@@ -52,7 +52,7 @@ mmseqs cluster --threads 32 --cov-mode 0 --min-seq-id 0.7 proteins.db proteins.7
 
 cd-hit command:
 ```
-TBD
+cd-hit -d 0 -M 0 -i proteins.faa -o proteins.70.cdhit -c 0.7 -T 0
 ```
 
 """
