@@ -24,7 +24,26 @@ We will:
         vi.   abnormal gene to sequence ratio
         vii.  low gene count
         viii. average gene length
+        ix.   compare using translated blast (blastp or diamond??) and check for same hits on
+              different strands. This should be similar to (iii)
 """
+
+"""
+Requirements:
+    1. phage_quality_config.yaml -- the configuration file
+    2. phanotate.py
+    3. transeq from EMBOSS
+    4. blastp
+    5. blastx (not yet required ... may use diamond)
+
+To run this on anthill start with:
+
+    snakemake --configfile config.yaml -s ~/GitHubs/EdwardsLab/phage/phage_quality.snakefile --cluster 'qsub -cwd -o sge_out -e sge_err -V -pe make 8 ' --latency-wait 60 -j 600
+
+
+
+"""
+
 
 """
 TODO
@@ -47,7 +66,7 @@ BLAST   = config['paths']['blast']
 STATS   = config['paths']['statistics']
 
 PHAGEDB = os.path.join(config['paths']['databases'], config['databases']['phage_proteins'])
-if not os.path.exists:
+if not os.path.exists(PHAGEDB):
     sys.stderr.write(f"FATAL: {PHAGEDB} not found. Please check your paths\n")
     sys.exit()
 
@@ -183,6 +202,8 @@ rule blast_phage_proteins:
         os.path.join(ORFS, "{sample}.orfs.faa")
     output:
         os.path.join(BLAST, "{sample}.phages.blastp")
+    threads:
+        8
     shell:
         "blastp -query {input} -db {PHAGEDB} -outfmt '6 std qlen slen' -out {output} -num_threads {threads}"
 
@@ -196,6 +217,8 @@ rule blast_nr:
         os.path.join(BLAST, "{sample}.nr.blastp")
     params:
         db = config['databases']['nr']
+    threads:
+        8
     shell:
         "blastp -query {input} -db {params.db} -outfmt '6 std qlen slen' -out {output} -num_threads {threads}"
 
