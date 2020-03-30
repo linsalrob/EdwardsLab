@@ -8,7 +8,7 @@ import argparse
 import hashlib
 from roblib import stream_fasta, bcolors
 
-def read_fasta(fafile, idmapfile, minlen=300, verbose=False):
+def read_fasta(fafile, idmapfile, minlen=100, verbose=False):
     """
     Read a fasta file and return a dict of proteins and their md5 sums
     :param fafile: fasta file
@@ -43,7 +43,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', help='file')
     parser.add_argument('-d', help='directory of fasta files')
     parser.add_argument('-i', help='id map file to write')
-    parser.add_argument('-m', help='minimum length of protein sequence to include (in amino acids). Default = 300', type=int, default=300)
+    parser.add_argument('-m', help='minimum length of protein sequence to include (in amino acids). Default = 300', type=int, default=100)
     parser.add_argument('-o', help='output file')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
