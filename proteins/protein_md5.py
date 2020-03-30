@@ -47,7 +47,7 @@ if __name__ == '__main__':
 
     if args.d:
         for f in os.listdir(args.d):
-            seqs.update(read_fasta(os.path.join(args.d, args.f), args.i, args.v))
+            seqs.update(read_fasta(os.path.join(args.d, f), args.i, args.v))
 
     with open(args.o, 'w') as out:
         for m in seqs:
