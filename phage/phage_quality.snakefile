@@ -53,7 +53,9 @@ TODO
 
 import os
 import sys
-from roblib import bcolors, stream_fasta, median
+from roblib import bcolors, stream_fasta, median, is_hypothetical
+from pppf_databases import connect_to_db, disconnect
+from pppf_clusters import proteinid_to_function
 
 if not config:
     sys.stderr.write("FATAL: Please define a config file using the --configfile command line option.\n")
@@ -71,8 +73,15 @@ if not os.path.exists(PHAGEDB):
     sys.exit()
 
 
-SAMPLES, = glob_wildcards(os.path.join(CONTIGS, '{sample}.fasta'))
+# include functions from phage clusters
+phage_cluster_db = None
+PHAGECLUSTERS = os.path.join(config['phage_cluster_database'])
+if not os.path.exists(PHAGECLUSTERS):
+    sys.stderr.write(f"Phage Cluster database {PHAGECLUSTERS} not found. Skipping functional analysis\n")
+else:
+    phage_cluster_db = connect_to_db(PHAGECLUSTERS)
 
+SAMPLES, = glob_wildcards(os.path.join(CONTIGS, '{sample}.fasta'))
 
 def count_adjacent_orfs(sample, fastafile, blastfile, adjacentout, nohitsout, searchtype):
     """
@@ -138,7 +147,7 @@ def av_protein_lengths(sample, blastfile, fractionout, summaryout, searchtype):
                 out.write(f"{p[0]}\t{q[p[0]]}\n")
     with open(summaryout, 'w') as out:
         out.write(f"{sample}\tAverage {searchtype} protein lengths\t")
-        out.write("[num orfs, median proportional length, averagh proportional length]\t")
+        out.write("[num orfs, median proportional length, average proportional length]\t")
         out.write(f"{len(av)}\t{median(av)}\t{sum(av)/len(av)}\n")
 
         
@@ -163,7 +172,32 @@ def coding_versus_noncoding(sample, contigs, orfs, outputfile):
         out.write(f"[coding bp, total bp, fraction coding]\t")
         out.write(f"{protlen}\t{dnalen}\t{protlen/dnalen}\n")
 
+def check_phage_functions(sample, blastfile, outputfile):
+    """
+    Count how many proteins have hypothetical functions
+    """
 
+    out = open(outputfile, 'w')
+    if not phage_cluster_db:
+        out.close()
+        return
+    
+    hypo = 0
+    nonhypo = 0
+    with open(blastfile, 'r') as f:
+        for l in f:
+            p = l.strip().split("\t")
+            fn = proteinid_to_function(p[1])
+            if is_hypothetical(fn):
+                hypo +=1
+            else:
+                nonhypo += 1
+    out.write(f"{sample}\tHypothetical proteins\t")
+    out.write("[Hypothetical, Non-hypothetical, Fraction hypothetical]\t")
+    out.write(f"{hypo}\t{nonhypo}\t{hypo/(hypo+nonhypo)}\n")
+    out.close()
+
+        
 
 
 
@@ -285,6 +319,16 @@ rule coding_vs_noncoding:
     run:
         coding_versus_noncoding(params.sample, input.ct, input.fa, output.cn)
 
+rule hypo_vs_non:
+    input:
+        bf = os.path.join(BLAST, "{sample}.phages.blastp")
+    output:
+        hn = os.path.join(STATS, "{sample}.phage.hyponon.tsv")
+    params:
+        sample = "{sample}"
+    run:
+        check_phage_functions(params.sample, input.bf, output.hn)
+
 
 rule combine_outputs:
     input:
@@ -292,9 +336,10 @@ rule combine_outputs:
         expand(os.path.join(STATS, "{sample}.average.nr.fraction"), sample=SAMPLES),
         expand(os.path.join(STATS, "{sample}.phage.adjacent.tsv"), sample=SAMPLES),
         expand(os.path.join(STATS, "{sample}.phage.nohits.tsv"), sample=SAMPLES),
-        #expand(os.path.join(STATS, "{sample}.nr.adjacent.tsv"), sample=SAMPLES),
+        expand(os.path.join(STATS, "{sample}.nr.adjacent.tsv"), sample=SAMPLES),
         expand(os.path.join(STATS, "{sample}.coding_noncoding.tsv"), sample=SAMPLES),
-        expand(os.path.join(STATS, "{sample}.nr.nohits.tsv"), sample=SAMPLES)
+        expand(os.path.join(STATS, "{sample}.nr.nohits.tsv"), sample=SAMPLES),
+        expand(os.path.join(STATS, "{sample}.phage.hyponon.tsv"), sample=SAMPLES)
     output:
         os.path.join(STATS, "all_stats.tsv")
     shell:
