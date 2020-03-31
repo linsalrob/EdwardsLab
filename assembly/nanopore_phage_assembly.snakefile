@@ -21,18 +21,23 @@ Rob Edwards, Feb 2020
 """
 
 import os
+import sys
 
 ## User defined options. 
 # Yes, this should be in a config file, but its not
 
 READDIR = "fastq"
-OUTDIR = "assembly"
-FLYDIR = "flye"
-STATS = "stats"
+OUTDIR  = "assembly"
+FLYDIR  = "flye"
+CANUDIR = "canu"
+STATS   = "stats"
 
 
 # this should be a path to your bacterial genomes that you want removed.
 BACTERIALDNA = os.path.join(os.environ['HOME'], "phage/Sequencing/BacterialGenomes/Bacteria.fna")
+if not os.path.exists(BACTERIALDNA):
+    sys.stderr.write("FATAL: {BACTERIALDNA} does not exist\n")
+    sys.exit()
 
 # Some options for filtlong. You may want to change these
 # https://github.com/rrwick/Filtlong
@@ -207,7 +212,23 @@ rule move_flye_assemblies:
     shell:
         "cp {input.r} {output.r} && cp {input.p} {output.p}"
 
+rule canu_assemblies:
+    input:
+        os.path.join(OUTDIR, "{sample}_1.host_removed.fq.gz")
+    output:
+        os.path.join(CANUDIR, "{sample}", "{sample}.contigs.fasta")
+    params:
+        odir = os.path.join(CANUDIR, "{sample}")
+    shell:
+        "canu stopOnLowCoverage=0 minInputCoverage=0 useGrid=false -d {params.odir} -p {wildcards.sample} genomeSize=100k -nanopore-raw {input}"
 
+rule move_canu_assemblies:
+    input:
+        os.path.join(CANUDIR, "{sample}", "{sample}.contigs.fasta")
+    output:
+        os.path.join(OUTDIR, "{sample}.canu.contigs.fasta")
+    shell:
+        "cp {input} {output}"
 
 
 ## Statistics on the sequences
@@ -268,7 +289,13 @@ rule count_polished_flye:
     shell:
         'python3 ~/bin/countfasta.py -t -f {input} > {output}'
 
-
+rule count_canu:
+    input:
+        os.path.join(OUTDIR, "{sample}.canu.contigs.fasta")
+    output:
+        os.path.join(STATS, "{sample}.canu.stats.tsv")
+    shell:
+        'python3 ~/bin/countfasta.py -t -f {input} > {output}'
 
 rule combine_stats:
     input:
@@ -278,7 +305,8 @@ rule combine_stats:
         expand(os.path.join(STATS, "{sample}.polished.tsv"), sample=FASTQ),
         expand(os.path.join(STATS, "{sample}.assembly.stats.tsv"), sample=FASTQ),
         expand(os.path.join(STATS, "{sample}.flye.assembly.stats.tsv"), sample=FASTQ),
-        expand(os.path.join(STATS, "{sample}.flye.polished.stats.tsv"), sample=FASTQ)
+        expand(os.path.join(STATS, "{sample}.flye.polished.stats.tsv"), sample=FASTQ),
+        expand(os.path.join(STATS, "{sample}.canu.stats.tsv"), sample=FASTQ)
     output:
         os.path.join(STATS, "all_statistics.tsv")
     shell:
