@@ -53,7 +53,7 @@ TODO
 
 import os
 import sys
-from roblib import bcolors, stream_fasta
+from roblib import bcolors, stream_fasta, median
 
 if not config:
     sys.stderr.write("FATAL: Please define a config file using the --configfile command line option.\n")
@@ -125,6 +125,8 @@ def av_protein_lengths(sample, blastfile, fractionout, summaryout, searchtype):
     """
     q = {}
     av = []
+    sys.stderr.write(f"{bcolors.GREEN}Average protein lengths for {sample} and {searchtype}{bcolors.ENDC}\n")
+
     with open(blastfile, 'r') as f:
         with open(fractionout, 'w') as out:
             for l in f:
@@ -136,8 +138,8 @@ def av_protein_lengths(sample, blastfile, fractionout, summaryout, searchtype):
                 out.write(f"{p[0]}\t{q[p[0]]}\n")
     with open(summaryout, 'w') as out:
         out.write(f"{sample}\tAverage {searchtype} protein lengths\t")
-        out.write("[sum av. length, total av. length, average av length]\t")
-        out.write(f"{sum(av)}\t{len(av)}\t{sum(av)/len(av)}\n")
+        out.write("[num orfs, median proportional length, averagh proportional length]\t")
+        out.write(f"{len(av)}\t{median(av)}\t{sum(av)/len(av)}\n")
 
         
 def coding_versus_noncoding(sample, contigs, orfs, outputfile):
@@ -243,7 +245,7 @@ rule average_nr_protein_len:
     params:
         sample = "{sample}"
     run:
-        av_protein_lengths(params.sample, input.bp, output.fr, output.st, 'phage')
+        av_protein_lengths(params.sample, input.bp, output.fr, output.st, 'nr')
 
 
 rule adjacent_phage_orfs_same_protein:
@@ -277,11 +279,11 @@ rule coding_vs_noncoding:
         ct = os.path.join(CONTIGS, "{sample}.fasta"),
         fa = os.path.join(ORFS, "{sample}.orfs.faa")
     output:
-        os.path.join(STATS, "{sample}.coding_noncoding.tsv")
+        cn = os.path.join(STATS, "{sample}.coding_noncoding.tsv")
     params:
         sample = "{sample}"
     run:
-        coding_versus_noncoding({params.sample}, {input.ct}, {input.fa}, {output})
+        coding_versus_noncoding(params.sample, input.ct, input.fa, output.cn)
 
 
 rule combine_outputs:
