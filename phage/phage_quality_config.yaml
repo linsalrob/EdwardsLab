@@ -3,7 +3,7 @@ paths:
     contigs:   contigs
     orfs:      phanotate
     blast:     blast
-    databases: databases
+    databases: /home3/redwards/phage/Sequencing/databases
     statistics: stats
 
 databases:
