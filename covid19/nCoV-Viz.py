@@ -30,6 +30,8 @@ localFileName = "Covid-19.csv"
 
 countries = ["China","Germany","Italy","United_Kingdom","United_States_of_America"]
 colours   = ["red",  "black",  "green","blue",          "orange"]
+# countries = ["United_Kingdom"]
+# colours   = ["blue",         ]
 
 # Extract cases and deaths and align day 0 to first date of detection or death
 def extractAligned(covidData, country, dates, noAlignFlag):
@@ -186,6 +188,7 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
             countryIndex = countryIndex+1
 
         if noPlotFlag == False:     # Plot the data
+
                                     # Select daily or cumulative results
             if (cumulativeResultsFlag == True):
                 casesType      = 'casesCumulative'
@@ -200,55 +203,64 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
             lastDate = str(covidData.first_valid_index())
             lastDate = lastDate.replace(' 00:00:00','')
 
-                                    # Plot results
+                                    # Plot titles
             if (noAlignFlag == True):
                 titleStr=''
             else:
                 titleStr='Aligned '
             if (cumulativeResultsFlag == True):
-                titleStr=titleStr + 'Covid-19 Cumulative Cases: ' + str(lastDate)
+                titleStr=titleStr + 'Covid-19 Cumulative Cases And Deaths: ' + str(lastDate)
             else:
-                titleStr=titleStr + 'Covid-19 Daily Cases: ' + str(lastDate)
-
-            ax = plt.gca()          # Create plot - get current axis
-            countryIndex = 0
-            for country in countries:
-                extractedCases[countryIndex].plot(kind='line',y=casesType,title=titleStr,label=extractedCountry[countryIndex],color=colours[countryIndex],ax=ax)
-                countryIndex = countryIndex+1
-            plt.show()
-
-            if (noAlignFlag == True):
-                titleStr=''
-            else:
-                titleStr='Aligned '
-            if (cumulativeResultsFlag == True):
-                titleStr=titleStr + 'Covid-19 Cumulative Deaths: ' + str(lastDate)
-            else:
-                titleStr=titleStr + 'Covid-19 Daily Deaths: ' + str(lastDate)
-
-            ax = plt.gca()          # Create plot - get current axis
-            countryIndex = 0
-            for country in countries:
-                extractedDeaths[countryIndex].plot(kind='line',y=deathsType,title=titleStr,label=extractedCountry[countryIndex],color=colours[countryIndex],ax=ax)
-                countryIndex = countryIndex+1
-            plt.show()
+                titleStr=titleStr + 'Covid-19 Daily Cases And Deaths: ' + str(lastDate)
 
 
-            if (noAlignFlag == True):
-                titleStr=''
-            else:
-                titleStr='Aligned '
-            if (cumulativeResultsFlag == True):
-                titleStr=titleStr + 'Covid-19 Cumulative Fatality Percentage: ' + str(lastDate)
-            else:
-                titleStr=titleStr + 'Covid-19 Daily Fatality Percentage: ' + str(lastDate)
+            if len(countries) == 1:     # Single country - Cases And Deaths
+                ax = plt.gca()          # Create plot - get current axis
+                extractedCases[0].plot(kind='line',y=casesType,title=titleStr,label=extractedCountry[0] + ' Cases',color='blue',ax=ax)
+                extractedDeaths[0].plot(kind='line',y=deathsType,title=titleStr,label=extractedCountry[0] + ' Deaths',color='red',ax=ax)
+                plt.show()
 
-            ax = plt.gca()          # Create plot - get current axis
-            countryIndex = 0
-            for country in countries:
-                extractedDeaths[countryIndex].plot(kind='line',y=percentageType,title=titleStr,label=extractedCountry[countryIndex],color=colours[countryIndex],ax=ax)
-                countryIndex = countryIndex+1
-            plt.show()
+
+            else:                       # Multiple countries
+                ax = plt.gca()          # Create plot - get current axis
+                countryIndex = 0
+                for country in countries:
+                    extractedCases[countryIndex].plot(kind='line',y=casesType,title=titleStr,label=extractedCountry[countryIndex],color=colours[countryIndex],ax=ax)
+                    countryIndex = countryIndex+1
+                plt.show()
+
+                if (noAlignFlag == True):
+                    titleStr=''
+                else:
+                    titleStr='Aligned '
+                if (cumulativeResultsFlag == True):
+                    titleStr=titleStr + 'Covid-19 Cumulative Deaths: ' + str(lastDate)
+                else:
+                    titleStr=titleStr + 'Covid-19 Daily Deaths: ' + str(lastDate)
+
+                ax = plt.gca()          # Create plot - get current axis
+                countryIndex = 0
+                for country in countries:
+                    extractedDeaths[countryIndex].plot(kind='line',y=deathsType,title=titleStr,label=extractedCountry[countryIndex],color=colours[countryIndex],ax=ax)
+                    countryIndex = countryIndex+1
+                plt.show()
+
+
+                if (noAlignFlag == True):
+                    titleStr=''
+                else:
+                    titleStr='Aligned '
+                if (cumulativeResultsFlag == True):
+                    titleStr=titleStr + 'Covid-19 Cumulative Fatality Percentage: ' + str(lastDate)
+                else:
+                    titleStr=titleStr + 'Covid-19 Daily Fatality Percentage: ' + str(lastDate)
+
+                ax = plt.gca()          # Create plot - get current axis
+                countryIndex = 0
+                for country in countries:
+                    extractedDeaths[countryIndex].plot(kind='line',y=percentageType,title=titleStr,label=extractedCountry[countryIndex],color=colours[countryIndex],ax=ax)
+                    countryIndex = countryIndex+1
+                plt.show()
 
     else:
         print("Cached spreadsheet file not found on computer")
