@@ -28,8 +28,8 @@ from bs4 import BeautifulSoup
 topLevelPage  = "https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide"
 localFileName = "Covid-19.csv"
 
-countries = ["China","Germany","Italy","United_Kingdom","United_States_of_America"]
-colours   = ["red",  "black",  "green","blue",          "orange"]
+countries = ["China","Germany","Italy","United_Kingdom","United_States_of_America", "Australia"]
+colours   = ["red",  "black",  "green","blue",          "orange",                   "pink"]
 country_single = ["United_Kingdom"]             # Default value, can be overwritten
 
 
