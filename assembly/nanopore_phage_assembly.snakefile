@@ -21,16 +21,23 @@ Rob Edwards, Feb 2020
 """
 
 import os
+import sys
 
 ## User defined options. 
 # Yes, this should be in a config file, but its not
 
 READDIR = "fastq"
-OUTDIR = "assembly"
-STATS = "stats"
+OUTDIR  = "assembly"
+FLYDIR  = "flye"
+CANUDIR = "canu"
+STATS   = "stats"
+
 
 # this should be a path to your bacterial genomes that you want removed.
 BACTERIALDNA = os.path.join(os.environ['HOME'], "phage/Sequencing/BacterialGenomes/Bacteria.fna")
+if not os.path.exists(BACTERIALDNA):
+    sys.stderr.write("FATAL: {BACTERIALDNA} does not exist\n")
+    sys.exit()
 
 # Some options for filtlong. You may want to change these
 # https://github.com/rrwick/Filtlong
@@ -46,7 +53,7 @@ FASTQ, = glob_wildcards(os.path.join(READDIR, '{fastq}.fastq.gz'))
 
 rule all:
     input:
-        expand(os.path.join(OUTDIR, "{sample}_6.fasta"), sample=FASTQ),
+        expand(os.path.join(OUTDIR, "{sample}_07.bam"), sample=FASTQ),
         os.path.join(STATS, "all_statistics.tsv")
 
 
@@ -71,29 +78,29 @@ rule remove_host:
     input:
         os.path.join(READDIR, "{sample}.fastq.gz")
     output:
-        os.path.join(OUTDIR, "{sample}_1.host_removed.fq.gz")
+        os.path.join(OUTDIR, "{sample}_01.host_removed.fq.gz")
     shell:
         "minimap2 -ax map-ont {BACTERIALDNA} {input} | samtools fastq -f 4 | gzip > {output}"
 
 
 rule filtlong:
     input:
-        os.path.join(OUTDIR, "{sample}_1.host_removed.fq.gz")
+        os.path.join(OUTDIR, "{sample}_01.host_removed.fq.gz")
     params:
         min_length = MIN_LENGTH, 
         keep_percent = KEEP_PERCENT,
         target_bases = TARGET_BASES
     output:
-        os.path.join(OUTDIR, "{sample}_2.filtlong.fastq.gz")
+        os.path.join(OUTDIR, "{sample}_02.filtlong.fastq.gz")
     shell:
         "filtlong --min_length {params.min_length} --keep_percent {params.keep_percent} --target_bases {params.target_bases} {input} | gzip > {output}"
 
 
 rule minimap:
     input:
-        os.path.join(OUTDIR, "{sample}_2.filtlong.fastq.gz")
+        os.path.join(OUTDIR, "{sample}_02.filtlong.fastq.gz")
     output:
-        os.path.join(OUTDIR, "{sample}_3.overlaps.paf")
+        os.path.join(OUTDIR, "{sample}_03.overlaps.paf")
     threads: 1
     # threads: workflow.cores * 0.50
     shell:
@@ -101,10 +108,10 @@ rule minimap:
 
 rule miniasm:
     input:
-        fq = os.path.join(OUTDIR, "{sample}_2.filtlong.fastq.gz"),
-        paf = os.path.join(OUTDIR, "{sample}_3.overlaps.paf")
+        fq = os.path.join(OUTDIR, "{sample}_02.filtlong.fastq.gz"),
+        paf = os.path.join(OUTDIR, "{sample}_03.overlaps.paf")
     output:
-        os.path.join(OUTDIR, "{sample}_4.miniasm.gfa")
+        os.path.join(OUTDIR, "{sample}_04.miniasm.gfa")
     shell:
         "miniasm -f {input.fq} {input.paf} > {output}"
 
@@ -113,9 +120,9 @@ rule minipolish:
         # we run this with the original reads not the filtlong reads
         flfq = os.path.join(READDIR, "{sample}.fastq.gz"),
         #flfq = os.path.join(OUTDIR, "{sample}.2.filtlong.fastq.gz"),
-        gfa = os.path.join(OUTDIR, "{sample}_4.miniasm.gfa")
+        gfa = os.path.join(OUTDIR, "{sample}_04.miniasm.gfa")
     output:
-        os.path.join(OUTDIR, "{sample}_5.polished.gfa")
+        os.path.join(OUTDIR, "{sample}_05.polished.gfa")
     params:
         rds = MINIPOLISH_ROUNDS
     shell:
@@ -123,18 +130,113 @@ rule minipolish:
 
 rule gfa2fasta:
     input:
-        os.path.join(OUTDIR, "{sample}_5.polished.gfa")
+        os.path.join(OUTDIR, "{sample}_05.polished.gfa")
     output:
-        os.path.join(OUTDIR, "{sample}_6.fasta")
+        os.path.join(OUTDIR, "{sample}_06.fasta")
     params:
         b = '{sample}'
     shell:
         "awk '/^S/{{print \">{params.b}_\"$2\"\\n\"$3}}' {input} > {output}"
 
+
+rule map_reads_to_contigs:
+    input:
+        reads = os.path.join(READDIR, "{sample}.fastq.gz"),
+        conts = os.path.join(OUTDIR, "{sample}_06.fasta")
+    output:
+        os.path.join(OUTDIR, "{sample}_07.bam")
+    shell:
+        """
+        minimap2 -a {input.conts} {input.reads} | \
+        samtools view -bh | samtools sort -o {output} -
+        """
+
+
+rule flye_assembly:
+    input:
+        os.path.join(OUTDIR, "{sample}_01.host_removed.fq.gz")
+    output:
+        os.path.join(FLYDIR, "{sample}", "assembly.fasta")
+    params:
+        odir = os.path.join(FLYDIR, "{sample}")
+    shell:
+        """
+        flye --nano-raw {input} --asm-coverage 50 --genome-size 100k -o {params.odir} || touch {output}
+        """
+
+
+rule map_for_racon_polish_flye:
+    """
+    This was recommended by Ryan Wick. 
+
+    First, we use minimap2 to map our original reads to the contigs, 
+    and then we use racon to polish the contigs
+    """
+    input:
+        reads = os.path.join(READDIR, "{sample}.fastq.gz"),
+        conts = os.path.join(FLYDIR, "{sample}", "assembly.fasta")
+    output:
+        os.path.join(FLYDIR, "{sample}", "mapped_reads.paf")
+    shell:
+        """
+        if [ -s {input.conts} ]; then
+            minimap2 {input.conts} {input.reads} > {output}
+        else
+            touch {output}
+        fi
+        """
+
+rule racon_polish_flye:
+    input:
+        reads = os.path.join(READDIR, "{sample}.fastq.gz"),
+        conts = os.path.join(FLYDIR, "{sample}", "assembly.fasta"),
+        maps  = os.path.join(FLYDIR, "{sample}", "mapped_reads.paf")
+    output:
+        os.path.join(FLYDIR, "{sample}", "polished_assembly.fasta")
+    shell:
+        """
+        if [ -s {input.conts} ]; then
+            racon {input.reads} {input.maps} {input.conts} > {output}
+        else
+            touch {output}
+        fi
+        """
+
+rule move_flye_assemblies:
+    input:
+        r = os.path.join(FLYDIR, "{sample}", "assembly.fasta"),
+        p = os.path.join(FLYDIR, "{sample}", "polished_assembly.fasta")
+    output:
+        r = os.path.join(OUTDIR, "{sample}_09_flye.fasta"),
+        p = os.path.join(OUTDIR, "{sample}_10_flye_polished.fasta")
+    shell:
+        "cp {input.r} {output.r} && cp {input.p} {output.p}"
+
+rule canu_assemblies:
+    input:
+        os.path.join(OUTDIR, "{sample}_01.host_removed.fq.gz")
+    output:
+        os.path.join(CANUDIR, "{sample}", "{sample}.contigs.fasta")
+    params:
+        odir = os.path.join(CANUDIR, "{sample}")
+    shell:
+        """
+        canu stopOnLowCoverage=0 minInputCoverage=0 useGrid=false -d {params.odir} -p {wildcards.sample} genomeSize=100k -nanopore-raw {input} || touch {output}
+        """
+
+rule move_canu_assemblies:
+    input:
+        os.path.join(CANUDIR, "{sample}", "{sample}.contigs.fasta")
+    output:
+        os.path.join(OUTDIR, "{sample}_11.canu.contigs.fasta")
+    shell:
+        "cp {input} {output}"
+
+
 ## Statistics on the sequences
 rule count_concat_fastq:
     input:
-        os.path.join(OUTDIR, "{sample}_1.host_removed.fq.gz")
+        os.path.join(OUTDIR, "{sample}_01.host_removed.fq.gz")
     output:
         os.path.join(STATS, "{sample}_combined.tsv")
     shell:
@@ -142,7 +244,7 @@ rule count_concat_fastq:
 
 rule count_filtlong:
     input:
-        os.path.join(OUTDIR, "{sample}_2.filtlong.fastq.gz")
+        os.path.join(OUTDIR, "{sample}_02.filtlong.fastq.gz")
     output:
         os.path.join(STATS, "{sample}.filtlong.tsv")
     shell:
@@ -151,7 +253,7 @@ rule count_filtlong:
 
 rule count_miniasm:
     input:
-        os.path.join(OUTDIR, "{sample}_4.miniasm.gfa")
+        os.path.join(OUTDIR, "{sample}_04.miniasm.gfa")
     output:
         os.path.join(STATS, "{sample}.miniasm.tsv")
     shell:
@@ -159,7 +261,7 @@ rule count_miniasm:
 
 rule count_minipolish:
     input:
-        os.path.join(OUTDIR, "{sample}_5.polished.gfa")
+        os.path.join(OUTDIR, "{sample}_05.polished.gfa")
     output:
         os.path.join(STATS, "{sample}.polished.tsv")
     shell:
@@ -167,9 +269,33 @@ rule count_minipolish:
 
 rule assembly_stats:
     input:
-        os.path.join(OUTDIR, "{sample}_6.fasta")
+        os.path.join(OUTDIR, "{sample}_06.fasta")
     output:
         os.path.join(STATS, "{sample}.assembly.stats.tsv")
+    shell:
+        'python3 ~/bin/countfasta.py -t -f {input} > {output}'
+
+rule count_flye:
+    input:
+        os.path.join(OUTDIR, "{sample}_09_flye.fasta"),
+    output:
+        os.path.join(STATS, "{sample}.flye.assembly.stats.tsv")
+    shell:
+        'python3 ~/bin/countfasta.py -t -f {input} > {output}'
+   
+rule count_polished_flye:
+    input:
+        os.path.join(OUTDIR, "{sample}_10_flye_polished.fasta")
+    output:
+        os.path.join(STATS, "{sample}.flye.polished.stats.tsv")
+    shell:
+        'python3 ~/bin/countfasta.py -t -f {input} > {output}'
+
+rule count_canu:
+    input:
+        os.path.join(OUTDIR, "{sample}_11.canu.contigs.fasta")
+    output:
+        os.path.join(STATS, "{sample}.canu.stats.tsv")
     shell:
         'python3 ~/bin/countfasta.py -t -f {input} > {output}'
 
@@ -179,7 +305,10 @@ rule combine_stats:
         expand(os.path.join(STATS, "{sample}.filtlong.tsv"), sample=FASTQ),
         expand(os.path.join(STATS, "{sample}.miniasm.tsv"), sample=FASTQ),
         expand(os.path.join(STATS, "{sample}.polished.tsv"), sample=FASTQ),
-        expand(os.path.join(STATS, "{sample}.assembly.stats.tsv"), sample=FASTQ)
+        expand(os.path.join(STATS, "{sample}.assembly.stats.tsv"), sample=FASTQ),
+        expand(os.path.join(STATS, "{sample}.flye.assembly.stats.tsv"), sample=FASTQ),
+        expand(os.path.join(STATS, "{sample}.flye.polished.stats.tsv"), sample=FASTQ),
+        expand(os.path.join(STATS, "{sample}.canu.stats.tsv"), sample=FASTQ)
     output:
         os.path.join(STATS, "all_statistics.tsv")
     shell:

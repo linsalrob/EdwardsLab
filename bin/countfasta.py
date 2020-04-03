@@ -17,7 +17,7 @@ if __name__ == "__main__":
     parser.add_argument('-f', help='fasta file', required=True)
     parser.add_argument('-l', help='list the lengths for each sequence (default = not to)', action='store_true')
     parser.add_argument('-m', help='minimum length fo be inclued', type=int, default=0)
-    parser.add_argument('-t', help='tab separated output', action='store_true')
+    parser.add_argument('-t', help='tab separated output. Fields: [# seqs, total bp, shortest, longest, N50, N75]', action='store_true')
     args = parser.parse_args()
 
     fa=read_fasta(args.f)
@@ -53,3 +53,4 @@ if __name__ == "__main__":
         print("Number of sequences: {}\nTotal length: {}\nShortest: {}\nLongest: {}\nN50: {}\nN75: {}".format(
             len(lens), length, lens[0], lens[-1], n50, n75,
         ))
+
