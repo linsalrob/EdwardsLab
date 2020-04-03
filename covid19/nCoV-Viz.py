@@ -30,8 +30,8 @@ localFileName = "Covid-19.csv"
 
 countries = ["China","Germany","Italy","United_Kingdom","United_States_of_America"]
 colours   = ["red",  "black",  "green","blue",          "orange"]
-# countries = ["United_Kingdom"]
-# colours   = ["blue",         ]
+country_single = ["United_Kingdom"]             # Default value, can be overwritten
+
 
 # Extract cases and deaths and align day 0 to first date of detection or death
 def extractAligned(covidData, country, dates, noAlignFlag):
@@ -115,6 +115,7 @@ def extractAligned(covidData, country, dates, noAlignFlag):
 
 # main
 def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
+    global countries
 
     cachedFilePresentFlag = False
 
@@ -152,6 +153,7 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
         if (cachedFilePresentFlag == False):
             print("No spreadsheet found at the URL")
             exit(0)
+
 
     numberOfCountries = len(countries)
 
@@ -209,9 +211,9 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
             else:
                 titleStr='Aligned '
             if (cumulativeResultsFlag == True):
-                titleStr=titleStr + 'Covid-19 Cumulative Cases And Deaths: ' + str(lastDate)
+                titleStr=titleStr + 'Covid-19 Cumulative Cases And Deaths: ' + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control"
             else:
-                titleStr=titleStr + 'Covid-19 Daily Cases And Deaths: ' + str(lastDate)
+                titleStr=titleStr + 'Covid-19 Daily Cases And Deaths: ' + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control"
 
 
             if len(countries) == 1:     # Single country - Cases And Deaths
@@ -234,9 +236,9 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
                 else:
                     titleStr='Aligned '
                 if (cumulativeResultsFlag == True):
-                    titleStr=titleStr + 'Covid-19 Cumulative Deaths: ' + str(lastDate)
+                    titleStr=titleStr + 'Covid-19 Cumulative Deaths: ' + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control"
                 else:
-                    titleStr=titleStr + 'Covid-19 Daily Deaths: ' + str(lastDate)
+                    titleStr=titleStr + 'Covid-19 Daily Deaths: ' + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control"
 
                 ax = plt.gca()          # Create plot - get current axis
                 countryIndex = 0
@@ -251,9 +253,9 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
                 else:
                     titleStr='Aligned '
                 if (cumulativeResultsFlag == True):
-                    titleStr=titleStr + 'Covid-19 Cumulative Fatality Percentage: ' + str(lastDate)
+                    titleStr=titleStr + 'Covid-19 Cumulative Fatality Percentage: ' + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control"
                 else:
-                    titleStr=titleStr + 'Covid-19 Daily Fatality Percentage: ' + str(lastDate)
+                    titleStr=titleStr + 'Covid-19 Daily Fatality Percentage: ' + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control"
 
                 ax = plt.gca()          # Create plot - get current axis
                 countryIndex = 0
@@ -273,7 +275,7 @@ if __name__ == '__main__':
     noAlignFlag             = False
     noPlotFlag              = False
 
-    if len(countries) != len(colours):
+    if ((len(countries) > 1) and (len(countries) != len(colours))):
         print("The number of colours must equal the number of countries")
         exit()
 
@@ -283,6 +285,7 @@ if __name__ == '__main__':
     parser.add_argument("-l", "--local",      action="store_true", help="Use local cached Covid-19.csv")
     parser.add_argument("-n", "--noalign",    action="store_true", help="Do not align first instance dates - all graphs start 2019-12-31")
     parser.add_argument("-q", "--quiet",      action="store_true", help="Quiet - Do not plot graphs")
+    parser.add_argument("-s", "--single",     nargs='?', const=1,  help="Process a single country - Specify the countriesAndTerritories string used in the spreadsheet")
     args = parser.parse_args()
 
     if (args.cumulative):
@@ -300,5 +303,12 @@ if __name__ == '__main__':
     if (args.quiet):
         noPlotFlag = True
         print("Do not plot graphs = True")
+
+    if (args.single):                   # Process single country - if no country specified use default country at top of file
+        if (args.single != 1):
+            country_single[0] = args.single
+
+        countries = country_single      # Overwrite the countries array
+        print("Process single country: " + str(countries))
 
     main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag)
