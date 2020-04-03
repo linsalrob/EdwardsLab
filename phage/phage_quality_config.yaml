@@ -7,5 +7,7 @@ paths:
     statistics: stats
 
 databases:
+    bacterial_proteins: bacteria.clusters.faa
     phage_proteins: phages.faa
     nr: /home2/db/blast/nr/nr
+    phage_cluster_database: /home3/redwards/phage/genbank_phages/20200228/clusters.sql

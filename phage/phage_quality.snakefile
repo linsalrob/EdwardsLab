@@ -67,19 +67,20 @@ ORFS    = config['paths']['orfs']
 BLAST   = config['paths']['blast']
 STATS   = config['paths']['statistics']
 
+# our phage and bacterial protein databases
 PHAGEDB = os.path.join(config['paths']['databases'], config['databases']['phage_proteins'])
 if not os.path.exists(PHAGEDB):
     sys.stderr.write(f"FATAL: {PHAGEDB} not found. Please check your paths\n")
     sys.exit()
-
+BACTDB = os.path.join(config['paths']['databases'], config['databases']['bacterial_proteins'])
+if not os.path.exists(BACTDB):
+    sys.stderr.write(f"FATAL: {BACTDB} not found. Please check your paths\n")
+    sys.exit()
 
 # include functions from phage clusters
-phage_cluster_db = None
-PHAGECLUSTERS = os.path.join(config['phage_cluster_database'])
+PHAGECLUSTERS = os.path.join(config['databases']['phage_cluster_database'])
 if not os.path.exists(PHAGECLUSTERS):
     sys.stderr.write(f"Phage Cluster database {PHAGECLUSTERS} not found. Skipping functional analysis\n")
-else:
-    phage_cluster_db = connect_to_db(PHAGECLUSTERS)
 
 SAMPLES, = glob_wildcards(os.path.join(CONTIGS, '{sample}.fasta'))
 
@@ -178,16 +179,17 @@ def check_phage_functions(sample, blastfile, outputfile):
     """
 
     out = open(outputfile, 'w')
-    if not phage_cluster_db:
+    if not os.path.exists(PHAGECLUSTERS):
         out.close()
         return
     
+    phage_cluster_db = connect_to_db(PHAGECLUSTERS)
     hypo = 0
     nonhypo = 0
     with open(blastfile, 'r') as f:
         for l in f:
             p = l.strip().split("\t")
-            fn = proteinid_to_function(p[1])
+            fn = proteinid_to_function(p[1], phage_cluster_db)
             if is_hypothetical(fn):
                 hypo +=1
             else:
@@ -243,6 +245,20 @@ rule blast_phage_proteins:
     shell:
         "blastp -query {input} -db {PHAGEDB} -outfmt '6 std qlen slen' -out {output} -num_threads {threads}"
 
+rule blast_bact_proteins:
+    """
+    This requires a phages.faa fasta database
+    that we do not yet provide
+    """
+    input:
+        os.path.join(ORFS, "{sample}.orfs.faa")
+    output:
+        os.path.join(BLAST, "{sample}.bacteria.blastp")
+    threads:
+        8
+    shell:
+        "blastp -query {input} -db {BACTDB} -outfmt '6 std qlen slen' -out {output} -num_threads {threads}"
+
 rule blast_nr:
     """
     This requires an nr database that you can download from NCBI
@@ -258,7 +274,6 @@ rule blast_nr:
     shell:
         "blastp -query {input} -db {params.db} -outfmt '6 std qlen slen' -out {output} -num_threads {threads}"
 
-
 rule average_phage_protein_len:
     input:
         bp = os.path.join(BLAST, "{sample}.phages.blastp")
@@ -269,6 +284,17 @@ rule average_phage_protein_len:
         sample = "{sample}"
     run:
         av_protein_lengths(params.sample, input.bp, output.fr, output.st, 'phage')
+
+rule average_bact_protein_len:
+    input:
+        bp = os.path.join(BLAST, "{sample}.bacteria.blastp")
+    output:
+        fr = os.path.join(BLAST, "{sample}.bact_prot_fractions.tsv"),
+        st = os.path.join(STATS, "{sample}.average.bacteria.fraction")
+    params:
+        sample = "{sample}"
+    run:
+        av_protein_lengths(params.sample, input.bp, output.fr, output.st, 'bacteria')
 
 rule average_nr_protein_len:
     input:
@@ -293,6 +319,18 @@ rule adjacent_phage_orfs_same_protein:
         sample = "{sample}"
     run:
         count_adjacent_orfs(params.sample, input.fa, input.bp, output.st, output.nh, "phage")
+
+rule adjacent_bacteria_orfs_same_protein:
+    input:
+        fa = os.path.join(ORFS, "{sample}.orfs.faa"),
+        bp = os.path.join(BLAST, "{sample}.bacteria.blastp")
+    output:
+        st = os.path.join(STATS, "{sample}.bacteria.adjacent.tsv"),
+        nh = os.path.join(STATS, "{sample}.bacteria.nohits.tsv")
+    params:
+        sample = "{sample}"
+    run:
+        count_adjacent_orfs(params.sample, input.fa, input.bp, output.st, output.nh, "bacteria")
 
 
 rule adjacent_nr_orfs_same_protein:
@@ -333,13 +371,17 @@ rule hypo_vs_non:
 rule combine_outputs:
     input:
         expand(os.path.join(STATS, "{sample}.average.phage.fraction"), sample=SAMPLES),
-        expand(os.path.join(STATS, "{sample}.average.nr.fraction"), sample=SAMPLES),
+        expand(os.path.join(STATS, "{sample}.average.bacteria.fraction"), sample=SAMPLES),
         expand(os.path.join(STATS, "{sample}.phage.adjacent.tsv"), sample=SAMPLES),
         expand(os.path.join(STATS, "{sample}.phage.nohits.tsv"), sample=SAMPLES),
-        expand(os.path.join(STATS, "{sample}.nr.adjacent.tsv"), sample=SAMPLES),
+        expand(os.path.join(STATS, "{sample}.bacteria.adjacent.tsv"), sample=SAMPLES),
         expand(os.path.join(STATS, "{sample}.coding_noncoding.tsv"), sample=SAMPLES),
-        expand(os.path.join(STATS, "{sample}.nr.nohits.tsv"), sample=SAMPLES),
+        expand(os.path.join(STATS, "{sample}.bacteria.nohits.tsv"), sample=SAMPLES),
         expand(os.path.join(STATS, "{sample}.phage.hyponon.tsv"), sample=SAMPLES)
+        # uncomment these to run the nr blast, but it takes  a long time!
+        # expand(os.path.join(STATS, "{sample}.average.nr.fraction"), sample=SAMPLES),
+        # expand(os.path.join(STATS, "{sample}.nr.adjacent.tsv"), sample=SAMPLES),
+        # expand(os.path.join(STATS, "{sample}.nr.nohits.tsv"), sample=SAMPLES),
     output:
         os.path.join(STATS, "all_stats.tsv")
     shell:
