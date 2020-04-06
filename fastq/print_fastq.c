@@ -8,11 +8,27 @@
  * Created by Rob on 4/6/20.
  * Leans heavily on the kseq library from Heng Li: https://github.com/lh3/readfq
  *
- * Should compile with no warnings with
+ * If you have the kseq.h library installed, this should compile with 
+ * no warnings (see below) with:
+ *
  * gcc -o print_fastq print_fastq.c -Wall -lz
  *
  * Usage:
  *     print_fastq -n <number of sequences> <fastq file>
+ *
+ *
+ *
+ * If you do not have the kseq.h library you can download it from
+ * https://github.com/lh3/readfq and then compile (eg. if it is in ../lib)
+ * gcc -o print_fastq print_fastq.c -Wall -I../lib -lz
+ *
+ * For some versions of gcc you may need to add
+ * -std=c99  if you get error: ‘for’ loop initial declarations are only allowed in C99 mode
+ * -D_XOPEN_SOURCE=700  if you get warning: implicit declaration of function ‘fileno’
+ *
+ *  to give:
+ *  gcc -o print_fastq print_fastq.c -Wall -I../lib -lz -std=c99 -D_XOPEN_SOURCE=700
+ *
  */
 
 #include <zlib.h>
