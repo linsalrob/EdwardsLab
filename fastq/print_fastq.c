@@ -60,8 +60,6 @@ int main(int argc, char *argv[]) {
             filename = argv[i];
     }
 
-    if (verbose) {puts(strcat("Reading from ", filename));}
-
     gzFile fp;
     kseq_t *seq;
     FILE * file = fopen(filename, "rb");
@@ -72,10 +70,13 @@ int main(int argc, char *argv[]) {
         printf("@%s %s\n", seq->name.s, seq->comment.s);
         printf("%s\n+\n%s\n", seq->seq.s, seq->qual.s);
         counter++;
-        if (counter == nseqs)
+        if (counter == nseqs) {
+            if (verbose) { fprintf(stderr, "%s\t%i\n", filename, counter); }
             return 0;
+        }
     }
     kseq_destroy(seq);
     gzclose(fp);
+    if (verbose) {fprintf(stderr, "%s\t%i\n", filename, counter);}
     return 0;
 }
