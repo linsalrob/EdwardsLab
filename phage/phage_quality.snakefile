@@ -66,6 +66,7 @@ CONTIGS = config['paths']['contigs']
 ORFS    = config['paths']['orfs']
 BLAST   = config['paths']['blast']
 STATS   = config['paths']['statistics']
+RESULTS = config['paths']['results']
 
 # our phage and bacterial protein databases
 PHAGEDB = os.path.join(config['paths']['databases'], config['databases']['phage_proteins'])
@@ -205,8 +206,16 @@ def check_phage_functions(sample, blastfile, outputfile):
 
 rule all:
     input:
-        expand(os.path.join(STATS, "{sample}.average.phage.fraction"), sample=SAMPLES),
-        os.path.join(STATS, "all_stats.tsv")
+        expand(os.path.join(STATS, "{sample}.average.phage.fraction.tsv"), sample=SAMPLES),
+        os.path.join(RESULTS, "all_stats.tsv"),
+        os.path.join(RESULTS, "average.phage.fraction.tsv"),
+        os.path.join(RESULTS, "phage.hyponon.tsv"),
+        os.path.join(RESULTS, "bacteria.nohits.tsv"),
+        os.path.join(RESULTS, "coding_noncoding.tsv"),
+        os.path.join(RESULTS, "bacteria.adjacent.tsv"),
+        os.path.join(RESULTS, "phage.nohits.tsv"),
+        os.path.join(RESULTS, "phage.adjacent.tsv"),
+        os.path.join(RESULTS, "average.bacteria.fraction.tsv")
 
 
 rule call_orfs:
@@ -279,7 +288,7 @@ rule average_phage_protein_len:
         bp = os.path.join(BLAST, "{sample}.phages.blastp")
     output:
         fr = os.path.join(BLAST, "{sample}.phage_prot_fractions.tsv"),
-        st = os.path.join(STATS, "{sample}.average.phage.fraction")
+        st = os.path.join(STATS, "{sample}.average.phage.fraction.tsv")
     params:
         sample = "{sample}"
     run:
@@ -290,7 +299,7 @@ rule average_bact_protein_len:
         bp = os.path.join(BLAST, "{sample}.bacteria.blastp")
     output:
         fr = os.path.join(BLAST, "{sample}.bact_prot_fractions.tsv"),
-        st = os.path.join(STATS, "{sample}.average.bacteria.fraction")
+        st = os.path.join(STATS, "{sample}.average.bacteria.fraction.tsv")
     params:
         sample = "{sample}"
     run:
@@ -301,7 +310,7 @@ rule average_nr_protein_len:
         bp = os.path.join(BLAST, "{sample}.nr.blastp")
     output:
         fr = os.path.join(BLAST, "{sample}.nr_prot_fractions.tsv"),
-        st = os.path.join(STATS, "{sample}.average.nr.fraction")
+        st = os.path.join(STATS, "{sample}.average.nr.fraction.tsv")
     params:
         sample = "{sample}"
     run:
@@ -367,11 +376,75 @@ rule hypo_vs_non:
     run:
         check_phage_functions(params.sample, input.bf, output.hn)
 
+rule combine_average_phage_fraction:
+    input:
+        expand(os.path.join(STATS, "{sample}.average.phage.fraction.tsv"), sample=SAMPLES),
+    output:
+        os.path.join(RESULTS, "average.phage.fraction.tsv")
+    shell:
+        "cat {input} > {output}"
+
+rule combine_phage_hyponon:
+    input:
+        expand(os.path.join(STATS, "{sample}.phage.hyponon.tsv"), sample=SAMPLES)
+    output:
+        os.path.join(RESULTS, "phage.hyponon.tsv")
+    shell:
+        "cat {input} > {output}"
+
+rule combine_bacteria_nohits:
+    input:
+        expand(os.path.join(STATS, "{sample}.bacteria.nohits.tsv"), sample=SAMPLES),
+    output:
+        os.path.join(RESULTS, "bacteria.nohits.tsv")
+    shell:
+        "cat {input} > {output}"
+
+rule combine_coding_noncoding:
+    input:
+        expand(os.path.join(STATS, "{sample}.coding_noncoding.tsv"), sample=SAMPLES),
+    output:
+        os.path.join(RESULTS, "coding_noncoding.tsv")
+    shell:
+        "cat {input} > {output}"
+
+rule combine_bacteria_adjacent:
+    input:
+        expand(os.path.join(STATS, "{sample}.bacteria.adjacent.tsv"), sample=SAMPLES),
+    output:
+        os.path.join(RESULTS, "bacteria.adjacent.tsv")
+    shell:
+        "cat {input} > {output}"
+
+rule combine_phage_nohits:
+    input:
+        expand(os.path.join(STATS, "{sample}.phage.nohits.tsv"), sample=SAMPLES),
+    output:
+        os.path.join(RESULTS, "phage.nohits.tsv")
+    shell:
+        "cat {input} > {output}"
+
+rule combine_phage_adjacent:
+    input:
+        expand(os.path.join(STATS, "{sample}.phage.adjacent.tsv"), sample=SAMPLES),
+    output:
+        os.path.join(RESULTS, "phage.adjacent.tsv")
+    shell:
+        "cat {input} > {output}"
+
+rule combine_average_bacteria_fraction:
+    input:
+        expand(os.path.join(STATS, "{sample}.average.bacteria.fraction.tsv"), sample=SAMPLES),
+    output:
+        os.path.join(RESULTS, "average.bacteria.fraction.tsv")
+    shell:
+        "cat {input} > {output}"
+
 
 rule combine_outputs:
     input:
-        expand(os.path.join(STATS, "{sample}.average.phage.fraction"), sample=SAMPLES),
-        expand(os.path.join(STATS, "{sample}.average.bacteria.fraction"), sample=SAMPLES),
+        expand(os.path.join(STATS, "{sample}.average.phage.fraction.tsv"), sample=SAMPLES),
+        expand(os.path.join(STATS, "{sample}.average.bacteria.fraction.tsv"), sample=SAMPLES),
         expand(os.path.join(STATS, "{sample}.phage.adjacent.tsv"), sample=SAMPLES),
         expand(os.path.join(STATS, "{sample}.phage.nohits.tsv"), sample=SAMPLES),
         expand(os.path.join(STATS, "{sample}.bacteria.adjacent.tsv"), sample=SAMPLES),
@@ -383,6 +456,6 @@ rule combine_outputs:
         # expand(os.path.join(STATS, "{sample}.nr.adjacent.tsv"), sample=SAMPLES),
         # expand(os.path.join(STATS, "{sample}.nr.nohits.tsv"), sample=SAMPLES),
     output:
-        os.path.join(STATS, "all_stats.tsv")
+        os.path.join(RESULTS, "all_stats.tsv")
     shell:
         "cat {input}  > {output}"
