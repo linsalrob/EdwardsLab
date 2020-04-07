@@ -291,7 +291,7 @@ rule coding_vs_noncoding:
         sample = "{sample}"
     shell:
         """
-        python3 ~/GitHubs/EdwardsLab/phage/phage_quality_assessment_scripts/coding_versus_noncoding.py \
+        python3 ~/GitHubs/EdwardsLab/phage/phage_quality_assessment_scripts/coding_vs_noncoding.py \
         -s {params.sample} -c {input.ct} -f {input.fa} -o {output.cn}
         """
 
