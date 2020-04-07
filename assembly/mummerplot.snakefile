@@ -59,6 +59,8 @@ wildcard_constraints:
     faf1 = '\w+',
     faf2 = '\w+'
 
+# you will need this in your path somewhere
+RCPY = os.path.join(os.environ["HOME"], "GitHubs/EdwardsLab/assembly/mummerplot.snakefile")
 
 
 # mummer needs to know the length of the genome
@@ -133,8 +135,9 @@ rule reverse_complement:
         expand(os.path.join(FASTARCDIR, "{sample}.fasta"), sample=FA)
     shell:
         """
-        python3 /home3/redwards/GitHubs/EdwardsLab/mummer/reverse_complement_fasta.py -d {FASTADIR} -k 6 -o {FASTARCDIR} -v
+        python3 {RCPY} -d {FASTADIR} -k 6 -o {FASTARCDIR} -v
         """
+
 
 rule run_mummer:
     """
