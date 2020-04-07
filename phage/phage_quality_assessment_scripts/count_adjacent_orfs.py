@@ -5,7 +5,7 @@ Count adjacent orfs in the blast output files.
 import os
 import sys
 import argparse
-
+from roblib import bcolors
 
 def count_adjacent_orfs(sample, fastafile, blastfile, adjacentout, nohitsout, searchtype):
     """
