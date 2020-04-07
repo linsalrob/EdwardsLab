@@ -54,6 +54,10 @@ FASTQ, = glob_wildcards(os.path.join(READDIR, '{fastq}.fastq.gz'))
 rule all:
     input:
         expand(os.path.join(OUTDIR, "{sample}_07.bam"), sample=FASTQ),
+        os.path.join(STATS, "wick_stats.tsv"),
+        os.path.join(STATS, "flye_unpolished_stats.tsv"),
+        os.path.join(STATS, "flye_polished_stats.tsv"),
+        os.path.join(STATS, "canu_stats.tsv"),
         os.path.join(STATS, "all_statistics.tsv")
 
 
@@ -234,11 +238,20 @@ rule move_canu_assemblies:
 
 
 ## Statistics on the sequences
+
+rule count_raw_sequences:
+    input:
+        os.path.join(READDIR, "{sample}.fastq.gz")
+    output:
+        os.path.join(STATS, "{sample}.fastq.counts.tsv")
+    shell:
+        "python3 ~/EdwardsLab/bin/countfastq.py -t -f {input} > {output}"
+
 rule count_concat_fastq:
     input:
         os.path.join(OUTDIR, "{sample}_01.host_removed.fq.gz")
     output:
-        os.path.join(STATS, "{sample}_combined.tsv")
+        os.path.join(STATS, "{sample}.host_removed.tsv")
     shell:
         "python3 ~/EdwardsLab/bin/countfastq.py -t -f {input} > {output}"
 
@@ -299,9 +312,42 @@ rule count_canu:
     shell:
         'python3 ~/bin/countfasta.py -t -f {input} > {output}'
 
+rule all_wick_stats:
+    input:
+        expand(os.path.join(STATS, "{sample}.assembly.stats.tsv"), sample=FASTQ),
+    output:
+        os.path.join(STATS, "wick_stats.tsv")
+    shell:
+        "cat {input} >> {output}"
+
+rule all_flye_unpolished_stats:
+    input:
+        expand(os.path.join(STATS, "{sample}.flye.assembly.stats.tsv"), sample=FASTQ),
+    output:
+        os.path.join(STATS, "flye_unpolished_stats.tsv")
+    shell:
+        "cat {input} >> {output}"
+
+rule all_flye_polished_stats:
+    input:
+        expand(os.path.join(STATS, "{sample}.flye.polished.stats.tsv"), sample=FASTQ),
+    output:
+        os.path.join(STATS, "flye_polished_stats.tsv")
+    shell:
+        "cat {input} >> {output}"
+
+rule all_canu_stats:
+    input:
+        expand(os.path.join(STATS, "{sample}.canu.stats.tsv"), sample=FASTQ),
+    output:
+        os.path.join(STATS, "canu_stats.tsv")
+    shell:
+        "cat {input} >> {output}"
+        
 rule combine_stats:
     input:
-        expand(os.path.join(STATS, "{sample}_combined.tsv"), sample=FASTQ),
+        expand(os.path.join(STATS, "{sample}.fastq.counts.tsv"), sample=FASTQ),
+        expand(os.path.join(STATS, "{sample}.host_removed.tsv"), sample=FASTQ),
         expand(os.path.join(STATS, "{sample}.filtlong.tsv"), sample=FASTQ),
         expand(os.path.join(STATS, "{sample}.miniasm.tsv"), sample=FASTQ),
         expand(os.path.join(STATS, "{sample}.polished.tsv"), sample=FASTQ),
