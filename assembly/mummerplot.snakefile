@@ -52,6 +52,8 @@ outputfilename = config['montage']
 # wildcards that I am still resolving, and
 # this is the simplest solution!
 
+REVCOM = os.path.join(os.environ["HOME"], "GitHubs/EdwardsLab/mummer/reverse_complement_fasta.py")
+
 
 # define fastafilename to be only ^\w+.fasta$. This is important to stop cyclic 
 # use of the wildcard as files are created.
@@ -60,7 +62,6 @@ wildcard_constraints:
     faf2 = '\w+'
 
 # you will need this in your path somewhere
-RCPY = os.path.join(os.environ["HOME"], "GitHubs/EdwardsLab/assembly/mummerplot.snakefile")
 
 
 # mummer needs to know the length of the genome
@@ -135,7 +136,7 @@ rule reverse_complement:
         expand(os.path.join(FASTARCDIR, "{sample}.fasta"), sample=FA)
     shell:
         """
-        python3 {RCPY} -d {FASTADIR} -k 6 -o {FASTARCDIR} -v
+        python3 {REVCOM} -d {FASTADIR} -k 6 -o {FASTARCDIR} -v
         """
 
 
