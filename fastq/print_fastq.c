@@ -16,7 +16,9 @@
  * Usage:
  *     print_fastq -n <number of sequences> <fastq file>
  *
- *
+ * With the -v option you get the number of reads written on stderr. You can redirect
+ * the stdout to gzip and stderr to a file like so:
+ *     print_fastq -n 5 -v test.fastq.gz 2>> num_reads.tsv | gzip - > test.out.gz
  *
  * If you do not have the kseq.h library you can download it from
  * https://github.com/lh3/readfq and then compile (eg. if it is in ../lib)
