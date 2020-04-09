@@ -8,7 +8,7 @@ and the N50 of the data set.
 import os
 import sys
 import argparse
-from roblib import stream_fastq
+from roblib import bcolors, stream_fastq
 
 __author__ = 'Rob Edwards'
 
@@ -18,6 +18,10 @@ if __name__ == "__main__":
     parser.add_argument('-t', help='tab separated summmary of name, total len, shortest, longest, n50, n75', action="store_true")
     parser.add_argument('-s', help='(deprecated). Same as -t', action="store_true")
     args = parser.parse_args()
+
+    if not os.path.exists(args.f):
+        sys.stderr.write(f"{bcolors.RED}FATAL: {args.f} not found{bcolors.ENDC}\n")
+        sys.exit(1)
 
     lens = []
     for (sid, label, seq, qual) in stream_fastq(args.f):
