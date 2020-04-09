@@ -32,6 +32,7 @@ countries = ["China","Germany","Italy","United_Kingdom","United_States_of_Americ
 colours   = ["red",  "black",  "green","blue",          "orange",                   "pink"]
 country_single = ["United_Kingdom"]             # Default value, can be overwritten
 
+
 # Extract cases and deaths and align day 0 to first date of detection or death
 def extractAligned(covidData, country, dates, noAlignFlag):
     print("Country: " + country)
