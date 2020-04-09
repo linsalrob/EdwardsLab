@@ -264,3 +264,4 @@ def stream_gfa_sequences(gfafile):
             continue
         p = l.strip().split("\t")
         yield p[1], p[2]
+

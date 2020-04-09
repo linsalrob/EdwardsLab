@@ -39,18 +39,21 @@ if __name__ == "__main__":
     len_so_far = 0
     n50 = None
     n75 = None
-
+    auN = 0
     for i in lens:
         len_so_far += i
         if not n50 and len_so_far >= length * 0.5:
             n50 = i
         if not n75 and len_so_far >= length * 0.75:
             n75 = i
+        auN += i**2
+
+    auN /= length
 
     if args.t:
-        print("\t".join(map(str, [args.f, len(lens), length, lens[0], lens[-1], n50, n75])))
+        print("\t".join(map(str, [args.f, len(lens), length, lens[0], lens[-1], n50, n75, auN])))
     else:
-        print("Number of sequences: {}\nTotal length: {}\nShortest: {}\nLongest: {}\nN50: {}\nN75: {}".format(
-            len(lens), length, lens[0], lens[-1], n50, n75,
+        print("Number of sequences: {}\nTotal length: {}\nShortest: {}\nLongest: {}\nN50: {}\nN75: {}\nauN: {}".format(
+            len(lens), length, lens[0], lens[-1], n50, n75, auN
         ))
 
