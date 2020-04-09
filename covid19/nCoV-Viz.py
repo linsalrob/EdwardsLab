@@ -211,9 +211,9 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
             else:
                 titleStr='Aligned '
             if (cumulativeResultsFlag == True):
-                titleStr=titleStr + 'Covid-19 Cumulative Cases And Deaths: ' + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control"
+                titleStr=titleStr + 'Covid-19 Cumulative Cases: ' + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control"
             else:
-                titleStr=titleStr + 'Covid-19 Daily Cases And Deaths: ' + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control"
+                titleStr=titleStr + 'Covid-19 Daily Cases: ' + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control"
 
 
             if len(countries) == 1:     # Single country - Cases And Deaths
@@ -309,6 +309,7 @@ if __name__ == '__main__':
             country_single[0] = args.single
 
         countries = country_single      # Overwrite the countries array
-        print("Process single country: " + str(countries))
+        noAlignFlag = True
+        print("Process single country: " + str(countries) + ". Do not align first instance date = True")
 
     main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag)
