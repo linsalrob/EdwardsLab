@@ -4,7 +4,7 @@
 
 This code was written by John Edwards. Rob might make some comments at some point
 
-# COVID-19 Data
+# COVID-19 Data Analysis
 
 This code uses the data from the [European Centre for Disease Prevention and Control](https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide).
 
@@ -22,13 +22,15 @@ Dependencies:
 
 # Running the code
 
-Simply call it with your flavor of python3 and you will see a plot of the latest data:
+Simply call it with your flavor of python3 and you will see a plot of the latest data.
+There are two main programs:
 
 ```bash
 python3 nCoV-Viz.py
+python3 nCoV-BarGraph.py
 ```
 
-The downloaded spreadsheet is stored locally in Covid-19.xlsx
+The programs downloaded the spreadsheet from the above URL and store it locally in Covid-19.csv
 To use cached local spreadsheet, use "-l" option
 
 Intermediate data for Cases/Deaths and also for each country are stored in relevant .csv files
