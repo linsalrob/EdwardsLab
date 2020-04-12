@@ -28,8 +28,8 @@ from bs4 import BeautifulSoup
 topLevelPage  = "https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide"
 localFileName = "Covid-19.csv"
 
-countries = ["China","Germany","Italy","United_Kingdom","United_States_of_America", "Australia"]
-colours   = ["red",  "black",  "green","blue",          "orange",                   "pink"]
+countries = ["China","Germany","Italy","United_Kingdom","United_States_of_America", "Australia", "Spain"]
+colours   = ["red",  "black",  "green","blue",          "orange",                   "pink",       "Violet"]
 country_single = ["United_Kingdom"]             # Default value, can be overwritten
 
 
@@ -114,7 +114,7 @@ def extractAligned(covidData, country, dates, noAlignFlag):
 
 
 # main
-def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
+def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag, fileSavePlotFlag):
     global countries
 
     cachedFilePresentFlag = False
@@ -134,7 +134,8 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
         resp = urllib.request.urlopen(topLevelPage)
         soup = BeautifulSoup(resp, "html.parser", from_encoding=resp.info().get_param('charset'))
 
-        for link in soup.find_all('a', href=True):
+        for link in soup.find_all(class_="btn btn-primary", href=True):
+        # for link in soup.find_all('a', href=True):
             # print(link['href'])
             if ("csv" in link['href']):
                 csvfileurl = link['href']
@@ -151,7 +152,7 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
                 break
 
         if (cachedFilePresentFlag == False):
-            print("No spreadsheet found at the URL")
+            print("No spreadsheet found at the URL, use \"-l\" to use local cached file")
             exit(0)
 
 
@@ -220,8 +221,12 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
                 ax = plt.gca()          # Create plot - get current axis
                 extractedCases[0].plot(kind='line',y=casesType,title=titleStr,label=extractedCountry[0] + ' Cases',color='blue',ax=ax)
                 extractedDeaths[0].plot(kind='line',y=deathsType,title=titleStr,label=extractedCountry[0] + ' Deaths',color='red',ax=ax)
-                plt.show()
 
+                if (fileSavePlotFlag == True):
+                    titleStr = titleStr.split(':', 1)[0]
+                    plt.savefig(titleStr.replace(" ", "")+extractedCountry[0]+'.png')
+
+                plt.show()
 
             else:                       # Multiple countries
                 ax = plt.gca()          # Create plot - get current axis
@@ -229,6 +234,11 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
                 for country in countries:
                     extractedCases[countryIndex].plot(kind='line',y=casesType,title=titleStr,label=extractedCountry[countryIndex],color=colours[countryIndex],ax=ax)
                     countryIndex = countryIndex+1
+
+                if (fileSavePlotFlag == True):
+                    titleStr = titleStr.split(':', 1)[0]
+                    plt.savefig(titleStr.replace(" ", "")+'.png')
+
                 plt.show()
 
                 if (noAlignFlag == True):
@@ -245,8 +255,12 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
                 for country in countries:
                     extractedDeaths[countryIndex].plot(kind='line',y=deathsType,title=titleStr,label=extractedCountry[countryIndex],color=colours[countryIndex],ax=ax)
                     countryIndex = countryIndex+1
-                plt.show()
 
+                if (fileSavePlotFlag == True):
+                    titleStr = titleStr.split(':', 1)[0]
+                    plt.savefig(titleStr.replace(" ", "")+'.png')
+
+                plt.show()
 
                 if (noAlignFlag == True):
                     titleStr=''
@@ -262,6 +276,11 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag):
                 for country in countries:
                     extractedDeaths[countryIndex].plot(kind='line',y=percentageType,title=titleStr,label=extractedCountry[countryIndex],color=colours[countryIndex],ax=ax)
                     countryIndex = countryIndex+1
+
+                if (fileSavePlotFlag == True):
+                    titleStr = titleStr.split(':', 1)[0]
+                    plt.savefig(titleStr.replace(" ", "")+'.png')
+
                 plt.show()
 
     else:
@@ -274,6 +293,7 @@ if __name__ == '__main__':
     cumulativeResultsFlag   = False
     noAlignFlag             = False
     noPlotFlag              = False
+    fileSavePlotFlag            = False
 
     if ((len(countries) > 1) and (len(countries) != len(colours))):
         print("The number of colours must equal the number of countries")
@@ -281,11 +301,12 @@ if __name__ == '__main__':
 
 
     parser = argparse.ArgumentParser(description='Covid-19 Visualizer')
-    parser.add_argument("-c", "--cumulative", action="store_true", help="Display cumulative results")
-    parser.add_argument("-l", "--local",      action="store_true", help="Use local cached Covid-19.csv")
-    parser.add_argument("-n", "--noalign",    action="store_true", help="Do not align first instance dates - all graphs start 2019-12-31")
-    parser.add_argument("-q", "--quiet",      action="store_true", help="Quiet - Do not plot graphs")
-    parser.add_argument("-s", "--single",     nargs='?', const=1,  help="Process a single country - Specify the countriesAndTerritories string used in the spreadsheet")
+    parser.add_argument("-c", "--cumulative",     action="store_true", help="Display cumulative results")
+    parser.add_argument("-l", "--local",          action="store_true", help="Use local cached Covid-19.csv")
+    parser.add_argument("-n", "--noalign",        action="store_true", help="Do not align first instance dates - all graphs start 2019-12-31")
+    parser.add_argument("-q", "--quiet",          action="store_true", help="Quiet - Do not plot graphs")
+    parser.add_argument("-f", "--file",           action="store_true", help="Save plot to file")
+    parser.add_argument("-s", "--single",         nargs='?', const=1,  help="Process a single country - Specify the countriesAndTerritories string used in the spreadsheet")
     args = parser.parse_args()
 
     if (args.cumulative):
@@ -304,6 +325,10 @@ if __name__ == '__main__':
         noPlotFlag = True
         print("Do not plot graphs = True")
 
+    if (args.file):
+        fileSavePlotFlag = True
+        print("Save plot graphs to file = True")
+
     if (args.single):                   # Process single country - if no country specified use default country at top of file
         if (args.single != 1):
             country_single[0] = args.single
@@ -312,4 +337,4 @@ if __name__ == '__main__':
         noAlignFlag = True
         print("Process single country: " + str(countries) + ". Do not align first instance date = True")
 
-    main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag)
+    main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag, fileSavePlotFlag)
