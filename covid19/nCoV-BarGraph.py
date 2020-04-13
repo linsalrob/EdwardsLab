@@ -2,15 +2,9 @@
 
 # Download WHO geographic distribution of COVID-19 cases worldwide
 # Source : European Centre for Disease Prevention and Control
-# Plot cases and deaths for selected countries
+# Plot bar graph of cases and deaths for top N countries (Default N=10 but can be changed on command line)
 # The downloaded spreadsheet is stored locally in Covid-19.csv
 # To use cached local spreadsheet, use "-l" option
-# Intermediate data for cases/deaths and also for each country are stored in relevant .csv files
-# All plots can be aligned to :
-#   First date of detection or death, in that country (default)
-#   First date of detection in China, 2019-12-31 (-n)
-# Data can be plotted as daily values (default) cumulative values (-c)
-# Countries to plot and line colours are specified in the appropriate tables at the top of this file
 
 # Dependencies : pandas, matplotlib, numpy, google-auth-httplib2, beautifulsoup4, xlrd ffmpeg
 
@@ -33,7 +27,7 @@ localFileName = "Covid-19.csv"
 
 
 # Extract cases and deaths and align day 0 to first date of detection or death
-def extractCountries(covidData, desiredColumn, dates):
+def extractCountries(covidData, desiredColumn, dates, popNormalizeFlag):
 
     countryData  = pd.DataFrame(index = dates)      # Create dataframe for country data
 
@@ -48,20 +42,31 @@ def extractCountries(covidData, desiredColumn, dates):
                     # We need to copy it to the new countryData array so that dates are pre-pended back to 2019-12-31
     for country in countriesList:
         countryData_tmp = covidData[covidData["countriesAndTerritories"].str.match(country)].copy()        # Copy desired country
+
+        if (countryData_tmp.dropna().empty == True):    # Drop empty frames
+            continue
+
+        population=countryData_tmp['popData2018'].iloc[0]
+        # print("Country               : " + country)
+        # print("Population (2018)     : %.2f (Million)" % (population / 1000000.))
+
+        countryData_tmp = countryData_tmp.iloc[::-1]    # Invert table - top to bottom
                                                     # Create cumulative cases column and cumulative deaths column - Rename column titles
                                                     # We need to invert table top to bottom and back again to do cumulative sum
-        countryDataCS = countryData_tmp.iloc[::-1]          # Invert table - top to bottom
-        countryDataCS = countryDataCS.cumsum(axis = 0)
-        countryDataCS = countryDataCS.iloc[::-1]            # Invert table - top to bottom
+        countryDataCS = countryData_tmp.cumsum(axis = 0)
         countryDataCS = countryDataCS.rename(columns={"cases": "casesCumulative", "deaths": "deathsCumulative"})
 
                                                     # Copy cumulative columns to countryData
         countryData_tmp['casesCumulative']  = countryDataCS['casesCumulative']
         countryData_tmp['deathsCumulative'] = countryDataCS['deathsCumulative']
 
-        countryData_tmp = countryData_tmp.loc[:, countryData_tmp.columns.intersection([desiredColumn])]   # Delete all columns except desired
+        if ((popNormalizeFlag == True) and (population > 0)):
+            countryData_tmp['cases']            = countryData_tmp['cases']            * (10000000.0 / population)
+            countryData_tmp['deaths']           = countryData_tmp['deaths']           * (10000000.0 / population)
+            countryData_tmp['casesCumulative']  = countryData_tmp['casesCumulative']  * (10000000.0 / population)
+            countryData_tmp['deathsCumulative'] = countryData_tmp['deathsCumulative'] * (10000000.0 / population)
 
-        countryData_tmp = countryData_tmp.iloc[::-1]    # Invert table - top to bottom
+        countryData_tmp = countryData_tmp.loc[:, countryData_tmp.columns.intersection([desiredColumn])]   # Delete all columns except desired
 
 
                                                     # Change column name to Country
@@ -71,6 +76,7 @@ def extractCountries(covidData, desiredColumn, dates):
 
         countryData[country] = countryData_tmp[country]
         countryData=countryData.fillna(0)           # Replace NaN with 0
+
 
                                     # Calculate fatality rates and clip to 100%
     # countryData['fatalityPercentage'] = countryData['deaths'] * 100./countryData['cases']
@@ -142,7 +148,7 @@ def draw_bargraph(i, countryData, nDisplay, title):
 
 
 # main
-def main(nDisplay, useCachedFileFlag, cumulativeResultsFlag, noPlotFlag, fileSavePlotFlag, deathsResultsFlag):
+def main(nDisplay, useCachedFileFlag, cumulativeResultsFlag, noPlotFlag, fileSavePlotFlag, popNormalizeFlag, deathsResultsFlag):
 
     cachedFilePresentFlag = False
 
@@ -201,19 +207,20 @@ def main(nDisplay, useCachedFileFlag, cumulativeResultsFlag, noPlotFlag, fileSav
 
         if (cumulativeResultsFlag == True):
             if (deathsResultsFlag == True):
-                countryData = extractCountries(covidData, "deathsCumulative", dates)
+                countryData = extractCountries(covidData, "deathsCumulative", dates, popNormalizeFlag)
             else:
-                countryData = extractCountries(covidData, "casesCumulative", dates)
+                countryData = extractCountries(covidData, "casesCumulative", dates, popNormalizeFlag)
         else:
             if (deathsResultsFlag == True):
-                countryData = extractCountries(covidData, "deaths", dates)
+                countryData = extractCountries(covidData, "deaths", dates, popNormalizeFlag)
             else:
-                countryData = extractCountries(covidData, "cases", dates)
+                countryData = extractCountries(covidData, "cases", dates, popNormalizeFlag)
 
+        # print(countryData)
         countryData = countryData.rename(columns={"index": "country"})
 
-        dft = countryData.pop('country')            # Remove country column
-        countryData['country']=dft                  # Insert at the end of the dataframe
+        countryColumn = countryData.pop('country')  # Remove country column
+        countryData['country']=countryColumn        # Insert at the end of the dataframe
 
         countryData = countryData.loc[:, '24/01/2020':] # Remove columns up to the given date
 
@@ -225,18 +232,23 @@ def main(nDisplay, useCachedFileFlag, cumulativeResultsFlag, noPlotFlag, fileSav
         numDates = len(dateList)
         print('numDates: ' + str(numDates))
 
-        if (cumulativeResultsFlag == True):
-            if (deathsResultsFlag == True):
-                titleStr = "Cumulative Deaths"
-            else:
-                titleStr = "Cumulative Cases"
-        else:
-            if (deathsResultsFlag == True):
-                titleStr = "Daily Deaths"
-            else:
-                titleStr = "Daily Cases"
+                                                    # Get last date in combinedCases
+        lastDate = str(covidData.first_valid_index())
+        lastDate = lastDate.replace(' 00:00:00','')
 
-        animator = animation.FuncAnimation(fig, draw_bargraph, frames=numDates, fargs=(countryData, nDisplay, titleStr,), interval=250, blit=False)
+        titleStr='Covid-19 '
+        if (popNormalizeFlag == True):
+            titleStr=titleStr + 'Pop Noramlized '
+        if (cumulativeResultsFlag == True):
+            titleStr = titleStr + "Cumulative "
+        else:
+            titleStr = titleStr + "Daily "
+        if (deathsResultsFlag == True):
+            titleStr = titleStr + "Deaths "
+        else:
+            titleStr = titleStr + "Cases "
+
+        animator = animation.FuncAnimation(fig, draw_bargraph, frames=numDates, fargs=(countryData, nDisplay, titleStr + str(lastDate),), interval=250, blit=False)
 
         if (noPlotFlag == False):
             plt.show()
@@ -259,7 +271,8 @@ if __name__ == '__main__':
     deathsResultsFlag       = False
     cumulativeResultsFlag   = False
     noPlotFlag              = False
-    fileSavePlotFlag            = False
+    fileSavePlotFlag        = False
+    popNormalizeFlag        = False
 
 
     parser = argparse.ArgumentParser(description='Covid-19 Comparison')
@@ -269,6 +282,7 @@ if __name__ == '__main__':
     parser.add_argument("-d", "--deaths",         action="store_true", help="Deaths")
     parser.add_argument("-m", "--mortality_rate", action="store_true", help="Mortality rate")
     parser.add_argument("-f", "--file",           action="store_true", help="Save plot to file")
+    parser.add_argument("-p", "--population",     action="store_true", help="Use population to normalize data to cases per 10 Million")
     parser.add_argument("-q", "--quiet",          action="store_true", help="Quiet - Do not plot graphs")
     args = parser.parse_args()
 
@@ -289,12 +303,16 @@ if __name__ == '__main__':
         deathsResultsFlag = True
         print("Deaths Results = True")
 
-    if (args.quiet):
-        noPlotFlag = True
-        print("Do not plot graphs = True")
-
     if (args.file):
         fileSavePlotFlag = True
         print("Save plot graphs to file = True")
 
-    main(nDisplay, useCachedFileFlag, cumulativeResultsFlag, noPlotFlag, fileSavePlotFlag, deathsResultsFlag)
+    if (args.population):
+        popNormalizeFlag = True
+        print("Normalize to population = True")
+
+    if (args.quiet):
+        noPlotFlag = True
+        print("Do not plot graphs = True")
+
+    main(nDisplay, useCachedFileFlag, cumulativeResultsFlag, noPlotFlag, fileSavePlotFlag, popNormalizeFlag, deathsResultsFlag)
