@@ -45,5 +45,5 @@ Countries to plot and line colours are specified in the appropriate tables at th
 
 For full help use the -h command.
 
-
+The plots can be viewed here, with daily updates : https://johned0.github.io/covid-19/
 
