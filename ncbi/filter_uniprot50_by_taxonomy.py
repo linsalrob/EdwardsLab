@@ -10,7 +10,7 @@ import sys
 import argparse
 import re
 
-from roblib import colour, stream_fasta
+from roblib import colours, stream_fasta
 from taxon import get_taxonomy_db, get_taxonomy
 
 __author__ = 'Rob Edwards'
@@ -39,7 +39,7 @@ def find_rank(tid, trank, tdb, verbose=False):
     if t.rank == trank:
         return n
     if verbose:
-        sys.stderr.write(f"{colour.PINK}ERROR: No rank for {tid}\n{colour.ENDC}")
+        sys.stderr.write(f"{colours.PINK}ERROR: No rank for {tid}\n{colours.ENDC}")
 
     return "root"
 
@@ -66,7 +66,7 @@ def fasta2tax(faf, outdir, trank, tdb, verbose=False):
                 fhs[rnk] = open(os.path.join(outdir, rnk + ".fasta"), 'w')
             fhs[rnk].write(f">{seqid}\n{seq}\n")
         else:
-            sys.stderr.write(f"{colour.RED}ERROR: No taxonomy in {seqid}{colour.ENDC}\n")
+            sys.stderr.write(f"{colours.RED}ERROR: No taxonomy in {seqid}{colours.ENDC}\n")
 
     for fh in fhs:
         fhs[fh].close()
@@ -77,7 +77,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', help='uniref file to filter', required=True)
     parser.add_argument('-d', help='output directory', required=True)
     parser.add_argument('-t', required=True,
-                        help='Taxonomic rank should probably be one of: ' . ';'.join(want))
+                        help='Taxonomic rank should probably be one of: ' + ';'.join(want))
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
@@ -85,3 +85,4 @@ if __name__ == '__main__':
     tdb = get_taxonomy_db()
 
     fasta2tax(args.f, args.d, args.t, tdb, args.v)
+
