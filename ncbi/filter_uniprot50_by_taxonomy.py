@@ -46,7 +46,7 @@ def find_rank(tid, trank, tdb, verbose=False):
         t, n = get_taxonomy(t.parent, tdb)
     if t.taxid in id2rank:
         for s in seenids:
-            id2rank[s] = n.scientific_name
+            id2rank[s] = id2rank[t.taxid]
         return id2rank[t.taxid]
     if t.rank == trank:
         for s in seenids:
@@ -96,6 +96,8 @@ if __name__ == '__main__':
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
+    if not os.path.exists(args.d):
+        os.makedirs(args.d, exist_ok=True)
 
     tdb = get_taxonomy_db()
 
