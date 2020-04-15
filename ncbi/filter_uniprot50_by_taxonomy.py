@@ -23,6 +23,8 @@ __email__ = 'raedwards@gmail.com'
 want = ['species', 'genus', 'family', 'order', 'class', 'phylum', 'kingdom']
 
 
+id2rank = {1 : "root", 131567: "cellular_organisms"}
+
 def find_rank(tid, trank, tdb, verbose=False):
     """
     Find the value for trank starting at tid.
@@ -32,13 +34,24 @@ def find_rank(tid, trank, tdb, verbose=False):
     :param verbose: More output
     :return: the taxonomic rank for tid or root if it is not found
     """
+    global id2rank
+    if tid in id2rank:
+        return id2rank[tid]
+
+    seenids = set()
 
     t,n = get_taxonomy(tid, tdb)
-    while t.parent != 1 and t.taxid != 1 and t.rank != trank:
+    while t.parent != 1 and t.taxid != 1 and t.rank != trank and t.taxid not in id2rank:
+        seenids.add(t.taxid)
         t, n = get_taxonomy(t.parent, tdb)
-    if t.taxid == 1 or t.taxid == 131567:
-        return "root"
+    if t.taxid in id2rank:
+        for s in seenids:
+            id2rank[s] = n.scientific_name
+        return id2rank[t.taxid]
     if t.rank == trank:
+        for s in seenids:
+            id2rank[s] = n.scientific_name
+        id2rank[tid] = n.scientific_name
         return n.scientific_name
     if verbose:
         sys.stderr.write(f"{colours.PINK}ERROR: No rank for {tid}\n{colours.ENDC}")
