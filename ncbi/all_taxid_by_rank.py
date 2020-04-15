@@ -59,4 +59,3 @@ if __name__ == '__main__':
     c = get_taxonomy_db()
     for i in all_ids(c, args.v):
         print(f"{i}\t{find_rank(i, args.t, c, args.v)}")
-    

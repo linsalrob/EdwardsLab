@@ -10,7 +10,7 @@ import argparse
 from .taxonomy import TaxonNode, TaxonName, TaxonDivision
 from .Error import EntryNotInDatabaseError
 from roblib import bcolors
-
+import time
 
 data = {"node": {}, "name": {}, "division": {}}
 default_database = "/raid60/usr/data/NCBI/taxonomy/current/taxonomy.sqlite3"
@@ -229,7 +229,9 @@ def all_ids(conn, verbose=False):
     cur = conn.cursor()
     sys.stderr.write(f"{bcolors.YELLOW}Collecting all the data. Please stand by.\n{bcolors.ENDC}")
     sys.stderr.write(f"{bcolors.RED}Warning, this will take a long time!!.\n{bcolors.ENDC}")
+    s = time.time()
     exc = cur.execute("select * from nodes")
+    sys.stderr.write(f"{bcolors.GREEN}Done in {time.time() - s} seconds!.\n{bcolors.ENDC}")
     return exc.fetchall()
 
 if __name__ == '__main__':
