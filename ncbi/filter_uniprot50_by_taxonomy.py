@@ -36,8 +36,10 @@ def find_rank(tid, trank, tdb, verbose=False):
     t,n = get_taxonomy(tid, tdb)
     while t.parent != 1 and t.taxid != 1 and t.rank != trank:
         t, n = get_taxonomy(t.parent, tdb)
+    if t.taxid == 1 or t.taxid == 131567:
+        return "root"
     if t.rank == trank:
-        return n
+        return n.scientific_name
     if verbose:
         sys.stderr.write(f"{colours.PINK}ERROR: No rank for {tid}\n{colours.ENDC}")
 
