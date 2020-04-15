@@ -190,7 +190,7 @@ def taxonomy_hierarchy(tid, verbose=False):
         yield data['node'][tid].parent
         tid = data['node'][tid].parent
 
-def all_ids(conn, protein=False, verbose=False):
+def all_ids_complete(conn, protein=False, verbose=False):
     """
     Get all the available IDs in the database
     :param conn: the database connection
@@ -218,8 +218,19 @@ def all_ids(conn, protein=False, verbose=False):
     sys.stderr.write(f"{bcolors.GREEN}Done.\n{bcolors.ENDC}")
     return t, n
 
+def all_ids(conn, verbose=False):
+    """
+    Just return a list of all taxonomy IDs
+    :param conn: database connection
+    :param verbose: more output
+    :return: a list of just the taxonomy IDs
+    """
 
-
+    cur = conn.cursor()
+    sys.stderr.write(f"{bcolors.YELLOW}Collecting all the data. Please stand by.\n{bcolors.ENDC}")
+    sys.stderr.write(f"{bcolors.RED}Warning, this will take a long time!!.\n{bcolors.ENDC}")
+    exc = cur.execute("select * from nodes")
+    return exc.fetchall()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Get data from the database")
