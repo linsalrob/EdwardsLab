@@ -66,11 +66,16 @@ def focus_counts(data_directory, verbose=False):
         count[sample] = {}
         if os.path.exists(os.path.join(data_directory, sample, "focus", "output_All_levels.csv")):
             with open(os.path.join(data_directory, sample, "focus", "output_All_levels.csv"), 'r') as fin:
+                lastcol = -1
                 for l in fin:
                     if l.startswith('Kingdom'):
+                        if 'pass_1.fasta'in l and 'pass_2.fasta' in l:
+                            lastcol = -2
                         continue
                     l = l.strip()
-                    tax = ":".join(l.split(",")[0:-1])
+                    tax = ":".join(l.split(",")[0:lastcol])
+                    # note that even if we split the tax to the previous column
+                    # we use R2 for the reads then it is consistent with the sf output :)
                     count[sample][tax] = l.split(",")[-1]
                     allfocus.add(tax)
     return count, allfocus
