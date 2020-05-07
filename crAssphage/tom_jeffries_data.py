@@ -138,6 +138,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', help='coverage file', required=True)
     parser.add_argument('-d', help='data directory', required=True)
     parser.add_argument('-o', help='output file base name. Stuff will be appended to this', required=True)
+    parser.add_argument('-l', help='subsystem level (1,2, or 3) (default = 3)', type=int, default=3)
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
