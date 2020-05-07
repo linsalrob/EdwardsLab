@@ -71,11 +71,13 @@ def focus_counts(data_directory, verbose=False):
                     if l.startswith('Kingdom'):
                         if '_pass.fasta' in l and '_pass_1.fasta'in l and '_pass_2.fasta' in l:
                             lastcol = -3
-                        if '_pass_1.fasta'in l and '_pass_2.fasta' in l:
+                        elif '_pass_1.fasta'in l and '_pass_2.fasta' in l:
                             lastcol = -2
                         continue
                     l = l.strip()
                     tax = ":".join(l.split(",")[0:lastcol])
+                    if '0' in tax:
+                        message(f"Error. Did not parse {l} from {sample} when lastcol was {lastcol}", "RED")
                     # note that even if we split the tax to the previous column
                     # we use R2 for the reads then it is consistent with the sf output :)
                     count[sample][tax] = l.split(",")[-1]
