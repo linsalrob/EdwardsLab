@@ -14,7 +14,7 @@ from .blast import stream_blast_results
 from .translate import translate_dna
 from .bcolors import bcolors
 from .rob_error import SequencePairError, FastqFormatError
-from .colours import colours, colors
+from .colours import colours, colors, message
 
 __all__ = [
     'mean', 'median', 'stdev',
@@ -24,6 +24,6 @@ __all__ = [
     'ascii_clean', 'is_hypothetical', 'Newick_Tree', 'parse_dnadist',
     'stream_blast_results',
     'translate_dna',
-    'bcolors', 'colours', 'colors',
+    'bcolors', 'colours', 'colors', 'message',
     'SequencePairError', 'FastqFormatError'
     ]
