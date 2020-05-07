@@ -92,3 +92,5 @@ def confidence_intervals(arr, stdevs=2):
     mn = mean(arr)
     st = stdev(arr)
     return confidence_interval_calcs(mn, st, len(arr), stdevs)
+
+
