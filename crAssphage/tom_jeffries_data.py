@@ -76,7 +76,7 @@ def focus_counts(data_directory, verbose=False):
                         continue
                     l = l.strip()
                     tax = ":".join(l.split(",")[0:lastcol])
-                    if ',0' in tax:
+                    if ':0' in tax:
                         message(f"Error parsing {sample} when lastcol was {lastcol}", "RED")
                         message(f"{l}", "BLUE")
                         message(f"{tax}", "PINK")
