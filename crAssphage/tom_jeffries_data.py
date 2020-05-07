@@ -59,6 +59,7 @@ def abricate_counts(data_directory, verbose=False):
 def focus_counts(data_directory, verbose=False):
     """ find the focus output and read it"""
     count = {}
+    allfocus = set()
     for sample in os.listdir(data_directory):
         if verbose:
             message(f"Focus: {sample}", "BLUE")
