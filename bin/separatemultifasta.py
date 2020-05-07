@@ -1,5 +1,7 @@
-"""
+#!/usr/bin/env python
 
+"""
+Separate a multi-fasta file into separate files in a directory
 """
 
 import os

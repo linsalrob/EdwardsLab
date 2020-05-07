@@ -37,16 +37,17 @@ if __name__ == "__main__":
     idmap = open(args.i, 'w')
     out = open(args.o, 'w')
 
-    for f in args.f:
-        if args.v:
-            sys.stderr.write(f"{bcolors.GREEN}Reading {f}{bcolors.ENDC}\n")
-        fa = read_fasta(f)
-        for id in fa:
-            counter += 1
-            out.write(">{}\n{}\n".format(counter, fa[id]))
-            idmap.write("{}\t{}\t{}".format(f, id, counter))
-            if args.x and (counter - (args.n-2)) > args.x:
-                break
+    if args.f:
+        for f in args.f:
+            if args.v:
+                sys.stderr.write(f"{bcolors.GREEN}Reading {f}{bcolors.ENDC}\n")
+            fa = read_fasta(f)
+            for id in fa:
+                counter += 1
+                out.write(">{}\n{}\n".format(counter, fa[id]))
+                idmap.write("{}\t{}\t{}\n".format(f, id, counter))
+                if args.x and (counter - (args.n-2)) > args.x:
+                    break
 
     if args.d:
         for d in args.d:
@@ -59,7 +60,7 @@ if __name__ == "__main__":
                 for id in fa:
                     counter += 1
                     out.write(">{}\n{}\n".format(counter, fa[id]))
-                    idmap.write("{}\t{}\t{}".format(f, id, counter))
+                    idmap.write("{}\t{}\t{}\n".format(f, id, counter))
                     if args.x and (counter - (args.n - 2)) > args.x:
                         break
 
