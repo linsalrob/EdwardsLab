@@ -77,7 +77,10 @@ def focus_counts(data_directory, verbose=False):
                     l = l.strip()
                     tax = ":".join(l.split(",")[0:lastcol])
                     if '0' in tax:
-                        message(f"Error. Did not parse {l} from {sample} when lastcol was {lastcol}", "RED")
+                        message(f"Error parsing {sample} when lastcol was {lastcol}", "RED")
+                        message(f"{l}", "BLUE")
+                        message(f"{l.split(',')}", "GREEN")
+                        sys.exit()
                     # note that even if we split the tax to the previous column
                     # we use R2 for the reads then it is consistent with the sf output :)
                     count[sample][tax] = l.split(",")[-1]
