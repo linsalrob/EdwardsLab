@@ -115,13 +115,13 @@ def superfocus_counts(data_directory, level=3, verbose=False):
 def write_file(samples, counts, allkeys, file, verbose=False):
     """ Write the appropriate output files"""
 
-    ak = sorted(allkeys)
+    ak = sorted(list(allkeys))
 
     if verbose:
         message(f"Writing to {file}", "GREEN")
 
     with open(file, 'w') as out:
-        out.write("\t".join(["Sample"] + [ak]))
+        out.write("\t".join(["Sample"] + ak))
         out.write("\n")
         for s in samples:
             out.write(s)
