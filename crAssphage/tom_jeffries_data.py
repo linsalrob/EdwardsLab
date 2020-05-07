@@ -42,7 +42,7 @@ def abricate_counts(data_directory, verbose=False):
     allabr = set()
     for sample in os.listdir(data_directory):
         if verbose:
-            message("Abricate: {sample}", "PINK")
+            message(f"Abricate: {sample}", "PINK")
         count[sample] = {}
         if os.path.exists(os.path.join(data_directory, sample, "abricate")):
             for f in os.listdir(os.path.join(data_directory, sample, "abricate")):
@@ -61,7 +61,7 @@ def focus_counts(data_directory, verbose=False):
     count = {}
     for sample in os.listdir(data_directory):
         if verbose:
-            message("Focus: {sample}", "BLUE")
+            message(f"Focus: {sample}", "BLUE")
         count[sample] = {}
         if os.path.exists(os.path.join(data_directory, sample, "focus", "output_All_levels.csv")):
             with open(os.path.join(data_directory, sample, "focus", "output_All_levels.csv"), 'r') as fin:
@@ -88,7 +88,7 @@ def superfocus_counts(data_directory, level=3, verbose=False):
 
     for sample in os.listdir(data_directory):
         if verbose:
-            message("Super focus: {sample}", "YELLOW")
+            message(f"Super focus: {sample}", "YELLOW")
         count[sample] = {}
         sffile = os.path.join(data_directory, sample, "sf", f"{sample}all_levels_and_function.xls")
         if os.path.exists(sffile):
