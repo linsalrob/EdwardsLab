@@ -158,8 +158,8 @@ if __name__ == '__main__':
         args.l = 3
 
     coverage = crassphage_coverage(args.c, args.v)
-    abricate, allabricate = abricate_counts(args.d, args.v)
     focus, allfocus = focus_counts(args.d, args.v)
+    abricate, allabricate = abricate_counts(args.d, args.v)
     sf, allsf = superfocus_counts(args.d, args.l, args.v)
 
     # now get all the samples that are in abricate, focus, or sf
