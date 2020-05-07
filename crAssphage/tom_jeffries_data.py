@@ -69,6 +69,7 @@ def focus_counts(data_directory, verbose=False):
                 for l in fin:
                     if l.startswith('Kingdom'):
                         continue
+                    l = l.strip()
                     tax = ":".join(l.split(",")[0:-1])
                     count[sample][tax] = l.split(",")[-1]
                     allfocus.add(tax)
