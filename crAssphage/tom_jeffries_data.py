@@ -69,7 +69,9 @@ def focus_counts(data_directory, verbose=False):
                 lastcol = -1
                 for l in fin:
                     if l.startswith('Kingdom'):
-                        if 'pass_1.fasta'in l and 'pass_2.fasta' in l:
+                        if '_pass.fasta' in l and '_pass_1.fasta'in l and '_pass_2.fasta' in l:
+                            lastcol = -3
+                        if '_pass_1.fasta'in l and '_pass_2.fasta' in l:
                             lastcol = -2
                         continue
                     l = l.strip()
@@ -118,7 +120,7 @@ def superfocus_counts(data_directory, level=3, verbose=False):
                     allsslvl.add(sslvl)
     return count, allsslvl
 
-def write_file(samples, counts, allkeys, file, verbose=False):
+def write_file(definition, samples, counts, allkeys, file, verbose=False):
     """ Write the appropriate output files"""
 
     ak = sorted(list(allkeys))
@@ -127,10 +129,10 @@ def write_file(samples, counts, allkeys, file, verbose=False):
         message(f"Writing to {file}", "GREEN")
 
     with open(file, 'w') as out:
-        out.write("\t".join(["Sample"] + ak))
+        out.write("\t".join(["Definition", "Sample"] + ak))
         out.write("\n")
         for s in samples:
-            out.write(s)
+            out.write(f"{definition}\t{s}")
             for k in ak:
                 if k in counts[s]:
                     out.write(f"\t{counts[s][k]}")
@@ -172,10 +174,29 @@ if __name__ == '__main__':
         message("Writing coverage", "GREEN")
 
     with open(f"{args.o}.coverage.tsv", 'w') as out:
-        out.write("Sample\tCoverage\n")
+        out.write("Definition\tMeasure\t")
+        out.write("\t".join(sortedsamples))
+        out.write("\nCoverage\tCoverage\t")
         for k in sortedsamples:
-            out.write(f"{k}\t{coverage[k]}\n")
+            if k in coverage:
+                out.write(f"\t{coverage[k]}")
+            else:
+                out.write("\t0")
+        out.write("\n")
 
-    write_file(sortedsamples, abricate, allabricate, f"{args.o}.abricate.tsv", args.v)
-    write_file(sortedsamples, focus, allfocus, f"{args.o}.focus.tsv", args.v)
-    write_file(sortedsamples, sf, allsf, f"{args.o}.superfocus.tsv", args.v)
+    write_file("Abricate genes", sortedsamples, abricate, allabricate, f"{args.o}.abricate_genes.tsv", args.v)
+
+    # convert abricate output to abricate programs
+    abprog = {}
+    allabprog = set()
+    for k in abricate:
+        abprog[k] = {}
+        for a in abricate[k]:
+            (prg, gene) = a.split(":")
+            abprog[k][prg] = abprog[k].get(prg, 0) + abricate[k][a]
+            allabprog.add(prg)
+    write_file("Abricate program", sortedsamples, abprog, allabprog, f"{args.o}.abricate_progs.tsv", args.v)
+
+    write_file("Focus strains", sortedsamples, focus, allfocus, f"{args.o}.focus_strains.tsv", args.v)
+
+    write_file(f"Superfocus level {args.l}", sortedsamples, sf, allsf, f"{args.o}.superfocus_level_{args.l}.tsv", args.v)
