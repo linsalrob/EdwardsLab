@@ -154,6 +154,7 @@ if __name__ == '__main__':
     parser.add_argument('-d', help='data directory', required=True)
     parser.add_argument('-o', help='output file base name. Stuff will be appended to this', required=True)
     parser.add_argument('-l', help='subsystem level (1,2, or 3) (default = 3)', type=int, default=3)
+    parser.add_argument('-x', help='DEBUGGING: Run one step only (currently focus)')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
@@ -163,8 +164,13 @@ if __name__ == '__main__':
 
     coverage = crassphage_coverage(args.c, args.v)
     focus, allfocus = focus_counts(args.d, args.v)
-    abricate, allabricate = abricate_counts(args.d, args.v)
-    sf, allsf = superfocus_counts(args.d, args.l, args.v)
+    abricate = {}
+    sf = {}
+    if args.x:
+        message("Skipped abricate/sf", "RED")
+    else:
+        abricate, allabricate = abricate_counts(args.d, args.v)
+        sf, allsf = superfocus_counts(args.d, args.l, args.v)
 
     # now get all the samples that are in abricate, focus, or sf
     samples = set(abricate.keys())
