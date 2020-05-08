@@ -119,7 +119,7 @@ def superfocus_counts(data_directory, level=3, verbose=False):
                         continue
                     p = l.strip().split("\t")
                     if level == 1:
-                        sslvl = [0]
+                        sslvl = p[0]
                     elif level == 2:
                         sslvl = ":".join([p[0], p[1]])
                     else:
