@@ -147,7 +147,7 @@ def write_file(definition, samples, counts, allkeys, file, verbose=False):
                     out.write(f"\t{counts[k][m]}")
                 else:
                     out.write("\t0")
-        out.write("\n")
+            out.write("\n")
 
 
 if __name__ == '__main__':
