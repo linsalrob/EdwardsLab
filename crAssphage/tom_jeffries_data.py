@@ -56,7 +56,7 @@ def abricate_counts(data_directory, verbose=False):
     return count, allabr
 
 
-def focus_counts(data_directory, verbose=False):
+def focus_counts(data_directory, taxlevel, verbose=False):
     """ find the focus output and read it"""
     count = {}
     allfocus = set()
@@ -75,16 +75,18 @@ def focus_counts(data_directory, verbose=False):
                             lastcol = -2
                         continue
                     l = l.strip()
-                    tax = ":".join(l.split(",")[0:lastcol])
-                    if ':0' in tax:
+                    taxparts = l.split(",")[0:lastcol]
+                    if len(taxparts) != 8:
                         message(f"Error parsing {sample} when lastcol was {lastcol}", "RED")
                         message(f"{l}", "BLUE")
-                        message(f"{tax}", "PINK")
+                        message(f"{taxparts}", "PINK")
                         message(f"{l.split(',')}", "GREEN")
                         sys.exit()
                     # note that even if we split the tax to the previous column
                     # we use R2 for the reads then it is consistent with the sf output :)
-                    count[sample][tax] = l.split(",")[-1]
+
+                    tax = ":".join(taxparts[0:taxlevel])
+                    count[sample][tax] = count[sample].get(tax, 0) + float(l.split(",")[-1])
                     allfocus.add(tax)
     return count, allfocus
 
@@ -149,31 +151,31 @@ def write_file(definition, samples, counts, allkeys, file, verbose=False):
 
 
 if __name__ == '__main__':
+
+    focustax = {1: 'Domain', 2: 'Kingdom', 3: 'Phylym', 4: 'Class', 5: 'Order', 6: 'Family', 7: 'Genus', 8: 'Species'}
+
     parser = argparse.ArgumentParser(description=" ")
     parser.add_argument('-c', help='coverage file', required=True)
     parser.add_argument('-d', help='data directory', required=True)
     parser.add_argument('-o', help='output file base name. Stuff will be appended to this', required=True)
-    parser.add_argument('-l', help='subsystem level (1,2, or 3) (default = 3)', type=int, default=3)
-    parser.add_argument('-x', help='DEBUGGING: Run one step only (currently focus)', action='store_true')
+    parser.add_argument('-f', help=f'focus taxonomic level. Must be one of {focustax} (default=7)', type=int, default=7)
+    parser.add_argument('-s', help='subsystem level (1,2, or 3) (default = 3)', type=int, default=3)
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    if args.l < 1 or args.l > 3:
-        message(f"Error: No subsystem level {args.l}. Defaulting to 3", "RED")
-        args.l = 3
+    if args.s < 1 or args.s > 3:
+        message(f"Error: No subsystem level {args.s}. Defaulting to 3", "RED")
+        args.s = 3
+
+    if args.f not in focustax:
+        message(f"{args.f} is not valid for focus taxonomy. It must be an integer between 1 and 8 in {focustax}", "RED")
+        sys.exit()
 
     coverage = crassphage_coverage(args.c, args.v)
-    focus, allfocus = focus_counts(args.d, args.v)
-    abricate = {}
-    allabricate = set()
-    sf = {}
-    allsf = set()
+    focus, allfocus = focus_counts(args.d, args.f, args.v)
 
-    if args.x:
-        message("Skipped abricate/sf", "RED")
-    else:
-        abricate, allabricate = abricate_counts(args.d, args.v)
-        sf, allsf = superfocus_counts(args.d, args.l, args.v)
+    abricate, allabricate = abricate_counts(args.d, args.v)
+    sf, allsf = superfocus_counts(args.d, args.s, args.v)
 
     # now get all the samples that are in abricate, focus, or sf
     samples = set(abricate.keys())
@@ -212,6 +214,6 @@ if __name__ == '__main__':
             allabprog.add(prg)
     write_file("Abricate program", sortedsamples, abprog, allabprog, f"{args.o}.abricate_progs.tsv", args.v)
 
-    write_file("Focus strains", sortedsamples, focus, allfocus, f"{args.o}.focus_strains.tsv", args.v)
+    write_file(f"Focus {focustax[args.f]}", sortedsamples, focus, allfocus, f"{args.o}.focus_{focustax[args.f]}.tsv", args.v)
 
     write_file(f"Superfocus level {args.l}", sortedsamples, sf, allsf, f"{args.o}.superfocus_level_{args.l}.tsv", args.v)
