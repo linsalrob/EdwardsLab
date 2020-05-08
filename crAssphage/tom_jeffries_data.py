@@ -152,7 +152,7 @@ def write_file(definition, samples, counts, allkeys, file, verbose=False):
 
 if __name__ == '__main__':
 
-    focustax = {1: 'Domain', 2: 'Kingdom', 3: 'Phylym', 4: 'Class', 5: 'Order', 6: 'Family', 7: 'Genus', 8: 'Species'}
+    focustax = {1: 'Domain', 2: 'Kingdom', 3: 'Phylum', 4: 'Class', 5: 'Order', 6: 'Family', 7: 'Genus', 8: 'Species'}
 
     parser = argparse.ArgumentParser(description=" ")
     parser.add_argument('-c', help='coverage file', required=True)
