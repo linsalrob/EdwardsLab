@@ -131,23 +131,23 @@ def superfocus_counts(data_directory, level=3, verbose=False):
 def write_file(definition, samples, counts, allkeys, file, verbose=False):
     """ Write the appropriate output files"""
 
-    ak = sorted(list(allkeys))
+    allmeasures = sorted(list(allkeys))
 
     if verbose:
         message(f"Writing to {file}", "GREEN")
 
     with open(file, 'w') as out:
-        out.write("\t".join(["Definition", "Sample"] + ak))
+        out.write("Definition\tMeasure\t")
+        out.write("\t".join(sortedsamples))
         out.write("\n")
-        for s in samples:
-            out.write(f"{definition}\t{s}")
-            for k in ak:
-                if k in counts[s]:
-                    out.write(f"\t{counts[s][k]}")
+        for m in allmeasures:
+            out.write(f"{definition}\t{m}")
+            for k in sortedsamples:
+                if k in counts and m in counts[k]:
+                    out.write(f"\t{counts[k][m]}")
                 else:
                     out.write("\t0")
-            out.write("\n")
-
+        out.write("\n")
 
 
 if __name__ == '__main__':
@@ -216,4 +216,4 @@ if __name__ == '__main__':
 
     write_file(f"Focus {focustax[args.f]}", sortedsamples, focus, allfocus, f"{args.o}.focus_{focustax[args.f]}.tsv", args.v)
 
-    write_file(f"Superfocus level {args.l}", sortedsamples, sf, allsf, f"{args.o}.superfocus_level_{args.l}.tsv", args.v)
+    write_file(f"Superfocus level {args.s}", sortedsamples, sf, allsf, f"{args.o}.superfocus_level_{args.l}.tsv", args.v)
