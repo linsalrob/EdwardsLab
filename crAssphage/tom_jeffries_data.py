@@ -161,6 +161,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', help=f'focus taxonomic level. Must be one of {focustax} (default=7)', type=int, default=7)
     parser.add_argument('-s', help='subsystem level (1,2, or 3) (default = 3)', type=int, default=3)
     parser.add_argument('-v', help='verbose output', action='store_true')
+    parser.add_argument('-a', help='Run all focus and superfocus levels. This is not coded efficiently, so use sparingly!', action='store_true')
     args = parser.parse_args()
 
     if args.s < 1 or args.s > 3:
@@ -214,6 +215,17 @@ if __name__ == '__main__':
             allabprog.add(prg)
     write_file("Abricate program", sortedsamples, abprog, allabprog, f"{args.o}.abricate_progs.tsv", args.v)
 
-    write_file(f"Focus {focustax[args.f]}", sortedsamples, focus, allfocus, f"{args.o}.focus_{focustax[args.f]}.tsv", args.v)
+    if args.a:
+        for lvl in range(1,9):
+            focus, allfocus = focus_counts(args.d, lvl, args.v)
+            write_file(f"Focus {focustax[lvl]}", sortedsamples, focus, allfocus,
+                       f"{args.o}.focus_{focustax[lvl]}.tsv", args.v)
 
-    write_file(f"Superfocus level {args.s}", sortedsamples, sf, allsf, f"{args.o}.superfocus_level_{args.l}.tsv", args.v)
+        for lvl in 1, 2, 3:
+            sf, allsf = superfocus_counts(args.d, lvl, args.v)
+            write_file(f"Superfocus level {lvl}", sortedsamples, sf, allsf,
+                       f"{args.o}.superfocus_level_{lvl}.tsv", args.v)
+    else:
+        write_file(f"Focus {focustax[args.f]}", sortedsamples, focus, allfocus, f"{args.o}.focus_{focustax[args.f]}.tsv", args.v)
+        write_file(f"Superfocus level {args.s}", sortedsamples, sf, allsf, f"{args.o}.superfocus_level_{args.s}.tsv", args.v)
+
