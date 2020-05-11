@@ -28,8 +28,10 @@ from bs4 import BeautifulSoup
 topLevelPage  = "https://www.ecdc.europa.eu/en/publications-data/download-todays-data-geographic-distribution-covid-19-cases-worldwide"
 localFileName = "Covid-19.csv"
 
-countries = ["China","Germany","Italy","United_Kingdom","United_States_of_America", "Australia", "Spain",   "Sweden"]
-colours   = ["red",  "black",  "green","blue",          "orange",                   "pink",       "Violet", "grey"]
+# countries = ["China","Germany","Italy","United_Kingdom","United_States_of_America", "Australia", "Spain",   "Sweden"]
+# colours   = ["red",  "black",  "green","blue",          "orange",                   "pink",      "Violet",  "grey"]
+countries = ["China","Germany","Italy","United_Kingdom","United_States_of_America", "Australia"]
+colours   = ["red",  "black",  "green","blue",          "orange",                   "pink"]
 country_single = ["United_Kingdom"]             # Default value, can be overwritten
 
 
@@ -46,11 +48,18 @@ def extractCountries(covidData, country, dates, noAlignFlag):
     countryData[list(countryData_tmp.columns.values)] = countryData_tmp[list(countryData_tmp.columns.values)]
     countryData=countryData.fillna(0)               # Replace NaN with 0
 
+#    countryFileName = country + '.csv'
+#    # countryData.to_csv (countryFileName, index = False, header=True)
+#    countryData.to_csv (countryFileName, index = True, header=True)
+
                                     # Fill columns : countriesAndTerritories geoId countryterritoryCode  popData2018
     countryData['countriesAndTerritories'] = countryData['countriesAndTerritories'].iloc[-1]
     countryData['geoId']                   = countryData['geoId'].iloc[-1]
     countryData['countryterritoryCode']    = countryData['countryterritoryCode'].iloc[-1]
     countryData['popData2018']             = countryData['popData2018'].iloc[-1]
+
+                                    # Replace NaN with 0
+    countryData=countryData.fillna(0)
 
                                     # Create cumulative cases column and cumulative deaths column - Rename column titles
     countryDataCS = countryData.cumsum(axis = 0)
@@ -60,16 +69,19 @@ def extractCountries(covidData, country, dates, noAlignFlag):
     countryData['casesCumulative']  = countryDataCS['casesCumulative']
     countryData['deathsCumulative'] = countryDataCS['deathsCumulative']
 
-                                    # Replace NaN with 0
-    countryData=countryData.fillna(0)
+                                    # Calculate moving averages
+    countryData['casesMA'] = countryData['cases'].rolling(7).mean()
+    countryData['deathsMA'] = countryData['deaths'].rolling(7).mean()
+    countryData['casesCumulativeMA'] = countryData['casesCumulative'].rolling(7).mean()
+    countryData['deathsCumulativeMA'] = countryData['deathsCumulative'].rolling(7).mean()
 
                                     # Calculate fatality rates and clip to 100%
     countryData['fatalityPercentage'] = countryData['deaths'] * 100./countryData['cases']
-    countryData['fatalityPercentage']=countryData['fatalityPercentage'].where(countryData['fatalityPercentage'] <= 100., 100.)
+    countryData['fatalityPercentage'] = countryData['fatalityPercentage'].where(countryData['fatalityPercentage'] <= 100., 100.)
     countryData.loc[countryData.cases == 0, "fatalityPercentage"] = 0                           # When cases 0= 0 set percentage to 0
 
     countryData['fatalityPercentageCumulative'] = countryData['deathsCumulative'] * 100./countryData['casesCumulative']
-    countryData['fatalityPercentageCumulative']=countryData['fatalityPercentageCumulative'].where(countryData['fatalityPercentageCumulative'] <= 100., 100.)
+    countryData['fatalityPercentageCumulative'] = countryData['fatalityPercentageCumulative'].where(countryData['fatalityPercentageCumulative'] <= 100., 100.)
     countryData.loc[countryData.casesCumulative == 0, "fatalityPercentageCumulative"] = 0       # When cases 0= 0 set percentage to 0
 
     outputFileName = country + ".csv"
@@ -141,16 +153,24 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag, file
             # print(link['href'])
             if ("csv" in link['href']):
                 csvfileurl = link['href']
-                urllib.request.urlretrieve(csvfileurl, localFileName)
-                cachedFilePresentFlag = True
-                print("Cached file updated")
+                try:
+                    urllib.request.urlretrieve(csvfileurl, localFileName)
+                    cachedFilePresentFlag = True
+                    print("Cached spreadheet updated")
+                except:
+                    cachedFilePresentFlag = False
+                    print("Spreadheet failed to download")
                 break
             elif ("xlsx" in link['href']):              # If data in .xlsx format then retrieve and store as local .csv format
                 xlsxfileurl = link['href']
-                xlsx_tmp = pd.read_excel(xlsxfileurl, index_col=0)
-                xlsx_tmp.to_csv(localFileName, index=True)
-                cachedFilePresentFlag = True
-                print("Cached file updated")
+                try:
+                    xlsx_tmp = pd.read_excel(xlsxfileurl, index_col=0)
+                    xlsx_tmp.to_csv(localFileName, index=True)
+                    cachedFilePresentFlag = True
+                    print("Cached spreadheet updated")
+                except:
+                    cachedFilePresentFlag = False
+                    print("Spreadheet failed to download")
                 break
 
         if (cachedFilePresentFlag == False):
@@ -192,14 +212,18 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag, file
             # print(extractedDeaths)
 
             if (popNormalizeFlag == True):
-                extractedCases[countryIndex]['cases']            = extractedCases[countryIndex]['cases']            * (10000000.0 / extractedPopulation[countryIndex])
-                extractedCases[countryIndex]['deaths']           = extractedCases[countryIndex]['deaths']           * (10000000.0 / extractedPopulation[countryIndex])
-                extractedCases[countryIndex]['casesCumulative']  = extractedCases[countryIndex]['casesCumulative']  * (10000000.0 / extractedPopulation[countryIndex])
-                extractedCases[countryIndex]['deathsCumulative'] = extractedCases[countryIndex]['deathsCumulative'] * (10000000.0 / extractedPopulation[countryIndex])
-                extractedDeaths[countryIndex]['cases']            = extractedDeaths[countryIndex]['cases']            * (10000000.0 / extractedPopulation[countryIndex])
-                extractedDeaths[countryIndex]['deaths']           = extractedDeaths[countryIndex]['deaths']           * (10000000.0 / extractedPopulation[countryIndex])
-                extractedDeaths[countryIndex]['casesCumulative']  = extractedDeaths[countryIndex]['casesCumulative']  * (10000000.0 / extractedPopulation[countryIndex])
-                extractedDeaths[countryIndex]['deathsCumulative'] = extractedDeaths[countryIndex]['deathsCumulative'] * (10000000.0 / extractedPopulation[countryIndex])
+                extractedCases[countryIndex]['cases']               = extractedCases[countryIndex]['cases']                 * (10000000.0 / extractedPopulation[countryIndex])
+                extractedCases[countryIndex]['deaths']              = extractedCases[countryIndex]['deaths']                * (10000000.0 / extractedPopulation[countryIndex])
+                extractedCases[countryIndex]['casesCumulative']     = extractedCases[countryIndex]['casesCumulative']       * (10000000.0 / extractedPopulation[countryIndex])
+                extractedCases[countryIndex]['deathsCumulative']    = extractedCases[countryIndex]['deathsCumulative']      * (10000000.0 / extractedPopulation[countryIndex])
+                extractedCases[countryIndex]['casesMA']             = extractedCases[countryIndex]['casesMA']               * (10000000.0 / extractedPopulation[countryIndex])
+                extractedCases[countryIndex]['deathsMA']            = extractedCases[countryIndex]['deathsMA']              * (10000000.0 / extractedPopulation[countryIndex])
+                extractedDeaths[countryIndex]['cases']              = extractedDeaths[countryIndex]['cases']                * (10000000.0 / extractedPopulation[countryIndex])
+                extractedDeaths[countryIndex]['deaths']             = extractedDeaths[countryIndex]['deaths']               * (10000000.0 / extractedPopulation[countryIndex])
+                extractedDeaths[countryIndex]['casesCumulative']    = extractedDeaths[countryIndex]['casesCumulative']      * (10000000.0 / extractedPopulation[countryIndex])
+                extractedDeaths[countryIndex]['deathsCumulative']   = extractedDeaths[countryIndex]['deathsCumulative']     * (10000000.0 / extractedPopulation[countryIndex])
+                extractedDeaths[countryIndex]['casesCumulativeMA']  = extractedDeaths[countryIndex]['casesCumulativeMA']    * (10000000.0 / extractedPopulation[countryIndex])
+                extractedDeaths[countryIndex]['deathsCumulativeMA'] = extractedDeaths[countryIndex]['deathsCumulativeMA']   * (10000000.0 / extractedPopulation[countryIndex])
 
             clen = np.maximum(clen, extractedCases[countryIndex].shape[0])
             dlen = np.maximum(dlen, extractedDeaths[countryIndex].shape[0])
@@ -210,10 +234,14 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag, file
         if (cumulativeResultsFlag == True):
             casesType      = 'casesCumulative'
             deathsType     = 'deathsCumulative'
+            casesMAType    = 'casesCumulativeMA'
+            deathsMAType   = 'deathsCumulativeMA'
             percentageType = 'fatalityPercentageCumulative'
         else:
             casesType      = 'cases'
             deathsType     = 'deaths'
+            casesMAType    = 'casesMA'
+            deathsMAType   = 'deathsMA'
             percentageType = 'fatalityPercentage'
 
                                                     # Get last date in combinedCases
@@ -230,8 +258,23 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag, file
                 titleStr=titleStr + ' Daily Cases And Deaths: '
 
             ax = plt.gca()                          # Create plot - get current axis
-            extractedCases[0].plot(kind='line', y=casesType,  title=titleStr + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control", label=extractedCountry[0] + ' Cases', color='blue',ax=ax)
-            extractedDeaths[0].plot(kind='line',y=deathsType, title=titleStr + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control", label=extractedCountry[0] + ' Deaths',color='red',ax=ax)
+
+                                                    # Plot daily cases and deaths
+            extractedCases[0].plot(kind='line', y=casesType,  label='Cases', color='blue',ax=ax)
+            extractedDeaths[0].plot(kind='line',y=deathsType, label='Deaths',color='red',ax=ax)
+
+                                                    # Plot daily moving averages
+            extractedCases[0].plot(kind='line', y=casesMAType,  label='Cases - 7 Day Moving Average', color='purple',ax=ax)
+            extractedDeaths[0].plot(kind='line',y=deathsMAType, label='Deaths - 7 Day Moving Average',color='orange',ax=ax)
+
+                                                    # Plot daily fatality rate
+            ax2 = plt.gca().twinx()
+            extractedDeaths[0].plot(kind='line',y=percentageType,label='Fatality Rate (%)',color='deepskyblue',linewidth=.5,ax=ax2)
+            ax2.set_ylabel('Fatality Rate (%)', color='deepskyblue')
+            ax2.tick_params(axis='y', labelcolor='deepskyblue')
+            ax2.get_legend().remove()
+
+            plt.title(extractedCountry[0] + '\n' + titleStr + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control")
 
             if (fileSavePlotFlag == True):
                 titleStr = titleStr.split(':', 1)[0]
@@ -347,6 +390,7 @@ if __name__ == '__main__':
     parser.add_argument("-p", "--population",     action="store_true", help="Use population to normalize data to cases per 10 Million")
     parser.add_argument("-q", "--quiet",          action="store_true", help="Quiet - Do not plot graphs")
     parser.add_argument("-s", "--single",         nargs='?', const=1,  help="Process a single country - Specify the countriesAndTerritories string used in the spreadsheet")
+    parser.add_argument("-m", "--ma",             action="store_true", help="Plot Moving Average (only availeble for single courntry plot)")
     args = parser.parse_args()
 
     if (args.cumulative):
