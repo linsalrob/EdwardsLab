@@ -1,12 +1,14 @@
 """
 Randomly sample a fraction of a fastq file and just create one file
+
+Note that if -p is 100 you will randomize the order of sequences in the file
 """
 
 import os
 import sys
 import argparse
 from random import sample
-from roblib import stream_fastq
+from roblib import stream_fastq, message
 
 __author__ = 'Rob Edwards'
 __copyright__ = 'Copyright 2020, Rob Edwards'
@@ -27,6 +29,11 @@ if __name__ == '__main__':
     for seqid, header, seq, qualscores in stream_fastq(args.f):
         sequences.append([header, seq, qualscores])
 
+    n = int(args.p/100 * len(sequences))
+
+    if args.v:
+        message(f"There are {len(sequences)} sequences. So we will sample {n} elements", "GREEN")
+
     with open(args.o, 'w') as out:
-        for s in sample(sequences, args.p):
+        for s in sample(sequences, n):
             out.write(f"@{s[0]}\n{s[1]}\n+\n{s[2]}\n")
