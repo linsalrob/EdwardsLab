@@ -227,10 +227,10 @@ def all_ids(conn, verbose=False):
     """
 
     cur = conn.cursor()
-    sys.stderr.write(f"{bcolors.YELLOW}Collecting all the data. Please stand by.\n{bcolors.ENDC}")
+    sys.stderr.write(f"{bcolors.YELLOW}Collecting all the taxon data. Please stand by.\n{bcolors.ENDC}")
     sys.stderr.write(f"{bcolors.RED}Warning, this will take a long time!!.\n{bcolors.ENDC}")
     s = time.time()
-    exc = cur.execute("select * from nodes")
+    exc = cur.execute("select tax_id from nodes")
     sys.stderr.write(f"{bcolors.GREEN}Done in {time.time() - s} seconds!.\n{bcolors.ENDC}")
     return exc.fetchall()
 
