@@ -42,11 +42,16 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=" ")
     parser.add_argument('-f', help='file')
     parser.add_argument('-d', help='directory of fasta files')
-    parser.add_argument('-i', help='id map file to write')
+    parser.add_argument('-i', help='id map file to write', required=True)
     parser.add_argument('-m', help='minimum length of protein sequence to include (in amino acids). Default = 300', type=int, default=100)
     parser.add_argument('-o', help='output file')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
+
+
+    if not args.f and not args.d:
+        sys.stderr.write("One of -f or -d must be provided. Please try again\n")
+        sys.exit()
 
     seqs = {}
     if args.f:
@@ -56,6 +61,7 @@ if __name__ == '__main__':
         for f in os.listdir(args.d):
             seqs.update(read_fasta(os.path.join(args.d, f), args.i, args.m, args.v))
 
-    with open(args.o, 'w') as out:
-        for m in seqs:
-            out.write(f">{m}\n{seqs[m]}\n")
+    if args.o:
+        with open(args.o, 'w') as out:
+            for m in seqs:
+                out.write(f">{m}\n{seqs[m]}\n")
