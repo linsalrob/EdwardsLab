@@ -16,16 +16,21 @@ We will:
     3. Compare those ORFs to bacterial proteins (probably a small subset ... TBD)
     4. Run viromeQC on the contigs
     5. Measure a bunch of stats about your contigs
-        i.    N50 (add L50/U50?)
-        ii.   N75
-        iii.  How many frameshifted proteins
-        iv.   genome length too large
-        v.    genome length too small
-        vi.   abnormal gene to sequence ratio
-        vii.  low gene count
-        viii. average gene length
-        ix.   compare using translated blast (blastp or diamond??) and check for same hits on
-              different strands. This should be similar to (iii)
+        i.      Number of contigs
+        ii.     Length
+        iii.    %GC
+        iv.     stdev of %GC in 20bp windows
+        v.      Fraction of “N” bases
+        vi.     N50 (add L50/U50?)
+        vii.    N75
+        viii.   How many frameshifted proteins
+        ix.     genome length too large
+        x.      genome length too small
+        xi.     abnormal gene to sequence ratio
+        xii.    low gene count
+        xiii.   average gene length
+        ixx.    compare using translated blast (blastp or diamond??) and check for same hits on
+                different strands. This should be similar to (iii)
 """
 
 """
@@ -53,7 +58,8 @@ TODO
 
 import os
 import sys
-from roblib import bcolors, stream_fasta, median, is_hypothetical
+import socket
+from roblib import bcolors, stream_fasta, mean, stdev, median, is_hypothetical
 from pppf_databases import connect_to_db, disconnect
 from pppf_clusters import proteinid_to_function
 
@@ -62,18 +68,23 @@ if not config:
     sys.stderr.write("examples are provided in the Git repo\n")
     sys.exit()
 
-CONTIGS = config['paths']['contigs']
-ORFS    = config['paths']['orfs']
-BLAST   = config['paths']['blast']
-STATS   = config['paths']['statistics']
-RESULTS = config['paths']['results']
+sys.stderr.write(f"Running on {socket.gethostname()}\n")
+
+CONTIGS = config['output_paths']['contigs']
+ORFS    = config['output_paths']['orfs']
+BLAST   = config['output_paths']['blast']
+STATS   = config['output_paths']['statistics']
+RESULTS = config['output_paths']['results']
+
+# executables
+BLASTEXC = config['executable_paths']['blast']
 
 # our phage and bacterial protein databases
-PHAGEDB = os.path.join(config['paths']['databases'], config['databases']['phage_proteins'])
+PHAGEDB = os.path.join(config['install_paths']['databases'], config['databases']['phage_proteins'])
 if not os.path.exists(PHAGEDB):
     sys.stderr.write(f"FATAL: {PHAGEDB} not found. Please check your paths\n")
     sys.exit()
-BACTDB = os.path.join(config['paths']['databases'], config['databases']['bacterial_proteins'])
+BACTDB = os.path.join(config['install_paths']['databases'], config['databases']['bacterial_proteins'])
 if not os.path.exists(BACTDB):
     sys.stderr.write(f"FATAL: {BACTDB} not found. Please check your paths\n")
     sys.exit()
@@ -85,7 +96,124 @@ if not os.path.exists(PHAGECLUSTERS):
 
 SAMPLES, = glob_wildcards(os.path.join(CONTIGS, '{sample}.fasta'))
 
+
+def kmer_kurtosis(sequences, k=7):
+    """
+    Calculate the kurtosis of k-mers in the sequences
+    :param sequences: dict of sequences
+    :param k: kmer size to use
+    """
+
+    # count the abundance of all kmers
+    kmers = {}
+    for s in sequences:
+        i=0
+        while i < len(sequences[s])-k:
+            subseq = sequences[s][i:i+k]
+            kmers[subseq] = kmers.get(subseq, 0) + 1
+            i += 1
+    counts = list(kmers.values())
+    av = mean(counts)
+    st = stdev(counts)
+
+    kurtosis = 0
+    for i,j in enumerate(counts):
+        kurtosis += (j-av)**4
+
+    kurtosis = kurtosis / (len(counts) * (st**4))
+    kurtosis -= 3
+
+    return kurtosis
+
+
+
+def contig_stats(sample, fastafile, contigstats):
+    """
+    Calculate some stats about the contigs in the fasta file
+    """
+
+    seqs = {}
+    s = ""
+    oldseqid = None
+    with open(fastafile, 'r') as f:
+        for l in f:
+            if l.startswith('>'):
+                p = l.split()
+                seqid = p[0].replace('>', '', 1)
+                if oldseqid:
+                    seqs[oldseqid]=s
+                    s = ""
+                oldseqid = seqid
+            else:
+                s += l.strip()
+    seqs[oldseqid]=s
+
+    lens = [len(seqs[x]) for x in seqs]
+    gc = 0
+    fn = 0
+    for s in seqs:
+        gc += seqs[s].upper().count("G")
+        gc += seqs[s].upper().count("C")
+        fn += seqs[s].upper().count("N")
+
+    gc /= sum(lens)
+    fn /= sum(lens)
+
+
+    with open(contigstats, "w") as out:
+        out.write(f"{sample}\tNumber of contigs\t{len(seqs)}\n")
+        out.write(f"{sample}\tTotal length\t{sum(lens)}\n")
+        out.write(f"{sample}\tLongest sequence\t{max(lens)}\n")
+        out.write(f"{sample}\tk-mer kurtosis\t{kmer_kurtosis(seqs, 7)}\n")
+        out.write(f"{sample}\tpercent GC\t{gc}\n")
+        out.write(f"{sample}\tFraction of N's\t{fn}")
+
+
+
+
 def count_adjacent_orfs(sample, fastafile, blastfile, adjacentout, nohitsout, searchtype):
+    """
+    In this version, we just count how many query proteins map to the
+    same target protein. This is easier than the original approach 
+    below
+    """
+    sys.stderr.write(f"{bcolors.GREEN}Counting adjacent ORFs for {sample} and {searchtype}{bcolors.ENDC}\n")
+    orfs = set()
+    with open(fastafile, 'r') as f:
+        for l in f:
+            if l.startswith('>'):
+                p = l.split()
+                seqid = p[0].replace('>', '', 1)
+                orfs.add(seqid)
+    
+    hits = {}
+    queries = set()
+    with open(blastfile, 'r') as f:
+        for l in f:
+            p = l.strip().split("\t")
+            if p[1] not in hits:
+                hits[p[1]] = set()
+            hits[p[1]].add(p[0])
+            queries.add(p[0])
+    count = 0
+    for h in hits:
+        if len(hits[h]) > 1:
+            count += 1
+    
+    nohits = (len(orfs) - len(queries))
+    
+    
+    with open(adjacentout, 'w') as out:
+        out.write(f"{sample}\tNumber of targets with two {searchtype} queries\t")
+        out.write(f"[two queries, total orfs, fraction twos]\t")
+        out.write(f"{count}\t{len(orfs)}\t{count/len(orfs)}\n")
+    with open(nohitsout, 'w') as out:
+        out.write(f"{sample}\tNumber of orfs with no hits\t")
+        out.write(f"[nohits, total orfs, fraction no hits]\t")
+        out.write(f"{nohits}\t{len(orfs)}\t{nohits/len(orfs)}\n")
+
+
+def count_adjacent_orfs_original(sample, fastafile, blastfile, adjacentout, nohitsout, searchtype):
     """
     Count hits where two adjacent orfs match
     to the same protein
@@ -203,7 +331,6 @@ def check_phage_functions(sample, blastfile, outputfile):
         
 
 
-
 rule all:
     input:
         expand(os.path.join(STATS, "{sample}.average.phage.fraction.tsv"), sample=SAMPLES),
@@ -249,10 +376,12 @@ rule blast_phage_proteins:
         os.path.join(ORFS, "{sample}.orfs.faa")
     output:
         os.path.join(BLAST, "{sample}.phages.blastp")
+    params:
+        blastp = os.path.join(BLASTEXC, "blastp")
     threads:
         8
     shell:
-        "blastp -query {input} -db {PHAGEDB} -outfmt '6 std qlen slen' -out {output} -num_threads {threads}"
+        "{params.blastp} -query {input} -db {PHAGEDB} -outfmt '6 std qlen slen' -out {output} -num_threads {threads}"
 
 rule blast_bact_proteins:
     """
@@ -263,10 +392,12 @@ rule blast_bact_proteins:
         os.path.join(ORFS, "{sample}.orfs.faa")
     output:
         os.path.join(BLAST, "{sample}.bacteria.blastp")
+    params:
+        blastp = os.path.join(BLASTEXC, "blastp")
     threads:
         8
     shell:
-        "blastp -query {input} -db {BACTDB} -outfmt '6 std qlen slen' -out {output} -num_threads {threads}"
+        "{params.blastp} -query {input} -db {BACTDB} -outfmt '6 std qlen slen' -out {output} -num_threads {threads}"
 
 rule blast_nr:
     """
@@ -277,11 +408,12 @@ rule blast_nr:
     output:
         os.path.join(BLAST, "{sample}.nr.blastp")
     params:
+        blastp = os.path.join(BLASTEXC, "blastp"),
         db = config['databases']['nr']
     threads:
         8
     shell:
-        "blastp -query {input} -db {params.db} -outfmt '6 std qlen slen' -out {output} -num_threads {threads}"
+        "{params.blastp} -query {input} -db {params.db} -outfmt '6 std qlen slen' -out {output} -num_threads {threads}"
 
 rule average_phage_protein_len:
     input:
@@ -290,7 +422,7 @@ rule average_phage_protein_len:
         fr = os.path.join(BLAST, "{sample}.phage_prot_fractions.tsv"),
         st = os.path.join(STATS, "{sample}.average.phage.fraction.tsv")
     params:
-        sample = "{sample}"
+        sample = "{sample}",
     run:
         av_protein_lengths(params.sample, input.bp, output.fr, output.st, 'phage')
 
@@ -376,6 +508,16 @@ rule hypo_vs_non:
     run:
         check_phage_functions(params.sample, input.bf, output.hn)
 
+rule count_contig_stats:
+    input:
+        ct = os.path.join(CONTIGS, "{sample}.fasta")
+    output:
+        cs = os.path.join(STATS, "{sample}.contig_stats.tsv")
+    params:
+        sample = "{sample}"
+    run:
+        contig_stats(params.sample, input.ct, output.cs)
+
 rule combine_average_phage_fraction:
     input:
         expand(os.path.join(STATS, "{sample}.average.phage.fraction.tsv"), sample=SAMPLES),
@@ -440,17 +582,41 @@ rule combine_average_bacteria_fraction:
     shell:
         "cat {input} > {output}"
 
-
-rule combine_outputs:
+rule combine_contig_stats:
     input:
-        expand(os.path.join(STATS, "{sample}.average.phage.fraction.tsv"), sample=SAMPLES),
-        expand(os.path.join(STATS, "{sample}.average.bacteria.fraction.tsv"), sample=SAMPLES),
-        expand(os.path.join(STATS, "{sample}.phage.adjacent.tsv"), sample=SAMPLES),
-        expand(os.path.join(STATS, "{sample}.phage.nohits.tsv"), sample=SAMPLES),
-        expand(os.path.join(STATS, "{sample}.bacteria.adjacent.tsv"), sample=SAMPLES),
-        expand(os.path.join(STATS, "{sample}.coding_noncoding.tsv"), sample=SAMPLES),
-        expand(os.path.join(STATS, "{sample}.bacteria.nohits.tsv"), sample=SAMPLES),
-        expand(os.path.join(STATS, "{sample}.phage.hyponon.tsv"), sample=SAMPLES)
+        expand(os.path.join(STATS, "{sample}.contig_stats.tsv"), sample=SAMPLES)
+    output:
+        os.path.join(RESULTS, "contig_stats.tsv")
+    shell:
+        "cat {input} > {output}"
+        
+rule combine_outputs:
+    """
+    This rule does two things:
+        1. We make sure all the samples are run
+        2. We combine all the results, but they are already combined above, hopefully!
+    """
+    input:
+        os.path.join(RESULTS, "average.bacteria.fraction.tsv"),
+        os.path.join(RESULTS, "average.phage.fraction.tsv"),
+        os.path.join(RESULTS, "bacteria.adjacent.tsv"),
+        os.path.join(RESULTS, "bacteria.nohits.tsv"),
+        os.path.join(RESULTS, "coding_noncoding.tsv"),
+        os.path.join(RESULTS, "contig_stats.tsv"),
+        os.path.join(RESULTS, "phage.adjacent.tsv"),
+        os.path.join(RESULTS, "phage.hyponon.tsv"),
+        os.path.join(RESULTS, "phage.nohits.tsv"),
+
+        
+        # expand(os.path.join(STATS, "{sample}.average.phage.fraction.tsv"), sample=SAMPLES),
+        # expand(os.path.join(STATS, "{sample}.average.bacteria.fraction.tsv"), sample=SAMPLES),
+        # expand(os.path.join(STATS, "{sample}.bacteria.adjacent.tsv"), sample=SAMPLES),
+        # expand(os.path.join(STATS, "{sample}.bacteria.nohits.tsv"), sample=SAMPLES),
+        # expand(os.path.join(STATS, "{sample}.coding_noncoding.tsv"), sample=SAMPLES),
+        # expand(os.path.join(STATS, "{sample}.phage.adjacent.tsv"), sample=SAMPLES),
+        # expand(os.path.join(STATS, "{sample}.phage.nohits.tsv"), sample=SAMPLES),
+        # expand(os.path.join(STATS, "{sample}.phage.hyponon.tsv"), sample=SAMPLES),
+        # expand(os.path.join(STATS, "{sample}.contig_stats.tsv"), sample=SAMPLES),
         # uncomment these to run the nr blast, but it takes  a long time!
         # expand(os.path.join(STATS, "{sample}.average.nr.fraction"), sample=SAMPLES),
         # expand(os.path.join(STATS, "{sample}.nr.adjacent.tsv"), sample=SAMPLES),
@@ -458,4 +624,4 @@ rule combine_outputs:
     output:
         os.path.join(RESULTS, "all_stats.tsv")
     shell:
-        "cat {input}  > {output}"
+        "cat {input} | sort > {output}"
