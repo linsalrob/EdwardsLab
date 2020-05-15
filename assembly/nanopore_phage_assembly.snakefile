@@ -360,3 +360,15 @@ rule combine_stats:
     shell:
         "cat {input} >> {output}"
 
+
+"""
+Possible dereplication.
+
+This maybe needed, but I am not sure
+
+# concatenate all the assemblies
+
+
+python3 ~/GitHubs/EdwardsLab/bin/renumber_merge_fasta.py -d contigs/ -o all_contigs.fasta -i all_contigs.ids
+
+"""
