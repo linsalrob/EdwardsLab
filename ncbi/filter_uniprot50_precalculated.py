@@ -85,5 +85,8 @@ if __name__ == '__main__':
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
+    if not os.path.exists(args.o):
+        os.makedirs(args.o, exist_ok=True)
+
     ranks = read_ranks(args.r, args.v)
     split_by_rank(args.f, ranks, args.o, args.v)
