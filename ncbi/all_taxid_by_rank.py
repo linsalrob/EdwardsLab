@@ -6,6 +6,7 @@ import os
 import sys
 import argparse
 from taxon import get_taxonomy_db, get_taxonomy, all_ids
+from roblib import colours
 
 __author__ = 'Rob Edwards'
 __copyright__ = 'Copyright 2020, Rob Edwards'
@@ -13,6 +14,8 @@ __credits__ = ['Rob Edwards']
 __license__ = 'MIT'
 __maintainer__ = 'Rob Edwards'
 __email__ = 'raedwards@gmail.com'
+
+id2rank = {}
 
 def find_rank(tid, trank, tdb, verbose=False):
     """
@@ -28,7 +31,6 @@ def find_rank(tid, trank, tdb, verbose=False):
         return id2rank[tid]
 
     seenids = set()
-
     t,n = get_taxonomy(tid, tdb)
     while t.parent != 1 and t.taxid != 1 and t.rank != trank and t.taxid not in id2rank:
         seenids.add(t.taxid)
@@ -57,5 +59,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     c = get_taxonomy_db()
-    for i in all_ids(c, args.v):
+    ais = all_ids(c, args.v)
+    sys.stderr.write(f"{colours.GREEN}There are {len(ais)} ids\n{colours.ENDC}")
+    for restple in ais:
+        i = restple[0]
         print(f"{i}\t{find_rank(i, args.t, c, args.v)}")
