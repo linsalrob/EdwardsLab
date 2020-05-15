@@ -1,13 +1,17 @@
 ---
-paths:
+output_paths:
     contigs:   contigs
     orfs:      phanotate
     blast:     blast
     databases: /home3/redwards/phage/Sequencing/databases
     statistics: stats
+    results: results
+
+executable_paths:
+    blast: /usr/local/blast+/bin/
 
 databases:
-    bacterial_proteins: bacteria.clusters.faa
     phage_proteins: phages.faa
+    bacterial_proteins: bacteria.clusters.faa
     nr: /home2/db/blast/nr/nr
     phage_cluster_database: /home3/redwards/phage/genbank_phages/20200228/clusters.sql
