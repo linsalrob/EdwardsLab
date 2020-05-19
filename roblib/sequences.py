@@ -4,7 +4,7 @@ import gzip
 
 import subprocess
 from .rob_error import SequencePairError, FastqFormatError
-from .bcolors import bcolors
+from .colours import colours, message
 
 __author__ = 'Rob Edwards'
 
@@ -155,10 +155,10 @@ def stream_paired_fastq(fqfile1, fqfile2):
             # the sequence names contain [space]1 and [space]2
             True
         else:
-            raise SequencePairError(f"{bcolors.RED}We can not match the forward/reverse reads in\n{header1} (seqid: {seqid1})\n{header2} (seqid: {seqid2}){bcolors.ENDC}\n")
+            raise SequencePairError(f"{colours.RED}We can not match the forward/reverse reads in\n{header1} (seqid: {seqid1})\n{header2} (seqid: {seqid2}){colours.ENDC}\n")
 
         if seqid1 != seqid2:
-            raise SequencePairError(f"{bcolors.RED}The sequence IDs {seqid1} and {seqid2} do not match and are not paired{bcolors.ENDC}\n")
+            raise SequencePairError(f"{colours.RED}The sequence IDs {seqid1} and {seqid2} do not match and are not paired{colours.ENDC}\n")
 
         seqid = seqid1.replace('@', '')
         seq1 = qin1.readline().strip()
@@ -265,3 +265,33 @@ def stream_gfa_sequences(gfafile):
         p = l.strip().split("\t")
         yield p[1], p[2]
 
+
+def write_fastq(fna, qual, outf, verbose=False):
+    """
+    Write DNA sequences + quality scores to a fastq file
+    :param fna: a dict of the DNA sequences
+    :param qual: a dict of the the quality scores
+    :param outf: the output file to write
+    :param verbose: more output
+    :return:
+    """
+
+    with open(outf, 'w') as out:
+        for k in fna:
+            if k not in qual:
+                raise FastqFormatError(f"{colours.RED}No quality scores were found for {k}{colours.ENDC}")
+
+            qualstring = None
+            if len(fna[k]) == len(qual[k]):
+                # the quality is probably already converted
+                if verbose:
+                    message("Assuming the qaulity scores have already been converted to a string as the seqs and ", "GREEN")
+                    message("qual scores are the same length", "GREEN")
+                qualstring = qual[k]
+            else:
+                p = qual[k].strip().split(" ")
+                if len(p) != len(fna[k]):
+                    raise FastqFormatError(f"{colours.RED}FATAL: When we split the quality scores on spaces they are not the same length as the dna sequences{colours.ENDC}")
+                qualstring = "".join(map(lambda x: chr(int(x)+33), p))
+
+            out.write(f"@{k}\n{fna[k]}\n+\n{qualstring}\n")
