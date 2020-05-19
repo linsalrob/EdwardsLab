@@ -291,7 +291,16 @@ def write_fastq(fna, qual, outf, verbose=False):
             else:
                 p = qual[k].strip().split(" ")
                 if len(p) != len(fna[k]):
-                    raise FastqFormatError(f"{colours.RED}FATAL: When we split the quality scores on spaces they are not the same length as the dna sequences{colours.ENDC}")
+                    msg = f"""
+                        {colours.RED}FATAL: For {k} we have sequence:
+                        |{fna[k]}|
+                        and
+                        |{qual[k]}|
+                        that became
+                        {p}
+                        lengths {len(fna[k])} and {len(p)} that are different
+                        """
+                    raise FastqFormatError(msg)
                 qualstring = "".join(map(lambda x: chr(int(x)+33), p))
 
             out.write(f"@{k}\n{fna[k]}\n+\n{qualstring}\n")
