@@ -27,7 +27,7 @@ if __name__ == '__main__':
         message("FATAL: either {args.f} or {args.q} not found", "RED")
         sys.exit(-1)
 
-    fa = read_fasta(args.f, True, False) 
+    fa = read_fasta(args.f, True, False)
     qu = read_fasta(args.q, True, True)
 
     write_fastq(fa, qu, args.o, args.v)
