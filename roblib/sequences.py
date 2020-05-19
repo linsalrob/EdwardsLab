@@ -9,7 +9,7 @@ from .colours import colours, message
 __author__ = 'Rob Edwards'
 
 
-def read_fasta(fname: str, whole_id: bool = True) -> dict:
+def read_fasta(fname: str, whole_id: bool = True, qual: bool = False) -> dict:
     """
     Read a fasta file and return a hash.
 
@@ -18,6 +18,7 @@ def read_fasta(fname: str, whole_id: bool = True) -> dict:
 
     :param fname: The file name to read
     :param whole_id: Whether to keep the whole id, or trim to first whitespace (default = all)
+    :param qual: these are quality scores (so add a space between lines!)
     :return: dict
     """
 
@@ -47,9 +48,12 @@ def read_fasta(fname: str, whole_id: bool = True) -> dict:
                 seqids = seqid.split(" ")
                 seqid = seqids[0]
         else:
-            seq += line
+            if qual:
+                seq += " " + line
+            else:
+                seq += line
 
-    seqs[seqid] = seq
+    seqs[seqid] = seq.strip()
     return seqs
 
 
