@@ -55,7 +55,15 @@ if __name__ == "__main__":
         if args.t:
             print("\t".join(map(str, [faf, len(lens), length, lens[0], lens[-1], n50, n75, auN])))
         else:
-            print("File name: {}\nNumber of sequences: {}\nTotal length: {}\nShortest: {}\nLongest: {}\nN50: {}\nN75: {}\nauN: {}".format(
-                faf, len(lens), length, lens[0], lens[-1], n50, n75, auN
+            print(f"""
+                  File name: {faf}
+                  Number of sequences: {len(lens):,}
+                  Total length: {length:,}
+                  Shortest: {lens[0]:,}
+                  Longest: {lens[-1]:,}
+                  N50: {n50:,}
+                  N75: {n75:,}
+                  auN: {int(auN):,}
+                  """
             ))
 
