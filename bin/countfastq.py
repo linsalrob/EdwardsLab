@@ -33,17 +33,28 @@ if __name__ == "__main__":
         len_so_far = 0
         n50 = None
         n75 = None
-
+        auN = 0
         for i in lens:
             len_so_far += i
             if not n50 and len_so_far >= length * 0.5:
                 n50 = i
             if not n75 and len_so_far >= length * 0.75:
                 n75 = i
+            auN += i**2
+
+        auN /= length
 
         if args.s or args.t:
             print("{}\t{}\t{}\t{}\t{}\t{}\t{}".format(faf, len(lens), length, lens[0], lens[-1], n50, n75))
         else:
-            print("File: {}\nNumber of sequences: {}\nTotal length: {}\nShortest: {}\nLongest: {}\nN50: {}\nN75: {}".format(
-                faf, len(lens), length, lens[0], lens[-1], n50, n75,
-            ))
+            print(f"""
+File name: {faf}
+Number of sequences: {len(lens):,}
+Total length: {length:,}
+Shortest: {lens[0]:,}
+Longest: {lens[-1]:,}
+N50: {n50:,}
+N75: {n75:,}
+auN: {int(auN):,}  """
+            )
+
