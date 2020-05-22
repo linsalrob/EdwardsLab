@@ -40,6 +40,8 @@ if __name__ == '__main__':
                     continue
 
                 tid = p[args.c]
+                if not tid:
+                    continue
 
                 level = {}
 

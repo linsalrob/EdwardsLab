@@ -24,6 +24,8 @@ def count_kmers(fqf, kmer, verbose=False):
         sys.stderr.write(f"{bcolors.GREEN}Reading {fqf}{bcolors.ENDC}\n");
     counts = [[0,0,0,0] for x in range(kmer)]
     for sid, seqid, seq, qual in stream_fastq(fqf):
+        if len(seq) < kmer:
+            continue
         if 'N' in seq  or 'n' in seq:
             continue
         for x in range(kmer):
