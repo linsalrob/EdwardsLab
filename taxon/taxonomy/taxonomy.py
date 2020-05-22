@@ -4,7 +4,7 @@ Classes of taxonomy data
 
 import os
 import sys
-
+from taxon import NoNameFoundError
 
 
 
@@ -96,6 +96,22 @@ class TaxonName:
             self.type_material.append(nameval)
         else:
             sys.stderr.write("Do not recognise name type |{}|\n".format(nametype))
+
+    def get_name(self):
+        """
+        Get the preferred name for this taxon
+        :return: a string with the name
+        """
+
+        if self.blast_name:
+            return self.blast_name
+        if self.scientific_name:
+            return self.scientific_name
+        if self.common_name:
+            return self.common_name
+        if self.equivalent_name:
+            return self.equivalent_name
+        raise NoNameFoundError(f"No name was found for taxonomy ID {self.taxid}")
 
 class TaxonDivision:
     def __init__(self, i=None, c=None, n=None, co=None):

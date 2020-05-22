@@ -21,7 +21,7 @@ def printtaxa(i, c):
     while t.parent != 1 and t.taxid != 1:
         t, n = get_taxonomy(t.parent, c)
         if t.rank in want:
-            names[t.rank] = n
+            names[t.rank] = n.get_name()
     print("\t".join([str(i)] + [names[w] for w in want]))
 
 
