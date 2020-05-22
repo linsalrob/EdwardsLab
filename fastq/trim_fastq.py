@@ -33,7 +33,7 @@ if __name__ == '__main__':
 
     fwd = args.forward.upper()
     rev = args.reverse.upper()
-    
+
     with open(args.o, 'w') as out:
         for sid, seqid, seq, qual in stream_fastq(args.f):
             original = [seq, qual]
