@@ -29,4 +29,4 @@ def printtaxa(i, c):
 if __name__ == '__main__':
     c = get_taxonomy_db()
     for i in all_species_ids(c):
-        printtaxa(i, c)
+        printtaxa(i[0], c)
