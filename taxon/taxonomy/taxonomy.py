@@ -4,8 +4,12 @@ Classes of taxonomy data
 
 import os
 import sys
-from taxon import NoNameFoundError
 
+
+class NoNameFoundError(Exception):
+    """No name was found for this entry"""
+    def __init__(self, message):
+        self.message = message
 
 
 class TaxonNode:
