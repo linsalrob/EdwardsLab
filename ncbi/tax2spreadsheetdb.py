@@ -4,7 +4,7 @@ Print the NCBI taxonomy as a spreadsheet
 
 from taxon import get_taxonomy_db, get_taxonomy, all_species_ids
 
-want = ['kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
+want = ['superkingdom', 'kingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
 
 def printtaxa(i, c):
     """
@@ -17,7 +17,7 @@ def printtaxa(i, c):
     names = {w: "" for w in want}
     t, n = get_taxonomy(i, c)
     if t.rank in want:
-        names[t.rank] = n
+        names[t.rank] = n.get_name()
     while t.parent != 1 and t.taxid != 1:
         t, n = get_taxonomy(t.parent, c)
         if t.rank in want:
