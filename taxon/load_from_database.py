@@ -234,6 +234,19 @@ def all_ids(conn, verbose=False):
     sys.stderr.write(f"{bcolors.GREEN}Done in {time.time() - s} seconds!.\n{bcolors.ENDC}")
     return exc.fetchall()
 
+def all_species_ids(conn, verbose=False):
+    """
+    Get all the species taxonomy IDs.
+
+    We filter for rank == species, but only return the taxonomy ID
+    :param conn: the database connection
+    :param verbose: more output
+    :return: all of the taxonomy IDs
+    """
+    cur = conn.cursor()
+    exc = cur.execute("select tax_id from nodes where rank='species'")
+    return exc.fetchall()
+
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Get data from the database")
     parser.add_argument('-s', help='sqlite database file',required=True)
