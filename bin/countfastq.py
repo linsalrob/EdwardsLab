@@ -14,12 +14,28 @@ __author__ = 'Rob Edwards'
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
-    parser.add_argument('-f', nargs='+', help='fasta file', required=True)
+    parser.add_argument('-f', nargs='+', help='fastq file')
+    parser.add_argument('-d', nargs='+', help='directory of fastq files')
     parser.add_argument('-t', help='tab separated summmary of name, total len, shortest, longest, n50, n75', action="store_true")
     parser.add_argument('-s', help='(deprecated). Same as -t', action="store_true")
     args = parser.parse_args()
 
-    for faf in args.f:
+    if not args.f and not args.d:
+        sys.stderr.write(f"{bcolors.RED}FATAL: Please specify either -f or -d{bcolors.ENDC}\n")
+        sys.exit(1)
+
+    if args.f:
+        files = args.f
+    else:
+        files = []
+
+    if args.d:
+        for subdir in args.d:
+            for f in os.listdir(subdir):
+                files.append(os.path.join(subdir, f))
+
+    overall = {'number': 0, 'total': 0, 'shortest':1e6, 'longest': 0}
+    for faf in files:
         if not os.path.exists(faf):
             sys.stderr.write(f"{bcolors.RED}FATAL: {faf} not found{bcolors.ENDC}\n")
             sys.exit(1)
@@ -57,4 +73,23 @@ N50: {n50:,}
 N75: {n75:,}
 auN: {int(auN):,}  """
             )
+        overall['number'] += len(lens)
+        overall['total']  += length
+        if lens[0] < overall['shortest']:
+            overall['shortest'] = lens[0]
+        if lens[-1] > overall['longest']:
+            overall['longest'] = lens[-1]
+
+
+print(f"""
+
+OVERALL SUMMARY
+Number of sequences: {overall['number']:,}
+Total length: {overall['total']:,}
+Shortest: {overall['shortest']:,}
+Longest: {overall['longest']:,}
+"""
+      )
+
+
 
