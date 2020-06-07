@@ -308,3 +308,11 @@ def write_fastq(fna, qual, outf, verbose=False):
                 qualstring = "".join(map(lambda x: chr(int(x)+33), p))
 
             out.write(f"@{k}\n{fna[k]}\n+\n{qualstring}\n")
+
+def qual_to_numbers(qualstring):
+    """
+    Convert the quality string to an array of numbers
+    :param qualstring: the quality string
+    :return: a list of numbers
+    """
+    return map(lambda x: ord(x)-33, qualstring)
