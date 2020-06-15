@@ -102,3 +102,6 @@ percent_pairwise_identity/needleman_wunsch-0.3.5/needleman_wunsch
 */core
 testrepeatfinder/repeatFinder
 repeatFinder
+
+# virtual environment
+venv/
