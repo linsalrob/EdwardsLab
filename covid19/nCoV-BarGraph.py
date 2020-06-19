@@ -46,7 +46,7 @@ def extractCountries(covidData, desiredColumn, dates, popNormalizeFlag):
         if (countryData_tmp.dropna().empty == True):    # Drop empty frames
             continue
 
-        population=countryData_tmp['popData2018'].iloc[0]
+        population=countryData_tmp['popData2019'].iloc[0]
         # print("Country               : " + country)
         # print("Population (2018)     : %.2f (Million)" % (population / 1000000.))
 
@@ -172,16 +172,24 @@ def main(nDisplay, useCachedFileFlag, cumulativeResultsFlag, noPlotFlag, fileSav
             # print(link['href'])
             if ("csv" in link['href']):
                 csvfileurl = link['href']
-                urllib.request.urlretrieve(csvfileurl, localFileName)
-                cachedFilePresentFlag = True
-                print("Cached file updated")
+                try:
+                    urllib.request.urlretrieve(csvfileurl, localFileName)
+                    cachedFilePresentFlag = True
+                    print("Cached spreadheet updated")
+                except:
+                    cachedFilePresentFlag = False
+                    print("Spreadheet failed to download")
                 break
-            elif ("xlsx" in link['href']):          # If data in .xlsx format then retrieve and store as local .csv format
+            elif ("xlsx" in link['href']):              # If data in .xlsx format then retrieve and store as local .csv format
                 xlsxfileurl = link['href']
-                xlsx_tmp = pd.read_excel(xlsxfileurl, index_col=0)
-                xlsx_tmp.to_csv(localFileName, index=True)
-                cachedFilePresentFlag = True
-                print("Cached file updated")
+                try:
+                    xlsx_tmp = pd.read_excel(xlsxfileurl, index_col=0)
+                    xlsx_tmp.to_csv(localFileName, index=True)
+                    cachedFilePresentFlag = True
+                    print("Cached spreadheet updated")
+                except:
+                    cachedFilePresentFlag = False
+                    print("Spreadheet failed to download")
                 break
 
         if (cachedFilePresentFlag == False):
@@ -192,7 +200,7 @@ def main(nDisplay, useCachedFileFlag, cumulativeResultsFlag, noPlotFlag, fileSav
     if (cachedFilePresentFlag == True):
         covidData = pd.read_csv(localFileName, index_col=0, encoding="iso8859_1")
                     # Spreadsheet columns :
-                    # dateRep	day	month	year	cases	deaths	countriesAndTerritories	geoId	countryterritoryCode	popData2018
+                    # dateRep	day	month	year	cases	deaths	countriesAndTerritories	geoId	countryterritoryCode	popData2019
 
         covidData=covidData.fillna(0)               # Replace NaN with 0
 

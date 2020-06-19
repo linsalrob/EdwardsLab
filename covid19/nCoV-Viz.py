@@ -52,11 +52,11 @@ def extractCountries(covidData, country, dates, noAlignFlag):
 #    # countryData.to_csv (countryFileName, index = False, header=True)
 #    countryData.to_csv (countryFileName, index = True, header=True)
 
-                                    # Fill columns : countriesAndTerritories geoId countryterritoryCode  popData2018
+                                    # Fill columns : countriesAndTerritories geoId countryterritoryCode  popData2019
     countryData['countriesAndTerritories'] = countryData['countriesAndTerritories'].iloc[-1]
     countryData['geoId']                   = countryData['geoId'].iloc[-1]
     countryData['countryterritoryCode']    = countryData['countryterritoryCode'].iloc[-1]
-    countryData['popData2018']             = countryData['popData2018'].iloc[-1]
+    countryData['popData2019']             = countryData['popData2019'].iloc[-1]
 
                                     # Replace NaN with 0
     countryData=countryData.fillna(0)
@@ -84,8 +84,18 @@ def extractCountries(covidData, country, dates, noAlignFlag):
     countryData['fatalityPercentageCumulative'] = countryData['fatalityPercentageCumulative'].where(countryData['fatalityPercentageCumulative'] <= 100., 100.)
     countryData.loc[countryData.casesCumulative == 0, "fatalityPercentageCumulative"] = 0       # When cases 0= 0 set percentage to 0
 
+    countryData['fatalityPercentageMA'] = countryData['fatalityPercentage'].rolling(7).mean()
+    countryData['fatalityPercentageCumulativeMA'] = countryData['fatalityPercentageCumulative'].rolling(7).mean()
+
     outputFileName = country + ".csv"
     countryData.to_csv(outputFileName, index=True)
+
+                                    # Print latest cases and deaths count
+    latestCases=countryData['cases'].iloc[-1]
+    latestDeaths=countryData['deaths'].iloc[-1]
+    print('Latest cases          : ' + str(latestCases))
+    print('Latest deaths         : ' + str(latestDeaths))
+    print('Latest fatality rate  : ' + str((latestDeaths*100.)/latestCases))
 
                                     # Print first data of cases
     dc = countryData.index[countryData['cases'] != 0].tolist()
@@ -98,9 +108,7 @@ def extractCountries(covidData, country, dates, noAlignFlag):
     totalCases=countryData['casesCumulative'].iloc[-1]
     totalDeaths=countryData['deathsCumulative'].iloc[-1]
     fatalityRate=totalDeaths*100./totalCases
-    population=countryData['popData2018'].iloc[0]
-
-
+    population=countryData['popData2019'].iloc[0]
     print('Total number of cases : ' + str(totalCases))
     print('Total number of deaths: ' + str(totalDeaths))
     print("Fatality rate         : %.2f %%" % (fatalityRate))
@@ -148,30 +156,32 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag, file
         resp = urllib.request.urlopen(topLevelPage)
         soup = BeautifulSoup(resp, "html.parser", from_encoding=resp.info().get_param('charset'))
 
-        for link in soup.find_all(class_="btn btn-primary", href=True):
-        # for link in soup.find_all('a', href=True):
+        for link in soup.find_all('a', href=True):
             # print(link['href'])
-            if ("csv" in link['href']):
-                csvfileurl = link['href']
-                try:
-                    urllib.request.urlretrieve(csvfileurl, localFileName)
-                    cachedFilePresentFlag = True
-                    print("Cached spreadheet updated")
-                except:
-                    cachedFilePresentFlag = False
-                    print("Spreadheet failed to download")
-                break
-            elif ("xlsx" in link['href']):              # If data in .xlsx format then retrieve and store as local .csv format
+            if ("xlsx" in link['href']):                # If data in .xlsx format then retrieve and store as local .csv format
                 xlsxfileurl = link['href']
                 try:
                     xlsx_tmp = pd.read_excel(xlsxfileurl, index_col=0)
                     xlsx_tmp.to_csv(localFileName, index=True)
                     cachedFilePresentFlag = True
-                    print("Cached spreadheet updated")
+                    print("Cached spreadheet updated (xlsx)")
                 except:
                     cachedFilePresentFlag = False
-                    print("Spreadheet failed to download")
+                    print("Spreadheet failed to download (xlsx)")
                 break
+
+        if (cachedFilePresentFlag == False):            # If data NOT in .xlsx format then retrieve and store .csv format
+            for link in soup.find_all(class_="btn btn-primary", href=True):
+                if ("csv" in link['href']):
+                    csvfileurl = link['href']
+                    try:
+                        urllib.request.urlretrieve(csvfileurl, localFileName)
+                        cachedFilePresentFlag = True
+                        print("Cached spreadheet updated (csv)")
+                    except:
+                        cachedFilePresentFlag = False
+                        print("Spreadheet failed to download (csv)")
+                    break
 
         if (cachedFilePresentFlag == False):
             print("No spreadsheet found at the URL, use \"-l\" to use local cached file")
@@ -188,7 +198,7 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag, file
     if (cachedFilePresentFlag == True):
         covidData = pd.read_csv(localFileName, index_col=0, encoding="iso8859_1")
                     # Spreadsheet columns :
-                    # dateRep	day	month	year	cases	deaths	countriesAndTerritories	geoId	countryterritoryCode	popData2018
+                    # dateRep	day	month	year	cases	deaths	countriesAndTerritories	geoId	countryterritoryCode	popData2019
 
         covidData=covidData.fillna(0)               # Replace NaN with 0
 
@@ -232,17 +242,19 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag, file
 
                                                     # Select daily or cumulative results
         if (cumulativeResultsFlag == True):
-            casesType      = 'casesCumulative'
-            deathsType     = 'deathsCumulative'
-            casesMAType    = 'casesCumulativeMA'
-            deathsMAType   = 'deathsCumulativeMA'
-            percentageType = 'fatalityPercentageCumulative'
+            casesType        = 'casesCumulative'
+            deathsType       = 'deathsCumulative'
+            casesMAType      = 'casesCumulativeMA'
+            deathsMAType     = 'deathsCumulativeMA'
+            percentageType   = 'fatalityPercentageCumulative'
+            percentageMAType = 'fatalityPercentageCumulativeMA'
         else:
-            casesType      = 'cases'
-            deathsType     = 'deaths'
-            casesMAType    = 'casesMA'
-            deathsMAType   = 'deathsMA'
-            percentageType = 'fatalityPercentage'
+            casesType        = 'cases'
+            deathsType       = 'deaths'
+            casesMAType      = 'casesMA'
+            deathsMAType     = 'deathsMA'
+            percentageType   = 'fatalityPercentage'
+            percentageMAType = 'fatalityPercentageMA'
 
                                                     # Get last date in combinedCases
         lastDate = str(covidData.first_valid_index())
@@ -258,20 +270,21 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag, file
                 titleStr=titleStr + ' Daily Cases And Deaths: '
 
             ax = plt.gca()                          # Create plot - get current axis
+            ax.autoscale(enable=True, tight=True)
 
-                                                    # Plot daily cases and deaths
+                                                    # Plot daily cases and deaths AND moving average
             extractedCases[0].plot(kind='line', y=casesType,  label='Cases', color='blue',ax=ax)
-            extractedDeaths[0].plot(kind='line',y=deathsType, label='Deaths',color='red',ax=ax)
+            extractedCases[0].plot(kind='line', y=casesMAType,  label='Cases - 7 Day Moving Average', color='dodgerblue',ax=ax)
+            extractedDeaths[0].plot(kind='line',y=deathsType, label='Deaths',color='seagreen',ax=ax)
+            extractedDeaths[0].plot(kind='line',y=deathsMAType, label='Deaths - 7 Day Moving Average',color='lime',ax=ax)
 
-                                                    # Plot daily moving averages
-            extractedCases[0].plot(kind='line', y=casesMAType,  label='Cases - 7 Day Moving Average', color='purple',ax=ax)
-            extractedDeaths[0].plot(kind='line',y=deathsMAType, label='Deaths - 7 Day Moving Average',color='orange',ax=ax)
-
-                                                    # Plot daily fatality rate
+                                                    # Plot daily mortality rate
             ax2 = plt.gca().twinx()
-            extractedDeaths[0].plot(kind='line',y=percentageType,label='Fatality Rate (%)',color='deepskyblue',linewidth=.5,ax=ax2)
-            ax2.set_ylabel('Fatality Rate (%)', color='deepskyblue')
-            ax2.tick_params(axis='y', labelcolor='deepskyblue')
+            extractedDeaths[0].plot(kind='line',y=percentageType,label='Mortality Rate (%)',color='red',linewidth=.75,ax=ax2)
+            extractedDeaths[0].plot(kind='line',y=percentageMAType,label='Mortality Rate Moving Average (%)',color='orange',linewidth=.75,ax=ax2)
+            ax2.set_ylabel('Mortality Rate (%)', color='red')
+            ax2.tick_params(axis='y', labelcolor='red')
+            ax2.set_ylim(0, 40)
             ax2.get_legend().remove()
 
             plt.title(extractedCountry[0] + '\n' + titleStr + str(lastDate) + "\nSource: European Centre for Disease Prevention and Control")
