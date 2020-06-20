@@ -22,8 +22,8 @@ def is_gzip(gbkf):
 
 
 def feat_to_text(feat, qual):
-    if qual in feat:
-        return " ".join(feat[qual])
+    if qual in feat.qualifiers:
+        return " ".join(feat.qualifiers[qual])
     return "-"
 
 def convert_genbank(gbkf, printout=False, verbose=False):
