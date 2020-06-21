@@ -64,7 +64,7 @@ def convert_genbank(gbkf, printout=False, verbose=False):
             thisres = [
                 f"{feat.location.start}..{feat.location.end}",
                 "+" if feat.strand >= 0 else "-",
-                (len(feat.seq) / 3) - 1,
+                (feat.location.__len__ / 3) - 1,
                 gi,
                 feat_to_text(feat, 'gene'),
                 feat_to_text(feat, 'locus_tag'),
