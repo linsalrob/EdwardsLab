@@ -62,7 +62,7 @@ def convert_genbank(gbkf, printout=False, verbose=False):
                 gene = " ".join(feat.qualifiers)
 
             thisres = [
-                f"{feat.start}..{feat.end}",
+                f"{feat.location.start}..{feat.location.end}",
                 "+" if feat.strand >= 0 else "-",
                 (feat.length / 3) - 1,
                 gi,
