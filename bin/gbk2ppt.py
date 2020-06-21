@@ -26,7 +26,7 @@ if __name__ == '__main__':
         r = convert_genbank(args.f, False, args.v)
         with open(args.o, 'w') as out:
             for l in r:
-                out.write("\t".join(l))
+                out.write("\t".join(map(str, l)))
                 out.write("\n")
     else:
         convert_genbank(args.f, True, args.v)

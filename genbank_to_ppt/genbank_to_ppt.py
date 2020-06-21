@@ -73,7 +73,7 @@ def convert_genbank(gbkf, printout=False, verbose=False):
             ]
 
             if printout:
-                print("\t".join(thisres))
+                print("\t".join(map(str, thisres)))
 
             res.append(thisres)
 
