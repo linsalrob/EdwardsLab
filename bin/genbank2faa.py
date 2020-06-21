@@ -24,10 +24,10 @@ def genbank_to_faa(gbkf, complexheader=False, verbose=False):
     :return:
     """
 
-    for seq in SeqIO.parse(gbkf):
+    for seq in SeqIO.parse(gbkf, 'genbank'):
         for feat in seq.features:
             if feat.type != 'CDS':
-                contine
+                continue
             (start, stop, strand) = (feat.location.start.position, feat.location.end.position, feat.strand)
             prtmtd = {
                 'EC_number': "",
@@ -53,13 +53,16 @@ def genbank_to_faa(gbkf, complexheader=False, verbose=False):
                 if strand < 0:
                     loc = f"{stop}_{start}"
 
-                cid += f' [{seq.id}] [{seq.annotations["organism"]}] [{seq.id}_{loc}]'
+                cid += f' [{seq.id}] '
+                if 'organism' in seq.annotations:
+                    cid += f' [{seq.annotations["organism"]}]'
+                cid += f' [{seq.id}_{loc}]'
                 if 'product' in feat.qualifiers:
-                    cid += f' [{feat.qualifiers["product"]}]'
+                    cid += f' {feat.qualifiers["product"][0]}'
                 else:
                     cid += f' [hypothetical protein]'
 
-            print(f"{cid}\n{feat.qualifiers["translation"]}")
+            print(f"{cid}\n{feat.qualifiers['translation'][0]}")
 
 
 
@@ -68,8 +71,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=" ")
     parser.add_argument('-g', help='genbank file', required=True)
     parser.add_argument('-c', help='complex identifier line', action='store_true')
-    parser.add_argument('-o', help='output file', required=True)
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-
+    genbank_to_faa(args.g, args.c, args.v)
