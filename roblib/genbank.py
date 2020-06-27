@@ -34,7 +34,7 @@ def genbank_stream(gbkf, verbose=False):
     """
 
     if is_gzip(gbkf):
-        handle = gzip.open(gbkf)
+        handle = gzip.open(gbkf, 'rt')
     else:
         handle = open(gbkf, 'r')
     return SeqIO.parse(handle, "genbank")
