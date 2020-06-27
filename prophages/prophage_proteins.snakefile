@@ -56,7 +56,11 @@ def write_protein_ids(gbkf, outf):
         for seq in SeqIO.parse(gbkf, "genbank"):
             for feat in seq.features:
                 if feat.type == "CDS" and 'protein_id' in feat.qualifiers:
-                    out.write("\n".join(feat.qualifiers['protein_id'] + [""]))
+                    product = "Hypothetical protein"
+                    if 'product' in feat.qualifiers:
+                        product = " ".join(feat.qualifiers['product'])
+                    for p in feat.qualifiers['protein_id']:
+                        out.write(f"{p}\t{product}\n")
 
 def contig_lens(inf, outf):
     """
@@ -118,7 +122,7 @@ rule run_phispy:
         temporary(os.path.join(PHSDIR, "{sample}_phage.fasta")),
         os.path.join(PHSDIR, "{sample}_phispy.log"),
         temporary(os.path.join(PHSDIR, "{sample}_bacteria.gbk")),
-        temporary(os.path.join(PHSDIR, "{sample}_phage.gbk")),
+        os.path.join(PHSDIR, "{sample}_phage.gbk"),
         os.path.join(PHSDIR, "{sample}_prophage_coordinates.tsv"),
     params:
         phispydir = PHSDIR,
