@@ -217,13 +217,29 @@ def genbank_to_ptt(gbkf, printout=False, verbose=False):
             if cogre.match(feat_to_text(feat, 'product')):
                 cog = cogre.match(feat_to_text(feat, 'product'))[1]
 
+            gene = feat_to_text(feat, 'gene')
+            if gene == "-":
+                gene = str(feat.location)
+
+            pid = feat_to_text(feat, 'locus_tag')
+            if pid == '-':
+                if 'locus_tag' in feat.qualifiers:
+                    pid = "|".join(feat.qualifiers['locus_tag'])
+                elif 'protein_id' in feat.qualifiers:
+                    pid = '|'.join(feat.qualifiers['protein_id'])
+                elif 'db_xref' in feat.qualifiers:
+                    pid = '|'.join(feat.qualifiers['db_xref'])
+                else:
+                    pid = seq.id + "." + str(feat.location)
+                
+
             thisres = [
                 f"{feat.location.start}..{feat.location.end}",
                 "+" if feat.strand >= 0 else "-",
                 (len(feat.location) / 3) - 1,
                 gi,
-                feat_to_text(feat, 'gene'),
-                feat_to_text(feat, 'locus_tag'),
+                gene,
+                pid,
                 cog,
                 feat_to_text(feat, 'product')
             ]
