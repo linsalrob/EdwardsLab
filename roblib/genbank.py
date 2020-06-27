@@ -47,10 +47,10 @@ def genbank_seqio(gbkf, verbose=False):
 def genbank_to_faa(gbkf, complexheader=False, verbose=False):
     """
     Parse a genbank file
-    :param gbkf:
-    :param complexheader:
-    :param verbose:
-    :return: a dict of the sequences
+    :param gbkf: the genbank file
+    :param complexheader: more detail in the header
+    :param verbose: more output
+    :return: yield the protein id and sequence
     """
 
     for seq in genbank_seqio(gbkf):
@@ -92,6 +92,33 @@ def genbank_to_faa(gbkf, complexheader=False, verbose=False):
                     cid += f' [hypothetical protein]'
 
             yield cid, feat.qualifiers['translation'][0]
+
+
+def genbank_to_functions(gbkf, verbose=False):
+    """
+    Parse a genbank file
+    :param gbkf: the genbank file
+    :param verbose: more output
+    :return: yield a tple of [protein id, function]
+    """
+    for seq in genbank_seqio(gbkf):
+        for feat in seq.features:
+            if feat.type != 'CDS':
+                continue
+
+            pid = None
+            if 'protein_id' in feat.qualifiers:
+                pid = '|'.join(feat.qualifiers['protein_id'])
+            elif 'locus_tag' in feat.qualifiers:
+                pid = "|".join(feat.qualifiers['locus_tag'])
+            else:
+                pid = seq.id + "." + str(feat.location)
+
+            prod = "Hypothetical protein"
+            if "product" in feat.qualifiers:
+                prod = "|".join(feat.qualifiers['product'])
+
+            yield pid, prod
 
 
 def genbank_to_orfs(gbkf, complexheader=False, verbose=False):
