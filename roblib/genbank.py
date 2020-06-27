@@ -25,7 +25,7 @@ def is_gzip(gbkf):
         return binascii.hexlify(i.read(2)) == b'1f8b'
 
 
-def genbank_stream(gbkf, verbose=False):
+def genbank_seqio(gbkf, verbose=False):
     """
     Get the parser stream
     :param gbkf: genbank file
@@ -49,7 +49,7 @@ def genbank_to_faa(gbkf, complexheader=False, verbose=False):
     :return: a dict of the sequences
     """
 
-    for seq in genbank_stream(gbkf):
+    for seq in genbank_seqio(gbkf):
         for feat in seq.features:
             if feat.type != 'CDS':
                 continue
@@ -99,7 +99,7 @@ def genbank_to_orfs(gbkf, complexheader=False, verbose=False):
     :return: a dict of the sequences
     """
 
-    for seq in genbank_stream(gbkf):
+    for seq in genbank_seqio(gbkf):
         for feat in seq.features:
             if feat.type != 'CDS':
                 continue
@@ -150,5 +150,5 @@ def genbank_to_fna(gbkf):
     :return: a dict of the sequences
     """
 
-    for seq in genbank_stream(gbkf):
+    for seq in genbank_seqio(gbkf):
         yield seq.id, seq.seq

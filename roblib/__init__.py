@@ -16,7 +16,7 @@ from .translate import translate_dna
 from .bcolors import bcolors
 from .rob_error import SequencePairError, FastqFormatError
 from .colours import colours, colors, message
-from .genbank import genbank_to_faa, genbank_to_fna, genbank_to_orfs, genbank_stream
+from .genbank import genbank_to_faa, genbank_to_fna, genbank_to_orfs, genbank_stream, genbank_seqio
 
 __all__ = [
     'mean', 'median', 'stdev',
@@ -29,5 +29,5 @@ __all__ = [
     'translate_dna',
     'bcolors', 'colours', 'colors', 'message',
     'SequencePairError', 'FastqFormatError',
-    'genbank_to_faa', 'genbank_to_fna', 'genbank_to_orfs', 'genbank_stream'
+    'genbank_to_faa', 'genbank_to_fna', 'genbank_to_orfs', 'genbank_stream', 'genbank_seqio'
     ]
