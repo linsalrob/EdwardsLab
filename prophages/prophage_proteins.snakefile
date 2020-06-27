@@ -47,20 +47,6 @@ SAMPLES, URLS = get_samples()
 def get_url(wildcards):
     return f"{URLS[wildcards.sample]}/{wildcards.sample}_genomic.gbff.gz"
 
-def write_protein_ids(gbkf, outf):
-    """
-    Write just the protein IDs
-    """
-
-    with open(outf, "w") as out:
-        for seq in SeqIO.parse(gbkf, "genbank"):
-            for feat in seq.features:
-                if feat.type == "CDS" and 'protein_id' in feat.qualifiers:
-                    product = "Hypothetical protein"
-                    if 'product' in feat.qualifiers:
-                        product = " ".join(feat.qualifiers['product'])
-                    for p in feat.qualifiers['protein_id']:
-                        out.write(f"{p}\t{product}\n")
 
 def contig_lens(inf, outf):
     """
@@ -75,7 +61,7 @@ rule all:
     input:
         expand(os.path.join(PHSDIR, "{sample}_prophage_coordinates.tsv"), sample=SAMPLES),
         expand(os.path.join(STATSDIR, "{sample}_contigs.txt"), sample=SAMPLES),
-        expand(os.path.join(PHGDIR, "{sample}_protein_ids.txt"), sample=SAMPLES)
+        expand(os.path.join(PHGDIR, "{sample}_protein_functions.txt"), sample=SAMPLES)
 
 rule download_genbank:
     """
@@ -144,9 +130,12 @@ rule create_phage_protein_list:
     input:
         gbk = os.path.join(PHSDIR, "{sample}_phage.gbk")
     output:
-        txt = os.path.join(PHGDIR, "{sample}_protein_ids.txt")
-    run:
-        write_protein_ids(input.gbk, output.txt)
+        txt = os.path.join(PHGDIR, "{sample}_protein_functions.txt")
+    shell:
+        """
+        python3 ~/GitHubs/EdwardsLab/bin/genbank2sequences.py -g {input.gbk} --functions {output.txt}
+        """
+    
 
 rule contig_stats:
     input:
