@@ -5,7 +5,7 @@ Convert a genbank file to sequences
 import os
 import sys
 import argparse
-from roblib import genbank_to_faa, genbank_to_fna, genbank_to_orfs
+from roblib import genbank_to_faa, genbank_to_fna, genbank_to_orfs, genbank_to_ptt
 
 __author__ = 'Rob Edwards'
 __copyright__ = 'Copyright 2020, Rob Edwards'
@@ -21,6 +21,7 @@ if __name__ == '__main__':
     parser.add_argument('-c', '--complex', help='complex identifier line', action='store_true')
     parser.add_argument('-a', '--aminoacids', help="output file for the amino acid sequences")
     parser.add_argument('-n', '--nucleotide', help='output file for nucleotide sequence')
+    parser.add_argument('-p', '--ptt', help='output file for the ptt protein table')
     parser.add_argument('-o', '--orfs', help='output file for orfs')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
@@ -44,7 +45,16 @@ if __name__ == '__main__':
                 out.write(f">{sid}\n{seq}\n")
         did = True
 
+
+    if args.ptt:
+        r = genbank_to_ptt(args.g, False, args.v)
+        with open(args.ptt, 'w') as out:
+            for l in r:
+                out.write("\t".join(map(str, l)))
+                out.write("\n")
+        did = True
+
     if not did:
-        sys.stderr.write("Please provide either a -n or -a output file! (or both)")
+        sys.stderr.write("Please provide either a -n, -a, -o, -p output file! (or all)")
 
 
