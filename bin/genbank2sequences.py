@@ -36,13 +36,13 @@ if __name__ == '__main__':
 
     if args.aminoacids:
         with open(args.aminoacids, 'w') as out:
-            for sid, seq in genbank_to_faa(args.genbank, args.complex), args.v:
+            for sid, seq in genbank_to_faa(args.genbank, args.complex, args.v):
                 out.write(f">{sid}\n{seq}\n")
         did = True
 
     if args.orfs:
         with open(args.orfs, 'w') as out:
-            for sid, seq in genbank_to_orfs(args.genbank, args.complex), args.v:
+            for sid, seq in genbank_to_orfs(args.genbank, args.complex, args.v):
                 out.write(f">{sid}\n{seq}\n")
         did = True
 
