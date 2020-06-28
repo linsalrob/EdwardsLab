@@ -6,6 +6,7 @@ import os
 import sys
 import argparse
 from roblib import genbank_to_faa, genbank_to_fna, genbank_to_orfs, genbank_to_ptt, genbank_to_functions
+from roblib import genbank
 
 __author__ = 'Rob Edwards'
 __copyright__ = 'Copyright 2020, Rob Edwards'
@@ -24,6 +25,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--ptt', help='output file for the ptt protein table')
     parser.add_argument('-o', '--orfs', help='output file for orfs')
     parser.add_argument('-f', '--functions', help='output file for two column table of [protein id, function]')
+    parser.add_argument('--phage_finder', help='make a phage finder file')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
@@ -59,6 +61,12 @@ if __name__ == '__main__':
         with open(args.functions, 'w') as out:
             for pid, prod in genbank_to_functions(args.genbank, args.v):
                 out.write(f"{pid}\t{prod}\n")
+        did = True
+
+    if args.phage_finder:
+        with open(args.phage_finder, 'w') as out:
+            for tple in genbank.genbank_to_phage_finder(args.genbank, args.v):
+                out.write("\t".join(map(str, tple)) + "\n")
         did = True
 
     if not did:

@@ -231,7 +231,7 @@ def genbank_to_ptt(gbkf, printout=False, verbose=False):
                     pid = '|'.join(feat.qualifiers['db_xref'])
                 else:
                     pid = seq.id + "." + str(feat.location)
-                
+
 
             thisres = [
                 f"{feat.location.start}..{feat.location.end}",
@@ -250,3 +250,38 @@ def genbank_to_ptt(gbkf, printout=False, verbose=False):
             res.append(thisres)
 
     return res
+
+def genbank_to_phage_finder(gbkf, verbose=False):
+    """
+    This is a very specific format used by phage_finder (http://phage-finder.sourceforge.net/documentation.htm)
+    - contig id, including >
+    - length of the contig
+    - gene ID
+    - start
+    - end
+    - function
+
+    :param gbkf: the genbank file
+    :param verbose: more output
+    :return: yields a tple of this data
+    """
+
+    for seq in genbank_seqio(gbkf):
+        for feat in seq.features:
+            if feat.type != 'CDS':
+                continue
+            pid = feat_to_text(feat, 'locus_tag')
+            if pid == '-':
+                if 'locus_tag' in feat.qualifiers:
+                    pid = "|".join(feat.qualifiers['locus_tag'])
+                elif 'protein_id' in feat.qualifiers:
+                    pid = '|'.join(feat.qualifiers['protein_id'])
+                elif 'db_xref' in feat.qualifiers:
+                    pid = '|'.join(feat.qualifiers['db_xref'])
+                else:
+                    pid = seq.id + "." + str(feat.location)
+            fn = "Hypothetical protein"
+            if 'product' in feat.qualifiers:
+                fn = feat_to_text(feat, 'product')
+            yield [seq.id, len(seq.seq), pid, feat.location.start, feat.location.end, fn]
+
