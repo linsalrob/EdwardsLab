@@ -146,11 +146,13 @@ def genbank_to_orfs(gbkf, complexheader=False, verbose=False):
                 'translation': ""
             }
 
-            cid = ">"
+            cid = ""
             if 'protein_id' in feat.qualifiers:
                 cid += '|'.join(feat.qualifiers['protein_id'])
             elif 'locus_tag' in feat.qualifiers:
                 cid += "|".join(feat.qualifiers['locus_tag'])
+            elif 'db_xref' in feat.qualifiers:
+                cid = '|'.join(feat.qualifiers['db_xref'])
             else:
                 cid += seq.id + "." + str(feat.location)
 
