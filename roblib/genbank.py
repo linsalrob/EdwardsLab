@@ -43,6 +43,37 @@ def genbank_seqio(gbkf, verbose=False):
         handle = open(gbkf, 'r')
     return SeqIO.parse(handle, "genbank")
 
+def feature_id(seq, feat):
+    """
+    Choose the appropriate id for the feature
+    :param feat: the feature
+    :return: the id
+    """
+
+    if 'protein_id' in feat.qualifiers:
+        return '|'.join(feat.qualifiers['protein_id'])
+    elif 'locus_tag' in feat.qualifiers:
+        return "|".join(feat.qualifiers['locus_tag'])
+    elif 'db_xref' in feat.qualifiers:
+        return '|'.join(feat.qualifiers['db_xref'])
+    else:
+        return seq.id + "." + str(feat.location)
+
+def feat_to_text(feat, qual):
+    if qual in feat.qualifiers:
+        return " ".join(feat.qualifiers[qual])
+    return "-"
+
+def genbank_to_fna(gbkf):
+    """
+    Parse a genbank file
+    :param gbkf: genbank file
+    :param verbose:
+    :return: a dict of the sequences
+    """
+
+    for seq in genbank_seqio(gbkf):
+        yield seq.id, seq.seq
 
 def genbank_to_faa(gbkf, complexheader=False, verbose=False):
     """
@@ -69,13 +100,7 @@ def genbank_to_faa(gbkf, complexheader=False, verbose=False):
                 'translation': ""
             }
 
-            cid = ">"
-            if 'protein_id' in feat.qualifiers:
-                cid += '|'.join(feat.qualifiers['protein_id'])
-            elif 'locus_tag' in feat.qualifiers:
-                cid += "|".join(feat.qualifiers['locus_tag'])
-            else:
-                cid += seq.id + "." + str(feat.location)
+            cid = feature_id(seq, feat)
 
             if complexheader:
                 loc = f"{start}_{stop}"
@@ -106,19 +131,13 @@ def genbank_to_functions(gbkf, verbose=False):
             if feat.type != 'CDS':
                 continue
 
-            pid = None
-            if 'protein_id' in feat.qualifiers:
-                pid = '|'.join(feat.qualifiers['protein_id'])
-            elif 'locus_tag' in feat.qualifiers:
-                pid = "|".join(feat.qualifiers['locus_tag'])
-            else:
-                pid = seq.id + "." + str(feat.location)
+            cid = feature_id(seq, feat)
 
             prod = "Hypothetical protein"
             if "product" in feat.qualifiers:
                 prod = "|".join(feat.qualifiers['product'])
 
-            yield pid, prod
+            yield cid, prod
 
 
 def genbank_to_orfs(gbkf, complexheader=False, verbose=False):
@@ -146,15 +165,7 @@ def genbank_to_orfs(gbkf, complexheader=False, verbose=False):
                 'translation': ""
             }
 
-            cid = ""
-            if 'protein_id' in feat.qualifiers:
-                cid += '|'.join(feat.qualifiers['protein_id'])
-            elif 'locus_tag' in feat.qualifiers:
-                cid += "|".join(feat.qualifiers['locus_tag'])
-            elif 'db_xref' in feat.qualifiers:
-                cid = '|'.join(feat.qualifiers['db_xref'])
-            else:
-                cid += seq.id + "." + str(feat.location)
+            cid = feature_id(seq, feat)
 
             if complexheader:
                 loc = f"{start}_{stop}"
@@ -172,24 +183,6 @@ def genbank_to_orfs(gbkf, complexheader=False, verbose=False):
 
             yield cid, feat.seq
 
-
-
-
-def genbank_to_fna(gbkf):
-    """
-    Parse a genbank file
-    :param gbkf: genbank file
-    :param verbose:
-    :return: a dict of the sequences
-    """
-
-    for seq in genbank_seqio(gbkf):
-        yield seq.id, seq.seq
-
-def feat_to_text(feat, qual):
-    if qual in feat.qualifiers:
-        return " ".join(feat.qualifiers[qual])
-    return "-"
 
 def genbank_to_ptt(gbkf, printout=False, verbose=False):
     """
@@ -223,17 +216,7 @@ def genbank_to_ptt(gbkf, printout=False, verbose=False):
             if gene == "-":
                 gene = str(feat.location)
 
-            pid = feat_to_text(feat, 'locus_tag')
-            if pid == '-':
-                if 'locus_tag' in feat.qualifiers:
-                    pid = "|".join(feat.qualifiers['locus_tag'])
-                elif 'protein_id' in feat.qualifiers:
-                    pid = '|'.join(feat.qualifiers['protein_id'])
-                elif 'db_xref' in feat.qualifiers:
-                    pid = '|'.join(feat.qualifiers['db_xref'])
-                else:
-                    pid = seq.id + "." + str(feat.location)
-
+            cid = feature_id(seq, feat)
 
             thisres = [
                 f"{feat.location.start}..{feat.location.end}",
@@ -241,7 +224,7 @@ def genbank_to_ptt(gbkf, printout=False, verbose=False):
                 (len(feat.location) / 3) - 1,
                 gi,
                 gene,
-                pid,
+                cid,
                 cog,
                 feat_to_text(feat, 'product')
             ]
@@ -272,18 +255,9 @@ def genbank_to_phage_finder(gbkf, verbose=False):
         for feat in seq.features:
             if feat.type != 'CDS':
                 continue
-            pid = feat_to_text(feat, 'locus_tag')
-            if pid == '-':
-                if 'locus_tag' in feat.qualifiers:
-                    pid = "|".join(feat.qualifiers['locus_tag'])
-                elif 'protein_id' in feat.qualifiers:
-                    pid = '|'.join(feat.qualifiers['protein_id'])
-                elif 'db_xref' in feat.qualifiers:
-                    pid = '|'.join(feat.qualifiers['db_xref'])
-                else:
-                    pid = seq.id + "." + str(feat.location)
+            cid = feature_id(seq, feat)
             fn = "Hypothetical protein"
             if 'product' in feat.qualifiers:
                 fn = feat_to_text(feat, 'product')
-            yield [seq.id, len(seq.seq), pid, feat.location.start, feat.location.end, fn]
+            yield [seq.id, len(seq.seq), cid, feat.location.start, feat.location.end, fn]
 
