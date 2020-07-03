@@ -179,15 +179,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     print("Timing run all at once")
-    print(timeit.timeit('run_hmmscan_aao(args.g, args.m)', setup="from __main__ import run_hmmscan_aao, args"))
+    print(timeit.timeit('run_hmmscan_aao(args.g, args.m)', setup="from __main__ import run_hmmscan_aao, args", number=3))
 
     print("Timing run one at a time")
-    print(timeit.timeit('run_hmmscan_oat(args.g, args.m)', setup="from __main__ import run_hmmscan_oat, args"))
+    print(timeit.timeit('run_hmmscan_oat(args.g, args.m)', setup="from __main__ import run_hmmscan_oat, args", number=3))
 
     print("Timing hmmscan using temporary files")
-    print(timeit.timeit('hmmscan_print_then_run(args.g, args.m)', setup="from __main__ import run_hmmscan_aao, args"))
+    print(timeit.timeit('hmmscan_print_then_run(args.g, args.m)', setup="from __main__ import run_hmmscan_aao, args", number=3))
 
     print("Timing hmmsearch using temporary files")
-    print(timeit.timeit('hmmsearch_print_then_run(args.g, args.m)', setup="from __main__ import run_hmmscan_aao, args"))
+    print(timeit.timeit('hmmsearch_print_then_run(args.g, args.m)', setup="from __main__ import run_hmmscan_aao, args", number=3))
 
 
