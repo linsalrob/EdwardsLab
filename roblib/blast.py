@@ -27,6 +27,13 @@ class BlastResult():
         if subject_length:
             self.subject_length = int(subject_length)
 
+    def is_significant(self):
+        """
+        Is this hit significant
+        :return: boolean
+        """
+
+        return self.evalue < 1e-5
 
 
 def stream_blast_results(blastf, verbose=False):
