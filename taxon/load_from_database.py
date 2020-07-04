@@ -267,7 +267,12 @@ def taxonomy_hierarchy_as_list(conn, tid, verbose=False):
 
     while t.parent != 1 and t.taxid != 1:
         if t.rank in wanted_levels:
-            taxlist[wanted_levels.index(t.rank)] = n.scientific_name
+            if n.scientific_name:
+                taxlist[wanted_levels.index(t.rank)] = n.scientific_name
+            elif n.common_name:
+                taxlist[wanted_levels.index(t.rank)] = n.common_name
+            else:
+                taxlist[wanted_levels.index(t.rank)] = f"[no name] taxid: {tid}"
         t, n = get_taxonomy(t.parent, conn)
     return taxlist
 
