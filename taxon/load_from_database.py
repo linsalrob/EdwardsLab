@@ -155,41 +155,6 @@ def gi_to_taxonomy(gi, conn, protein=False, verbose=False):
         sys.stderr.write("GI: {} Taxonomy: {}\n".format(gi, p))
     return get_taxonomy(p, conn)
 
-def taxonomy_hierarchy(tid, verbose=False):
-    """
-    Get the taxonomical hierarchy for a tax id. Yields so you can call this in a while loop
-    Note we just yield the id
-    :param tid: taxonomy ID
-    :param verbose: More output
-    """
-
-    global data
-    global conn
-
-
-    while tid != 1: 
-        if tid == 1:
-            if verbose:
-                sys.stderr.write(f"{bcolors.RED}Taxonomy ID 1 found{bcolors.ENDC}\n")
-            return
-        if not tid:
-            if verbose:
-                sys.stderr.write(f"{bcolors.RED}No tid{bcolors.ENDC}\n")
-            return
-
-        if tid not in data['node']:
-            try:
-                get_taxonomy(tid, conn, verbose)
-            except EntryNotInDatabaseError:
-                if verbose:
-                    sys.stderr.write(f"{bcolors.RED}{tid} is not in database. Can not continue{bcolors.ENDC}\n")
-                return
-
-        if verbose:
-            sys.stderr.write(f"{bcolors.GREEN}tid: {tid} parent: {data['node'][tid].parent}{bcolors.ENDC}\n")
-        yield data['node'][tid].parent
-        tid = data['node'][tid].parent
-
 def all_ids_complete(conn, protein=False, verbose=False):
     """
     Get all the available IDs in the database
@@ -246,6 +211,65 @@ def all_species_ids(conn, verbose=False):
     cur = conn.cursor()
     exc = cur.execute("select tax_id from nodes where rank='species'")
     return exc.fetchall()
+
+
+def taxonomy_hierarchy(tid, verbose=False):
+    """
+    Get the taxonomical hierarchy for a tax id. Yields so you can call this in a while loop
+    Note we just yield the id
+    :param tid: taxonomy ID
+    :param verbose: More output
+    """
+
+    global data
+    global conn
+
+
+    while tid != 1:
+        if tid == 1:
+            if verbose:
+                sys.stderr.write(f"{bcolors.RED}Taxonomy ID 1 found{bcolors.ENDC}\n")
+            return
+        if not tid:
+            if verbose:
+                sys.stderr.write(f"{bcolors.RED}No tid{bcolors.ENDC}\n")
+            return
+
+        if tid not in data['node']:
+            try:
+                get_taxonomy(tid, conn, verbose)
+            except EntryNotInDatabaseError:
+                if verbose:
+                    sys.stderr.write(f"{bcolors.RED}{tid} is not in database. Can not continue{bcolors.ENDC}\n")
+                return
+
+        if verbose:
+            sys.stderr.write(f"{bcolors.GREEN}tid: {tid} parent: {data['node'][tid].parent}{bcolors.ENDC}\n")
+        yield data['node'][tid].parent
+        tid = data['node'][tid].parent
+
+def taxonomy_hierarchy_as_list(conn, tid, verbose=False):
+    """
+    Return the taxonomy hierarchy as a list
+    :param conn: the database connect
+    :param tid: the taxonomy id
+    :param verbose: more output
+    :return:
+    """
+    wanted_levels = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species', 'subspecies']
+    taxlist = ["", "", "", "", "", "", "", ""]
+
+    t, n = get_taxonomy(tid, conn)
+    if not t:
+        if verbose:
+            sys.stderr.write("No taxonomy for {}\n".format(tid))
+        return taxlist
+
+    while t.parent != 1 and t.taxid != 1:
+        if t.rank in wanted_levels:
+            taxlist[wanted_levels.index(t.rank)] = n.scientific_name
+        t, n = get_taxonomy(t.parent, conn)
+    return taxlist
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Get data from the database")
