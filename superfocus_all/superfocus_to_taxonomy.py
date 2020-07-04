@@ -124,6 +124,9 @@ def parse_m8_tophit(m8f, evalue, verbose=False):
                         ignore_tids.add(tid)
                         continue
                 if taxonomy[tid]:
+                    if 'metagenome' in taxonomy[tid][6].lower():
+                        taxonomy.pop(tid)
+                        continue
                     r = "\t".join(taxonomy[tid])
                     printed.add(p[0])
                     print(f"{p[0]}\t{r}\ttaxid: {tid}")
