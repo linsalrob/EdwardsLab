@@ -26,6 +26,9 @@ __email__ = 'raedwards@gmail.com'
 
 def run_hmmscan_oat(gbkf, hmmf):
 
+    allhits = {}
+    hitcount = 0
+    rescount = 0
     for seq in genbank_seqio(gbkf):
         for feat in seq.features:
             if feat.type != 'CDS':
@@ -41,9 +44,6 @@ def run_hmmscan_oat(gbkf, hmmf):
             hmmresult = search.communicate(input=f">{feat.id}\n{aa}\n".encode())[0]
 
             results = SearchIO.parse(StringIO(hmmresult.decode()), 'hmmer3-text')
-            allhits = {}
-            hitcount = 0
-            rescount = 0
             for res in results:
                 allhits[res.id] = {}
                 rescount += 1
@@ -51,12 +51,15 @@ def run_hmmscan_oat(gbkf, hmmf):
                     allhits[res.id][hit.id] = hit.evalue
                     hitcount += 1
 
-            print(f"Using hmmscan and streaming one at time there were {rescount} results and {hitcount} hits, and our dict has {len(allhits)} entries")
+    print(f"Using hmmscan and streaming one at time there were {rescount} results and {hitcount} hits, and our dict has {len(allhits)} entries")
 
 
 def run_hmmscan_aao(gbkf, hmmf):
 
 
+    allhits = {}
+    hitcount = 0
+    rescount = 0
     for seq in genbank_seqio(gbkf):
         prots = []
         for feat in seq.features:
@@ -75,9 +78,6 @@ def run_hmmscan_aao(gbkf, hmmf):
         hmmresult = search.communicate(input="\n".join(prots).encode())[0]
 
         results = SearchIO.parse(StringIO(hmmresult.decode()), 'hmmer3-text')
-        allhits = {}
-        hitcount = 0
-        rescount = 0
         for res in results:
             allhits[res.id] = {}
             rescount += 1
@@ -85,7 +85,7 @@ def run_hmmscan_aao(gbkf, hmmf):
                 allhits[res.id][hit.id] = hit.evalue
                 hitcount += 1
 
-        print(f"Using hmmscan and streaming all at once there were {rescount} results and {hitcount} hits, and our dict has {len(allhits)} entries")
+    print(f"Using hmmscan and streaming all at once there were {rescount} results and {hitcount} hits, and our dict has {len(allhits)} entries")
 
 def hmmscan_print_then_run(gbkf, hmmf):
     aaout = NamedTemporaryFile(mode='w+t', delete=False)
@@ -185,9 +185,9 @@ if __name__ == '__main__':
     print(timeit.timeit('run_hmmscan_oat(args.g, args.m)', setup="from __main__ import run_hmmscan_oat, args", number=3))
 
     print("Timing hmmscan using temporary files")
-    print(timeit.timeit('hmmscan_print_then_run(args.g, args.m)', setup="from __main__ import run_hmmscan_aao, args", number=3))
+    print(timeit.timeit('hmmscan_print_then_run(args.g, args.m)', setup="from __main__ import hmmscan_print_then_run, args", number=3))
 
     print("Timing hmmsearch using temporary files")
-    print(timeit.timeit('hmmsearch_print_then_run(args.g, args.m)', setup="from __main__ import run_hmmscan_aao, args", number=3))
+    print(timeit.timeit('hmmsearch_print_then_run(args.g, args.m)', setup="from __main__ import hmmsearch_print_then_run, args", number=3))
 
 
