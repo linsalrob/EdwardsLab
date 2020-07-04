@@ -257,7 +257,7 @@ def taxonomy_hierarchy_as_list(conn, tid, verbose=False):
     :return:
     """
     wanted_levels = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
-    taxlist = ["s_", "p_", "c_", "o_", "f_", "g_", "s_"]
+    taxlist = ["s:", "p:", "c:", "o:", "f:", "g:", "s:"]
 
     t, n = get_taxonomy(tid, conn)
     if not t:
@@ -268,11 +268,11 @@ def taxonomy_hierarchy_as_list(conn, tid, verbose=False):
     while t.parent != 1 and t.taxid != 1:
         if t.rank in wanted_levels:
             if n.scientific_name:
-                taxlist[wanted_levels.index(t.rank)] += n.scientific_name
+                taxlist[wanted_levels.index(t.rank)] = t.rank[0] + ":" + n.scientific_name
             elif n.common_name:
-                taxlist[wanted_levels.index(t.rank)] += n.common_name
+                taxlist[wanted_levels.index(t.rank)] = t.rank[0] + ":" + n.common_name
             else:
-                taxlist[wanted_levels.index(t.rank)] += f"[no name] taxid: {tid}"
+                taxlist[wanted_levels.index(t.rank)] = t.rank[0] + ":" + f"[no name] taxid: {tid}"
         t, n = get_taxonomy(t.parent, conn)
     return taxlist
 
