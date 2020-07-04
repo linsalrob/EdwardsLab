@@ -40,14 +40,13 @@ def printmatches(seqid, matches):
         if len(t) == 1:
             ranks[i + 1] = t.pop()
     s = "\t".join(ranks)
-    return f"{seqid}\t{s}\n"
+    print(f"{seqid}\t{s}")
 
-def parse_m8(m8f, evalue, output, verbose=False):
+def parse_m8(m8f, evalue, verbose=False):
     """
     Parse the m8 file and ... do something!
     :param m8f: the m8 output file from diamond
     :param evalue: the maximum evalue
-    :param output: the output file
     :param verbose: more output (maybe)
     :return:
     """
@@ -60,31 +59,30 @@ def parse_m8(m8f, evalue, output, verbose=False):
     if verbose:
         sys.stderr.write(f"{colors.GREEN}Reading {m8f}{colors.ENDC}\n")
     lastid = None
-    with open(output, 'w') as out:
-        with open(m8f, 'r') as f:
-            for l in f:
-                p = l.strip().split("\t")
-                if float(p[10]) > evalue:
-                    continue
-                if lastid and p[0] != lastid:
-                    out.write(printmatches(lastid, matches))
-                    matches = []
-                lastid = p[0]
-                m = fig.match(p[1])
-                if m:
-                    tid = m.group(1)
-                    if tid not in taxonomy:
-                        taxonomy[tid] = taxonomy_hierarchy_as_list(c, tid, True)
-                    if taxonomy[tid]:
-                        matches.append(taxonomy[tid])
+
+    with open(m8f, 'r') as f:
+        for l in f:
+            p = l.strip().split("\t")
+            if float(p[10]) > evalue:
+                continue
+            if lastid and p[0] != lastid:
+                printmatches(lastid, matches)
+                matches = []
+            lastid = p[0]
+            m = fig.match(p[1])
+            if m:
+                tid = m.group(1)
+                if tid not in taxonomy:
+                    taxonomy[tid] = taxonomy_hierarchy_as_list(c, tid, True)
+                if taxonomy[tid]:
+                    matches.append(taxonomy[tid])
 
 
-def parse_m8_tophit(m8f, evalue, output, verbose=False):
+def parse_m8_tophit(m8f, evalue, verbose=False):
     """
     Parse the m8 file and ... do something!
     :param m8f: the m8 output file from diamond
     :param evalue: the maximum evalue
-    :param output: output file
     :param verbose: more output (maybe)
     :return:
     """
@@ -97,37 +95,35 @@ def parse_m8_tophit(m8f, evalue, output, verbose=False):
     if verbose:
         sys.stderr.write(f"{colors.GREEN}Reading {m8f}{colors.ENDC}\n")
     printed=set()
-    with open(output, 'w') as out:
-        with open(m8f, 'r') as f:
-            for l in f:
-                p = l.strip().split("\t")
-                if float(p[10]) > evalue:
-                    continue
-                if p[0] in printed:
-                    continue
-                m = fig.match(p[1])
-                if m:
-                    tid = m.group(1)
-                    if tid not in taxonomy:
-                        taxonomy[tid] = taxonomy_hierarchy_as_list(c, tid, True)
-                    if taxonomy[tid]:
-                        r = "\t".join(taxonomy[tid])
-                        printed.add(p[0])
-                        out.write(f"{p[0]}\t{r}\n")
+
+    with open(m8f, 'r') as f:
+        for l in f:
+            p = l.strip().split("\t")
+            if float(p[10]) > evalue:
+                continue
+            if p[0] in printed:
+                continue
+            m = fig.match(p[1])
+            if m:
+                tid = m.group(1)
+                if tid not in taxonomy:
+                    taxonomy[tid] = taxonomy_hierarchy_as_list(c, tid, True)
+                if taxonomy[tid]:
+                    r = "\t".join(taxonomy[tid])
+                    printed.add(p[0])
+                    print(f"{p[0]}\t{r}")
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=" ")
-    parser.add_argument('-d', '--directory', help='Super focus output directory. Needs the m8 files', required=True)
+    parser.add_argument('-f', '--file', help='Super focus m8 output file', required=True)
     parser.add_argument('-e', '--evalue', help='max evalue. Default 1e-5', type=float, default=1e-5)
     parser.add_argument('-t', '--tophit', help='only use the tophit', action='store_true')
-    parser.add_argument('-o', '--output', help="output file", required=True)
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    for f in os.listdir(args.directory):
-        if f.endswith('.m8'):
-            if args.tophit:
-                parse_m8_tophit(os.path.join(args.directory, f), args.evalue, args.output, args.v)
-            else:
-                parse_m8(os.path.join(args.directory, f), args.evalue, args.output, args.v)
+
+    if args.tophit:
+        parse_m8_tophit(args.file, args.evalue, args.v)
+    else:
+        parse_m8(args.file, args.evalue, args.v)
 
