@@ -7,6 +7,7 @@ import sys
 import argparse
 import re
 from taxon import taxonomy_hierarchy_as_list, get_taxonomy_db
+from taxon.Error import EntryNotInDatabaseError
 from roblib import colors
 
 __author__ = 'Rob Edwards'
@@ -17,6 +18,8 @@ __maintainer__ = 'Rob Edwards'
 __email__ = 'raedwards@gmail.com'
 
 taxonomy = {}
+
+ignore_tids = {'6666666', '88888881'}
 
 
 def printmatches(seqid, matches):
@@ -72,8 +75,14 @@ def parse_m8(m8f, evalue, verbose=False):
             m = fig.match(p[1])
             if m:
                 tid = m.group(1)
+                if tid in ignore_tids:
+                    continue
                 if tid not in taxonomy:
-                    taxonomy[tid] = taxonomy_hierarchy_as_list(c, tid, True)
+                    try:
+                        taxonomy[tid] = taxonomy_hierarchy_as_list(c, tid, True)
+                    except EntryNotInDatabaseError as e:
+                        ignore_tids.add(tid)
+                        continue
                 if taxonomy[tid]:
                     matches.append(taxonomy[tid])
 
@@ -106,8 +115,14 @@ def parse_m8_tophit(m8f, evalue, verbose=False):
             m = fig.match(p[1])
             if m:
                 tid = m.group(1)
+                if tid in ignore_tids:
+                    continue
                 if tid not in taxonomy:
-                    taxonomy[tid] = taxonomy_hierarchy_as_list(c, tid, True)
+                    try:
+                        taxonomy[tid] = taxonomy_hierarchy_as_list(c, tid, True)
+                    except EntryNotInDatabaseError as e:
+                        ignore_tids.add(tid)
+                        continue
                 if taxonomy[tid]:
                     r = "\t".join(taxonomy[tid])
                     printed.add(p[0])
