@@ -18,6 +18,30 @@ __email__ = 'raedwards@gmail.com'
 
 taxonomy = {}
 
+
+def printmatches(seqid, matches):
+    """
+    Summarize and print he matches
+    :param seqid: the sequence ID
+    :param matches:  the matches array
+    :return:
+    """
+
+
+    if len(matches) == 0:
+        print(f"{seqid}\tUnknown")
+        return
+
+    ranks = ["Root", "", "", "", "", "", "", "", ""]
+    for i in range(0, 8):
+        t = set()
+        for r in matches:
+            t.add(r[i])
+        if len(t) == 1:
+            ranks[i + 1] = t.pop()
+    s = "\t".join(ranks)
+    print(f"{seqid}\t{s}")
+
 def parse_m8(m8f, evalue, verbose=False):
     """
     Parse the m8 file and ... do something!
@@ -31,42 +55,25 @@ def parse_m8(m8f, evalue, verbose=False):
     c = get_taxonomy_db()
     global taxonomy
 
-    matches = {}
+    matches = []
     if verbose:
         sys.stderr.write(f"{colors.GREEN}Reading {m8f}{colors.ENDC}\n")
+    lastid = None
     with open(m8f, 'r') as f:
         for l in f:
             p = l.strip().split("\t")
             if float(p[10]) > evalue:
                 continue
+            if lastid and p[0] != lastid:
+                printmatches(lastid, matches)
+                matches = []
+            lastid = p[0]
             m = fig.match(p[1])
-            matches[p[0]] = []
             if m:
                 tid = m.group(1)
                 if tid not in taxonomy:
                     taxonomy[tid] = taxonomy_hierarchy_as_list(c, tid, True)
-                matches[p[0]].append(taxonomy[tid])
-
-    for m in matches:
-        if len(matches[m]) == 0:
-            print(f"{m}\tUnknown")
-            continue
-
-        ranks = ["Root", "", "", "", "", "", "", "", ""]
-        for i in range(0,8):
-            t = set()
-            for r in matches[m]:
-                t.add(r[i])
-            if len(t) == 1:
-                ranks[i+1] = t.pop()
-        s = "\t".join(ranks)
-        print(f"{m}\t{s}")
-
-
-
-
-
-
+                matches.append(taxonomy[tid])
 
 
 if __name__ == '__main__':
