@@ -18,11 +18,11 @@ __email__ = 'raedwards@gmail.com'
 
 taxonomy = {}
 
-def parse_m8(m8f, eval, verbose=False):
+def parse_m8(m8f, evalue, verbose=False):
     """
     Parse the m8 file and ... do something!
     :param m8f: the m8 output file from diamond
-    :param eval: the maximum evalue
+    :param evalue: the maximum evalue
     :param verbose: more output (maybe)
     :return:
     """
@@ -37,7 +37,7 @@ def parse_m8(m8f, eval, verbose=False):
     with open(m8f, 'r') as f:
         for l in f:
             p = l.strip().split("\t")
-            if float(p[10] > eval):
+            if float(p[10]) > evalue:
                 continue
             m = fig.match(p[1])
             matches[p[0]] = []
@@ -71,12 +71,12 @@ def parse_m8(m8f, eval, verbose=False):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=" ")
-    parser.add_argument('-d', '--database', help='Super focus output directory. Needs the m8 files', required=True)
+    parser.add_argument('-d', '--directory', help='Super focus output directory. Needs the m8 files', required=True)
     parser.add_argument('-e', '--evalue', help='max evalue. Default 1e-5', type=float, default=1e-5)
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    for f in os.listdir(args.d):
+    for f in os.listdir(args.directory):
         if f.endswith('.m8'):
-            parse_m8(os.path.join(args.d, f), args.e, args.v)
+            parse_m8(os.path.join(args.directory, f), args.evalue, args.v)
 
