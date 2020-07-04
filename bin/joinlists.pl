@@ -4,12 +4,13 @@
 
 use strict;
 
-my $header; my @files; my $filetitle; my $zero = "";
+my $header; my @files; my $filetitle; my $zero = ""; my $skip=0;
 while (@ARGV) {
 	my $t=shift @ARGV;
 	if ($t eq "-h") {$header=1}
 	elsif ($t eq "-t") {$filetitle=1}
 	elsif ($t eq "-z") {$zero=0}
+	elsif ($t eq "-s") {$skip=1}
 	elsif (-e $t) {push @files, $t}
 	else {
 		print STDERR "Don't understand $t\n";
@@ -19,7 +20,7 @@ while (@ARGV) {
 unless (scalar(@files) > 1) {
  print STDERR <<EOF;
 
-$0 -h -t <files>
+$0 <files>
 
 Join two or more lists from two files. Anything with the same keys will be merged. 
 This assumes there are two separated by tabs, and the first column is the key and 
@@ -28,6 +29,7 @@ the rest of the columns the values
 -h files include header row (first column is used from file 1)
 -t use the file names as titles in the output
 -z use 0 instead of null for non-existent values
+-s skip lines that start #
 
 EOF
 
@@ -41,6 +43,7 @@ foreach my $f (@files) {
 	$datapoints{$f}=0;
 	while (<IN>) {
 		chomp;
+		if ($skip && index($_, "#") == 0) {next}
 		my @a=split /\t/;
 		my $key = shift @a;
 		if ($header && !(defined $headers->{$f})) {$headers->{$f}=\@a}
