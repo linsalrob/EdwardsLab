@@ -36,6 +36,8 @@ def get_samples():
             p = l.strip().split("\t")
             # we strip off the protocol because we prefer rsync but fall
             # fall back to curl if that doesn't work
+            if p[19] == "na":
+                continue
             p[19] = p[19].replace("ftp://", "", 1)
             ass_id = p[19].split("/")[-1]
             samples[ass_id] = p[19]
