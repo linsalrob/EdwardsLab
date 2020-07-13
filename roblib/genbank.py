@@ -184,7 +184,7 @@ def genbank_to_orfs(gbkf, complexheader=False, verbose=False):
                 else:
                     cid += f' [hypothetical protein]'
 
-            yield cid, feat.seq
+            yield cid, str(feat.extract(seq).seq)
 
 
 def genbank_to_ptt(gbkf, printout=False, verbose=False):
