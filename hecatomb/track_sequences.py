@@ -38,10 +38,10 @@ if __name__ == '__main__':
     header = {}
 
     # initially didn't plan to keep all these :)
-    for seqid, header, seq, qualscores in stream_fastq(args.f):
+    for seqid, hd, seq, qualscores in stream_fastq(args.f):
         dna[seqid] = seq.upper()
         qual[seqid] = qualscores
-        header[seqid] = header
+        header[seqid] = hd
 
     changed = set()
     for step in range(1, 10):
