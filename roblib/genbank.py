@@ -117,9 +117,9 @@ def genbank_to_faa(gbkf, complexheader=False, verbose=False):
                     cid += f' [hypothetical protein]'
 
             if 'translation' in feat.qualifiers:
-                yield cid, feat.qualifiers['translation'][0]
+                yield seq.id, cid, feat.qualifiers['translation'][0]
             else:
-                yield cid, str(feat.extract(seq).translate().seq)
+                yield seq.id, cid, str(feat.extract(seq).translate().seq)
 
 
 def genbank_to_functions(gbkf, verbose=False):
@@ -184,7 +184,7 @@ def genbank_to_orfs(gbkf, complexheader=False, verbose=False):
                 else:
                     cid += f' [hypothetical protein]'
 
-            yield cid, str(feat.extract(seq).seq)
+            yield seq.id, cid, str(feat.extract(seq).seq)
 
 
 def genbank_to_ptt(gbkf, printout=False, verbose=False):
