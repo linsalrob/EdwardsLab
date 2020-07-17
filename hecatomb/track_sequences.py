@@ -34,8 +34,10 @@ if __name__ == '__main__':
 
     os.makedirs(args.o, exist_ok=True)
     initial = {}
+    qual = {}
     for seqid, header, seq, qualscores in stream_fastq(args.f):
         initial[seqid] = seq.upper()
+        qual[seqid] = qualscores
 
     changed = set()
     for step in range(1, 10):
@@ -46,7 +48,7 @@ if __name__ == '__main__':
             message(f"FQ File {fqf} not found", "RED")
             continue
         seqs = []
-        with open(os.path.join(args.o, f"step_{step}.text"), 'w') as out:
+        with open(os.path.join(args.o, f"step_{step}.text"), 'w') as out, open(os.path.join(args.o, f"step_{step}.fq"), 'w') as fqout:
             seen = set()
             for seqid, header, seq, qualscores in stream_fastq(fqf):
                 seen.add(seqid)
@@ -55,12 +57,14 @@ if __name__ == '__main__':
                     continue
                 if initial[seqid] != seq.upper():
                     out.write(f"{seqid}\n")
+                    fqout.write(f"@{seqid}\n{initial[seqid]}\n+\n{qual[seqid]}\n")
                     initial[seqid] = seq.upper()
                     changed.add(seqid)
-            for s in initial:
-                if s not in seen:
-                    out.write(f"{s}\n")
-                    changed.add(s)
+            for seqid in initial:
+                if seqid not in seen:
+                    out.write(f"{seqid}\n")
+                    fqout.write(f"@{seqid}\n{initial[seqid]}\n+\n{qual[seqid]}\n")
+                    changed.add(seqid)
 
     with open(os.path.join(args.o, "unchanged.txt"), 'w') as out:
         for s in initial:
