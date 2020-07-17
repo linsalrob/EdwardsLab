@@ -44,6 +44,7 @@ if __name__ == '__main__':
         header[seqid] = hd
 
     changed = set()
+    deleted = set()
     for step in range(1, 10):
         if args.v:
             message(f"Working on step {step}", "GREEN")
@@ -69,11 +70,12 @@ if __name__ == '__main__':
                     qual[seqid] = qualscores
                     changed.add(seqid)
             for seqid in dna:
-                if seqid not in seen:
+                if seqid not in seen and seqid not in deleted:
                     out.write(f"{seqid}\n")
                     fqinput.write(f"@{header[seqid]}\n{dna[seqid]}\n+\n{qual[seqid]}\n")
                     fqout.write(f"@{header[seqid]}\n\n+\n\n")
                     changed.add(seqid)
+                    deleted.add(seqid)
 
     with open(os.path.join(args.o, "unchanged.txt"), 'w') as out:
         for s in dna:
