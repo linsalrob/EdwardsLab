@@ -52,7 +52,9 @@ if __name__ == '__main__':
             message(f"FQ File {fqf} not found", "RED")
             continue
         seqs = []
-        with open(os.path.join(args.o, f"step_{step}.text"), 'w') as out, open(os.path.join(args.o, f"step_{step}.fq"), 'w') as fqout:
+        with open(os.path.join(args.o, f"step_{step}.text"), 'w') as out, \
+                open(os.path.join(args.o, f"step_{step}_input.fq"), 'w') as fqinput,\
+                open(os.path.join(args.o, f"step_{step}_output.fq"), 'w') as fqout:
             seen = set()
             for seqid, hd, seq, qualscores in stream_fastq(fqf):
                 seen.add(seqid)
@@ -61,13 +63,15 @@ if __name__ == '__main__':
                     continue
                 if dna[seqid] != seq.upper():
                     out.write(f"{seqid}\n")
-                    fqout.write(f"@{header[seqid]}\n{dna[seqid]}\n+\n{qual[seqid]}\n")
+                    fqinput.write(f"@{header[seqid]}\n{dna[seqid]}\n+\n{qual[seqid]}\n")
+                    fqout.write(f"@{header[seqid]}\n{seq.upper()}\n+\n{qualscores}\n")
                     dna[seqid] = seq.upper()
                     changed.add(seqid)
             for seqid in dna:
                 if seqid not in seen:
                     out.write(f"{seqid}\n")
-                    fqout.write(f"@{header[seqid]}\n{dna[seqid]}\n+\n{qual[seqid]}\n")
+                    fqinput.write(f"@{header[seqid]}\n{dna[seqid]}\n+\n{qual[seqid]}\n")
+                    fqout.write(f"@{header[seqid]}\n\n+\n\n")
                     changed.add(seqid)
 
     with open(os.path.join(args.o, "unchanged.txt"), 'w') as out:
