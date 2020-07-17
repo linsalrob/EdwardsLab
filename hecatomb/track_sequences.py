@@ -33,11 +33,15 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     os.makedirs(args.o, exist_ok=True)
-    initial = {}
+    dna = {}
     qual = {}
+    header = {}
+
+    # initially didn't plan to keep all these :)
     for seqid, header, seq, qualscores in stream_fastq(args.f):
-        initial[seqid] = seq.upper()
+        dna[seqid] = seq.upper()
         qual[seqid] = qualscores
+        header[seqid] = header
 
     changed = set()
     for step in range(1, 10):
@@ -52,22 +56,22 @@ if __name__ == '__main__':
             seen = set()
             for seqid, header, seq, qualscores in stream_fastq(fqf):
                 seen.add(seqid)
-                if seqid not in initial:
+                if seqid not in dna:
                     message(f"{seqid} is a different sequence id", "PINK")
                     continue
-                if initial[seqid] != seq.upper():
+                if dna[seqid] != seq.upper():
                     out.write(f"{seqid}\n")
-                    fqout.write(f"@{seqid}\n{initial[seqid]}\n+\n{qual[seqid]}\n")
-                    initial[seqid] = seq.upper()
+                    fqout.write(f"@{header[seqid]}\n{dna[seqid]}\n+\n{qual[seqid]}\n")
+                    dna[seqid] = seq.upper()
                     changed.add(seqid)
-            for seqid in initial:
+            for seqid in dna:
                 if seqid not in seen:
                     out.write(f"{seqid}\n")
-                    fqout.write(f"@{seqid}\n{initial[seqid]}\n+\n{qual[seqid]}\n")
+                    fqout.write(f"@{header[seqid]}\n{dna[seqid]}\n+\n{qual[seqid]}\n")
                     changed.add(seqid)
 
     with open(os.path.join(args.o, "unchanged.txt"), 'w') as out:
-        for s in initial:
+        for s in dna:
             if s not in changed:
                 out.write(f"{s}\n")
 
