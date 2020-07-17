@@ -66,6 +66,7 @@ if __name__ == '__main__':
                     fqinput.write(f"@{header[seqid]}\n{dna[seqid]}\n+\n{qual[seqid]}\n")
                     fqout.write(f"@{header[seqid]}\n{seq.upper()}\n+\n{qualscores}\n")
                     dna[seqid] = seq.upper()
+                    qual[seqid] = qualscores
                     changed.add(seqid)
             for seqid in dna:
                 if seqid not in seen:
