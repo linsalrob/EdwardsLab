@@ -54,7 +54,7 @@ if __name__ == '__main__':
         seqs = []
         with open(os.path.join(args.o, f"step_{step}.text"), 'w') as out, open(os.path.join(args.o, f"step_{step}.fq"), 'w') as fqout:
             seen = set()
-            for seqid, header, seq, qualscores in stream_fastq(fqf):
+            for seqid, hd, seq, qualscores in stream_fastq(fqf):
                 seen.add(seqid)
                 if seqid not in dna:
                     message(f"{seqid} is a different sequence id", "PINK")
