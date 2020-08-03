@@ -21,7 +21,7 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     if not args.f and not args.d:
-        sys.stderr.write(f"{bcolors.RED}FATAL: Please specify either -f or -d{bcolors.ENDC}\n")
+        sys.stderr.write(f"{bcolors.RED}FATAL: Please specify either -f or -d or use -h for more help{bcolors.ENDC}\n")
         sys.exit(1)
 
     if args.f:
