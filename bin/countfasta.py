@@ -8,20 +8,37 @@ and the N50 of the data set.
 import os
 import sys
 import argparse
-from roblib import read_fasta
+from roblib import read_fasta, bcolors
 
 __author__ = 'Rob Edwards'
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
-    parser.add_argument('-f', nargs='+', help='fasta file', required=True)
+    parser.add_argument('-f', nargs='+', help='fasta file')
+    parser.add_argument('-d', nargs='+', help='directory of fasta files')
     parser.add_argument('-l', help='list the lengths for each sequence (default = not to)', action='store_true')
     parser.add_argument('-m', help='minimum length fo be inclued', type=int, default=0)
     parser.add_argument('-t', help='tab separated output. Fields: [# seqs, total bp, shortest, longest, N50, N75]', action='store_true')
     args = parser.parse_args()
 
+    if not args.f and not args.d:
+        sys.stderr.write(f"{bcolors.RED}FATAL: Please specify either -f or -d or use -h for more help{bcolors.ENDC}\n")
+        sys.exit(1)
 
-    for faf in args.f:
+    if args.f:
+        files = args.f
+    else:
+        files = []
+
+    if args.d:
+        for subdir in args.d:
+            for f in os.listdir(subdir):
+                files.append(os.path.join(subdir, f))
+
+    overall = {'number': 0, 'total': 0, 'shortest':1e6, 'longest': 0}
+
+
+    for faf in files:
         fa=read_fasta(faf)
 
         if len(fa.keys()) == 1 and list(fa.keys())[0] == '':
