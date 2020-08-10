@@ -19,9 +19,13 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     md5seen = set()
+    idseen = set()
 
     with open(args.o, 'w') as out, open(args.i, 'w') as idout:
         for seqid, seq in stream_fasta(args.f):
+            if seqid in idseen:
+                continue
+            idseen.add(seqid)
             md5 = hashlib.md5(seq.upper().encode('utf-8')).hexdigest()
             idout.write(f"{md5}\t{seqid}\n")
             if md5 not in md5seen:
