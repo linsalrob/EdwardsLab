@@ -175,7 +175,7 @@ def parse_status(this_sample_id, status):
     if 'status' in status.attrib and status.attrib['status'] != 'live':
         sys.stderr.write("WARNING: {}. Status is not live: status: {}\n".format(this_sample_id, status.attrib['status']))
     if 'when' not in status.attrib:
-        sys.stderr.write("WARNING: {}. No time stampe for status.\n".format(this_sample_id))
+        sys.stderr.write("WARNING: {}. No time stamp for status.\n".format(this_sample_id))
         return "unknown"
     return status.attrib['when']
 
@@ -198,14 +198,17 @@ def parse_biosample(biosample, header):
     known_titles = ['Ids', 'Description - Title', 'Description - Comment', 'Owner - Name', 'Owner - Email', 'Release Date', 'Links']
     known_attributes = ["abs_air_humidity", "age", "air_temp", "alkalinity", "altitude", "analyte_type", "biochem_oxygen_dem", "biomaterial_provider", "biospecimen_repository", "biospecimen_repository_sample_id", "body_habitat", "body_mass_index", "body_product", "breed", "building_setting", "build_occup_type", "carb_dioxide", "chem_administration", "chem_oxygen_dem", "clone", "collected_by", "collection_date", "cultivar", "depth", "description", "dev_stage", "diet", "disease", "elev", "env_biome", "env_feature", "env_material", "env_package", "ethnicity", "family_relationship", "filter_type", "gap_accession", "gap_consent_code", "gap_consent_short_name", "gap_sample_id", "gap_subject_id", "gastrointest_disord", "genotype", "geo_loc_name", "health_state", "heat_cool_type", "host", "host_age", "host_body_mass_index", "host_body_product", "host_body_temp", "host_diet", "host_disease", "host_family_relationship", "host_genotype", "host_height", "host_last_meal", "host_occupation", "host_phenotype", "host_pulse", "host_sex", "host_subject_id", "host_taxid", "host_tissue_sampled", "host_tot_mass", "ihmc_medication_code", "indoor_space", "investigation_type", "isolate", "isolation_source", "isol_growth_condt", "label", "lat_lon", "light_type", "liver_disord", "medic_hist_perform", "misc_param", "molecular_data_type", "nitrate", "occupant_dens_samp", "occup_samp", "organism_count", "oxy_stat_samp", "perturbation", "ph", "phosphate", "pre_treatment", "project_name", "propagation", "race", "reactor_type", "ref_biomaterial", "rel_air_humidity", "rel_to_oxygen", "salinity", "samp_collect_device", "sample_name", "sample_type", "samp_mat_process", "samp_salinity", "samp_size", "samp_store_dur", "samp_store_loc", "samp_store_temp", "samp_vol_we_dna_ext", "sewage_type", "sex", "sludge_retent_time", "smoker", "source_material_id", "space_typ_state", "special_diet", "store_cond", "strain", "study_design", "study_disease", "study_name", "subject_is_affected", "submitted_sample_id", "submitted_subject_id", "submitter_handle", "suspend_solids", "temp", "tissue", "tot_phosphate", "treatment", "typ_occupant_dens", "ventilation_type", "wastewater_type"]
     known_keys_attrs_set=set(known_attrs)
+    known_attributes_set = set(known_attributes)
 
 
 
     for attr in biosample.attrib:
         if (attr not in known_keys_attrs_set):
-            sys.stderr.write("WARNING: ({}) New key in biosample: {}\n".format(this_sample_id, attr))
+            sys.stderr.write("WARNING: ({}) New key in biosample: {}. Please add this to the known_attrs variable\n".format(this_sample_id, attr))
 
     contents = {x:"" for x in known_titles}
+
+    # parse the known_attributes
     for x in known_attrs:
         if x in biosample.attrib:
             contents[x]=biosample.attrib[x]
@@ -213,7 +216,7 @@ def parse_biosample(biosample, header):
             contents[x] = None
             sys.stderr.write(f"No attribute {x} in biosample\n")
 
-
+    # parse the known_titles elements
     attributes = {}
     for child in biosample:
         if 'Ids' == child.tag:
@@ -223,11 +226,12 @@ def parse_biosample(biosample, header):
         elif 'Attributes' == child.tag:
             for attr in child:
                 (n,v) = parse_attribute(this_sample_id, attr)
-                if 'sludge_retent_time' == n:
-                    sys.stderr.write("ATTRIBUTE: {} VALUE: {}\n".format(n,v))
+                if n not in known_attributes_set:
+                    sys.stderr.write("ERROR: New attribute {} that we have not seen before. Please append to `known_attributes` in this code\n".format(n))
                 if n in attributes:
-                    sys.stderr.write("ERROR: ({}): Appending attribute value for {}. Previously had {} and now have {}\n".format(this_sample_id, n, attributes[n], v))
-                    attributes[n] = attributes[n] + "; " + v.strip()
+                    if attributes[n] != v:
+                        sys.stderr.write("Redundant Atributes: ({}): Appending attribute value for {}. Previously had {} and now have {}\n".format(this_sample_id, n, attributes[n], v))
+                        attributes[n] = attributes[n] + "; " + v.strip()
                 else:
                     attributes[n]=v.strip()
         elif 'Owner' == child.tag:
@@ -240,7 +244,7 @@ def parse_biosample(biosample, header):
             # this doesn't seem to contain a lot of information?
             continue
         else:
-            sys.stderr.write("Skipped child: {}\n".format(child.tag))
+            sys.stderr.write("Skipped the title: {} as we don't know how to parse it\n".format(child.tag))
 
     if header == 0:
         sys.stdout.write("Sample Accession\t")
