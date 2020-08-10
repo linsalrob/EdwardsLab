@@ -61,35 +61,8 @@ import xml.etree.ElementTree as ET
 known_attrs = ['id', 'accession', 'last_update', 'access', 'publication_date', 'submission_date']
 known_titles = ['Ids', 'Description - Title', 'Description - Comment', 'Owner - Name', 'Owner - Email', 'Release Date',
                 'Links']
-known_attributes = ["abs_air_humidity", "age", "air_temp", "alkalinity", "altitude", "analyte_type",
-                    "biochem_oxygen_dem", "biomaterial_provider", "biospecimen_repository",
-                    "biospecimen_repository_sample_id", "body_habitat", "body_mass_index", "body_product", "breed",
-                    "building_setting", "build_occup_type", "carb_dioxide",
-                    "chem_administration", "chem_oxygen_dem", "clone", "collected_by", "collection_date", "cultivar",
-                    "depth", "description", "dev_stage", "diet", "disease",
-                    "elev", "env_biome", "env_feature", "env_material", "env_package", "ethnicity",
-                    "family_relationship", "filter_type", "gap_accession", "gap_consent_code",
-                    "gap_consent_short_name", "gap_sample_id", "gap_subject_id", "gastrointest_disord", "genotype",
-                    "geo_loc_name", "health_state", "heat_cool_type", "host",
-                    "host_age", "host_body_mass_index", "host_body_product", "host_body_temp", "host_diet",
-                    "host_disease", "host_family_relationship", "host_genotype",
-                    "host_height", "host_last_meal", "host_occupation", "host_phenotype", "host_pulse", "host_sex",
-                    "host_subject_id", "host_taxid", "host_tissue_sampled",
-                    "host_tot_mass", "ihmc_medication_code", "indoor_space", "investigation_type", "isolate",
-                    "isolation_source", "isol_growth_condt", "label", "lat_lon",
-                    "light_type", "liver_disord", "medic_hist_perform", "misc_param", "molecular_data_type", "nitrate",
-                    "occupant_dens_samp", "occup_samp", "organism_count",
-                    "oxy_stat_samp", "perturbation", "ph", "phosphate", "pre_treatment", "project_name", "propagation",
-                    "race", "reactor_type", "ref_biomaterial",
-                    "rel_air_humidity", "rel_to_oxygen", "salinity", "samp_collect_device", "sample_name",
-                    "sample_type", "samp_mat_process", "samp_salinity",
-                    "samp_size", "samp_store_dur", "samp_store_loc", "samp_store_temp", "samp_vol_we_dna_ext",
-                    "serovar", "sewage_type", "sex", "sludge_retent_time", "smoker",
-                    "source_material_id", "space_typ_state", "special_diet", "store_cond", "strain", "study_design",
-                    "study_disease", "study_name", "subject_is_affected",
-                    "submitted_sample_id", "submitted_subject_id", "submitter_handle", "suspend_solids", "temp",
-                    "tissue", "tot_phosphate", "treatment", "typ_occupant_dens",
-                    "ventilation_type", "wastewater_type"]
+known_attributes = ['abs_air_humidity', 'age', 'age range', 'air_temp', 'alias', 'alkalinity', 'alt_elev', 'alternate_id', 'altitude', 'analyte_type', 'anonymized name', 'anonymized_name', 'assembly', 'assembly_method', 'assembly_method_and_version', 'assembly_method_version', 'assemblyversion', 'attribute_package', 'biochem_oxygen_dem', 'biomaterial_provider', 'biospecimen_repository', 'biospecimen_repository_sample_id', 'biotic_relationship', 'biotype', 'body sample site', 'body sample subsite', 'body_habitat', 'body_mass_index', 'body_product', 'breed', 'broker name', 'build_occup_type', 'building_setting', 'carb_dioxide', 'cell shape', 'chem_administration', 'chem_oxygen_dem', 'clone', 'collected_by', 'collection_date', 'common name', 'completeness score', 'completeness_estimated', 'contamination score', 'contamination_estimated', 'cultivar', 'culture_collecction', 'culture_collection', 'depth', 'derived_from', 'description', 'dev_stage', 'diet', 'disease', 'disease_stage', 'dreived-from', 'elev', 'ena checklist', 'ena first public', 'ena last update', 'ena-checklist', 'ena-first-public', 'ena-last-update', 'encoded_traits', 'env_biome', 'env_broad_scale', 'env_feature', 'env_local_scale', 'env_material', 'env_medium', 'env_package', 'environment', 'environmental-sample', 'environmental_sample', 'estimated_size', 'ethnicity', 'external id', 'extrachrom_elements', 'family_relationship', 'filter_type', 'finishing strategy (depth of coverage)', 'foodon ontology term', 'funding program', 'gap_accession', 'gap_consent_code', 'gap_consent_short_name', 'gap_sample_id', 'gap_subject_id', 'gastrointest_disord', 'gene calling method', 'genome size (bp)', 'genome_coverage', 'genotype', 'genus', 'geo_loc_name', 'geographic location (region and locality)', 'gold stamp id', 'gram staining', 'greengenes id', 'habitat', 'health_state', 'heat_cool_type', 'hhs_region', 'history of isolate', 'host', 'host_age', 'host_body_habitat', 'host_body_mass_index', 'host_body_product', 'host_body_temp', 'host_description', 'host_diet', 'host_disease', 'host_disease_outcome', 'host_disease_stage', 'host_family_relationship', 'host_genotype', 'host_health_state', 'host_height', 'host_last_meal', 'host_life_stage', 'host_occupation', 'host_phenotype', 'host_pulse', 'host_sex', 'host_subject_id', 'host_taxid', 'host_tissue_sampled', 'host_tot_mass', 'identification method', 'identified_by', 'ifsac+ category', 'ihmc_medication_code', 'indoor_space', 'insdc center alias', 'insdc center name', 'insdc first public', 'insdc last update', 'insdc status', 'investigation_type', 'isol_growth_condt', 'isolate', 'isolate_name_alias', 'isolation comments', 'isolation site', 'isolation_source', 'lab_host', 'label', 'lat_lon', 'light_type', 'liver_disord', 'locus_tag_prefix', 'mapping_method', 'mapping_method_and_version', 'mapping_method_version', 'mating_type', 'medic_hist_perform', 'metagenome-source', 'metagenome_source', 'metagenomic', 'misc_param', 'misc_param: hmp body site', 'misc_param: hmp supersite', 'molecular_data_type', 'motility', 'nitrate', 'note', 'nucleic acid extraction', 'num_replicons', 'number_of_identified_antimicrobial_resistance_genes', 'occup_samp', 'occupant_dens_samp', 'organism_count', 'orgmod_note', 'oxy_stat_samp', 'oxygen requirement', 'passage_history', 'pathogenicity', 'pathotype', 'pathovar', 'perturbation', 'pfge_primaryenzyme_pattern', 'pfge_secondaryenzyme_pattern', 'ph', 'phenotypes', 'phosphate', 'pre_treatment', 'project_name', 'project_type', 'projectaccession', 'propagation', 'publicaccession', 'quality_assessment_method', 'quality_assessment_method_and_version', 'quality_assessment_method_version', 'race', 'reactor_type', 'ref_biomaterial', 'region (hhs)', 'rel_air_humidity', 'rel_to_oxygen', 'salinity', 'samp_collect_device', 'samp_mat_process', 'samp_salinity', 'samp_size', 'samp_store_dur', 'samp_store_loc', 'samp_store_temp', 'samp_vol_we_dna_ext', 'sample comment', 'sample derived from', 'sample number', 'sample_identifier', 'sample_name', 'sample_type', 'sequencing depth', 'sequencing method', 'sequencing_meth', 'sequencingtechnology', 'serogroup', 'serotype', 'serovar', 'sewage_type', 'sex', 'sludge_retent_time', 'smoker', 'sop', 'source_material_id', 'space_typ_state', 'special_diet', 'species', 'specimen_voucher', 'sporulation', 'sra accession', 'store_cond', 'strain', 'strain_name_alias', 'study_design', 'study_disease', 'study_name', 'sub_species', 'subgroup', 'subject_id', 'subject_is_affected', 'submitted_sample_id', 'submitted_subject_id', 'submitter id', 'submitter_handle', 'subsrc_note', 'subtype', 'supplier_name', 'suspend_solids', 'temp', 'temperature optimum', 'temperature range', 'timepoint', 'tissue', 'title', 'tot_phosphate', 'treatment', 'trophic_level', 'typ_occupant_dens', 'type', 'type-material', 'type_strain', 'ukzn', 'uploaddate', 'value', 'ventilation_type', 'wastewater_type']
+
 known_attrs_set = set(known_attrs)
 known_titles_set = set(known_titles)
 known_attributes_set = set(known_attributes)
@@ -262,7 +235,7 @@ def parse_biosample(biosample, header):
             for attr in child:
                 (n,v) = parse_attribute(this_sample_id, attr)
                 if n not in known_attributes_set:
-                    sys.stderr.write("ERROR: New attribute {} in {}. Please append to `known_attributes` in this code\n".format(n, this_sample_id))
+                    # sys.stderr.write("ERROR: New attribute {} in {}. Please append to `known_attributes` in this code\n".format(n, this_sample_id))
                     known_attributes_set.add(n)
                 if n in attributes:
                     if attributes[n] != v:
@@ -314,15 +287,12 @@ if __name__ == '__main__':
         parse_biosample(biosample, header)
         header=header+1
 
-    global known_attributes_set, known_attributes, known_attrs_set, known_attrs
-    print(f"KA: {len(known_attrs)} KAS: {len(known_attrs_set)}")
-    
     if len(known_attrs_set) != len(known_attrs):
         sys.stderr.write("PLEASE UPDATE THIS CODE. Edit known_attrs with this list:\n")
         l = sorted(list(known_attrs_set))
-        print(l)
+        sys.stderr.write(f"{l}\n")
     if len(known_attributes_set) != len(known_attributes):
         sys.stderr.write("PLEASE UPDATE THIS CODE. Edit known_attributes with this list:\n")
         l = sorted(list(known_attributes_set))
-        print(l)
+        sys.stderr.write(f"s.update({l})\n")
 
