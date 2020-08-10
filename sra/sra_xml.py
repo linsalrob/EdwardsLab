@@ -138,7 +138,7 @@ def parse_attribute(this_sample_id, attr):
     if 'harmonized_name' in attr.attrib:
         return attr.attrib['harmonized_name'], attr.text
     elif 'attribute_name' in attr.attrib:
-        return attr.attrib['attribute_name'].lower, attr.text
+        return attr.attrib['attribute_name'].lower(), attr.text
     else:
         sys.stderr.write("WARNING: ({}): Neither harmonized_name nor attribute name in attribute {}".format(this_sample_id, attr.text))
         return "",""
@@ -196,7 +196,21 @@ def parse_biosample(biosample, header):
     # we make a list so that the order is guaranteed, and then make a set for O(1) lookup
     known_attrs = ['id', 'accession', 'last_update', 'access', 'publication_date', 'submission_date']
     known_titles = ['Ids', 'Description - Title', 'Description - Comment', 'Owner - Name', 'Owner - Email', 'Release Date', 'Links']
-    known_attributes = ["abs_air_humidity", "age", "air_temp", "alkalinity", "altitude", "analyte_type", "biochem_oxygen_dem", "biomaterial_provider", "biospecimen_repository", "biospecimen_repository_sample_id", "body_habitat", "body_mass_index", "body_product", "breed", "building_setting", "build_occup_type", "carb_dioxide", "chem_administration", "chem_oxygen_dem", "clone", "collected_by", "collection_date", "cultivar", "depth", "description", "dev_stage", "diet", "disease", "elev", "env_biome", "env_feature", "env_material", "env_package", "ethnicity", "family_relationship", "filter_type", "gap_accession", "gap_consent_code", "gap_consent_short_name", "gap_sample_id", "gap_subject_id", "gastrointest_disord", "genotype", "geo_loc_name", "health_state", "heat_cool_type", "host", "host_age", "host_body_mass_index", "host_body_product", "host_body_temp", "host_diet", "host_disease", "host_family_relationship", "host_genotype", "host_height", "host_last_meal", "host_occupation", "host_phenotype", "host_pulse", "host_sex", "host_subject_id", "host_taxid", "host_tissue_sampled", "host_tot_mass", "ihmc_medication_code", "indoor_space", "investigation_type", "isolate", "isolation_source", "isol_growth_condt", "label", "lat_lon", "light_type", "liver_disord", "medic_hist_perform", "misc_param", "molecular_data_type", "nitrate", "occupant_dens_samp", "occup_samp", "organism_count", "oxy_stat_samp", "perturbation", "ph", "phosphate", "pre_treatment", "project_name", "propagation", "race", "reactor_type", "ref_biomaterial", "rel_air_humidity", "rel_to_oxygen", "salinity", "samp_collect_device", "sample_name", "sample_type", "samp_mat_process", "samp_salinity", "samp_size", "samp_store_dur", "samp_store_loc", "samp_store_temp", "samp_vol_we_dna_ext", "sewage_type", "sex", "sludge_retent_time", "smoker", "source_material_id", "space_typ_state", "special_diet", "store_cond", "strain", "study_design", "study_disease", "study_name", "subject_is_affected", "submitted_sample_id", "submitted_subject_id", "submitter_handle", "suspend_solids", "temp", "tissue", "tot_phosphate", "treatment", "typ_occupant_dens", "ventilation_type", "wastewater_type"]
+    known_attributes = ["abs_air_humidity", "age", "air_temp", "alkalinity", "altitude", "analyte_type", "biochem_oxygen_dem", "biomaterial_provider", "biospecimen_repository",
+                        "biospecimen_repository_sample_id", "body_habitat", "body_mass_index", "body_product", "breed", "building_setting", "build_occup_type", "carb_dioxide",
+                        "chem_administration", "chem_oxygen_dem", "clone", "collected_by", "collection_date", "cultivar", "depth", "description", "dev_stage", "diet", "disease",
+                        "elev", "env_biome", "env_feature", "env_material", "env_package", "ethnicity", "family_relationship", "filter_type", "gap_accession", "gap_consent_code",
+                        "gap_consent_short_name", "gap_sample_id", "gap_subject_id", "gastrointest_disord", "genotype", "geo_loc_name", "health_state", "heat_cool_type", "host",
+                        "host_age", "host_body_mass_index", "host_body_product", "host_body_temp", "host_diet", "host_disease", "host_family_relationship", "host_genotype",
+                        "host_height", "host_last_meal", "host_occupation", "host_phenotype", "host_pulse", "host_sex", "host_subject_id", "host_taxid", "host_tissue_sampled",
+                        "host_tot_mass", "ihmc_medication_code", "indoor_space", "investigation_type", "isolate", "isolation_source", "isol_growth_condt", "label", "lat_lon",
+                        "light_type", "liver_disord", "medic_hist_perform", "misc_param", "molecular_data_type", "nitrate", "occupant_dens_samp", "occup_samp", "organism_count",
+                        "oxy_stat_samp", "perturbation", "ph", "phosphate", "pre_treatment", "project_name", "propagation", "race", "reactor_type", "ref_biomaterial",
+                        "rel_air_humidity", "rel_to_oxygen", "salinity", "samp_collect_device", "sample_name", "sample_type", "samp_mat_process", "samp_salinity",
+                        "samp_size", "samp_store_dur", "samp_store_loc", "samp_store_temp", "samp_vol_we_dna_ext", "serovar", "sewage_type", "sex", "sludge_retent_time", "smoker",
+                        "source_material_id", "space_typ_state", "special_diet", "store_cond", "strain", "study_design", "study_disease", "study_name", "subject_is_affected",
+                        "submitted_sample_id", "submitted_subject_id", "submitter_handle", "suspend_solids", "temp", "tissue", "tot_phosphate", "treatment", "typ_occupant_dens",
+                        "ventilation_type", "wastewater_type"]
     known_keys_attrs_set=set(known_attrs)
     known_attributes_set = set(known_attributes)
 
