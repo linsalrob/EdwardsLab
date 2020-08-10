@@ -57,6 +57,44 @@ import sys
 import argparse
 import xml.etree.ElementTree as ET
 
+# we make a list so that the order is guaranteed, and then make a set for O(1) lookup
+known_attrs = ['id', 'accession', 'last_update', 'access', 'publication_date', 'submission_date']
+known_titles = ['Ids', 'Description - Title', 'Description - Comment', 'Owner - Name', 'Owner - Email', 'Release Date',
+                'Links']
+known_attributes = ["abs_air_humidity", "age", "air_temp", "alkalinity", "altitude", "analyte_type",
+                    "biochem_oxygen_dem", "biomaterial_provider", "biospecimen_repository",
+                    "biospecimen_repository_sample_id", "body_habitat", "body_mass_index", "body_product", "breed",
+                    "building_setting", "build_occup_type", "carb_dioxide",
+                    "chem_administration", "chem_oxygen_dem", "clone", "collected_by", "collection_date", "cultivar",
+                    "depth", "description", "dev_stage", "diet", "disease",
+                    "elev", "env_biome", "env_feature", "env_material", "env_package", "ethnicity",
+                    "family_relationship", "filter_type", "gap_accession", "gap_consent_code",
+                    "gap_consent_short_name", "gap_sample_id", "gap_subject_id", "gastrointest_disord", "genotype",
+                    "geo_loc_name", "health_state", "heat_cool_type", "host",
+                    "host_age", "host_body_mass_index", "host_body_product", "host_body_temp", "host_diet",
+                    "host_disease", "host_family_relationship", "host_genotype",
+                    "host_height", "host_last_meal", "host_occupation", "host_phenotype", "host_pulse", "host_sex",
+                    "host_subject_id", "host_taxid", "host_tissue_sampled",
+                    "host_tot_mass", "ihmc_medication_code", "indoor_space", "investigation_type", "isolate",
+                    "isolation_source", "isol_growth_condt", "label", "lat_lon",
+                    "light_type", "liver_disord", "medic_hist_perform", "misc_param", "molecular_data_type", "nitrate",
+                    "occupant_dens_samp", "occup_samp", "organism_count",
+                    "oxy_stat_samp", "perturbation", "ph", "phosphate", "pre_treatment", "project_name", "propagation",
+                    "race", "reactor_type", "ref_biomaterial",
+                    "rel_air_humidity", "rel_to_oxygen", "salinity", "samp_collect_device", "sample_name",
+                    "sample_type", "samp_mat_process", "samp_salinity",
+                    "samp_size", "samp_store_dur", "samp_store_loc", "samp_store_temp", "samp_vol_we_dna_ext",
+                    "serovar", "sewage_type", "sex", "sludge_retent_time", "smoker",
+                    "source_material_id", "space_typ_state", "special_diet", "store_cond", "strain", "study_design",
+                    "study_disease", "study_name", "subject_is_affected",
+                    "submitted_sample_id", "submitted_subject_id", "submitter_handle", "suspend_solids", "temp",
+                    "tissue", "tot_phosphate", "treatment", "typ_occupant_dens",
+                    "ventilation_type", "wastewater_type"]
+known_attrs_set = set(known_attrs)
+known_titles_set = set(known_titles)
+known_attributes_set = set(known_attributes)
+
+
 def parse_ids(this_sample_id, ids):
     """
     Parse the IDs field
@@ -193,32 +231,15 @@ def parse_biosample(biosample, header):
     else:
         sys.stderr.write(f"Unknown accession number in {biosample}\n")
 
-    # we make a list so that the order is guaranteed, and then make a set for O(1) lookup
-    known_attrs = ['id', 'accession', 'last_update', 'access', 'publication_date', 'submission_date']
-    known_titles = ['Ids', 'Description - Title', 'Description - Comment', 'Owner - Name', 'Owner - Email', 'Release Date', 'Links']
-    known_attributes = ["abs_air_humidity", "age", "air_temp", "alkalinity", "altitude", "analyte_type", "biochem_oxygen_dem", "biomaterial_provider", "biospecimen_repository",
-                        "biospecimen_repository_sample_id", "body_habitat", "body_mass_index", "body_product", "breed", "building_setting", "build_occup_type", "carb_dioxide",
-                        "chem_administration", "chem_oxygen_dem", "clone", "collected_by", "collection_date", "cultivar", "depth", "description", "dev_stage", "diet", "disease",
-                        "elev", "env_biome", "env_feature", "env_material", "env_package", "ethnicity", "family_relationship", "filter_type", "gap_accession", "gap_consent_code",
-                        "gap_consent_short_name", "gap_sample_id", "gap_subject_id", "gastrointest_disord", "genotype", "geo_loc_name", "health_state", "heat_cool_type", "host",
-                        "host_age", "host_body_mass_index", "host_body_product", "host_body_temp", "host_diet", "host_disease", "host_family_relationship", "host_genotype",
-                        "host_height", "host_last_meal", "host_occupation", "host_phenotype", "host_pulse", "host_sex", "host_subject_id", "host_taxid", "host_tissue_sampled",
-                        "host_tot_mass", "ihmc_medication_code", "indoor_space", "investigation_type", "isolate", "isolation_source", "isol_growth_condt", "label", "lat_lon",
-                        "light_type", "liver_disord", "medic_hist_perform", "misc_param", "molecular_data_type", "nitrate", "occupant_dens_samp", "occup_samp", "organism_count",
-                        "oxy_stat_samp", "perturbation", "ph", "phosphate", "pre_treatment", "project_name", "propagation", "race", "reactor_type", "ref_biomaterial",
-                        "rel_air_humidity", "rel_to_oxygen", "salinity", "samp_collect_device", "sample_name", "sample_type", "samp_mat_process", "samp_salinity",
-                        "samp_size", "samp_store_dur", "samp_store_loc", "samp_store_temp", "samp_vol_we_dna_ext", "serovar", "sewage_type", "sex", "sludge_retent_time", "smoker",
-                        "source_material_id", "space_typ_state", "special_diet", "store_cond", "strain", "study_design", "study_disease", "study_name", "subject_is_affected",
-                        "submitted_sample_id", "submitted_subject_id", "submitter_handle", "suspend_solids", "temp", "tissue", "tot_phosphate", "treatment", "typ_occupant_dens",
-                        "ventilation_type", "wastewater_type"]
-    known_keys_attrs_set=set(known_attrs)
-    known_attributes_set = set(known_attributes)
-
+    global known_attrs_set
+    global known_titles_set
+    global known_attributes_set
 
 
     for attr in biosample.attrib:
-        if (attr not in known_keys_attrs_set):
+        if (attr not in known_attrs_set):
             sys.stderr.write("WARNING: ({}) New key in biosample: {}. Please add this to the known_attrs variable\n".format(this_sample_id, attr))
+            known_attrs_set.add(attr)
 
     contents = {x:"" for x in known_titles}
 
@@ -242,6 +263,7 @@ def parse_biosample(biosample, header):
                 (n,v) = parse_attribute(this_sample_id, attr)
                 if n not in known_attributes_set:
                     sys.stderr.write("ERROR: New attribute {} in {}. Please append to `known_attributes` in this code\n".format(n, this_sample_id))
+                    known_attributes_set.add(n)
                 if n in attributes:
                     if attributes[n] != v:
                         sys.stderr.write("Redundant Atributes: ({}): Appending attribute value for {}. Previously had {} and now have {}\n".format(this_sample_id, n, attributes[n], v))
@@ -291,3 +313,16 @@ if __name__ == '__main__':
     for biosample in biosampleset:
         parse_biosample(biosample, header)
         header=header+1
+
+    global known_attributes_set, known_attributes, known_attrs_set, known_attrs
+    print(f"KA: {len(known_attrs)} KAS: {len(known_attrs_set)}")
+    
+    if len(known_attrs_set) != len(known_attrs):
+        sys.stderr.write("PLEASE UPDATE THIS CODE. Edit known_attrs with this list:\n")
+        l = sorted(list(known_attrs_set))
+        print(l)
+    if len(known_attributes_set) != len(known_attributes):
+        sys.stderr.write("PLEASE UPDATE THIS CODE. Edit known_attributes with this list:\n")
+        l = sorted(list(known_attributes_set))
+        print(l)
+
