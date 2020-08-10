@@ -241,7 +241,7 @@ def parse_biosample(biosample, header):
             for attr in child:
                 (n,v) = parse_attribute(this_sample_id, attr)
                 if n not in known_attributes_set:
-                    sys.stderr.write("ERROR: New attribute {} that we have not seen before. Please append to `known_attributes` in this code\n".format(n))
+                    sys.stderr.write("ERROR: New attribute {} in {}. Please append to `known_attributes` in this code\n".format(n, this_sample_id))
                 if n in attributes:
                     if attributes[n] != v:
                         sys.stderr.write("Redundant Atributes: ({}): Appending attribute value for {}. Previously had {} and now have {}\n".format(this_sample_id, n, attributes[n], v))
