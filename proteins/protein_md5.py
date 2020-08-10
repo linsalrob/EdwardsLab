@@ -21,7 +21,7 @@ def read_fasta(fafile, idmapfile, minlen=100, verbose=False):
         sys.stderr.write(f"{bcolors.GREEN}Reading {fafile}{bcolors.ENDC}\n")
 
     seqs = {}
-    with open(idmapfile, 'a') as out:
+    with open(idmapfile, 'a') as idout:
         for seqid, seq in stream_fasta(fafile):
             # ignore a sequence with a stop codon
             if '*' in seq:
@@ -30,7 +30,7 @@ def read_fasta(fafile, idmapfile, minlen=100, verbose=False):
                 continue
             md5 = hashlib.md5(seq.upper().encode('utf-8')).hexdigest()
             seqs[md5] = seq
-            out.write(f"{md5}\t{seqid}\n")
+            idout.write(f"{md5}\t{seqid}\n")
 
     return seqs
 
