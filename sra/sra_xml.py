@@ -187,7 +187,11 @@ def parse_biosample(biosample, header):
     :return:
     """
     # this is used for debugging
-    this_sample_id = biosample.attrib['accession']
+    this_sample_id = "Unknown"
+    if 'accession' in biosample.attrib:
+        this_sample_id = biosample.attrib['accession']
+    else:
+        sys.stderr.write(f"Unknown accession number in {biosample}\n")
 
     # we make a list so that the order is guaranteed, and then make a set for O(1) lookup
     known_attrs = ['id', 'accession', 'last_update', 'access', 'publication_date', 'submission_date']
@@ -203,7 +207,11 @@ def parse_biosample(biosample, header):
 
     contents = {x:"" for x in known_titles}
     for x in known_attrs:
-        contents[x]=biosample.attrib[x]
+        if x in biosample.attrib:
+            contents[x]=biosample.attrib[x]
+        else:
+            contents[x] = None
+            sys.stderr.write(f"No attribute {x} in biosample\n")
 
 
     attributes = {}

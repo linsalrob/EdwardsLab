@@ -30,8 +30,8 @@ def parse_child(child, tag_to_print, toprint):
     for attr in child.attrib:
         if toprint:
             print("{}\t{}".format(child.tag, attr))
-            if 'Attribute' == child.tag and 'harmonized_name'==attr:
-                print("{}\t{}\t{}".format(child.tag, attr, child.attrib['harmonized_name']))
+            #if 'Attribute' == child.tag and 'harmonized_name'==attr:
+            #    print("{}\t{}\t{}".format(child.tag, attr, child.attrib['harmonized_name']))
 
     for gc in child:
         parse_child(gc, tag_to_print, toprint)
