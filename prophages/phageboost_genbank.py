@@ -73,7 +73,7 @@ if __name__ == '__main__':
 
     if args.verbose:
         message("Reading genbank file", "GREEN")
-    genecalls = genbank_to_pandas(args.genbankfile, args.mincontiglen, args.verbose)
+    genecalls = genbank_to_pandas(args.genbankfile, args.mincontiglen, True, True, args.verbose)
     if args.verbose:
         message("Phage Boosting", "GREEN")
     res = run_phage_boost(genecalls, args.modelfile, args.verbose)
