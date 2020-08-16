@@ -314,9 +314,13 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
             while trans.endswith('*'):
                 trans = trans[:-1]
 
-            if '*' in trans:
-                message(f"There is a * in  {feature_id(seq, feat)} so skipped\n", "RED")
-                continue
+            if ignorepartials:
+                if '*' in trans:
+                    message(f"There is a * in  {feature_id(seq, feat)} so skipped\n", "RED")
+                    continue
+                if 'x' in trans:
+                    message(f"There is a X in  {feature_id(seq, feat)} so skipped\n", "RED")
+                    continue
 
             if len(trans) == 0:
                 message(f"The translation for {feature_id(seq, feat)} was zero, so skipped\n", "RED")
