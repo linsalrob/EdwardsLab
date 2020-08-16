@@ -2,8 +2,12 @@
 #                                                                      #
 # Run and test PhageBoost                                              #
 #                                                                      #
-# For this test, we need phageboost and phispy installed in conda      #
+# PhageBoost is available from                                         #
+# https://github.com/ku-cbd/PhageBoost                                 #
+# https://www.biorxiv.org/content/10.1101/2020.08.09.243022v1.full.pdf #
 #                                                                      #
+#                                                                      #
+# For this test, we need phageboost and phispy installed in conda      #
 #                                                                      #
 ########################################################################
 
