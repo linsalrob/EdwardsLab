@@ -61,12 +61,15 @@ def run_phage_boost(genecalls, model_file, verbose):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=" ")
     parser.add_argument('-g', '--genbankfile', help='GenBank file to parse', required=True)
-    parser.add_argument('-m', '--modelfile', help="Model file. Probably something like model_delta_std_hacked.pickled.silent.gz", required=True)
+    parser.add_argument('-m', '--modelfile', required=True,
+                        help="Model file. Probably something like model_delta_std_hacked.pickled.silent.gz")
     parser.add_argument('-o', '--outputfile', help='output file for phage regions')
+    parser.add_argument('-c', '--mincontiglen', default=10000, type=int,
+                        help='minimum contig length  [Default: %(default)d]')
     parser.add_argument('-v', '--verbose', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    genecalls = genbank_to_pandas(args.genbankfile, args.verbose)
+    genecalls = genbank_to_pandas(args.genbankfile, args.mincontiglen, args.verbose)
     res = run_phage_boost(genecalls, args.modelfile, args.verbose)
     if args.outputfile:
         with open(args.outputfile, 'w') as out:

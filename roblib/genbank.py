@@ -265,7 +265,7 @@ def genbank_to_phage_finder(gbkf, verbose=False):
                 fn = feat_to_text(feat, 'product')
             yield [seq.id, len(seq.seq), cid, feat.location.start, feat.location.end, fn]
 
-def genbank_to_pandas(gbkf, verbose=False):
+def genbank_to_pandas(gbkf, mincontiglen, verbose=False):
     """
     This is a bit of a specific format used by phage_boost. its a simple dataframe with a couple of
     additional columns:
@@ -286,6 +286,8 @@ def genbank_to_pandas(gbkf, verbose=False):
     c = 0
     genes = []
     for seq in genbank_seqio(gbkf):
+        if len(seq) > mincontiglen:
+            continue
         for feat in seq.features:
             if feat.type != 'CDS':
                 continue
