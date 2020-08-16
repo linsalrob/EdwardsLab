@@ -17,7 +17,7 @@ from .bcolors import bcolors
 from .rob_error import SequencePairError, FastqFormatError
 from .colours import colours, colors, message
 from .genbank import genbank_to_faa, genbank_to_fna, genbank_to_orfs, genbank_seqio
-from .genbank import genbank_to_ptt, genbank_to_functions, feature_id
+from .genbank import genbank_to_ptt, genbank_to_functions, feature_id, genbank_to_pandas
 
 __all__ = [
     'mean', 'median', 'stdev',
@@ -31,5 +31,5 @@ __all__ = [
     'bcolors', 'colours', 'colors', 'message',
     'SequencePairError', 'FastqFormatError',
     'genbank_to_faa', 'genbank_to_fna', 'genbank_to_orfs', 'genbank_to_ptt', 'genbank_seqio', 'genbank_to_functions',
-    'feature_id'
+    'feature_id', 'genbank_to_pandas'
     ]

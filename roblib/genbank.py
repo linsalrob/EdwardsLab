@@ -8,6 +8,7 @@ import re
 import binascii
 import gzip
 from Bio import SeqIO
+import pandas as pd
 
 
 __author__ = 'Rob Edwards'
@@ -264,3 +265,46 @@ def genbank_to_phage_finder(gbkf, verbose=False):
                 fn = feat_to_text(feat, 'product')
             yield [seq.id, len(seq.seq), cid, feat.location.start, feat.location.end, fn]
 
+def genbank_to_pandas(gbkf, verbose=False):
+    """
+    This is a bit of a specific format used by phage_boost. its a simple dataframe with a couple of
+    additional columns:
+        ['contig',
+         'id',
+         'start',
+         'stop',
+         'direction',
+         'partial',
+         'DNAseq',
+         'AAseq',
+         'header']
+    :param gbkf: Genbank file to parse
+    :param verbose: more output
+    :return: a pandas data frame
+    """
+
+    c = 0
+    genes = []
+    for seq in genbank_seqio(gbkf):
+        for feat in seq.features:
+            if feat.type != 'CDS':
+                continue
+            tid = seq.id + "_" + str(c)
+            partial = 0
+            # I don't think this is exactly right
+            if 'truncated' in feat.qualifiers:
+                partial = 1
+            trans = None
+            if 'translation' in feat.qualifiers:
+                trans = feat.qualifiers['translation'][0]
+            else:
+                trans = str(feat.extract(seq).translate().seq)
+            row = [seq.id, c, feat.location.start.position, feat.location.end.position, feat.strand,
+                   partial, str(feat.extract(seq).seq), trans, tid]
+            c += 1
+            genes.append(row)
+
+    genecalls = pd.DataFrame(genes, columns=['contig', 'id', 'start', 'stop', 'direction', 'partial', 'DNAseq', 'AAseq',
+                                             'header'])
+
+    return genecalls
