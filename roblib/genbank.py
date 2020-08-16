@@ -318,7 +318,7 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
                 if '*' in trans:
                     message(f"There is a * in  {feature_id(seq, feat)} so skipped\n", "RED")
                     continue
-                if 'x' in trans:
+                if 'X' in trans:
                     message(f"There is a X in  {feature_id(seq, feat)} so skipped\n", "RED")
                     continue
 
