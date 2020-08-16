@@ -289,7 +289,7 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
     genes = []
     for seq in genbank_seqio(gbkf):
         if len(seq) < mincontiglen:
-            message(f"Skipped {seq.id} because it's length ({len(seq)}) is less than the minimum contig length ({mincontiglen})\n", "RED")
+            message(f"Skipped {seq.id} because it's length ({len(seq)}) is less than the minimum contig length ({mincontiglen})", "RED")
             continue
         for feat in seq.features:
             if feat.type != 'CDS':
@@ -302,7 +302,7 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
 
             dnaseq = str(feat.extract(seq).seq)
             if len(dnaseq) == 0:
-                message(f"The DNA sequence for {feature_id(seq, feat)} was zero, so skipped\n", "RED")
+                message(f"The DNA sequence for {feature_id(seq, feat)} was zero, so skipped", "RED")
                 continue
 
             trans = None
@@ -336,8 +336,7 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
 
 
             if len(trans) == 0:
-                message(f"The translation for {feature_id(seq, feat)} was zero, so skipped\n", "RED")
-                message(f"DNA is {dnaseq}\n", "BLUE")
+                message(f"The translation for {feature_id(seq, feat)} was zero, so skipped", "RED")
                 continue
 
 
