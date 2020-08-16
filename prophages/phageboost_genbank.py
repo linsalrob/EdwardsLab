@@ -69,7 +69,11 @@ if __name__ == '__main__':
     parser.add_argument('-v', '--verbose', help='verbose output', action='store_true')
     args = parser.parse_args()
 
+    if args.verbose:
+        message("Reading genbank file", "GREEN")
     genecalls = genbank_to_pandas(args.genbankfile, args.mincontiglen, args.verbose)
+    if args.verbose:
+        message("Phage Boosting", "GREEN")
     res = run_phage_boost(genecalls, args.modelfile, args.verbose)
     if args.outputfile:
         with open(args.outputfile, 'w') as out:

@@ -9,7 +9,7 @@ import binascii
 import gzip
 from Bio import SeqIO
 import pandas as pd
-
+from .colours import message
 
 __author__ = 'Rob Edwards'
 __copyright__ = 'Copyright 2020, Rob Edwards'
@@ -286,7 +286,8 @@ def genbank_to_pandas(gbkf, mincontiglen, verbose=False):
     c = 0
     genes = []
     for seq in genbank_seqio(gbkf):
-        if len(seq) > mincontiglen:
+        if len(seq) < mincontiglen:
+            message(f"Skipped {seq.id} because it's length ({len(seq)} is less than the minimum contig length ({mincontiglen})\n")
             continue
         for feat in seq.features:
             if feat.type != 'CDS':
