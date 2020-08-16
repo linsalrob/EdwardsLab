@@ -66,7 +66,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', '--modelfile', required=True,
                         help="Model file. Probably something like model_delta_std_hacked.pickled.silent.gz")
     parser.add_argument('-o', '--outputfile', help='output file for phage regions')
-    parser.add_argument('-c', '--mincontiglen', default=10000, type=int,
+    parser.add_argument('-c', '--mincontiglen', default=1000, type=int,
                         help='minimum contig length  [Default: %(default)d]')
     parser.add_argument('-v', '--verbose', help='verbose output', action='store_true')
     args = parser.parse_args()

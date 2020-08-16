@@ -289,7 +289,7 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
     genes = []
     for seq in genbank_seqio(gbkf):
         if len(seq) < mincontiglen:
-            message(f"Skipped {seq.id} because it's length ({len(seq)} is less than the minimum contig length ({mincontiglen})\n")
+            message(f"Skipped {seq.id} because it's length ({len(seq)} is less than the minimum contig length ({mincontiglen})\n", "RED")
             continue
         for feat in seq.features:
             if feat.type != 'CDS':
