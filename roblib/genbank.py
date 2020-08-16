@@ -327,6 +327,7 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
                             retrans = str(feat.extract(seq).translate().seq)
                             while retrans.endswith('*'):
                                 retrans = trans[:-1]
+                            trans = retrans
                         if aa in retrans:
                             message(f"There is a {aa} in  {feature_id(seq, feat)} so skipped. (And yes, retranslated)", "RED")
                             keeporf = False
