@@ -43,11 +43,8 @@ def run_phage_boost(genecalls, model_file, verbose):
     # calculate features from gene calls
     if verbose:
         message("Calculating features", "GREEN")
-    try:
-        df = calculate_features(genecalls)
-    except ZeroDivisionError as e:
-        message("There was a divide by zero error. Phage boosting failed\n", "RED")
-        return pd.DataFrame(columns=['', 'phage', 'contig', 'start', 'stop', 'genes', 'probability'])
+
+    df = calculate_features(genecalls)
     # load model
     model, feats, feats_, limit = read_model_from_file(model_file)
     # transform data
