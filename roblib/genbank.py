@@ -265,7 +265,7 @@ def genbank_to_phage_finder(gbkf, verbose=False):
                 fn = feat_to_text(feat, 'product')
             yield [seq.id, len(seq.seq), cid, feat.location.start, feat.location.end, fn]
 
-def genbank_to_pandas(gbkf, mincontiglen, verbose=False):
+def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocysteine=False, verbose=False):
     """
     This is a bit of a specific format used by phage_boost. its a simple dataframe with a couple of
     additional columns:
@@ -278,6 +278,8 @@ def genbank_to_pandas(gbkf, mincontiglen, verbose=False):
          'DNAseq',
          'AAseq',
          'header']
+    :param ignorepartials: Ignore any gene call with a frameshift (ie. a stop codon in the middle of the sequence)
+    :param convert_selenocysteine: PhageBoost crashes with a selenocysteine protein because it is not included in Biopython
     :param gbkf: Genbank file to parse
     :param verbose: more output
     :return: a pandas data frame
@@ -297,14 +299,38 @@ def genbank_to_pandas(gbkf, mincontiglen, verbose=False):
             # I don't think this is exactly right
             if 'truncated' in feat.qualifiers:
                 partial = 1
+
+            dnaseq = str(feat.extract(seq).seq)
+            if len(dnaseq) == 0:
+                message(f"The DNA sequence for {feature_id(seq, feat)} was zero, so skipped\n", "RED")
+                continue
+
             trans = None
-            if 'translation' in feat.qualifiers:
+            if 'translation' in feat.qualifiers and len(feat.qualifiers['translation'][0]) > 0:
                 trans = feat.qualifiers['translation'][0]
             else:
                 trans = str(feat.extract(seq).translate().seq)
+
+            while trans.endswith('*'):
+                trans = trans[:-1]
+
+            if '*' in trans:
+                message(f"There is a * in  {feature_id(seq, feat)} so skipped\n", "RED")
+                continue
+
+            if len(trans) == 0:
+                message(f"The translation for {feature_id(seq, feat)} was zero, so skipped\n", "RED")
+                message(f"DNA is {dnaseq}\n", "BLUE")
+                continue
+
+
+            if convert_selenocysteine:
+                trans = trans.replace('U', 'C')
             row = [seq.id, c, feat.location.start.position, feat.location.end.position, feat.strand,
-                   partial, str(feat.extract(seq).seq), trans, tid]
+                   partial, dnaseq, trans, tid]
             c += 1
+
+
             genes.append(row)
 
     genecalls = pd.DataFrame(genes, columns=['contig', 'id', 'start', 'stop', 'direction', 'partial', 'DNAseq', 'AAseq',
