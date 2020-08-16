@@ -314,13 +314,26 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
             while trans.endswith('*'):
                 trans = trans[:-1]
 
+            # partial amino acid codes we should ignore
+            paa = {'B', 'Z', 'J', 'X', '*'}
+
+            keeporf = True
             if ignorepartials:
-                if '*' in trans:
-                    message(f"There is a * in  {feature_id(seq, feat)} so skipped\n", "RED")
-                    continue
-                if 'X' in trans:
-                    message(f"There is a X in  {feature_id(seq, feat)} so skipped\n", "RED")
-                    continue
+                retrans = None
+                for aa in paa:
+                    if aa in trans:
+                        if not retrans:
+                            # first check that is true for the correct translation
+                            retrans = str(feat.extract(seq).translate().seq)
+                            while retrans.endswith('*'):
+                                retrans = trans[:-1]
+                        if aa in retrans:
+                            message(f"There is a {aa} in  {feature_id(seq, feat)} so skipped. (And yes, retranslated)", "RED")
+                            keeporf = False
+
+            if not keeporf:
+                continue
+
 
             if len(trans) == 0:
                 message(f"The translation for {feature_id(seq, feat)} was zero, so skipped\n", "RED")
