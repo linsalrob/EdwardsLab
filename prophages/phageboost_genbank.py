@@ -8,6 +8,7 @@ This is extracted from their example code, but we added parsing genbank files to
 import os
 import sys
 from roblib import genbank_to_pandas, message
+import pandas as pd
 from PhageBoost.main import read_sequence_file, call_genes, calculate_features, read_model_from_file, predict, get_predictions
 import xgboost as xgb
 import argparse
@@ -42,7 +43,11 @@ def run_phage_boost(genecalls, model_file, verbose):
     # calculate features from gene calls
     if verbose:
         message("Calculating features", "GREEN")
-    df = calculate_features(genecalls)
+    try:
+        df = calculate_features(genecalls)
+    except ZeroDivisionError as e:
+        message("There was a divide by zero error. Phage boosting failed\n", "RED")
+        return pd.DataFrame(columns=['', 'phage', 'contig', 'start', 'stop', 'genes', 'probability'])
     # load model
     model, feats, feats_, limit = read_model_from_file(model_file)
     # transform data
