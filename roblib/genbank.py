@@ -306,11 +306,9 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
                 message(f"The DNA sequence for {feature_id(seq, feat)} was zero, so skipped", "RED")
                 continue
 
-            trans = None
-            if 'translation' in feat.qualifiers and len(feat.qualifiers['translation'][0]) > 0:
-                trans = feat.qualifiers['translation'][0]
-            else:
-                trans = str(feat.extract(seq).translate().seq)
+            # we just do a de novo translation rather than relying on the translation provided
+            # in the genbank file that is often wrong
+            trans = str(feat.extract(seq).translate().seq)
 
             while trans.endswith('*'):
                 trans = trans[:-1]
@@ -320,28 +318,11 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
 
             keeporf = True
 
-            """
-            This is a bit hacky, but we need to check for B, Z, J, X, and * in the sequences.
-            If we find one, we confirm that it is in the direct translation rather than
-            the translation from the genbank file. We should probably just use the direct
-            translation originally. 
-            
-            Anyway, we retranslate it if we need to.
-            """
-
             if ignorepartials:
-                retrans = None
                 for aa in paa:
                     if aa in trans:
-                        if not retrans:
-                            # first check that is true for the correct translation
-                            retrans = str(feat.extract(seq).translate().seq)
-                            while retrans.endswith('*'):
-                                retrans = retrans[:-1]
-                            trans = retrans
-                        if aa in retrans:
-                            message(f"There is a {aa} in  {feature_id(seq, feat)} so skipped.", "RED")
-                            keeporf = False
+                        message(f"There is a {aa} in  {feature_id(seq, feat)} so skipped.", "RED")
+                        keeporf = False
 
             if not keeporf:
                 continue
