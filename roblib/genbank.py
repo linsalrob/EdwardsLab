@@ -294,6 +294,7 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
         for feat in seq.features:
             if feat.type != 'CDS':
                 continue
+
             tid = seq.id + "_" + str(c)
             partial = 0
             # I don't think this is exactly right
@@ -327,6 +328,7 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
             
             Anyway, we retranslate it if we need to.
             """
+
             if ignorepartials:
                 retrans = None
                 for aa in paa:
@@ -335,27 +337,24 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
                             # first check that is true for the correct translation
                             retrans = str(feat.extract(seq).translate().seq)
                             while retrans.endswith('*'):
-                                retrans = trans[:-1]
+                                retrans = retrans[:-1]
                             trans = retrans
                         if aa in retrans:
-                            message(f"There is a {aa} in  {feature_id(seq, feat)} so skipped. (And yes, retranslated)", "RED")
+                            message(f"There is a {aa} in  {feature_id(seq, feat)} so skipped.", "RED")
                             keeporf = False
 
             if not keeporf:
                 continue
 
-
             if len(trans) == 0:
                 message(f"The translation for {feature_id(seq, feat)} was zero, so skipped", "RED")
                 continue
-
 
             if convert_selenocysteine:
                 trans = trans.replace('U', 'C')
             row = [seq.id, c, feat.location.start.position, feat.location.end.position, feat.strand,
                    partial, dnaseq, trans, tid]
             c += 1
-
 
             genes.append(row)
 
