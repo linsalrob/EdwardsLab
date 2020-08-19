@@ -308,7 +308,7 @@ def main(useCachedFileFlag, cumulativeResultsFlag, noAlignFlag, noPlotFlag, file
             else:
                 casesType        = 'casesMA'
                 deathsType       = 'deathsMA'
-                percentageType   = 'fatalityPercentagefatalityPercentageMA'
+                percentageType   = 'fatalityPercentage'
 
                                                             # Plot titles
             titleStr='Covid-19 '
