@@ -20,11 +20,15 @@ import os
 # set this to the directory that has the fastq files
 readdir = "fastq"
 
-# set this to the location of the indexed host genome
+# set this to the path to the indexed host genome
 # that you want to filter out. This should be indexed
 # with `bowtie2-build`, and should be just the base 
 # filename of the .1.bt2, .2.bt2, .3.bt2 indexes etc.
-host_bt_index = "human"   
+host_bt_index = "/path/to/human"   
+
+# set this to the host name that we will use in the output names
+hostname = "human"
+
 
 # set this to the location where you would like the results
 # written. We will make the directory if it doesn't exist
@@ -63,12 +67,12 @@ PATTERN_R2 = '{sample}_R2'
 
 rule all:
     input:
-        os.path.join(outdir, PATTERN_R1 + "_" + host_bt_index + '.mapped.fastq'),
-        os.path.join(outdir, PATTERN_R2 + "_" + host_bt_index + '.mapped.fastq'),
-        os.path.join(outdir, '{sample}_singletons_' + host_bt_index + '.mapped.fastq'),
-        os.path.join(outdir, PATTERN_R1 + "_" + host_bt_index + '.unmapped.fastq'),
-        os.path.join(outdir, PATTERN_R2 + "_" + host_bt_index + '.unmapped.fastq'),
-        os.path.join(outdir, '{sample}_singletons_' + host_bt_index + '.unmapped.fastq'),
+        os.path.join(outdir, PATTERN_R1 + "_" + hostname + '.mapped.fastq'),
+        os.path.join(outdir, PATTERN_R2 + "_" + hostname + '.mapped.fastq'),
+        os.path.join(outdir, '{sample}_singletons_' + hostname + '.mapped.fastq'),
+        os.path.join(outdir, PATTERN_R1 + "_" + hostname + '.unmapped.fastq'),
+        os.path.join(outdir, PATTERN_R2 + "_" + hostname + '.unmapped.fastq'),
+        os.path.join(outdir, '{sample}_singletons_' + hostname + '.unmapped.fastq'),
     
 
 rule btmap:
@@ -76,7 +80,7 @@ rule btmap:
         r1 = os.path.join(readdir, '{sample}_R1' + file_extension),
         r2 = os.path.join(readdir, '{sample}_R2' + file_extension),
     output:
-        os.path.join(outdir, '{sample}.' + host_bt_index + '.bam')
+        os.path.join(outdir, '{sample}.' + hostname + '.bam')
     params:
         idx = host_bt_index
     shell:
@@ -86,48 +90,48 @@ rule btmap:
 
 rule R1_reads_map_to_ref:
     input:
-        '{sample}.' + host_bt_index + '.bam'
+        '{sample}.' + hostname + '.bam'
     output:
-        os.path.join(outdir, PATTERN_R1 + "_" + host_bt_index + '.mapped.fastq')
+        os.path.join(outdir, PATTERN_R1 + "_" + hostname + '.mapped.fastq')
     shell:
         "samtools fastq -G 12 -f 65 {input} > {output}"
 
 rule R2_reads_map_to_ref:
     input:
-        '{sample}.' + host_bt_index + '.bam'
+        '{sample}.' + hostname + '.bam'
     output:
-        os.path.join(outdir, PATTERN_R2 + "_" + host_bt_index + '.mapped.fastq')
+        os.path.join(outdir, PATTERN_R2 + "_" + hostname + '.mapped.fastq')
     shell:
         "samtools fastq  -G 12 -f 129 {input} > {output}"
 
 rule single_reads_map_to_ref:
     input:
-        '{sample}.' + host_bt_index + '.bam'
+        '{sample}.' + hostname + '.bam'
     output:
-        os.path.join(outdir, '{sample}_singletons_' + host_bt_index + '.mapped.fastq')
+        os.path.join(outdir, '{sample}_singletons_' + hostname + '.mapped.fastq')
     shell:
         "samtools fastq  -F 5 {input} > {output}"
 
 rule R1_unmapped:
     input:
-        '{sample}.' + host_bt_index + '.bam'
+        '{sample}.' + hostname + '.bam'
     output:
-        os.path.join(outdir, PATTERN_R1 + "_" + host_bt_index + '.unmapped.fastq')
+        os.path.join(outdir, PATTERN_R1 + "_" + hostname + '.unmapped.fastq')
     shell:
         "samtools fastq  -f 77  {input} > {output}"
 
 rule R2_unmapped:
     input:
-        '{sample}.' + host_bt_index + '.bam'
+        '{sample}.' + hostname + '.bam'
     output:
-        os.path.join(outdir, PATTERN_R2 + "_" + host_bt_index + '.unmapped.fastq')
+        os.path.join(outdir, PATTERN_R2 + "_" + hostname + '.unmapped.fastq')
     shell:
         "samtools fastq  -f 141 {input} > {output}"
 
 rule single_reads_unmapped:
     input:
-        '{sample}.' + host_bt_index + '.bam'
+        '{sample}.' + hostname + '.bam'
     output:
-        os.path.join(outdir, '{sample}_singletons_' + host_bt_index + '.unmapped.fastq')
+        os.path.join(outdir, '{sample}_singletons_' + hostname + '.unmapped.fastq')
     shell:
         "samtools fastq  -f 4 -F 1  {input} > {output}"
