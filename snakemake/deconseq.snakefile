@@ -87,7 +87,7 @@ rule btmap:
         idx = host_bt_index
     shell:
         """
-		bowtie2 -p {threads} -x {params.idx} -1 {input.r1} -2 {input.r2} | samtools view -bh | samtools sort -o {output} -'
+		bowtie2 -p {threads} -x {params.idx} -1 {input.r1} -2 {input.r2} | samtools view -bh | samtools sort -o {output} -
         """
 
 rule R1_reads_map_to_ref:
