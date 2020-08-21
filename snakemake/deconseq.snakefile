@@ -67,12 +67,14 @@ PATTERN_R2 = '{sample}_R2'
 
 rule all:
     input:
-        os.path.join(outdir, PATTERN_R1 + "_" + hostname + '.mapped.fastq'),
-        os.path.join(outdir, PATTERN_R2 + "_" + hostname + '.mapped.fastq'),
-        os.path.join(outdir, '{sample}_singletons_' + hostname + '.mapped.fastq'),
-        os.path.join(outdir, PATTERN_R1 + "_" + hostname + '.unmapped.fastq'),
-        os.path.join(outdir, PATTERN_R2 + "_" + hostname + '.unmapped.fastq'),
-        os.path.join(outdir, '{sample}_singletons_' + hostname + '.unmapped.fastq'),
+        expand([
+            os.path.join(outdir, PATTERN_R1 + "_" + hostname + '.mapped.fastq'),
+            os.path.join(outdir, PATTERN_R2 + "_" + hostname + '.mapped.fastq'),
+            os.path.join(outdir, '{sample}_singletons_' + hostname + '.mapped.fastq'),
+            os.path.join(outdir, PATTERN_R1 + "_" + hostname + '.unmapped.fastq'),
+            os.path.join(outdir, PATTERN_R2 + "_" + hostname + '.unmapped.fastq'),
+            os.path.join(outdir, '{sample}_singletons_' + hostname + '.unmapped.fastq')
+        ], sample=SAMPLES)
     
 
 rule btmap:
@@ -90,7 +92,7 @@ rule btmap:
 
 rule R1_reads_map_to_ref:
     input:
-        '{sample}.' + hostname + '.bam'
+        os.path.join(outdir, '{sample}.' + hostname + '.bam')
     output:
         os.path.join(outdir, PATTERN_R1 + "_" + hostname + '.mapped.fastq')
     shell:
@@ -98,7 +100,7 @@ rule R1_reads_map_to_ref:
 
 rule R2_reads_map_to_ref:
     input:
-        '{sample}.' + hostname + '.bam'
+        os.path.join(outdir, '{sample}.' + hostname + '.bam')
     output:
         os.path.join(outdir, PATTERN_R2 + "_" + hostname + '.mapped.fastq')
     shell:
@@ -106,7 +108,7 @@ rule R2_reads_map_to_ref:
 
 rule single_reads_map_to_ref:
     input:
-        '{sample}.' + hostname + '.bam'
+        os.path.join(outdir, '{sample}.' + hostname + '.bam')
     output:
         os.path.join(outdir, '{sample}_singletons_' + hostname + '.mapped.fastq')
     shell:
@@ -114,7 +116,7 @@ rule single_reads_map_to_ref:
 
 rule R1_unmapped:
     input:
-        '{sample}.' + hostname + '.bam'
+        os.path.join(outdir, '{sample}.' + hostname + '.bam')
     output:
         os.path.join(outdir, PATTERN_R1 + "_" + hostname + '.unmapped.fastq')
     shell:
@@ -122,7 +124,7 @@ rule R1_unmapped:
 
 rule R2_unmapped:
     input:
-        '{sample}.' + hostname + '.bam'
+        os.path.join(outdir, '{sample}.' + hostname + '.bam')
     output:
         os.path.join(outdir, PATTERN_R2 + "_" + hostname + '.unmapped.fastq')
     shell:
@@ -130,7 +132,7 @@ rule R2_unmapped:
 
 rule single_reads_unmapped:
     input:
-        '{sample}.' + hostname + '.bam'
+        os.path.join(outdir, '{sample}.' + hostname + '.bam')
     output:
         os.path.join(outdir, '{sample}_singletons_' + hostname + '.unmapped.fastq')
     shell:
