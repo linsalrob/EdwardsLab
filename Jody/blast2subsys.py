@@ -33,9 +33,6 @@ def connect_to_db(dbname, verbose=False):
     :return: the database connection
     """
 
-    global conn
-    if conn:
-        return conn
 
     try:
         conn = sqlite3.connect(dbname)
@@ -90,29 +87,30 @@ def blast_to_subsys(blastf, sqlf, outf, verbose):
         message(f"FATAL: could not connect to database{sqlf}", "RED")
         sys.exit(-1)
 
-    q = "select role_name,  superclass, class, subclass, subsystem_name from proteins " + \
+    q = "select superclass, class, subclass, subsystem_name, role_name from proteins " + \
         "inner join md5sum on proteins.patric_id = md5sum.patric_id where md5sum.md5sum = ?"
 
     seen = set()
 
-    for br in stream_blast_results(blastf):
-        if br.query in seen:
-            continue
-        seen.add(br.query)
-        cur.execute(q, [br.db])
-        if br.query not in proteins:
-            proteins[br.query] = set()
-        for r in cur.fetchall():
-            """
-                role = r['role_name']
-                proteins[br.query].add(role)
-                ss = "\t".join(r)
-                if role not in roles:
-                    roles[role] = set()
-                roles[role].add(ss)
-            """
-            r.insert(0, br.query)
-            print("\t".join(map(str, r)))
+    with open(outf, 'w') as out:
+        for br in stream_blast_results(blastf):
+            if br.query in seen:
+                continue
+            seen.add(br.query)
+            cur.execute(q, [br.db])
+            if br.query not in proteins:
+                proteins[br.query] = set()
+            for r in cur.fetchall():
+                """
+                    role = r['role_name']
+                    proteins[br.query].add(role)
+                    ss = "\t".join(r)
+                    if role not in roles:
+                        roles[role] = set()
+                    roles[role].add(ss)
+                """
+                # print(br.query + "\t" + "\t".join(map(str, r)))
+                out.write(br.query + "\t" + "\t".join(map(str, r)) + "\n")
 
 
 
