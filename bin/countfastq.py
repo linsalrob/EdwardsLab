@@ -17,7 +17,7 @@ if __name__ == "__main__":
     parser.add_argument('-f', nargs='+', help='fastq file')
     parser.add_argument('-d', nargs='+', help='directory of fastq files')
     parser.add_argument('-t', help='tab separated summmary of name, total len, shortest, longest, n50, n75', action="store_true")
-    parser.add_argument('-s', help='(deprecated). Same as -t', action="store_true")
+    parser.add_argument('-s', help="summarize the counts. Useful if you run on a directory", action="store_true")
     args = parser.parse_args()
 
     if not args.f and not args.d:
@@ -60,8 +60,9 @@ if __name__ == "__main__":
 
         auN /= length
 
-        if args.s or args.t:
-            print("{}\t{}\t{}\t{}\t{}\t{}\t{}".format(faf, len(lens), length, lens[0], lens[-1], n50, n75))
+        if args.t:
+            print(f"{faf}\t{len(lens):,}\t{length:,}\t{lens[0]:,}\t" \
+                  + f"{lens[-1]:,}\t{n50:,}\t{n75:,}\t{int(auN):,}")
         else:
             print(f"""
 File name: {faf}
@@ -80,8 +81,8 @@ auN: {int(auN):,}  """
         if lens[-1] > overall['longest']:
             overall['longest'] = lens[-1]
 
-
-print(f"""
+if args.s:
+    print(f"""
 
 OVERALL SUMMARY
 Number of sequences: {overall['number']:,}
