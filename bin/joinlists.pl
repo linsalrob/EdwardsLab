@@ -38,6 +38,7 @@ die;
 
 my $data; my %allkeys; my $headers; 
 my %datapoints;
+my $firstcolheader;
 foreach my $f (@files) {
 	open(IN, $f) || die "Can't open $f";
 	$datapoints{$f}=0;
@@ -46,6 +47,7 @@ foreach my $f (@files) {
 		if ($skip && index($_, "#") == 0) {next}
 		my @a=split /\t/;
 		my $key = shift @a;
+		if ($header && !(defined $firstcolheader)) {$firstcolheader = $key}
 		if ($header && !(defined $headers->{$f})) {$headers->{$f}=\@a}
 		else {$data->{$f}->{$key} = \@a; $allkeys{$key}=1}
 		($#a > $datapoints{$f}) ? $datapoints{$f} = $#a : 1;
@@ -54,7 +56,7 @@ foreach my $f (@files) {
 }
 
 if ($header) {
-    print "";
+    print $firstcolheader;
     map {print join("\t", "", @{$headers->{$_}})} @files;
     print "\n";
 }
