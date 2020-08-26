@@ -105,3 +105,8 @@ repeatFinder
 
 # virtual environment
 venv/
+
+# some compiled code
+bin/primer-basecounting
+bin/primer-predictions
+bin/primer-trimming
