@@ -20,6 +20,7 @@ __license__ = 'MIT'
 __maintainer__ = 'Rob Edwards'
 __email__ = 'raedwards@gmail.com'
 
+
 def run_phage_boost(genecalls, model_file, verbose):
     """
     Run phage boost
