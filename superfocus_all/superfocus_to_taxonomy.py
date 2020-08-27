@@ -1,5 +1,5 @@
 """
-Parse the superfocus m8 diamon output files and sumamrize the taxonomies
+Parse the superfocus m8 diamond output files and sumamrize the taxonomies
 """
 
 import os
@@ -24,7 +24,7 @@ ignore_tids = {'6666666', '88888881'}
 
 def printmatches(seqid, matches):
     """
-    Summarize and print he matches
+    Summarize and print the matches
     :param seqid: the sequence ID
     :param matches:  the matches array
     :return:
