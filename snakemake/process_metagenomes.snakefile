@@ -104,7 +104,7 @@ rule combine_contigs:
         contigs = os.path.join(ASSDIR, "round1_contigs.fa"),
         ids = os.path.join(ASSDIR, "round1_contigs.ids") 
     shell:
-        'python3 ~/bin/renumber_merge_fasta.py -f {input} -o {output.contigs} -i {output.ids} -v'
+        'python3 ~redwards/bin/renumber_merge_fasta.py -f {input} -o {output.contigs} -i {output.ids} -v'
 
 
 rule index_contigs:
@@ -287,7 +287,7 @@ rule concatentate_all_assemblies:
         contigs = os.path.join(REASSM, "merged_contigs.fa"),
         ids = os.path.join(REASSM, "merged_contigs.ids") 
     shell:
-        'python3 ~/bin/renumber_merge_fasta.py -f {input.new} -o {output.contigs} -i {output.ids} -v'
+        'python3 ~redwards/bin/renumber_merge_fasta.py -f {input.new} -o {output.contigs} -i {output.ids} -v'
 
 rule merge_assemblies_with_flye:
     """
