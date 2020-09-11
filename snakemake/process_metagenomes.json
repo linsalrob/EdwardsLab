@@ -10,13 +10,13 @@
         "bowtie2" : "/usr/local/bowtie2/bin/bowtie2"
     },
     "directories" : {
-        "Reads" : "Reads",
+        "Reads" : "fastq",
         "round1_assembly_output" : "assembly.1",
         "round1_contig_read_mapping" : "reads.contigs.1",
         "round2_unassembled_reads" : "unassembled_reads",
         "round2_assembly_output" : "reassembled_reads",
-        "round2_contig_read_mapping" : "reads.contigs.2",
-        "testdir" : "testdir"
-    }
+        "combined_contig_merging" : "final.combined_contigs"
+    },
+    "threads" : 8
 }
 
