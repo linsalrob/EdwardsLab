@@ -46,9 +46,9 @@ def extractCountries(covidData, desiredColumn, dates, popNormalizeFlag):
         if (countryData_tmp.dropna().empty == True):    # Drop empty frames
             continue
 
-        population=countryData_tmp['popData2018'].iloc[0]
+        population=countryData_tmp['popData2019'].iloc[0]
         # print("Country               : " + country)
-        # print("Population (2018)     : %.2f (Million)" % (population / 1000000.))
+        # print("Population (2019)     : %.2f (Million)" % (population / 1000000.))
 
         countryData_tmp = countryData_tmp.iloc[::-1]    # Invert table - top to bottom
                                                     # Create cumulative cases column and cumulative deaths column - Rename column titles
@@ -61,10 +61,10 @@ def extractCountries(covidData, desiredColumn, dates, popNormalizeFlag):
         countryData_tmp['deathsCumulative'] = countryDataCS['deathsCumulative']
 
         if ((popNormalizeFlag == True) and (population > 0)):
-            countryData_tmp['cases']            = countryData_tmp['cases']            * (10000000.0 / population)
-            countryData_tmp['deaths']           = countryData_tmp['deaths']           * (10000000.0 / population)
-            countryData_tmp['casesCumulative']  = countryData_tmp['casesCumulative']  * (10000000.0 / population)
-            countryData_tmp['deathsCumulative'] = countryData_tmp['deathsCumulative'] * (10000000.0 / population)
+            countryData_tmp['cases']            = countryData_tmp['cases']            * (1000000.0 / population)
+            countryData_tmp['deaths']           = countryData_tmp['deaths']           * (1000000.0 / population)
+            countryData_tmp['casesCumulative']  = countryData_tmp['casesCumulative']  * (1000000.0 / population)
+            countryData_tmp['deathsCumulative'] = countryData_tmp['deathsCumulative'] * (1000000.0 / population)
 
         countryData_tmp = countryData_tmp.loc[:, countryData_tmp.columns.intersection([desiredColumn])]   # Delete all columns except desired
 
@@ -172,16 +172,24 @@ def main(nDisplay, useCachedFileFlag, cumulativeResultsFlag, noPlotFlag, fileSav
             # print(link['href'])
             if ("csv" in link['href']):
                 csvfileurl = link['href']
-                urllib.request.urlretrieve(csvfileurl, localFileName)
-                cachedFilePresentFlag = True
-                print("Cached file updated")
+                try:
+                    urllib.request.urlretrieve(csvfileurl, localFileName)
+                    cachedFilePresentFlag = True
+                    print("Cached spreadheet updated")
+                except:
+                    cachedFilePresentFlag = False
+                    print("Spreadheet failed to download")
                 break
-            elif ("xlsx" in link['href']):          # If data in .xlsx format then retrieve and store as local .csv format
+            elif ("xlsx" in link['href']):              # If data in .xlsx format then retrieve and store as local .csv format
                 xlsxfileurl = link['href']
-                xlsx_tmp = pd.read_excel(xlsxfileurl, index_col=0)
-                xlsx_tmp.to_csv(localFileName, index=True)
-                cachedFilePresentFlag = True
-                print("Cached file updated")
+                try:
+                    xlsx_tmp = pd.read_excel(xlsxfileurl, index_col=0)
+                    xlsx_tmp.to_csv(localFileName, index=True)
+                    cachedFilePresentFlag = True
+                    print("Cached spreadheet updated")
+                except:
+                    cachedFilePresentFlag = False
+                    print("Spreadheet failed to download")
                 break
 
         if (cachedFilePresentFlag == False):
@@ -190,9 +198,9 @@ def main(nDisplay, useCachedFileFlag, cumulativeResultsFlag, noPlotFlag, fileSav
 
 
     if (cachedFilePresentFlag == True):
-        covidData = pd.read_csv(localFileName, index_col=0, encoding="iso8859_1")
+        covidData = pd.read_csv(localFileName, index_col=0, encoding="utf-8-sig")
                     # Spreadsheet columns :
-                    # dateRep	day	month	year	cases	deaths	countriesAndTerritories	geoId	countryterritoryCode	popData2018
+                    # dateRep	day	month	year	cases	deaths	countriesAndTerritories	geoId	countryterritoryCode	popData2019
 
         covidData=covidData.fillna(0)               # Replace NaN with 0
 
@@ -282,7 +290,7 @@ if __name__ == '__main__':
     parser.add_argument("-d", "--deaths",         action="store_true", help="Deaths")
     parser.add_argument("-m", "--mortality_rate", action="store_true", help="Mortality rate")
     parser.add_argument("-f", "--file",           action="store_true", help="Save plot to file")
-    parser.add_argument("-p", "--population",     action="store_true", help="Use population to normalize data to cases per 10 Million")
+    parser.add_argument("-p", "--population",     action="store_true", help="Use population to normalize data to cases per 1 Million")
     parser.add_argument("-q", "--quiet",          action="store_true", help="Quiet - Do not plot graphs")
     args = parser.parse_args()
 
