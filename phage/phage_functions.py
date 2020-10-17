@@ -11,7 +11,7 @@ hypothetical
 import os
 import sys
 import argparse
-from PhiSpyModules import is_phage_func, is_not_phage_func, is_unknown_func
+from PhiSpyModules import is_phage_func, is_unknown_func
 from roblib import is_hypothetical
 
 __author__ = 'Rob Edwards'
