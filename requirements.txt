@@ -1,0 +1,13 @@
+biopython
+datrie
+matplotlib
+networkx 
+numpy
+pandas
+phispy
+pybtex
+pymongo
+requests
+scipy
+seaborn 
+sklearn
