@@ -110,3 +110,4 @@ venv/
 bin/primer-basecounting
 bin/primer-predictions
 bin/primer-trimming
+fastq/change_fastq_pair_symbol
