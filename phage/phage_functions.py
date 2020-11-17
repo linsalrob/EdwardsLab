@@ -40,9 +40,10 @@ def run(filename, verbose=False):
 
     total = hypo + phage + notp
 
-    print(f"Phage proteins: {phage} ({(phage/total)*100:2} %)")
-    print(f"Hypothetical proteins: {hypo} ({(hypo/total)*100:2} %)")
-    print(f"Not phage proteins {notp} ({(notp/total)*100:2} %)")
+    print(f"Phage proteins: {phage:,} ({(phage/total)*100:.2f} %)")
+    print(f"Hypothetical proteins: {hypo:,} ({(hypo/total)*100:.2f} %)")
+    print(f"Not phage proteins {notp:,} ({(notp/total)*100:.2f} %)")
+    print(f"Total proteins: {total:,}")
 
 
 if __name__ == '__main__':
