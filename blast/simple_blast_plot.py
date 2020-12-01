@@ -16,7 +16,7 @@ __maintainer__ = 'Rob Edwards'
 __email__ = 'raedwards@gmail.com'
 
 
-def run(filename, seqname, reflen, query=False,  verbose=False):
+def run(filename, outputfile, seqname, reflen, query=False,  verbose=False):
     fig = plt.figure()
     ax = fig.add_subplot(111)
 
@@ -87,18 +87,20 @@ def run(filename, seqname, reflen, query=False,  verbose=False):
 
     fig.set_facecolor('white')
 
-    plt.show()
-
+    #plt.show()
+    fig.savefig(outputfile)
 
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Plot blast output from an m8 format file")
     parser.add_argument('-f', help='blast output filename', required=True)
+    parser.add_argument('-i', help='image file to write', required=True)
     parser.add_argument('-q', help='use the query locations. The default is to use the reference locations', action='store_true')
     parser.add_argument('-n', help='name of the reference (query with -q) sequence to use. The default is to ignore this and assume you only have one sequence', default=None)
     parser.add_argument('-l', help='length of the reference (query with -q) sequence', default='auto')
+
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    run(args.f, args.n, args.l, args.q, args.v)
+    run(args.f, args.i, args.n, args.l, args.q, args.v)
