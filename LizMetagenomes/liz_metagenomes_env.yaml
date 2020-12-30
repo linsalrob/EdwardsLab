@@ -1,0 +1,9 @@
+name: liz_metagenomes
+channels:
+    - conda-forge
+    - bioconda
+    - default
+dependencies:
+    - prinseq-plus-plus
+    - focus
+    - super-focus
