@@ -67,12 +67,12 @@ def load_primers(primerf, verbose=False):
 
     return exact, degenerate
 
-def testp(fastaf, exactp, degeneratep, verbose=False):
+def testp(fastaf, exactp, degeneratep, printname=False, verbose=False):
     for seqid, seq in stream_fasta(fastaf):
         seq = seq.upper() # always work in uppercase
         rcseq = rc(seq)
         for pp in exactp:
-            lf = rf = lr = rr = 'Not Found'
+            lf = rf = lr = rr = '-'
             try:
                 pos = seq.index(pp[0])
                 lf = pos+1
@@ -85,34 +85,38 @@ def testp(fastaf, exactp, degeneratep, verbose=False):
                 pass
             try:
                 pos = rcseq.index(pp[0])
-                lr = pos+1
+                lr = (len(rcseq) - pos) + 1 + len(pp[0])
             except ValueError:
                 pass
             try:
                 pos = rcseq.index(pp[1])
-                rr = pos+1
+                rr = (len(rcseq) - pos) + 1 + len(pp[1])
             except ValueError:
                 pass
             pp += [lf, rf, lr, rr]
+            if printname:
+                print(fastaf + "\t", end="")
             print(seqid + "\t" + "\t".join(map(str, pp)))
 
         for pp in degeneratep:
             lre = re.compile(pp[0])
             rre = re.compile(pp[1])
-            lf = rf = lr = rr = 'Not Found'
+            lf = rf = lr = rr = '-'
             m = lre.search(seq)
             if m:
                 lf = m.pos + 1
             m = lre.search(rcseq)
             if m:
-                lr = m.pos + 1
+                lr = (len(rcseq) - m.pos) + 1 + len(pp[0])
             m = rre.search(seq)
             if m:
                 rf = m.pos + 1
             m = rre.search(rcseq)
             if m:
-                rr = m.pos + 1
+                rr = (len(rcseq) - m.pos) + 1 + len(pp[1])
             pp += [lf, rf, lr, rr]
+            if printname:
+                print(fastaf + "\t", end="")
             print(seqid + "\t" + "\t".join(map(str, pp)))
 
 
@@ -121,8 +125,11 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Match primers")
     parser.add_argument('-p', help='primers file. This should be [fwd\trev]', required=True)
     parser.add_argument('-f', help='fasta filename to search', required=True)
+    parser.add_argument('-n', help='Include file name in output', action='store_true')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
     exactp, degeneratep =  load_primers(args.p, args.v)
-    testp(args.f, exactp, degeneratep, args.v)
+    if args.v:
+        print(f"Primers are\n{exactp}\n{degeneratep}")
+    testp(args.f, exactp, degeneratep, args.n, args.v)
