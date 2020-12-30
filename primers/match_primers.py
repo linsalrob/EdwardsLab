@@ -89,12 +89,12 @@ def testp(fastaf, exactp, degeneratep, verbose=False):
             except ValueError:
                 pass
             try:
-                pos = seq.index(pp[0])
+                pos = rcseq.index(pp[1])
                 rr = pos+1
             except ValueError:
                 pass
             pp += [lf, rf, lr, rr]
-            print("\t".join(map(str, pp)))
+            print(seqid + "\t" + "\t".join(map(str, pp)))
 
         for pp in degeneratep:
             lre = re.compile(pp[0])
@@ -113,7 +113,7 @@ def testp(fastaf, exactp, degeneratep, verbose=False):
             if m:
                 rr = m.pos + 1
             pp += [lf, rf, lr, rr]
-            print("\t".join(map(str, pp)))
+            print(seqid + "\t" + "\t".join(map(str, pp)))
 
 
 
