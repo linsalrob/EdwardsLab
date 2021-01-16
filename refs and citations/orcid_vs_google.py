@@ -28,7 +28,7 @@ def check_dups(bibtexf, verbose=False):
         message(f"Checking for duplicate entries: {bibtexf}", "PINK")
     entries = set()
     dupentries=False
-    with open(bibtexf, 'r') as bin:
+    with open(bibtexf, 'r', encoding="utf8") as bin:
         for l in bin:
             if l.startswith('@'):
                 l = l.replace('@misc', '')
@@ -40,7 +40,7 @@ def check_dups(bibtexf, verbose=False):
                 entries.add(l)
 
     if dupentries:
-        sys.stderr.write("FATAL: The bibtex file has duplicate entries in it. Please remove them before trying to continue\n")
+        sys.stderr.write(f"FATAL: The bibtex file {bibtexf} has duplicate entries in it. Please remove them before trying to continue\n")
         sys.stderr.write("(It is an issue with Google Scholar, but pybtex breaks with duplicate entries. Sorry)\n")
         sys.exit(-1)
 

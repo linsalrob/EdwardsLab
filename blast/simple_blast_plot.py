@@ -52,9 +52,9 @@ def run(filename, outputfile, seqname, reflen, mergey, query=False,  verbose=Fal
         sys.stderr.write(f"Parsed min as {minx} max as {maxx}\n")
 
     # plot a red line for the reference
-    yposn = 2
+    yposn = 1
     ax.plot([minx, maxx], [yposn, yposn], color='red')
-    yposn += 2
+    yposn += 1
 
 
     yposns = {}
@@ -90,6 +90,8 @@ def run(filename, outputfile, seqname, reflen, mergey, query=False,  verbose=Fal
 
     ax.set_xlabel(f"Position in {seqname} from {minx} to {maxx}")
     ax.set_ylabel("Individual sequences")
+
+
 
     #ax.spines['bottom'].set_visible(False)
     #ax.spines['left'].set_visible(False)

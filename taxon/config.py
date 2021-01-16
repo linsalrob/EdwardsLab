@@ -1,5 +1,5 @@
 """
-
+Some settings for the config files
 """
 
 # defaultdir = '/data/ncbi/taxonomy/current'
