@@ -12,10 +12,12 @@ from .Error import EntryNotInDatabaseError
 from roblib import bcolors
 import time
 
+from .config import get_db_dir
+
+
 data = {"node": {}, "name": {}, "division": {}}
-default_database = "/raid60/usr/data/NCBI/taxonomy/current/taxonomy.sqlite3"
+default_database = os.path.join(get_db_dir(), "taxonomy.sqlite3")
 conn = None
-#default_database = "/data/ncbi/taxonomy/20180620/taxonomy.sqlite"
 
 def connect_to_db(dbname, verbose=False):
     """
