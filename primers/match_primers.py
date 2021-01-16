@@ -43,6 +43,35 @@ def replace_degenerate(seq, verbose=False):
         sys.stderr.write(f"{colours.WARNING}ERROR: We replaced IUPAC characters but appear to have additional characters: {oseq} --> {seq}\n")
     return seq
 
+def load_extended_primers(primerf, verbose=False):
+    """
+    Load the primers. We expect two columns, forwards and reverse
+    We test for degenerate primers and if so add the regular expressions to the list
+    :param primerf: the file of primers
+
+    """
+    exact = []
+    degenerate = []
+    names = {}
+
+    with open(primerf, 'r') as f:
+        for l in f:
+            p = l.strip().split("\t")
+            if (len(p) != 3):
+                sys.stderr.write(f"{colours.RED}ERROR:{colours.ENDC} Can't find the primers in {l}\n")
+                sys.exit(2)
+            p[1] = p[1].upper()
+            p[2] = p[2].upper()
+            if is_degenerate(p[1]) or is_degenerate(p[2]):
+                dp1 = replace_degenerate(p[1])
+                degenerate.append([dp1, replace_degenerate(p[2])])
+                names[dp1] = p[0]
+            else:
+                exact.append([p[1],p[2]])
+                names[p[1]]=p[0]
+
+    return exact, degenerate, names
+
 def load_primers(primerf, verbose=False):
     """
     Load the primers. We expect two columns, forwards and reverse
@@ -67,7 +96,7 @@ def load_primers(primerf, verbose=False):
 
     return exact, degenerate
 
-def testp(fastaf, exactp, degeneratep, printname=False, verbose=False):
+def testp(fastaf, exactp, degeneratep, names, printname=False, verbose=False):
     for seqid, seq in stream_fasta(fastaf):
         seq = seq.upper() # always work in uppercase
         rcseq = rc(seq)
@@ -93,10 +122,14 @@ def testp(fastaf, exactp, degeneratep, printname=False, verbose=False):
                 rr = (len(rcseq) - pos) + 1 + len(pp[1])
             except ValueError:
                 pass
-            pp += [lf, rf, lr, rr]
+            if names:
+                ttpp = [seqid, names[pp[0]]] + pp + [lf, rf, lr, rr]
+            else:
+                ttpp = [seqid] + pp + [lf, rf, lr, rr]
+
             if printname:
                 print(fastaf + "\t", end="")
-            print(seqid + "\t" + "\t".join(map(str, pp)))
+            print("\t".join(map(str, ttpp)))
 
         for pp in degeneratep:
             lre = re.compile(pp[0])
@@ -114,22 +147,40 @@ def testp(fastaf, exactp, degeneratep, printname=False, verbose=False):
             m = rre.search(rcseq)
             if m:
                 rr = (len(rcseq) - m.pos) + 1 + len(pp[1])
-            pp += [lf, rf, lr, rr]
+            if names:
+                ttpp = [seqid, names[pp[0]]] + pp + [lf, rf, lr, rr]
+            else:
+                ttpp = [seqid] + pp + [lf, rf, lr, rr]
+
             if printname:
                 print(fastaf + "\t", end="")
-            print(seqid + "\t" + "\t".join(map(str, pp)))
+            print("\t".join(map(str, ttpp)))
 
 
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Match primers")
-    parser.add_argument('-p', help='primers file. This should be [fwd\trev]', required=True)
+    parser.add_argument('-x', help='extended primers file. This should be [name\tfwd\trev]')
+    parser.add_argument('-p', help='primers file. This should be [fwd\trev]')
     parser.add_argument('-f', help='fasta filename to search', required=True)
     parser.add_argument('-n', help='Include file name in output', action='store_true')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    exactp, degeneratep =  load_primers(args.p, args.v)
+
+    if args.x:
+        exactp, degeneratep, names = load_extended_primers(args.x, args.v)
+    elif args.p:
+        exactp, degeneratep =  load_primers(args.p, args.v)
+        names = None
+    else:
+        sys.stderr.write(f"{colours.RED}FATAL: {colours.ENDC} Either -p or -x must be supplied\n")
+        sys.exit(2)
+
+
+    if not os.path.exists(args.f):
+        sys.stderr.write(f"{colours.RED}FATAL: {colours.ENDC} {args.f} does not exist\n")
+        sys.exit(2)
     if args.v:
         print(f"Primers are\n{exactp}\n{degeneratep}")
-    testp(args.f, exactp, degeneratep, args.n, args.v)
+    testp(args.f, exactp, degeneratep, names, args.n, args.v)
