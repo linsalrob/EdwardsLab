@@ -63,4 +63,3 @@ ax.get_yaxis().tick_left()
 fig.set_facecolor('white')
 
 plt.show()
-# plt.savefig(args.o)
