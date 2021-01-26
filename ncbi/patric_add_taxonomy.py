@@ -29,40 +29,45 @@ if __name__ == '__main__':
             if len(p) > maxp:
                 maxp = len(p)
 
-    with open(args.o, 'w', encoding='utf-8') as out: 
-        with open(args.f, 'r', encoding='utf-8') as f:
-            for l in f:
-                p = l.strip().split("\t")
-                while (len(p) < maxp):
+    firstline = True
+    with open(args.o, 'w', encoding='utf-8') as out, open(args.f, 'r', encoding='utf-8') as f:
+        for l in f:
+            p = l.strip().split("\t")
+            while (len(p) < maxp):
+                if firstline:
+                    p.append("Column to normalize length")
+                else:
                     p.append("")
 
-                if l.startswith("genome_id"):
-                    out.write("{}\t{}\n".format(l.strip(), "\t".join(want)))
-                    continue
+            if l.startswith("genome_id"):
+                firstline = False
+                out.write("{}\t{}\n".format(l.strip(), "\t".join(want)))
+                continue
 
-                tid = p[args.c]
-                if not tid:
-                    continue
+            tid = p[args.c]
+            if not tid:
+                continue
 
-                level = {}
+            level = {}
 
-                t, n = get_taxonomy(tid, c)
-                if t == -1:
-                    # deleted node
-                    message(f"Deleted node {tid} has been skipped\n", "RED")
-                    continue
+            t, n = get_taxonomy(tid, c)
+            if t == -1:
+                # deleted node
+                message(f"Deleted node {tid} has been skipped\n", "RED")
+                continue
 
-                while t and t.parent > 1 and t.parent != 131567:
-                    # 131567 is cellular organisms
-                    if t.rank in want:
-                        level[t.rank] = n.scientific_name
-                    t, n = get_taxonomy(t.parent, c)
+            # while t and t.parent > 1 and t.parent != 131567:
+            while t and t != 1:
+                # 131567 is cellular organisms
+                if t.rank in want:
+                    level[t.rank] = n.scientific_name
+                t, n = get_taxonomy(t.parent, c)
 
-                for w in want:
-                    if w in level:
-                        p.append(level[w])
-                    else:
-                        p.append("")
+            for w in want:
+                if w in level:
+                    p.append(level[w])
+                else:
+                    p.append("")
 
-                out.write("\t".join(map(str, p)))
-                out.write("\n")
+            out.write("\t".join(map(str, p)))
+            out.write("\n")
