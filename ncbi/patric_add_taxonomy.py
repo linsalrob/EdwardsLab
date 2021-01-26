@@ -6,6 +6,7 @@ import os
 import sys
 import argparse
 from taxon import get_taxonomy_db, get_taxonomy
+from roblib import message
 
 c = get_taxonomy_db()
 
@@ -46,6 +47,10 @@ if __name__ == '__main__':
                 level = {}
 
                 t, n = get_taxonomy(tid, c)
+                if t == -1:
+                    # deleted node
+                    message(f"Deleted node {tid} has been skipped", "RED")
+                    continue
 
                 while t and t.parent > 1 and t.parent != 131567:
                     # 131567 is cellular organisms

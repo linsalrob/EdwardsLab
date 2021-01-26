@@ -169,6 +169,26 @@ def create_load(conn, datadir, verbose=False):
                 sys.exit()
     conn.commit()
 
+    # The deleted nodes
+    dbfile = os.path.join(datadir, "delnodes.dmp")
+    if verbose:
+        sys.stderr.write("loading DELETED table: {}\n".format(dbfile))
+    if not os.path.exists(dbfile):
+        sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
+        sys.exit(-1)
+    conn.execute("CREATE TABLE deleted (tax_id INTEGER)")
+    conn.commit()
+    with open(dbfile, "r") as f:
+        for l in f:
+            l = l.replace("|", "").strip()
+            try:
+                conn.execute("INSERT INTO deleted VALUES (?)", l)
+            except sqlite3.OperationalError as e:
+                sys.stderr.write("{}".format(e))
+                sys.stderr.write("\nWhile insert on: {}\n".format(l))
+                sys.exit()
+    conn.commit()
+
     # the gi_taxid
     dbfile = os.path.join(datadir, "gi_taxid_nucl.dmp.gz")
     if verbose:
