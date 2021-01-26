@@ -182,7 +182,7 @@ def create_load(conn, datadir, verbose=False):
         for l in f:
             l = l.replace("|", "").strip()
             try:
-                conn.execute("INSERT INTO deleted VALUES (?)", l)
+                conn.execute("INSERT INTO deleted VALUES (?)", [l])
             except sqlite3.OperationalError as e:
                 sys.stderr.write("{}".format(e))
                 sys.stderr.write("\nWhile insert on: {}\n".format(l))
