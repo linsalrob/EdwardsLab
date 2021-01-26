@@ -189,6 +189,20 @@ def create_load(conn, datadir, verbose=False):
                 sys.exit()
     conn.commit()
 
+    return conn
+
+def not_used(conn, datadir, verbose=False):
+    """
+    Unreachable code!
+    
+    The following two sections are deprecated because NCBI no longer supports gi_taxid tables directly
+    
+    However, there is the new accession2taxid folder with similar data and we should update this code
+    with that folder.
+
+    This is here as legacy code
+    """
+
     # the gi_taxid
     dbfile = os.path.join(datadir, "gi_taxid_nucl.dmp.gz")
     if verbose:
