@@ -49,7 +49,7 @@ if __name__ == '__main__':
                 t, n = get_taxonomy(tid, c)
                 if t == -1:
                     # deleted node
-                    message(f"Deleted node {tid} has been skipped", "RED")
+                    message(f"Deleted node {tid} has been skipped\n", "RED")
                     continue
 
                 while t and t.parent > 1 and t.parent != 131567:

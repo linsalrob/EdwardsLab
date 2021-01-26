@@ -118,7 +118,7 @@ def get_taxonomy(taxid, conn, verbose=False):
             cur.execute("select tax_id from deleted where tax_id = ?", [taxid])
             newid = cur.fetchone()
             if newid and newid[0]:
-                sys.stderr.write(f"{bcolors.PINK}Node {taxid} has been deleted")
+                sys.stderr.write(f"{bcolors.PINK}Node {taxid} has been deleted\n")
                 return -1, "Deleted"
             raise EntryNotInDatabaseError(f"ERROR: {taxid} is not in the database and not merged\n")
 
