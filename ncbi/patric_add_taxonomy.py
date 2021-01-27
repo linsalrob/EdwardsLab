@@ -51,13 +51,13 @@ if __name__ == '__main__':
             level = {}
 
             t, n = get_taxonomy(tid, c)
-            if t == -1:
+            if t.taxid == -1:
                 # deleted node
                 message(f"Deleted node {tid} has been skipped\n", "RED")
                 continue
 
             # while t and t.parent > 1 and t.parent != 131567:
-            while t and t != 1:
+            while t and t.taxid != 1:
                 # 131567 is cellular organisms
                 if t.rank in want:
                     level[t.rank] = n.scientific_name

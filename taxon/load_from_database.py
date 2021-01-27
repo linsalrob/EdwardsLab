@@ -119,7 +119,7 @@ def get_taxonomy(taxid, conn, verbose=False):
             newid = cur.fetchone()
             if newid and newid[0]:
                 sys.stderr.write(f"{bcolors.PINK}Node {taxid} has been deleted\n")
-                return -1, "Deleted"
+                return TaxonNode(t=-1), TaxonName(t=-1, u="Deleted")
             raise EntryNotInDatabaseError(f"ERROR: {taxid} is not in the database and not merged\n")
 
     t = TaxonNode(*p)
