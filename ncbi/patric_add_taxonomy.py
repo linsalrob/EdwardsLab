@@ -41,7 +41,7 @@ if __name__ == '__main__':
 
             if l.startswith("genome_id"):
                 firstline = False
-                out.write("{}\t{}\n".format(l.strip(), "\t".join(want)))
+                out.write("{}\n".format("\t".join(p + want)))
                 continue
 
             tid = p[args.c]
