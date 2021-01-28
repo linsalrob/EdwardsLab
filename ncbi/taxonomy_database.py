@@ -45,7 +45,8 @@ if __name__ == "__main__":
     c = get_taxonomy_db()
     for i in ids:
         t, n = get_taxonomy(i, c)
-        while t.parent != 1 and t.taxid != 1:
+        # while t.parent != 1 and t.taxid != 1:
+        while t.taxid != 1:
             print("{}\tname: {}\trank: {}\tparent: {}".format(t.taxid, n.scientific_name, t.rank, t.parent))
             t, n = get_taxonomy(t.parent, c)
 
