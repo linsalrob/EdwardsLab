@@ -91,7 +91,10 @@ if __name__ == '__main__':
 
     data, headers = read_data(args.f, args.l, args.c)
     if args.r:
+        sys.stderr.write(f"Transposing. First line is\n{data[0]}\n")
         data = transpose(data)
+        sys.stderr.write(f"Transposing. First line is\n{data[0]}\n")
+
     pairwise(data, headers)
     if args.p:
         plot_pairs(data, headers)
