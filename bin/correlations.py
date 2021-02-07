@@ -26,7 +26,7 @@ def read_data(f, h, c):
         start = 0
     with open(f,'r') as fin:
         for l in fin:
-            p=l.strip().split("\t")
+            p=l.rstrip().split("\t")
             if firstline:
                 if h:
                     headers = p[start:]
@@ -40,6 +40,12 @@ def read_data(f, h, c):
                 data[i-start].append(float(p[i]))
     return data, headers
 
+
+def transpose(data):
+    """
+    Transpose the data. In case the data are in rows, not columns
+    """
+    return [*zip(*data)]
 
 def pairwise(data, headers):
     """
@@ -78,9 +84,14 @@ if __name__ == '__main__':
     parser.add_argument('-f', help='file of data with data in columns', required=True)
     parser.add_argument('-l', help='first line is a header line (will be used in output)', action='store_true')
     parser.add_argument('-c', help='first column is data and should be included (default: the first columns is labels that are discarded)', action='store_true')
+    parser.add_argument('-r', help='data is in rows (ie. transpose)', action='store_true')
+    parser.add_argument('-p', help='plot the pairwise data', action='store_true')
     parser.add_argument('-v', help='verbose output')
     args = parser.parse_args()
 
     data, headers = read_data(args.f, args.l, args.c)
+    if args.r:
+        data = transpose(data)
     pairwise(data, headers)
-    plot_pairs(data, headers)
+    if args.p:
+        plot_pairs(data, headers)
