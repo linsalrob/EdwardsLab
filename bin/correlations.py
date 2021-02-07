@@ -20,10 +20,12 @@ def read_data(f, h, c):
 
     data = []
     headers = []
+    rownames = []
     firstline = True
     start = 1
     if c:
         start = 0
+    n = 0
     with open(f,'r') as fin:
         for l in fin:
             p=l.rstrip().split("\t")
@@ -36,9 +38,14 @@ def read_data(f, h, c):
                     data.append([])
                 firstline = False
                 continue
+            if start == 1:
+                rownames.append(p[0])
+            else:
+                n+=1
+                rownames.append(f"row{n}")
             for i in range(start, len(p)):
                 data[i-start].append(float(p[i]))
-    return data, headers
+    return data, headers, rownames
 
 
 def transpose(data):
@@ -89,10 +96,11 @@ if __name__ == '__main__':
     parser.add_argument('-v', help='verbose output')
     args = parser.parse_args()
 
-    data, headers = read_data(args.f, args.l, args.c)
+    data, headers, rownames = read_data(args.f, args.l, args.c)
     if args.r:
         sys.stderr.write(f"Transposing. First line is\n{data[0]}\n")
         data = transpose(data)
+        headers = rownames
         sys.stderr.write(f"Transposing. First line is\n{data[0]}\n")
 
     pairwise(data, headers)
