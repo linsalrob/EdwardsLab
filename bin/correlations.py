@@ -1,5 +1,6 @@
 """
-Given a file with columns, generate correlations between all the columns of data
+Generate correlations between all the columns or rows of data. We will read a matrix file
+and transpose it if requested, to generate all pairwise Pearson's correlations
 """
 
 import os
