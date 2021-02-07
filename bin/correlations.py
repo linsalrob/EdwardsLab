@@ -98,10 +98,8 @@ if __name__ == '__main__':
 
     data, headers, rownames = read_data(args.f, args.l, args.c)
     if args.r:
-        sys.stderr.write(f"Transposing. First line is\n{data[0]}\n")
         data = transpose(data)
         headers = rownames
-        sys.stderr.write(f"Transposing. First line is\n{data[0]}\n")
 
     pairwise(data, headers)
     if args.p:
