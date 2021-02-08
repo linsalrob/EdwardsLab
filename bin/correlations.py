@@ -1,3 +1,5 @@
+#!/usr/bin/env python3
+
 """
 Generate correlations between all the columns or rows of data. We will read a matrix file
 and transpose it if requested, to generate all pairwise Pearson's correlations
