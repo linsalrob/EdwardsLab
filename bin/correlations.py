@@ -57,17 +57,19 @@ def transpose(data):
     """
     return [*zip(*data)]
 
-def pairwise(data, headers):
+def pairwise(data, headers, contigname=None):
     """
     Calculate pairwise distances
-    :param data:
-    :param headers:
+    :param data: the raw data matrix
+    :param headers: the array of contig names
     :return:
     """
 
     cols = range(len(headers))
 
     for i, j in combinations(cols, 2):
+        if contigname and (headers[i] != contigname and headers[j] != contigname):
+            continue
         pearson, p = pearsonr(data[i], data[j])
         print("{}\t{}\t{}\t{}".format(headers[i], headers[j], pearson, p))
 
@@ -95,6 +97,7 @@ if __name__ == '__main__':
     parser.add_argument('-l', help='first line is a header line (will be used in output)', action='store_true')
     parser.add_argument('-c', help='first column is data and should be included (default: the first columns is labels that are discarded)', action='store_true')
     parser.add_argument('-r', help='data is in rows (ie. transpose)', action='store_true')
+    parser.add_argument('-n', help='filter for a particular contig that must be included in the pairwise calculations')
     parser.add_argument('-p', help='plot the pairwise data', action='store_true')
     parser.add_argument('-v', help='verbose output')
     args = parser.parse_args()
@@ -104,6 +107,6 @@ if __name__ == '__main__':
         data = transpose(data)
         headers = rownames
 
-    pairwise(data, headers)
+    pairwise(data, headers, args.n)
     if args.p:
         plot_pairs(data, headers)
