@@ -59,13 +59,13 @@ def disconnect(conn, verbose=False):
 
 
 
-def get_taxonomy_db():
+def get_taxonomy_db(db=default_database):
     """
     Connect to the default SQLite3 taxonomy database
     """
     
-    if os.path.exists(default_database):
-        return connect_to_db(default_database)
+    if os.path.exists(db):
+        return connect_to_db(db)
     else:
         sys.stderr.write("The default database ({}) does not exist. Please create a connection\n".format(default_database))
         sys.exit(-1)

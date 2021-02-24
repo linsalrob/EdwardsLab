@@ -45,7 +45,7 @@ def printmatches(seqid, matches):
     s = "\t".join(ranks)
     print(f"{seqid}\t{s}")
 
-def parse_m8(m8f, evalue, verbose=False):
+def parse_m8(m8f, evalue, database=None, verbose=False):
     """
     Parse the m8 file and ... do something!
     :param m8f: the m8 output file from diamond
@@ -55,7 +55,10 @@ def parse_m8(m8f, evalue, verbose=False):
     """
 
     fig = re.compile('fig\|(\d+)\.\d+')
-    c = get_taxonomy_db()
+    if database:
+        c = get_taxonomy_db(database)
+    else:
+        c = get_taxonomy_db()
     global taxonomy
 
     matches = []
@@ -137,6 +140,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--file', help='Super focus m8 output file', required=True)
     parser.add_argument('-e', '--evalue', help='max evalue. Default 1e-5', type=float, default=1e-5)
     parser.add_argument('-t', '--tophit', help='only use the tophit', action='store_true')
+    parser.add_arguemtn('-d', '--db', help='SQLite3 taxonomy database location')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
@@ -144,5 +148,5 @@ if __name__ == '__main__':
     if args.tophit:
         parse_m8_tophit(args.file, args.evalue, args.v)
     else:
-        parse_m8(args.file, args.evalue, args.v)
+        parse_m8(args.file, args.evalue, args.db, args.v)
 
