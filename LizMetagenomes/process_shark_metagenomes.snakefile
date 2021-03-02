@@ -44,7 +44,7 @@ rule prinseq:
         s2 = temporary(os.path.join(PSEQDIR, "{sample}_single_out_R2.fastq")),
         b1 = temporary(os.path.join(PSEQDIR, "{sample}_bad_out_R1.fastq")),
         b2 = temporary(os.path.join(PSEQDIR, "{sample}_bad_out_R2.fastq"))
-    conda: "liz_metagenomes_env.yaml"
+    conda: "envs/prinseq.yaml"
     params:
         o = os.path.join(PSEQDIR, "{sample}")
     shell:
@@ -64,13 +64,12 @@ rule stats:
         expand(os.path.join(PSEQDIR, "{smps}_good_out_R1.fastq"), smps=SAMPLES)
     output:
         "statistics.tsv"
-    conda: "liz_metagenomes_env.yaml"
     params:
         i = PSEQDIR,
     shell:
         """
         echo -e "name\tnum sequences\ttotal len\tshortest\tlongest\tn50\tn75" > {output} &&
-        countfastq.py -t -d {PSEQDIR} >> {output}
+        ~redwards/bin/countfastq.py -t -d {PSEQDIR} >> {output}
         """
 
 
@@ -87,7 +86,7 @@ rule focus:
         temporary(os.path.join(FOCSDIR, "output_Genus_tabular.csv")),
         temporary(os.path.join(FOCSDIR, "output_Order_tabular.csv")),
         temporary(os.path.join(FOCSDIR, "output_Species_tabular.csv"))
-    conda: "liz_metagenomes_env.yaml"
+    conda: "envs/focus.yaml"
     params:
         i = PSEQDIR,
         o = FOCSDIR
@@ -107,7 +106,7 @@ rule superfocus:
         temporary(os.path.join(SUPFDIR, "output_subsystem_level_1.xls")),
         temporary(os.path.join(SUPFDIR, "output_subsystem_level_2.xls")),
         temporary(os.path.join(SUPFDIR, "output_subsystem_level_3.xls")),
-    conda: "liz_metagenomes_env.yaml"
+    conda: "envs/superfocus.yaml"
     params:
         i = PSEQDIR,
         o = SUPFDIR
@@ -125,7 +124,7 @@ rule superfocus_taxonomy:
         os.path.join(SUPFDIR, "{smps}_good_out_R1.taxonomy")
     shell:
         """
-        python3 ~/GitHubs/EdwardsLab/superfocus_all/superfocus_to_taxonomy.py -f {input} --tophit > {output}
+        python3 ~redwards/GitHubs/EdwardsLab/superfocus_all/superfocus_to_taxonomy.py -f {input} --tophit > {output}
         """
 
 rule count_sf_taxonomy:
@@ -149,6 +148,6 @@ rule join_superfocus_taxonomy:
         os.path.join(SUPFDIR, "all_taxonomy.tsv")
     shell:
         """
-        joinlists.pl -h -z {input} > {output}
+        ~redwards/bin/joinlists.pl -h -z {input} > {output}
         """
 
