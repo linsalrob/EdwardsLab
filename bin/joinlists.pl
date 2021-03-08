@@ -39,41 +39,51 @@ die;
 my $data; my %allkeys; my $headers; 
 my %datapoints;
 my $firstcolheader;
+my %name;
 foreach my $f (@files) {
 	open(IN, $f) || die "Can't open $f";
-	$datapoints{$f}=0;
+	$name{$f} = $f;
+	$name{$f} =~ s#^.*/##;
+	$datapoints{$name{$f}}=0;
 	while (<IN>) {
 		chomp;
 		if ($skip && index($_, "#") == 0) {next}
 		my @a=split /\t/;
 		my $key = shift @a;
 		if ($header && !(defined $firstcolheader)) {$firstcolheader = $key}
-		if ($header && !(defined $headers->{$f})) {$headers->{$f}=\@a}
-		else {$data->{$f}->{$key} = \@a; $allkeys{$key}=1}
-		($#a > $datapoints{$f}) ? $datapoints{$f} = $#a : 1;
+		if ($header && !(defined $headers->{$name{$f}})) {$headers->{$name{$f}}=\@a}
+		else {
+			$data->{$name{$f}}->{$key} = \@a;
+			$allkeys{$key}=1
+		}
+		($#a > $datapoints{$name{$f}}) ? $datapoints{$name{$f}} = $#a : 1;
 	}
 	close IN;
 }
 
 if ($header) {
     print $firstcolheader;
-    map {print join("\t", "", @{$headers->{$_}})} @files;
+    map {print join("\t", "", @{$headers->{$name{$_}}})} @files;
     print "\n";
 }
 
 my @keys = sort {$a cmp $b} keys %allkeys;
-if ($filetitle) {print join("\t", "", @files), "\n"}
+
+if ($filetitle) {
+	print join("\t", "", map {$name{$_}} @files), "\n";
+}
 foreach my $k (@keys) {
 	print $k;
 	foreach my $f (@files) {
-		#(defined $data->{$f}->{$k}) ? (print join("\t", "", @{$data->{$f}->{$k}})) : print "\t" x scalar(@files);
-		#(defined $data->{$f}->{$k}) ? (print join("\t", "", @{$data->{$f}->{$k}})) : print "\t" x $datapoints{$f};
-		if (!defined $data->{$f}->{$k}) {
-			$data->{$f}->{$k} = [];
-			$#{$data->{$f}->{$k}}=$datapoints{$f};
+		my $n = $name{$f};
+		#(defined $data->{$n}->{$k}) ? (print join("\t", "", @{$data->{$n}->{$k}})) : print "\t" x scalar(@files);
+		#(defined $data->{$n}->{$k}) ? (print join("\t", "", @{$data->{$n}->{$k}})) : print "\t" x $datapoints{$n};
+		if (!defined $data->{$n}->{$k}) {
+			$data->{$n}->{$k} = [];
+			$#{$data->{$n}->{$k}}=$datapoints{$n};
 		}
-		map {(!defined $data->{$f}->{$k}->[$_]) ? $data->{$f}->{$k}->[$_]=$zero :1} (0 .. $#{$data->{$f}->{$k}});
-		print join("\t", "", @{$data->{$f}->{$k}});
+		map {(!defined $data->{$n}->{$k}->[$_]) ? $data->{$n}->{$k}->[$_]=$zero :1} (0 .. $#{$data->{$n}->{$k}});
+		print join("\t", "", @{$data->{$n}->{$k}});
 	}
 	
 	print "\n";
