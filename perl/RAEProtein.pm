@@ -81,10 +81,18 @@ Returns true is this function is part of that subset
 sub strict_hypothetical {
 	my ($self, $x)=@_;
 	if (! $x)                             { return 1 }
-	if (lc($x) eq "hypothetical protein") { return 1 }
-	if (lc($x) eq "conserved protein")    { return 1 }
-	if (lc($x) eq "uncharacterized protein")    { return 1 }
-	if (lc($x) eq "conserved hypothetical protein") {return 1}
+
+	my @hypo = (
+		"conserved hypothetical protein", 
+		"conserved protein", 
+		"hypothetical protein", 
+		"uncharacterised protein",
+		"uncharacterized protein", 
+	);
+	map {
+		if (lc($x) eq $_) {return 1}
+		} @hypo;
+
 	if ($x =~ /hypothetical/) {return 1}
 	return 0;
 }
