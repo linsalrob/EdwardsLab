@@ -32,7 +32,10 @@ if __name__ == "__main__":
     if args.d:
         for subdir in args.d:
             for f in os.listdir(subdir):
-                files.append(os.path.join(subdir, f))
+                if 'fastq' in f or 'fq' in f:
+                    files.append(os.path.join(subdir, f))
+                else:
+                    sys.stderr.write(f"Skipped {os.path.join(subdir, f)}. Does not appear to be fastq\n")
 
     overall = {'number': 0, 'total': 0, 'shortest':1e6, 'longest': 0}
     for faf in files:
