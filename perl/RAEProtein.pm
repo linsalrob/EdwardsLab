@@ -84,6 +84,8 @@ sub strict_hypothetical {
 	if (lc($x) eq "hypothetical protein") { return 1 }
 	if (lc($x) eq "conserved protein")    { return 1 }
 	if (lc($x) eq "uncharacterized protein")    { return 1 }
+	if (lc($x) eq "conserved hypothetical protein") {return 1}
+	if ($x =~ /hypothetical/) {return 1}
 	return 0;
 }
 
