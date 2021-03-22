@@ -1,0 +1,10 @@
+name: bowtie
+channels:
+    - conda-forge
+    - bioconda
+    - default
+dependencies:
+    # There is an issue with newer tbb libraries. This might go away at some point: https://www.biostars.org/p/494922/
+    - tbb=2020.2
+    - bowtie2
+    - samtools

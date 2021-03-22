@@ -9,11 +9,9 @@ map reads using bowtie2, and take the unmapped reads and reassemble.
 Repeat that with the site data sets and then again with the sample
 datasets.
 
-A work in progress...
-
 To run on the cluster use this command:
 
-snakemake --configfile process_metagenomes.json -s ~/GitHubs/EdwardsLab/snakemake/process_metagenomes.snakefile --cluster 'qsub -cwd -o sge_out -e sge_err -V -pe make 8 -q default'  -j 200 --latency-wait 120
+snakemake --configfile process_metagenomes.json -s ~/GitHubs/EdwardsLab/snakemake/process_metagenomes.snakefile --profile sge
 
 """
 
@@ -22,9 +20,7 @@ import sys
 import socket
 
 
-hostname = socket.gethostname()
 
-sys.stderr.write(f"Running on: {hostname}\n")
 
 configfile: 'process_metagenomes.json'
 
@@ -35,20 +31,12 @@ CRMDIR  = config['directories']['round1_contig_read_mapping']
 UNASSM  = config['directories']['round2_unassembled_reads']
 REASSM  = config['directories']['round2_assembly_output']
 CCMO    = config['directories']['combined_contig_merging']
-THREADS = config['threads']
+PSEQDIR = config['directories']['prinseq']
 
-if hostname.startswith('node'):
-    hostname = 'anth'
-
-if f"{hostname}_executables" not in config:
-    sys.stderr.write(f"No executables defined for {hostname}_executables in process_metagenomes.json\n")
-    sys.exit(-1)
-
-config['executables'] = config[f"{hostname}_executables"]
 
 # A Snakemake regular expression matching the forward mate FASTQ files.
 # the comma after SAMPLES is important!
-SAMPLES,EXTENSIONS, = glob_wildcards(os.path.join(READDIR, '{sample}R1{extn}'))
+SAMPLES,EXTENSIONS, = glob_wildcards(os.path.join(READDIR, '{sample}_R1.{extn}'))
 if len(SAMPLES) == 0:
     sys.stderr.write(f"We did not find any fastq files in {SAMPLES}. Is this the right read dir?\n")
     sys.exit(0)
@@ -59,12 +47,9 @@ if len(set(EXTENSIONS)) != 1:
     sys.exit(0)
 
 FQEXTN = EXTENSIONS[0]
-PATTERN_R1 = '{sample}R1' + FQEXTN
-PATTERN_R2 = '{sample}R2' + FQEXTN
+PATTERN_R1 = '{sample}_R1.' + FQEXTN
+PATTERN_R2 = '{sample}_R2.' + FQEXTN
 
-print(f"Samples are {SAMPLES}")
-
-# this is the samples we have processed!
 
 rule all:
     input:
@@ -74,22 +59,58 @@ rule all:
         os.path.join(CCMO, "flye.log"),
 
 
-rule megahit_assemble:
+rule prinseq:
     input:
         r1 = os.path.join(READDIR, PATTERN_R1),
         r2 = os.path.join(READDIR, PATTERN_R2)
     output:
+        r1 = os.path.join(PSEQDIR, "{sample}_good_out_R1.fastq"),
+        r2 = os.path.join(PSEQDIR, "{sample}_good_out_R2.fastq"),
+        s1 = os.path.join(PSEQDIR, "{sample}_single_out_R1.fastq"),
+        s2 = os.path.join(PSEQDIR, "{sample}_single_out_R2.fastq"),
+        b1 = temporary(os.path.join(PSEQDIR, "{sample}_bad_out_R1.fastq")),
+        b2 = temporary(os.path.join(PSEQDIR, "{sample}_bad_out_R2.fastq"))
+    conda: "envs/prinseq.yaml"
+    params:
+        o = os.path.join(PSEQDIR, "{sample}")
+    shell:
+        """
+            prinseq++ -min_len 60 -min_qual_mean 25 -ns_max_n 1 -derep 1 \
+                    -out_format 0 -trim_tail_left 5 -trim_tail_right 5 \
+                    -ns_max_n 5  -trim_qual_type min -trim_qual_left 30 \
+                    -trim_qual_right 30 -trim_qual_window 10 \
+                    -threads {threads} \
+                    -out_name {params.o} \
+                    -fastq {input.r1} \
+                    -fastq2 {input.r2};
+        """
+
+rule megahit_assemble:
+    input:
+        r1 = os.path.join(PSEQDIR, "{sample}_good_out_R1.fastq"),
+        r2 = os.path.join(PSEQDIR, "{sample}_good_out_R2.fastq"),
+        s1 = os.path.join(PSEQDIR, "{sample}_single_out_R1.fastq"),
+        s2 = os.path.join(PSEQDIR, "{sample}_single_out_R2.fastq")
+    output:
         os.path.join(ASSDIR, "{sample}/final.contigs.fa"),
-        os.path.join(ASSDIR, "{sample}/checkpoints.txt"),
-        os.path.join(ASSDIR, "{sample}/done"),
-        directory(os.path.join(ASSDIR, "{sample}/intermediate_contigs")),
-        os.path.join(ASSDIR, "{sample}/log"),
-        os.path.join(ASSDIR, "{sample}/options.json")
+        temporary(os.path.join(ASSDIR, "{sample}/checkpoints.txt")),
+        temporary(os.path.join(ASSDIR, "{sample}/done")),
+        temporary(directory(os.path.join(ASSDIR, "{sample}/intermediate_contigs"))),
+        temporary(os.path.join(ASSDIR, "{sample}/log")),
+        temporary(os.path.join(ASSDIR, "{sample}/options.json"))
     params:
         odir = directory(os.path.join(ASSDIR, '{sample}'))
-    threads: THREADS
+    resources:
+        mem_mb=20000,
+        cpus=8
+    conda:
+        "envs/megahit.yaml"
     shell:
-        'rmdir {params.odir}; {config[executables][assembler]} -1 {input.r1} -2 {input.r2} -o {params.odir} -t {threads}'
+        """
+        rmdir {params.odir}; 
+        megahit -1 {input.r1} -2 {input.r2} -r {input.s1} -r {input.s2} \
+                -o {params.odir} -t {resources.cpus}
+        """
 
 rule combine_contigs:
     """
@@ -102,9 +123,9 @@ rule combine_contigs:
         expand(os.path.join(ASSDIR, "{sample}/final.contigs.fa"), sample=SAMPLES)
     output:
         contigs = os.path.join(ASSDIR, "round1_contigs.fa"),
-        ids = os.path.join(ASSDIR, "round1_contigs.ids") 
+        ids = os.path.join(ASSDIR, "round1_contigs.ids")
     shell:
-        'python3 ~redwards/bin/renumber_merge_fasta.py -f {input} -o {output.contigs} -i {output.ids} -v'
+        'python3 ~/GitHubs/EdwardsLab/bin/renumber_merge_fasta.py -f {input} -o {output.contigs} -i {output.ids} -v'
 
 
 rule index_contigs:
@@ -116,18 +137,25 @@ rule index_contigs:
     params:
         baseoutput = os.path.join(CRMDIR, "round1_contigs")
     output:
-        idx1 = os.path.join(CRMDIR, "round1_contigs.1.bt2l"),
-        idx2 = os.path.join(CRMDIR, "round1_contigs.2.bt2l"),
-        idx3 = os.path.join(CRMDIR, "round1_contigs.3.bt2l"),
-        idx4 = os.path.join(CRMDIR, "round1_contigs.4.bt2l"),
-        ridx1 = os.path.join(CRMDIR, "round1_contigs.rev.1.bt2l"),
-        ridx2 = os.path.join(CRMDIR, "round1_contigs.rev.2.bt2l")
-    threads: THREADS
+        idx1 = temporary(os.path.join(CRMDIR, "round1_contigs.1.bt2l")),
+        idx2 = temporary(os.path.join(CRMDIR, "round1_contigs.2.bt2l")),
+        idx3 = temporary(os.path.join(CRMDIR, "round1_contigs.3.bt2l")),
+        idx4 = temporary(os.path.join(CRMDIR, "round1_contigs.4.bt2l")),
+        ridx1 = temporary(os.path.join(CRMDIR, "round1_contigs.rev.1.bt2l")),
+        ridx2 = temporary(os.path.join(CRMDIR, "round1_contigs.rev.2.bt2l"))
+    resources:
+        mem_mb=20000,
+        cpus=8
+    conda:
+        "envs/bowtie.yaml"
     shell:
         # note that we build a large index by default, because
         # at some point we will end up doing that, and so this
         # always makes a large index
-        'bowtie2-build --threads {threads} --large-index {input} {params.baseoutput}'
+        """
+        mkdir -p {CRMDIR} && \
+        bowtie2-build --threads {resources.cpus} --large-index {input} {params.baseoutput}
+        """
         
 
 rule map_reads:
@@ -140,16 +168,26 @@ rule map_reads:
         idx3 = os.path.join(CRMDIR, "round1_contigs.3.bt2l"),
         idx4 = os.path.join(CRMDIR, "round1_contigs.4.bt2l"),
         ridx1 = os.path.join(CRMDIR, "round1_contigs.rev.1.bt2l"),
-        ridx2 = os.path.join(CRMDIR, "round1_contigs.rev.2.bt2l")
+        ridx2 = os.path.join(CRMDIR, "round1_contigs.rev.2.bt2l"),
+        r1 = os.path.join(PSEQDIR, "{sample}_good_out_R1.fastq"),
+        r2 = os.path.join(PSEQDIR, "{sample}_good_out_R2.fastq"),
+        s1 = os.path.join(PSEQDIR, "{sample}_single_out_R1.fastq"),
+        s2 = os.path.join(PSEQDIR, "{sample}_single_out_R2.fastq")
     params:
-        r1 = os.path.join(READDIR, PATTERN_R1),
-        r2 = os.path.join(READDIR, PATTERN_R2),
         contigs = os.path.join(CRMDIR, "round1_contigs")
     output:
-        os.path.join(CRMDIR, "{sample}.contigs.bam") 
-    threads: THREADS
+        os.path.join(CRMDIR, "{sample}.contigs.bam")
+    resources:
+        mem_mb=20000,
+        cpus=8
+    conda:
+        "envs/bowtie.yaml"
     shell:
-        'bowtie2 -x {params.contigs} -1 {params.r1} -2 {params.r2} --threads {threads} | samtools view -bh | samtools sort -o {output} -'
+        """
+        bowtie2 -x {params.contigs} -1 {input.r1} -2 {input.r2} \
+        -U {input.s1} -U {input.s2} --threads {resources.cpus} | \
+        samtools view -bh | samtools sort -o {output} -
+        """
 
 """
 Using samtools to extract unmapped reads from the bam files
@@ -167,6 +205,8 @@ rule umapped_left_reads:
         os.path.join(CRMDIR, "{sample}.contigs.bam")
     output:
         os.path.join(UNASSM, "{sample}.unassembled.R1.fastq")
+    conda:
+        "envs/bowtie.yaml"
     shell:
         """
         samtools view -h {input} | 
@@ -185,6 +225,8 @@ rule umapped_right_reads:
         os.path.join(CRMDIR, "{sample}.contigs.bam")
     output:
         os.path.join(UNASSM, "{sample}.unassembled.R2.fastq")
+    conda:
+        "envs/bowtie.yaml"
     shell:
         """
         samtools view  -h {input} | 
@@ -203,6 +245,8 @@ rule umapped_single_reads:
         os.path.join(CRMDIR, "{sample}.contigs.bam")
     output:
         os.path.join(UNASSM, "{sample}.unassembled.singles.fastq")
+    conda:
+        "envs/bowtie.yaml"
     shell:
             "samtools fastq -f 4 -F 1 {input} > {output}"
 
@@ -257,16 +301,20 @@ rule assemble_unassembled:
         s0 = os.path.join(UNASSM, "single.unassembled.fastq")
     output:
         os.path.join(REASSM, "final.contigs.fa"),
-        os.path.join(REASSM, "checkpoints.txt"),
-        os.path.join(REASSM, "done"),
-        directory(os.path.join(REASSM, "intermediate_contigs")),
-        os.path.join(REASSM, "log"),
-        os.path.join(REASSM, "options.json")
+        temporary(os.path.join(REASSM, "checkpoints.txt")),
+        temporary(os.path.join(REASSM, "done")),
+        temporary(directory(os.path.join(REASSM, "intermediate_contigs"))),
+        temporary(os.path.join(REASSM, "log")),
+        temporary(os.path.join(REASSM, "options.json"))
     params:
         odir = os.path.join(REASSM)
-    threads: THREADS
+    conda:
+        "envs/megahit.yaml"
+    resources:
+        mem_mb=64000,
+        cpus=32
     shell:
-        'rmdir {params.odir}; {config[executables][assembler]} -1 {input.r1} -2 {input.r2} -r {input.s0} -o {params.odir} -t {threads}'
+        'rmdir {params.odir}; megahit -1 {input.r1} -2 {input.r2} -r {input.s0} -o {params.odir} -t {resources.cpus}'
 
 """
 Combine all the contigs and use metaflye to merge the subassmblies
@@ -287,7 +335,7 @@ rule concatentate_all_assemblies:
         contigs = os.path.join(REASSM, "merged_contigs.fa"),
         ids = os.path.join(REASSM, "merged_contigs.ids") 
     shell:
-        'python3 ~redwards/bin/renumber_merge_fasta.py -f {input} -o {output.contigs} -i {output.ids} -v'
+        'python3 ~/GitHubs/EdwardsLab/bin/renumber_merge_fasta.py -f {input} -o {output.contigs} -i {output.ids} -v'
 
 rule merge_assemblies_with_flye:
     """
@@ -301,9 +349,13 @@ rule merge_assemblies_with_flye:
         os.path.join(CCMO, "assembly_graph.gv"),
         os.path.join(CCMO, "assembly_info.txt"),
         os.path.join(CCMO, "flye.log"),
-    threads: THREADS
+    conda:
+        "envs/flye.yaml"
+    resources:
+        mem_mb=64000,
+        cpus=32
     shell:
         """
-        flye --meta --subassemblies {input.contigs} -o {CCMO} --threads {threads}
+        flye --meta --subassemblies {input.contigs} -o {CCMO} --threads {resources.cpus}
         """
 

@@ -1,0 +1,10 @@
+channels:
+        - conda-forge
+        - bioconda
+dependencies:
+        - miniasm
+        - mash
+        - minimap2
+        - muscle
+        - r-ape
+        - r-phangorn
