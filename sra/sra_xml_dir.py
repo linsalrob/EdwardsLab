@@ -42,7 +42,7 @@ def parse_ids(this_sample_id, ids, verbose=False):
         else:
             sys.stderr.write("WARNING: ({}) Id: {} text: {} is not a DB\n".format(this_sample_id, anid.tag, anid.text))
     if verbose:
-        message(f"ID is {id_text}", 'blue')
+        message(f"\tID is {id_text}", 'BLUE')
 
     return id_text
 
@@ -100,7 +100,7 @@ def parse_description(this_sample_id, desc, verbose=False):
         desc_org = desc_org.strip()
 
     if verbose:
-        message(f"Parsed description {desc_title}", "BLUE")
+        message(f"\tParsed description {desc_title}", "BLUE")
 
     return (desc_title, desc_comment, desc_org)
 
@@ -140,6 +140,8 @@ def parse_owner(this_sample_id, owner, verbose=False):
             name = child.text
         elif "Contact" == child.tag and "email" in child.attrib:
             email = child.attrib['email']
+    if verbose:
+        message(f"\tOwner is {name}", 'BLUE')
 
     return name, email
 
@@ -158,6 +160,10 @@ def parse_status(this_sample_id, status, verbose=False):
     if 'when' not in status.attrib:
         sys.stderr.write("WARNING: {}. No time stamp for status.\n".format(this_sample_id))
         return "unknown"
+
+    if verbose:
+        message(f"\tStatus is {status.attrib['when']}", 'BLUE')
+
     return status.attrib['when']
 
 def parse_biosample(biosample, verbose=False):
@@ -200,12 +206,12 @@ def parse_biosample(biosample, verbose=False):
     attributes = {}
     for child in biosample:
         if 'Ids' == child.tag:
-            contents['Ids'] = parse_ids(this_sample_id, child)
+            contents['Ids'] = parse_ids(this_sample_id, child, verbose)
         elif 'Description' == child.tag:
-            (contents['Description - Title'], contents['Description - Comment'], contents['Organism']) = parse_description(this_sample_id, child)
+            (contents['Description - Title'], contents['Description - Comment'], contents['Organism']) = parse_description(this_sample_id, child, verbose)
         elif 'Attributes' == child.tag:
             for attr in child:
-                (n,v) = parse_attribute(this_sample_id, attr)
+                (n,v) = parse_attribute(this_sample_id, attr, verbose)
                 if not v:
                     sys.stderr.write(f"ERROR: no value returned for {n} from {this_sample_id}\n")
                     continue
@@ -218,11 +224,11 @@ def parse_biosample(biosample, verbose=False):
                 else:
                     attributes[n]=v.strip()
         elif 'Owner' == child.tag:
-            contents['Owner - Name'], contents['Owner - Email'] = parse_owner(this_sample_id, child)
+            contents['Owner - Name'], contents['Owner - Email'] = parse_owner(this_sample_id, child, verbose)
         elif 'Status' == child.tag:
-            contents['Release Date'] = parse_status(this_sample_id, child)
+            contents['Release Date'] = parse_status(this_sample_id, child, verbose)
         elif 'Links' == child.tag:
-            contents['Links'] = parse_links(this_sample_id, child)
+            contents['Links'] = parse_links(this_sample_id, child, verbose)
         elif 'Models' == child.tag or 'Package' == child.tag:
             # this doesn't seem to contain a lot of information?
             continue
@@ -293,7 +299,7 @@ if __name__ == '__main__':
         tree = ET.parse(os.path.join(args.d, f))
         biosampleset = tree.getroot()
         for biosample in biosampleset:
-            tid, cont = parse_biosample(biosample)
+            tid, cont = parse_biosample(biosample, args.v)
             data[tid] = cont
 
     write_outputs(data, args.m)
