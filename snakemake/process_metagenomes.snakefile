@@ -31,8 +31,9 @@ CRMDIR  = config['directories']['round1_contig_read_mapping']
 UNASSM  = config['directories']['round2_unassembled_reads']
 REASSM  = config['directories']['round2_assembly_output']
 CCMO    = config['directories']['combined_contig_merging']
+RMRD    = config['directories']['reads_vs_final_assemblies']
 PSEQDIR = config['directories']['prinseq']
-
+STATS   = config['directories']['statistics']
 
 # A Snakemake regular expression matching the forward mate FASTQ files.
 # the comma after SAMPLES is important!
@@ -57,6 +58,9 @@ rule all:
         #expand(os.path.join(CRMDIR, "{sample}.contigs.bam"), sample=SAMPLES)
         os.path.join(REASSM, "merged_contigs.fa"),
         os.path.join(CCMO, "flye.log"),
+        os.path.join(STATS, "final_assembly.txt"),
+        expand(os.path.join(RMRD, "{sample}.final_contigs.bam.bai"), sample=SAMPLES),
+        os.path.join(STATS, "sample_coverage.tsv")
 
 
 rule prinseq:
@@ -352,10 +356,114 @@ rule merge_assemblies_with_flye:
     conda:
         "envs/flye.yaml"
     resources:
-        mem_mb=64000,
+        mem_mb=512000,
         cpus=32
     shell:
         """
         flye --meta --subassemblies {input.contigs} -o {CCMO} --threads {resources.cpus}
+        """
+
+rule final_assembly_stats:
+    input:
+        os.path.join(CCMO, "assembly.fasta")
+    output:
+        os.path.join(STATS, "final_assembly.txt")
+    shell:
+        """
+        countfasta.py -f {input} > {output}
+        """
+
+
+rule index_final_contigs:
+    """
+    build the bowtie2 index of the final assembly
+    """
+    input:
+        os.path.join(CCMO, "assembly.fasta")
+    params:
+        baseoutput = os.path.join(RMRD, "final_contigs")
+    output:
+        idx1 = temporary( os.path.join(RMRD, "final_contigs" + ".1.bt2l")),
+        idx2 = temporary( os.path.join(RMRD, "final_contigs" + ".2.bt2l")),
+        idx3 = temporary( os.path.join(RMRD, "final_contigs" + ".3.bt2l")),
+        idx4 = temporary( os.path.join(RMRD, "final_contigs" + ".4.bt2l")),
+        rid1 = temporary( os.path.join(RMRD, "final_contigs" + ".rev.1.bt2l")),
+        rid2 = temporary( os.path.join(RMRD, "final_contigs" + ".rev.2.bt2l"))
+    resources:
+        mem_mb=20000,
+        cpus=8
+    conda:
+        "envs/bowtie.yaml"
+    shell:
+        # note that we build a large index by default, because
+        # at some point we will end up doing that, and so this
+        # always makes a large index
+        """
+        mkdir -p {RMRD} && \
+        bowtie2-build --threads {resources.cpus} --large-index {input} {params.baseoutput}
+        """
+        
+
+rule map_reads_to_final:
+    """
+    Here we map the original reads back to the contigs
+    """
+    input:
+        idx1 = os.path.join(RMRD, "final_contigs" + ".1.bt2l"),
+        idx2 = os.path.join(RMRD, "final_contigs" + ".2.bt2l"),
+        idx3 = os.path.join(RMRD, "final_contigs" + ".3.bt2l"),
+        idx4 = os.path.join(RMRD, "final_contigs" + ".4.bt2l"),
+        rid1 = os.path.join(RMRD, "final_contigs" + ".rev.1.bt2l"),
+        rid2 = os.path.join(RMRD, "final_contigs" + ".rev.2.bt2l"),
+        r1 = os.path.join(PSEQDIR, "{sample}_good_out_R1.fastq"),
+        r2 = os.path.join(PSEQDIR, "{sample}_good_out_R2.fastq"),
+        s1 = os.path.join(PSEQDIR, "{sample}_single_out_R1.fastq"),
+        s2 = os.path.join(PSEQDIR, "{sample}_single_out_R2.fastq")
+    params:
+        contigs = os.path.join(RMRD, "final_contigs")
+    output:
+        os.path.join(RMRD, "{sample}.final_contigs.bam")
+    resources:
+        mem_mb=20000,
+        cpus=8
+    conda:
+        "envs/bowtie.yaml"
+    shell:
+        """
+        bowtie2 -x {params.contigs} -1 {input.r1} -2 {input.r2} \
+        -U {input.s1} -U {input.s2} --threads {resources.cpus} | \
+        samtools view -bh | samtools sort -o {output} -
+        """
+
+rule bai_final_bams:
+    input:
+        os.path.join(RMRD, "{sample}.final_contigs.bam")
+    output:
+        os.path.join(RMRD, "{sample}.final_contigs.bam.bai")
+    shell:
+        "samtools index {input}"
+
+rule count_mapped_reads:
+    input:
+        bam = os.path.join(RMRD, "{sample}.final_contigs.bam"),
+        bai = os.path.join(RMRD, "{sample}.final_contigs.bam.bai")
+    output:
+        os.path.join(RMRD, "{sample}_contig_hits.tsv")
+    resources:
+        cpus=8
+    shell:
+        """
+        samtools idxstats -@ {resources.cpus} {input.bam} | cut -f 1,3 > {output}
+        """
+rule make_table:
+    input:
+        expand(os.path.join(RMRD, "{smpl}_contig_hits.tsv"), smpl=SAMPLES)
+    output:
+        os.path.join(STATS, "sample_coverage.tsv")
+    resources:
+        mem_mb=64000
+    shell:
+        """
+        joinlists.pl -t {input} > {output}
         """
 
