@@ -285,7 +285,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Parse an xml file of metadata for crAssphage')
     parser.add_argument('-d', help='directory of xml files to parse (e.g. /data/SRA/biosample/crassphage.xml)', required=True)
     parser.add_argument('-m', help='minimum number of files an attribute has to appear in [Default %(default)d]', type=int, default=1)
-    parser.add_argument('-v', helpt='verbose output', action='store_true')
+    parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
     data = {}
