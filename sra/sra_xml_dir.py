@@ -296,7 +296,7 @@ if __name__ == '__main__':
 
     data = {}
     for f in os.listdir(args.d):
-        message(f"Parsing {f}", "RED")
+        message(f"Parsing {f}", "PINK")
         tree = ET.parse(os.path.join(args.d, f))
         biosampleset = tree.getroot()
         for biosample in biosampleset:
