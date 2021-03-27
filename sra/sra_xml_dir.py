@@ -297,10 +297,18 @@ if __name__ == '__main__':
     data = {}
     for f in os.listdir(args.d):
         message(f"Parsing {f}", "PINK")
-        tree = ET.parse(os.path.join(args.d, f))
-        biosampleset = tree.getroot()
-        for biosample in biosampleset:
-            tid, cont = parse_biosample(biosample, args.v)
-            data[tid] = cont
+        # tree = ET.parse(os.path.join(args.d, f))
+        # sometimes eutils puts mutliple xml records per file (which is not valid xml).
+        # here we read the whole thing and then split. This is not great as consuming mem, but hopefully OK
+        xmlstr = ""
+        with open(os.path.join(args.d, f), 'r') as xmlin:
+            for l in xmlin:
+                xmlstr += l.rstrip()
+        for xml in xmlstr.split('<?xml version="1.0" ?>'):
+            tree = ET.fromstring(xml)
+            biosampleset = tree.getroot()
+            for biosample in biosampleset:
+                tid, cont = parse_biosample(biosample, args.v)
+                data[tid] = cont
 
-    write_outputs(data, args.m)
+        write_outputs(data, args.m)
