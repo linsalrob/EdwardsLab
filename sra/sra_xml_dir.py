@@ -11,6 +11,7 @@ import os
 import sys
 import argparse
 import xml.etree.ElementTree as ET
+from roblib import message
 
 # we make a list so that the order is guaranteed, and then make a set for O(1) lookup
 # but later we just resort the sets :)
@@ -23,11 +24,12 @@ known_titles_set = set(known_titles)
 known_attributes_set = set()
 
 
-def parse_ids(this_sample_id, ids):
+def parse_ids(this_sample_id, ids, verbose=False):
     """
     Parse the IDs field
     :param this_sample_id: The current sample ID for debugging
     :param ids: The ID xml
+    :param verbose: more output
     :return:
     """
     id_text = ""
@@ -39,14 +41,18 @@ def parse_ids(this_sample_id, ids):
             id_text = id_text + "Sample|{}; ".format(anid.text)
         else:
             sys.stderr.write("WARNING: ({}) Id: {} text: {} is not a DB\n".format(this_sample_id, anid.tag, anid.text))
+    if verbose:
+        message(f"\tID is {id_text}", 'BLUE')
+
     return id_text
 
 
-def parse_links(this_sample_id, links):
+def parse_links(this_sample_id, links, verbose=False):
     """
     Parse the links field
     :param this_sample_id:
     :param links:
+    :param verbose: more output
     :return:
     """
 
@@ -61,15 +67,16 @@ def parse_links(this_sample_id, links):
 
     return link_text
 
-def parse_description(this_sample_id, desc):
+def parse_description(this_sample_id, desc, verbose=False):
     """
     Parse the description field and return the title and the
     :param this_sample_id: The current sample ID for debugging
     :param desc: The description xml
+    :param verbose: more output
     :return:
     """
-    desc_title = "";
-    desc_comment = "";
+    desc_title = ""
+    desc_comment = ""
     desc_org = ""
 
     for child in desc:
@@ -92,14 +99,18 @@ def parse_description(this_sample_id, desc):
     if desc_org:
         desc_org = desc_org.strip()
 
+    if verbose:
+        message(f"\tParsed description {desc_title}", "BLUE")
+
     return (desc_title, desc_comment, desc_org)
 
 
-def parse_attribute(this_sample_id, attr):
+def parse_attribute(this_sample_id, attr, verbose=False):
     """
     Parse out the attribute field
     :param this_sample_id:
     :param attr:
+    :param verbose: more output
     :return:
     """
 
@@ -112,11 +123,12 @@ def parse_attribute(this_sample_id, attr):
         return "",""
 
 
-def parse_owner(this_sample_id, owner):
+def parse_owner(this_sample_id, owner, verbose=False):
     """
     Extract name and contact from owner
     :param this_sample_id:
     :param owner:
+    :param verbose: more output
     :return:
     """
 
@@ -128,15 +140,18 @@ def parse_owner(this_sample_id, owner):
             name = child.text
         elif "Contact" == child.tag and "email" in child.attrib:
             email = child.attrib['email']
+    if verbose:
+        message(f"\tOwner is {name}", 'BLUE')
 
     return name, email
 
 
-def parse_status(this_sample_id, status):
+def parse_status(this_sample_id, status, verbose=False):
     """
     What is the status of this
     :param this_sample_id:
     :param status:
+    :param verbose: more output
     :return:
     """
 
@@ -145,12 +160,17 @@ def parse_status(this_sample_id, status):
     if 'when' not in status.attrib:
         sys.stderr.write("WARNING: {}. No time stamp for status.\n".format(this_sample_id))
         return "unknown"
+
+    if verbose:
+        message(f"\tStatus is {status.attrib['when']}", 'BLUE')
+
     return status.attrib['when']
 
-def parse_biosample(biosample):
+def parse_biosample(biosample, verbose=False):
     """
     Parse a biosample object and print the information
     :param biosample: the biosample xml to parse
+    :param verbose: more output
     :return:
     """
 
@@ -160,6 +180,9 @@ def parse_biosample(biosample):
     else:
         sys.stderr.write(f"Unknown accession number in {biosample}, skipped\n")
         return None
+
+    if verbose:
+        message(f"Parsing {this_sample_id}", 'GREEN')
 
     global known_attrs_set
     global known_titles_set
@@ -183,12 +206,12 @@ def parse_biosample(biosample):
     attributes = {}
     for child in biosample:
         if 'Ids' == child.tag:
-            contents['Ids'] = parse_ids(this_sample_id, child)
+            contents['Ids'] = parse_ids(this_sample_id, child, verbose)
         elif 'Description' == child.tag:
-            (contents['Description - Title'], contents['Description - Comment'], contents['Organism']) = parse_description(this_sample_id, child)
+            (contents['Description - Title'], contents['Description - Comment'], contents['Organism']) = parse_description(this_sample_id, child, verbose)
         elif 'Attributes' == child.tag:
             for attr in child:
-                (n,v) = parse_attribute(this_sample_id, attr)
+                (n,v) = parse_attribute(this_sample_id, attr, verbose)
                 if not v:
                     sys.stderr.write(f"ERROR: no value returned for {n} from {this_sample_id}\n")
                     continue
@@ -201,11 +224,11 @@ def parse_biosample(biosample):
                 else:
                     attributes[n]=v.strip()
         elif 'Owner' == child.tag:
-            contents['Owner - Name'], contents['Owner - Email'] = parse_owner(this_sample_id, child)
+            contents['Owner - Name'], contents['Owner - Email'] = parse_owner(this_sample_id, child, verbose)
         elif 'Status' == child.tag:
-            contents['Release Date'] = parse_status(this_sample_id, child)
+            contents['Release Date'] = parse_status(this_sample_id, child, verbose)
         elif 'Links' == child.tag:
-            contents['Links'] = parse_links(this_sample_id, child)
+            contents['Links'] = parse_links(this_sample_id, child, verbose)
         elif 'Models' == child.tag or 'Package' == child.tag:
             # this doesn't seem to contain a lot of information?
             continue
@@ -219,11 +242,12 @@ def parse_biosample(biosample):
 
 
 
-def write_outputs(data, minocc=1):
+def write_outputs(data, minocc=1, verbose=False):
     """
     Write all the data out
     :param data: dict with keys = sample id, values = contents
     :param minocc: minimum occurrence of any key in the contents
+    :param verbose: more output
     :return: nothing
     """
 
@@ -267,14 +291,24 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description='Parse an xml file of metadata for crAssphage')
     parser.add_argument('-d', help='directory of xml files to parse (e.g. /data/SRA/biosample/crassphage.xml)', required=True)
     parser.add_argument('-m', help='minimum number of files an attribute has to appear in [Default %(default)d]', type=int, default=1)
+    parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
     data = {}
     for f in os.listdir(args.d):
-        tree = ET.parse(os.path.join(args.d, f))
-        biosampleset = tree.getroot()
-        for biosample in biosampleset:
-            tid, cont = parse_biosample(biosample)
-            data[tid] = cont
+        message(f"Parsing {f}", "PINK")
+        # tree = ET.parse(os.path.join(args.d, f))
+        # sometimes eutils puts mutliple xml records per file (which is not valid xml).
+        # here we read the whole thing and then split. This is not great as consuming mem, but hopefully OK
+        xmlstr = ""
+        with open(os.path.join(args.d, f), 'r') as xmlin:
+            for l in xmlin:
+                xmlstr += l.rstrip()
+        for xml in xmlstr.split('<?xml version="1.0" ?>'):
+            tree = ET.fromstring(xml)
+            biosampleset = tree.getroot()
+            for biosample in biosampleset:
+                tid, cont = parse_biosample(biosample, args.v)
+                data[tid] = cont
 
-    write_outputs(data, args.m)
+        write_outputs(data, args.m)
