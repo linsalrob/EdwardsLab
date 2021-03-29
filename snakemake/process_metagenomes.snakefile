@@ -467,3 +467,13 @@ rule make_table:
         joinlists.pl -t {input} > {output}
         """
 
+rule count_contig_lengths:
+    input:
+        os.path.join(CCMO, "assembly.fasta")
+    output:
+        os.path.join(STATS, "sequence_lengths.tsv")
+    shell:
+        """
+        countfasta.py -f {input} -ln > {output}
+        """
+
