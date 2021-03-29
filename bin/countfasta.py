@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser.add_argument('-d', nargs='+', help='directory of fasta files')
     parser.add_argument('-l', help='list the lengths for each sequence (default = not to)', action='store_true')
     parser.add_argument('-m', help='minimum length fo be inclued', type=int, default=0)
+    parser.add_argument('-n', help='do NOT print the summary at the end', action='store_true')
     parser.add_argument('-t', help='tab separated output. Fields: [# seqs, total bp, shortest, longest, N50, N75]', action='store_true')
     args = parser.parse_args()
 
@@ -68,6 +69,9 @@ if __name__ == "__main__":
             auN += i**2
 
         auN /= length
+
+        if args.n:
+            sys.exit(0)
 
         if args.t:
             print("\t".join(map(str, [faf, len(lens), length, lens[0], lens[-1], n50, n75, auN])))
