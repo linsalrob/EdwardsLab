@@ -11,9 +11,8 @@ import json
 from config import get_db_dir
 import gzip
 
-defaultdir = get_db_dir()
 
-def connect_to_db(dbname, verbose=False):
+def connect_to_db(outdir, dbname, verbose=False):
     """
     Connect to the database
     :param dbname: the database file name
@@ -23,10 +22,10 @@ def connect_to_db(dbname, verbose=False):
 
     try:
         if verbose:
-            sys.stderr.write("Connecting to {}\n".format(os.path.join(defaultdir, dbname)))
-        conn = sqlite3.connect(os.path.join(defaultdir, dbname))
+            sys.stderr.write("Connecting to {}\n".format(os.path.join(outdir, dbname)))
+        conn = sqlite3.connect(os.path.join(outdir, dbname))
     except sqlite3.Error as e:
-        sys.stderr.write("ERROR Creating database: {}\n".format(os.path.join(defaultdir, dbname)))
+        sys.stderr.write("ERROR Creating database: {}\n".format(os.path.join(outdir, dbname)))
         sys.stderr.write(e)
         sys.exit(-1)
 
@@ -281,6 +280,7 @@ def create_indices(conn, verbose=False):
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Convert NCBI taxonomy to SQLite3 database")
     parser.add_argument('-d', help='directory with tax data', required=True)
+    parser.add_argument('-p', help='path (directory) to write SQLite db to', required=True)
     parser.add_argument('-s', help='sqlite file to write (default=taxonomy.sqlite3)',default="taxonomy.sqlite3")
     parser.add_argument('-v', help='verbose output', action="store_true")
     parser.add_argument('-o', help='overwrite any existing databases (otherwise error out)', action="store_true")
@@ -293,7 +293,7 @@ if __name__ == '__main__':
             sys.stderr.write("{} already exists so we won't overwrite it. Use -o to force overwrite\n".format(args.s))
             sys.exit(-1)
 
-    conn = connect_to_db(args.s, args.v)
+    conn = connect_to_db(args.p, args.s, args.v)
     conn = create_load(conn, args.d, args.v)
     conn = create_indices(conn, args.v)
     disconnect(conn, args.v)

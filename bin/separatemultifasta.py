@@ -27,7 +27,7 @@ if __name__ == '__main__':
         os.makedirs(args.d, exist_ok=True)
 
     for seqid, seq in stream_fasta(args.f, True):
-        sname = seqid.split(" ")[0]
+        sname = seqid.split()[0]
         if args.v:
             sys.stderr.write(f"{colours.GREEN}Writing {sname}{colours.ENDC}\n")
         with open(os.path.join(args.d, f"{sname}.fasta"), 'w') as out:
