@@ -1,5 +1,7 @@
 """
-A date time
+A date time parse mostly written for parsing the PATRIC metadata
+
+Note: for a functional version, please see the jupyter notebook "RAST sources.ipynb" in the PhispyAnalysis github repo.
 """
 import sys
 
