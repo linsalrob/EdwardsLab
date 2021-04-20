@@ -242,11 +242,12 @@ def parse_biosample(biosample, verbose=False):
 
 
 
-def write_outputs(data, minocc=1, verbose=False):
+def write_outputs(xmlf, data, minocc=1, firstime=False, verbose=False):
     """
     Write all the data out
     :param data: dict with keys = sample id, values = contents
     :param minocc: minimum occurrence of any key in the contents
+    :param firstime: print a header line the first time this function is called
     :param verbose: more output
     :return: nothing
     """
@@ -264,15 +265,17 @@ def write_outputs(data, minocc=1, verbose=False):
     ka = sorted(list(filter(lambda x: acounts[x] > minocc, known_attributes_set)))
 
 
-    sys.stdout.write("Sample Accession\t")
-    sys.stdout.write("\t".join(kt))
-    sys.stdout.write("\t")
-    sys.stdout.write("\t".join(ka))
-    sys.stdout.write("\n")
+    if firsttime:
+        sys.stdout.write("Filename\t")
+        sys.stdout.write("Sample Accession\t")
+        sys.stdout.write("\t".join(kt))
+        sys.stdout.write("\t")
+        sys.stdout.write("\t".join(ka))
+        sys.stdout.write("\n")
 
 
     for s in data:
-        sys.stdout.write(s)
+        sys.stdout.write(f"{xmlf}\t{s}")
         for k in kt:
             if k in data[s]:
                 sys.stdout.write(f"\t{data[s][k]}")
@@ -295,11 +298,25 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     data = {}
+    firsttime = True
     for f in os.listdir(args.d):
-        tree = ET.parse(os.path.join(args.d, f))
-        biosampleset = tree.getroot()
-        for biosample in biosampleset:
-            tid, cont = parse_biosample(biosample, args.v)
-            data[tid] = cont
+        message(f"Parsing {f}", "PINK")
+        # tree = ET.parse(os.path.join(args.d, f))
+        # biosampleset = tree.getroot()
+        # sometimes eutils puts mutliple xml records per file (which is not valid xml).
+        # here we read the whole thing and then split. This is not great as consuming mem, but hopefully OK
+        xmlstr = ""
+        with open(os.path.join(args.d, f), 'r') as xmlin:
+            for l in xmlin:
+                xmlstr += l.rstrip()
+        for xml in xmlstr.split('<?xml version="1.0" ?>'):
+            if not xml.strip():
+                continue
+            xml = '<?xml version="1.0" ?>' + xml
+            biosampleset = ET.fromstring(xml)
+            for biosample in biosampleset:
+                tid, cont = parse_biosample(biosample, args.v)
+                data[tid] = cont
 
-    write_outputs(data, args.m)
+        write_outputs(f, data, args.m, firsttime, args.v)
+        firsttime = False
