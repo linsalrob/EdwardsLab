@@ -25,11 +25,17 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--ptt', help='output file for the ptt protein table')
     parser.add_argument('-o', '--orfs', help='output file for orfs (.orfs will be appended)')
     parser.add_argument('-f', '--functions', help='output file for two column table of [protein id, function]')
+    parser.add_argument('-i', '--seqid', help='Only output these sequence ID(s) [multiple -i allowed]',
+                        action='append')
     parser.add_argument('--phage_finder', help='make a phage finder file')
     parser.add_argument('--separate',  action='store_true',
                         help='separate output into different files (with no other options just output gbk).')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
+
+    if args.i and not args.separate:
+        sys.stderr.write("-i was provided, so requiring to separate files (--separate assumed)\n")
+        args.separate = True
 
     did = False
     if args.nucleotide:
@@ -37,6 +43,10 @@ if __name__ == '__main__':
             lastid = None
             out = None
             for sid, seq in genbank_to_fna(args.genbank):
+                if args.i and sid not in args.i:
+                    if args.v:
+                        sys.stderr.write(f"Skipped {sid} not provided in -i options\n")
+                    continue
                 if sid != lastid:
                     if out:
                         out.close()
@@ -56,6 +66,10 @@ if __name__ == '__main__':
             lastid = None
             out = None
             for seqid, sid, seq in genbank_to_faa(args.genbank, args.complex, args.v):
+                if args.i and sid not in args.i:
+                    if args.v:
+                        sys.stderr.write(f"Skipped {seqid} not provided in -i options\n")
+                    continue
                 if seqid != lastid:
                     if out:
                         out.close()
@@ -75,6 +89,10 @@ if __name__ == '__main__':
             lastid = None
             out = None
             for seqid, sid, seq in genbank_to_orfs(args.genbank, args.complex, args.v):
+                if args.i and sid not in args.i:
+                    if args.v:
+                        sys.stderr.write(f"Skipped {seqid} not provided in -i options\n")
+                    continue
                 if seqid != lastid:
                     if out:
                         out.close()
@@ -113,6 +131,10 @@ if __name__ == '__main__':
         lastid = None
         out = None
         for seq in genbank_seqio(args.genbank):
+            if args.i and seq.id not in args.i:
+                if args.v:
+                    sys.stderr.write(f"Skipped {seq.id} not provided in -i options\n")
+                continue
             out = open(f"{seq.id}.gbk", 'w')
             SeqIO.write(seq, out, 'genbank')
             out.close()
