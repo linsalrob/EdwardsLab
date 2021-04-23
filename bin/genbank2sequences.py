@@ -2,11 +2,11 @@
 Convert a genbank file to sequences
 """
 
-import os
 import sys
 import argparse
-from roblib import genbank_to_faa, genbank_to_fna, genbank_to_orfs, genbank_to_ptt, genbank_to_functions
+from roblib import genbank_to_faa, genbank_to_fna, genbank_to_orfs, genbank_to_ptt, genbank_to_functions, genbank_seqio
 from roblib import genbank
+from Bio import SeqIO
 
 __author__ = 'Rob Edwards'
 __copyright__ = 'Copyright 2020, Rob Edwards'
@@ -26,7 +26,8 @@ if __name__ == '__main__':
     parser.add_argument('-o', '--orfs', help='output file for orfs (.orfs will be appended)')
     parser.add_argument('-f', '--functions', help='output file for two column table of [protein id, function]')
     parser.add_argument('--phage_finder', help='make a phage finder file')
-    parser.add_argument('--separate', help='separate genbank entries into different files. In this case the ID is prepended to whatever you provide', action='store_true')
+    parser.add_argument('--separate',  action='store_true',
+                        help='separate output into different files (with no other options just output gbk).')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
@@ -88,7 +89,6 @@ if __name__ == '__main__':
                     out.write(f">{sid}\n{seq}\n")
         did = True
 
-
     if args.ptt:
         r = genbank_to_ptt(args.genbank, False, args.v)
         with open(args.ptt, 'w') as out:
@@ -109,7 +109,14 @@ if __name__ == '__main__':
                 out.write("\t".join(map(str, tple)) + "\n")
         did = True
 
+    if not did and args.separate:
+        lastid = None
+        out = None
+        for seq in genbank_seqio(args.genbank):
+            out = open(f"{seq.id}.gbk", 'w')
+            SeqIO.write(seq, out, 'genbank')
+            out.close()
+        did = True
+
     if not did:
         sys.stderr.write("Please provide either a -n, -a, -o, -p, -f output file! (or all)\n")
-
-
