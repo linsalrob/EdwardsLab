@@ -117,8 +117,8 @@ if __name__ == '__main__':
 
     if args.functions:
         with open(args.functions, 'w') as out:
-            for pid, prod in genbank_to_functions(args.genbank, args.v):
-                out.write(f"{pid}\t{prod}\n")
+            for sid, pid, prod in genbank_to_functions(args.genbank, True, args.v):
+                out.write(f"{sid}\t{pid}\t{prod}\n")
         did = True
 
     if args.phage_finder:
