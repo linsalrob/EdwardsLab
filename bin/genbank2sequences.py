@@ -33,7 +33,7 @@ if __name__ == '__main__':
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    if args.i and not args.separate:
+    if args.seqid and not args.separate:
         sys.stderr.write("-i was provided, so requiring to separate files (--separate assumed)\n")
         args.separate = True
 
@@ -43,7 +43,7 @@ if __name__ == '__main__':
             lastid = None
             out = None
             for sid, seq in genbank_to_fna(args.genbank):
-                if args.i and sid not in args.i:
+                if args.seqid and sid not in args.seqid:
                     if args.v:
                         sys.stderr.write(f"Skipped {sid} not provided in -i options\n")
                     continue
@@ -66,7 +66,7 @@ if __name__ == '__main__':
             lastid = None
             out = None
             for seqid, sid, seq in genbank_to_faa(args.genbank, args.complex, args.v):
-                if args.i and sid not in args.i:
+                if args.seqid and sid not in args.seqid:
                     if args.v:
                         sys.stderr.write(f"Skipped {seqid} not provided in -i options\n")
                     continue
@@ -89,7 +89,7 @@ if __name__ == '__main__':
             lastid = None
             out = None
             for seqid, sid, seq in genbank_to_orfs(args.genbank, args.complex, args.v):
-                if args.i and sid not in args.i:
+                if args.seqid and sid not in args.seqid:
                     if args.v:
                         sys.stderr.write(f"Skipped {seqid} not provided in -i options\n")
                     continue
@@ -131,7 +131,7 @@ if __name__ == '__main__':
         lastid = None
         out = None
         for seq in genbank_seqio(args.genbank):
-            if args.i and seq.id not in args.i:
+            if args.seqid and seq.id not in args.seqid:
                 if args.v:
                     sys.stderr.write(f"Skipped {seq.id} not provided in -i options\n")
                 continue
