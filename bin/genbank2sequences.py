@@ -42,7 +42,7 @@ if __name__ == '__main__':
         if args.separate:
             lastid = None
             out = None
-            for sid, seq in genbank_to_fna(args.genbank):
+            for sid, seq in genbank_to_fna(args.genbank, args.complex):
                 if args.seqid and sid not in args.seqid:
                     if args.v:
                         sys.stderr.write(f"Skipped {sid} not provided in -i options\n")
@@ -57,7 +57,7 @@ if __name__ == '__main__':
                 out.close()
         else:
             with open(f"{args.nucleotide}.fna", 'w') as out:
-                for sid, seq in genbank_to_fna(args.genbank):
+                for sid, seq in genbank_to_fna(args.genbank, args.complex):
                     out.write(f">{sid}\n{seq}\n")
         did = True
 

@@ -65,16 +65,22 @@ def feat_to_text(feat, qual):
         return " ".join(feat.qualifiers[qual])
     return "-"
 
-def genbank_to_fna(gbkf):
+def genbank_to_fna(gbkf, include_definition=False, verbose=False):
     """
     Parse a genbank file
     :param gbkf: genbank file
-    :param verbose:
+    :param include_definition: include the genbank definition line with the accession
+    :param verbose: more output
     :return: a dict of the sequences
     """
 
     for seq in genbank_seqio(gbkf):
-        yield seq.id, seq.seq
+        myid = seq.id
+        if include_definition:
+            myid += seq.description
+        yield myid, seq.seq
+
+
 
 def genbank_to_faa(gbkf, complexheader=False, verbose=False):
     """
