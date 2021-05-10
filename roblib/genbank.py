@@ -77,7 +77,7 @@ def genbank_to_fna(gbkf, include_definition=False, verbose=False):
     for seq in genbank_seqio(gbkf):
         myid = seq.id
         if include_definition:
-            myid += seq.description
+            myid += " " + seq.description
         yield myid, seq.seq
 
 
