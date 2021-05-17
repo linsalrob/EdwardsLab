@@ -31,6 +31,21 @@ or do them together if you know what you are doing!
 pkg-config --cflags --libs python
 ```
 
+### NOTE: For python >= 3.8
+
+You now need to use python3-embed instead of python3:
+
+```bash
+pkg-config --cflags --libs python3-embed
+```
+
+If your output from 
+
+```bash
+pkg-config --libs python3
+``````
+
+is empty, then please check `python3-embed`
 
 You then need to use a `c++` compiler to compile it. Put the `cflags` and `libs` in the appropriate positions:
 

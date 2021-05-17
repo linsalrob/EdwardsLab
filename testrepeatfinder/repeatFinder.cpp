@@ -59,7 +59,29 @@ void input()
 	}
 	fclose(f);
 
+	//cout << dna << endl;
+
 	//printf("dna len = %d\n",dna_len);
+}
+
+int two_bit_encode(int x) {
+    // convert a base to a two bit encode
+    switch(x) {
+        case 65: // A
+        case 97: // a
+            return 0;
+        case 67: // C
+        case 99: // c
+            return 1;
+        case 71: // G
+        case 103: // g
+            return 2;
+        case 84: // T
+        case 116: //t
+            return 3;
+        default:
+            return rand() % 4;
+    }
 }
 
 // find all the 11 length substring and store their start position
@@ -68,25 +90,32 @@ void find_repeats()
 	int key,start,keylen=2*(REPEAT_LEN-1);
 
 	key = 0;
-	for(start = 0;start < REPEAT_LEN; start++)
-		key = (key<<2) + converter[(int) dna[start]];
+	for(start = 0;start < REPEAT_LEN; start++) {
+	        // cout << "key: " << key << " (key<<2) " << (key<<2) << " base: "<< dna[start] << " converter " << two_bit_encode((int) dna[start]) << endl;
+			// key = (key<<2) + converter[(int) dna[start]];
+			key = (key<<2) + two_bit_encode((int) dna[start]);
+    }
 	allrepeats[key].push_back(0);
 
 	for(start = 1;start < dna_len-REPEAT_LEN+1; start++)
 	{
-		key = ((key&((1<<keylen)-1))<< 2) + converter[(int) dna[start+REPEAT_LEN-1]];
-		allrepeats[key].push_back(start);
+		//key = ((key&((1<<keylen)-1))<< 2) + converter[(int) dna[start+REPEAT_LEN-1]];
+		key = ((key&((1<<keylen)-1))<< 2) + two_bit_encode((int) dna[start+REPEAT_LEN-1]);
+		// cout << "Base: " << dna[start+REPEAT_LEN-1] << " Convert: " << two_bit_encode((int) dna[start+REPEAT_LEN-1]) << " key: " << key << " start: " << start << endl;
+    	allrepeats[key].push_back(start);
 	}
 
 	//find reverse repeat
 	key = 0;
 	for(start = dna_len-1;start >dna_len-1-REPEAT_LEN; start--)
-		key = (key<<2) + converter[complement[(int) dna[start]]];
+		// key = (key<<2) + converter[complement[(int) dna[start]]];
+		key = (key<<2) + two_bit_encode(complement[(int) dna[start]]);
 	allrepeats[key].push_back((dna_len-1)*(-1));
 	
 	for(start = dna_len-2;start >REPEAT_LEN-2; start--)
 	{
-		key= ((key&((1<<keylen)-1))<<2) + converter[complement[(int) dna[start-REPEAT_LEN+1]]];
+		//key= ((key&((1<<keylen)-1))<<2) + converter[complement[(int) dna[start-REPEAT_LEN+1]]];
+		key= ((key&((1<<keylen)-1))<<2) + two_bit_encode(complement[(int) dna[start-REPEAT_LEN+1]]);
 		allrepeats[key].push_back(start*(-1));
 	}
 }
@@ -155,7 +184,9 @@ void extend_repeats()
 
 	key = 0;
 	for(i = 0;i < REPEAT_LEN; i++)
-		key = (key<<2) + converter[(int) dna[i]];
+		// key = (key<<2) + converter[(int) dna[i]];
+		key = (key<<2) + two_bit_encode((int) dna[i]);
+
 	for(j=0;j<(int) allrepeats[key].size();j++)
 		if(allrepeats[key][j]<0)
 			find_maxlen_rev(0,allrepeats[key][j]);
@@ -163,7 +194,8 @@ void extend_repeats()
 			find_maxlen(0,allrepeats[key][j]);
 
 	for(i =1;i<dna_len-REPEAT_LEN+1;i++){
-		key = ((key&((1<<keylen)-1))<< 2) + converter[(int) dna[i+REPEAT_LEN-1]];
+		//key = ((key&((1<<keylen)-1))<< 2) + converter[(int) dna[i+REPEAT_LEN-1]];
+		key = ((key&((1<<keylen)-1))<< 2) + two_bit_encode((int) dna[i+REPEAT_LEN-1]);
 		for(j=0;j<(int) allrepeats[key].size();j++)
 			if(allrepeats[key][j]<0)
 				find_maxlen_rev(i,allrepeats[key][j]);

@@ -65,16 +65,22 @@ def feat_to_text(feat, qual):
         return " ".join(feat.qualifiers[qual])
     return "-"
 
-def genbank_to_fna(gbkf):
+def genbank_to_fna(gbkf, include_definition=False, verbose=False):
     """
     Parse a genbank file
     :param gbkf: genbank file
-    :param verbose:
+    :param include_definition: include the genbank definition line with the accession
+    :param verbose: more output
     :return: a dict of the sequences
     """
 
     for seq in genbank_seqio(gbkf):
-        yield seq.id, seq.seq
+        myid = seq.id
+        if include_definition:
+            myid += " " + seq.description
+        yield myid, seq.seq
+
+
 
 def genbank_to_faa(gbkf, complexheader=False, verbose=False):
     """
@@ -123,12 +129,13 @@ def genbank_to_faa(gbkf, complexheader=False, verbose=False):
                 yield seq.id, cid, str(feat.extract(seq).translate().seq)
 
 
-def genbank_to_functions(gbkf, verbose=False):
+def genbank_to_functions(gbkf, seqid=False, verbose=False):
     """
     Parse a genbank file
     :param gbkf: the genbank file
+    :param seqid: include the sequence ID in the yiel
     :param verbose: more output
-    :return: yield a tple of [protein id, function]
+    :return: yield a tple of [(seqid), protein id, function]
     """
     for seq in genbank_seqio(gbkf):
         for feat in seq.features:
@@ -141,7 +148,10 @@ def genbank_to_functions(gbkf, verbose=False):
             if "product" in feat.qualifiers:
                 prod = "|".join(feat.qualifiers['product'])
 
-            yield cid, prod
+            if seqid:
+                yield seq.id, cid, prod
+            else:
+                yield cid, prod
 
 
 def genbank_to_orfs(gbkf, complexheader=False, verbose=False):
