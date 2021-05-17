@@ -1,0 +1,56 @@
+ 'A': 'GCT', 'B': 'NNN', 'C': 'TGT', 'D': 'AAC',
+ 'E': 'CAG', 'F': 'TAT', 'G': 'GGT', 'H': 'TAT',
+ 'I': 'ATT', 'J': 'NNN', 'K': 'AAG', 'L': 'ATT',
+ 'M': 'ATT', 'N': 'AAC', 'O': 'NNN', 'P': 'CCT',
+ 'Q': 'CAG', 'R': 'AAG', 'S': 'ACT' 'T': 'ACT',
+ 'U': 'NNN', 'V': 'ATT', 'W': 'TGG', 'X': 'NNN',
+ 'Y': 'TAT', 'Z': 'NNN',
+ 
+ 'GCT', 'NNN', 'TGT', 'AAC', 'CAG', 'TAT', 'GGT',
+ 'TAT', 'ATT', 'NNN', 'AAG', 'ATT', 'ATT', 'AAC',
+ 'NNN', 'CCT', 'CAG', 'AAG', 'ACT' 'ACT', 'NNN',
+ 'ATT', 'TGG', 'NNN', 'TAT', 'NNN',
+
+ 
+ 
+ 'D': 'AAC',
+ 'N': 'AAC',
+ 
+ 'K': 'AAG',
+ 'R': 'AAG',
+
+ 'S': 'ACT',
+ 'T': 'ACT',
+ 
+ 'V': 'ATT',
+ 'I': 'ATT',
+ 'L': 'ATT',
+ 'M': 'ATT',
+
+ 'A': 'GCT',
+ 'G': 'GGT',
+
+ 'J': 'NNN',
+ 'B': 'NNN',
+ 'O': 'NNN',
+ 'U': 'NNN',
+ 'X': 'NNN',
+ 'Z': 'NNN',
+ 
+ 'F': 'TAT',
+ 'H': 'TAT',
+ 'Y': 'TAT',
+
+ 'C': 'TGT',
+ 
+ 'W': 'TGG',
+ 
+ 'E': 'CAG',
+ 'Q': 'CAG',
+
+ 'P': 'CCT',
+
+
+
+ 
+
