@@ -6,7 +6,6 @@ import os
 import sys
 import argparse
 from pybtex.database import parse_file, BibliographyData
-from roblib import message
 
 __author__ = 'Rob Edwards'
 __copyright__ = 'Copyright 2020, Rob Edwards'
@@ -14,6 +13,41 @@ __credits__ = ['Rob Edwards']
 __license__ = 'MIT'
 __maintainer__ = 'Rob Edwards'
 __email__ = 'raedwards@gmail.com'
+
+def message(msg, c):
+    """
+    Print a message to stderr using color
+    :param msg: the message to print
+    :param color: the color to use
+    :return: nothing
+    """
+    color = {
+        'HEADER': '\033[95m',
+        'OKBLUE': '\033[94m',
+        'OKGREEN': '\033[92m',
+        'WARNING': '\033[93m',
+        'FAIL': '\033[91m',
+        'ENDC': '\033[0m',
+        'BOLD': '\033[1m',
+        'UNDERLINE': '\033[4m',
+        'PINK': '\033[95m',
+        'BLUE': '\033[94m',
+        'GREEN': '\033[92m',
+        'YELLOW': '\033[93m',
+        'RED': '\033[91m',
+        'WHITE': '\033[0m',
+        }
+
+    c = c.upper()
+    if c not in color:
+        c = "WHITE"
+
+    if os.fstat(0) == os.fstat(1):
+        #  stderr is not redirected
+        sys.stderr.write(f"{color[c]}{msg}{color['ENDC']}\n")
+    else:
+        sys.stderr.write(f"{msg}\n")
+
 
 
 def check_dups(bibtexf, verbose=False):
