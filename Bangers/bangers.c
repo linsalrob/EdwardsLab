@@ -57,8 +57,8 @@ int main(int argc, char *argv[])
     fp = gzopen(argv[1], "r");
     seq = kseq_init(fp);
     while ((l = kseq_read(seq)) >= 0) {
-        printf("name: %s\n", seq->name.s);
-        printf("seq: %s\n", seq->seq.s);
+        printf(">%s\n", seq->name.s);
+        // printf("seq: %s\n", seq->seq.s);
 	// instantiate an empty string for the encoded version
 	char encoded[(strlen(seq->seq.s) * 3) + 1];
 	strncpy(encoded, "", sizeof(encoded));
@@ -80,7 +80,7 @@ int main(int argc, char *argv[])
 		strcat(encoded, codons[c]);
 
 	}
-	printf("enc: %s\n", encoded);
+	printf("%s\n", encoded);
 
     }
     kseq_destroy(seq); 
