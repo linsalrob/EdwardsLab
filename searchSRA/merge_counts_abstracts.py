@@ -125,6 +125,7 @@ def read_abstracts(abstractsf, reads_per_sample_file, average_per_proj, counts, 
 
             runids = runs.split(',')
             run_counts = {c:[] for c in all_contigs}
+            rowcount = 0
             for r in runids:
                 if r not in counts:
                     message(f"Run {r} not found", "RED")
@@ -132,12 +133,14 @@ def read_abstracts(abstractsf, reads_per_sample_file, average_per_proj, counts, 
                 for c in all_contigs:
                     if c in counts[r]:
                         run_counts[c].append(counts[r][c])
-                        reads_out.write(f"{project}\t{r}\t{c}\t{counts[r]}\n")
-            average_out.write("\t".join([project, title, abstract, annotation, comment]))
-            num = len(runids)
-            for c in all_contigs:
-                average_out.write(f"\t{sum(run_counts[c])/num}")
-            average_out.write("\n")
+                        rowcount += counts[r][c]
+                        reads_out.write(f"{project}\t{r}\t{c}\t{counts[r][c]}\n")
+            if rowcount > 0:
+                average_out.write("\t".join([project, title, abstract, annotation, comment]))
+                num = len(runids)
+                for c in all_contigs:
+                    average_out.write(f"\t{sum(run_counts[c])/num}")
+                average_out.write("\n")
     abst.close()
 
 if __name__ == "__main__":
