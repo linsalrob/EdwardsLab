@@ -102,7 +102,7 @@ def read_abstracts(abstractsf, reads_per_sample_file, average_per_proj, counts, 
         abst = open(abstractsf, 'r')
 
     with open(reads_per_sample_file, 'w') as reads_out, open(average_per_proj, 'w') as average_out:
-        average_out.write("Project\tTitle\tAbstract\tAnnotation\tComment")
+        average_out.write("Project\tTitle\tAbstract\tAnnotation\tComment\tTotal hits")
         for c in all_contigs:
             average_out.write(f"\t{c}")
         average_out.write("\n")
@@ -136,7 +136,7 @@ def read_abstracts(abstractsf, reads_per_sample_file, average_per_proj, counts, 
                         rowcount += counts[r][c]
                         reads_out.write(f"{project}\t{r}\t{c}\t{counts[r][c]}\n")
             if rowcount > 0:
-                average_out.write("\t".join([project, title, abstract, annotation, comment]))
+                average_out.write("\t".join([project, title, abstract, annotation, comment, str(rowcount)]))
                 num = len(runids)
                 for c in all_contigs:
                     average_out.write(f"\t{sum(run_counts[c])/num}")
