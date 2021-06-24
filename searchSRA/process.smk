@@ -49,7 +49,7 @@ rule idxstats:
     conda:
         "envs/samtools.yaml"
     resources:
-        mem_mb=64000
+        mem_mb=640000
     shell:
         """
         ODIR=$(mktemp -d -p {TEMPDIR});
@@ -58,10 +58,10 @@ rule idxstats:
             SAMP=$(echo $F | sed -e 's/.\/[0-9]\+\///; s/.bam//');
             C=$((C+1));
             echo -e "Sample\t$SAMP" > $ODIR/out.$C;
-            samtools idxstats $F | grep -v ^\* | cut -f 1,3 | \
+            samtools idxstats $F | awk '$3 != 0' | grep -v ^\* | cut -f 1,3 | \
                     sed -e "s|^|$SAMP\t|" >> $ODIR/out.$C;
         done;
-        joinlists.pl -h $ODIR/* > {output}
+        joinlists.pl -z -h $ODIR/* > {output}
         rm -rf $ODIR
         """
 
