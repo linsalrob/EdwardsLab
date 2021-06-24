@@ -106,8 +106,14 @@ def read_abstracts(abstractsf, reads_per_sample_file, average_per_proj, counts, 
 
         for l in abst:
             # SRA Project     Title   Abstract        Annotation      Comment Runs
-            project, title, abstract, annotation, comment, runs = l.strip().split("\t")
-            runids = runs.split(',')
+            p = l.strip().split("\t")
+            if len(p) != 6:
+                if verbose:
+                    message(f"Malformed Abstracts: {l}", "RED")
+                continue
+
+            project = p[0]
+            runids = p[6].split(',')
             run_counts = {c:[] for c in all_contigs}
             for r in runids:
                 if r not in counts:
@@ -117,7 +123,7 @@ def read_abstracts(abstractsf, reads_per_sample_file, average_per_proj, counts, 
                     if c in counts[r]:
                         run_counts[c].append(counts[r][c])
                         reads_out.write(f"{project}\t{r}\t{c}\t{counts[r]}\n")
-            average_out.write("\t".join([project, title, abstract, annotation, comment]))
+            average_out.write("\t".join(p[0:5]))
             num = len(runids)
             for c in all_contigs:
                 average_out.write(f"\t{sum(run_counts[c])/num}")
