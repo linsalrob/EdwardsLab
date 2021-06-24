@@ -8,7 +8,48 @@ import sys
 import argparse
 import gzip
 
-from .colours import message
+
+__author__ = 'Rob Edwards'
+
+
+class colors(object):
+    
+
+    color = {
+        'HEADER': '\033[95m',
+        'OKBLUE': '\033[94m',
+        'OKGREEN': '\033[92m',
+        'WARNING': '\033[93m',
+        'FAIL': '\033[91m',
+        'ENDC': '\033[0m',
+        'BOLD': '\033[1m',
+        'UNDERLINE': '\033[4m',
+        'PINK': '\033[95m',
+        'BLUE': '\033[94m',
+        'GREEN': '\033[92m',
+        'YELLOW': '\033[93m',
+        'RED': '\033[91m',
+        'WHITE': '\033[0m',
+        }
+
+
+def message(msg, color):
+    """
+    Print a message to stderr using color
+    :param msg: the message to print
+    :param color: the color to use
+    :return: nothing
+    """
+
+    color = color.upper()
+    if color not in colors.color:
+        raise ColorNotFoundError(f"There is no color {color}")
+
+    if os.fstat(0) == os.fstat(1):
+        #  stderr is not redirected
+        sys.stderr.write(f"{colors.color[color]}{msg}{colors.color['ENDC']}\n")
+    else:
+        sys.stderr.write(f"{msg}\n")
 
 def counts_per_sample(counts_dir, verbose=False):
     """
@@ -29,7 +70,7 @@ def counts_per_sample(counts_dir, verbose=False):
             message(f"Reading {os.path.join(counts_dir, f)}", "GREEN")
         with open(os.path.join(counts_dir, f), 'r') as f:
             for l in f:
-                if l.startswith('sample'):
+                if l.startswith('Sample'):
                     continue
                 p = l.strip().split("\t")
                 if int(p[2]) == 0:
@@ -58,10 +99,10 @@ def read_abstracts(abstractsf, reads_per_sample_file, average_per_proj, counts, 
         abst = open(abstractsf, 'r')
 
     with open(reads_per_sample_file, 'w') as reads_out, open(average_per_proj, 'w') as average_out:
-        average_per_proj.write("Project\tTitle\tAbstract\tAnnotation\tComment")
+        average_out.write("Project\tTitle\tAbstract\tAnnotation\tComment")
         for c in all_contigs:
-            average_per_proj.write(f"\t{c}")
-        average_per_proj.write("\n")
+            average_out.write(f"\t{c}")
+        average_out.write("\n")
 
         for l in abst:
             # SRA Project     Title   Abstract        Annotation      Comment Runs
@@ -76,11 +117,11 @@ def read_abstracts(abstractsf, reads_per_sample_file, average_per_proj, counts, 
                     if c in counts[r]:
                         run_counts[c].append(counts[r][c])
                         reads_out.write(f"{project}\t{r}\t{c}\t{counts[r]}\n")
-            average_per_proj.write("\t".join([project, title, abstract, annotation, comment]))
+            average_out.write("\t".join([project, title, abstract, annotation, comment]))
             num = len(runids)
             for c in all_contigs:
-                average_per_proj.write(f"\t{sum(run_counts[c])/num}")
-            average_per_proj.write("\n")
+                average_out.write(f"\t{sum(run_counts[c])/num}")
+            average_out.write("\n")
     abst.close()
 
 if __name__ == "__main__":
