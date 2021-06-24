@@ -65,9 +65,9 @@ def counts_per_sample(counts_dir, verbose=False):
 
     counts = {}
     all_contigs = set()
+    if verbose:
+        message(f"Reading counts_dir", "GREEN")
     for f in os.listdir(counts_dir):
-        if verbose:
-            message(f"Reading {os.path.join(counts_dir, f)}", "GREEN")
         with open(os.path.join(counts_dir, f), 'r') as f:
             for l in f:
                 if l.startswith('Sample'):
@@ -86,6 +86,9 @@ def read_abstracts(abstractsf, reads_per_sample_file, average_per_proj, counts, 
     """
     Read the abstracts file, and write the reads per sample and the average per project
     """
+
+    if verbose:
+        message("Received {len(counts)} counts and {len(all_contigs)} contigs", "PINK")
 
     if verbose:
         message("Reading the abstracts and writing the output", "GREEN")
@@ -109,7 +112,7 @@ def read_abstracts(abstractsf, reads_per_sample_file, average_per_proj, counts, 
             p = l.strip().split("\t")
             if len(p) != 6:
                 if verbose:
-                    message(f"Malformed Abstracts: {l}", "RED")
+                    message(f"Malformed Abstracts (len p: {len(p)}: {l}", "RED")
                 continue
 
             project = p[0]
