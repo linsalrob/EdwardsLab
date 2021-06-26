@@ -7,61 +7,108 @@ import os
 import sys
 
 
-TEMPDIR="/local/edwa0468"
-
+TEMPDIR = "/local/edwa0468"
+RESULTS = "results"
+FILTERED = "filtered"
+MAPQ = 2
+IDXSTATS = "idxstats"
+ABSTRACTS = "/home/edwa0468/GitHubs/EdwardsLab/searchSRA/searchSRA_abstracts.tsv.gz"
 
 rule all:
     input:
-        "1",
-        "empty_bams_removed",
-        "sequence_hits.tsv"
+        "reads_per_project.tsv",
+        "reads_per_sample.tsv"
 
 
 rule extract_results:
     input:
         "results.zip"
     output:
-        directory("1")
+        directory(os.path.join(RESULTS, "1"))
+    params:
+        results = RESULTS
     shell:
-        "unzip results.zip"
+        """
+        mkdir -p {params.results} && 
+        unzip results.zip -d {params.results}
+        """
 
 rule remove_empty:
     input:
-        "1"
+        os.path.join(RESULTS, "1")
     output:
         temporary("empty_bams_removed")
+    params:
+        results = RESULTS
     shell:
         """
-        for F in $(find . -size -851c -name \*bam); do
+        for F in $(find {params.results} -size -900c -name \*bam); do
             rm -f $F $F.bai;
         done;
         touch {output}
         """
 
-rule idxstats:
-    # we do this all in one rule so we still have access to the local
-    # storage to remove the temporary files
+rule filter_reads:
+    """ Filter reads by MAPQ score"""
     input:
-        "1",
-        "empty_bams_removed"
+        os.path.join(RESULTS, "1")
     output:
-        "sequence_hits.tsv"
+        directory(FILTERED)
+    conda:
+        "envs/samtools.yaml"
+    params:
+        results = RESULTS,
+        filt = FILTERED,
+        qual = MAPQ
+    shell:
+        """
+        mkdir -p {params.filt};
+        for BAMFILE in $(find {params.results} -name \*bam); do
+            BAM=$(basename $BAMFILE);
+            samtools view -bq {params.qual} -o {params.filt}/$BAM $BAMFILE;
+            samtools index {params.filt}/$BAM;
+        done
+        """
+
+
+rule idxstats:
+    input:
+        FILTERED
+    output:
+        IDXSTATS
     conda:
         "envs/samtools.yaml"
     resources:
         mem_mb=640000
+    params:
+        filt = FILTERED,
+        idx = IDXSTATS
     shell:
         """
-        ODIR=$(mktemp -d -p {TEMPDIR});
         C=0;
-        for F in $(find . -name \*bam); do 
-            SAMP=$(echo $F | sed -e 's/.\/[0-9]\+\///; s/.bam//');
+        mkdir -p {params.idx};
+        for BAMFILE in $(find {params.filt} -name \*bam); do
+            FNAME=$(basename $BAMFILE);
+            SAMP=$(echo $FNAME | sed -e 's/.bam//');
             C=$((C+1));
-            echo -e "Sample\t$SAMP" > $ODIR/out.$C;
-            samtools idxstats $F | awk '$3 != 0' | grep -v ^\* | cut -f 1,3 | \
-                    sed -e "s|^|$SAMP\t|" >> $ODIR/out.$C;
+            samtools idxstats $BAMFILE | awk '$3 != 0' | \
+                    grep -v ^\* | cut -f 1,3 | sed -e "s|^|$SAMP\t|" \
+                    >> {params.idx}/out.$C;
         done;
-        joinlists.pl -z -h $ODIR/* > {output}
-        rm -rf $ODIR
+    """
+    
+rule merge:
+    input:
+        IDXSTATS
+    output:
+        p = "reads_per_project.tsv",
+        s = "reads_per_sample.tsv"
+    params:
+        abstracts = ABSTRACTS
+    shell:
         """
-
+        "python3 \
+                $HOME/GitHubs/EdwardsLab/searchSRA/merge_counts_abstracts.py \
+                -d {input} -a {params.abstracts} -r {output.s} \
+                -p {output.p}
+        """

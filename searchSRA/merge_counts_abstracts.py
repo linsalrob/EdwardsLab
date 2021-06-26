@@ -136,8 +136,9 @@ def read_abstracts(abstractsf, reads_per_sample_file, average_per_proj, counts, 
                         rowcount += counts[r][c]
                         reads_out.write(f"{project}\t{r}\t{c}\t{counts[r][c]}\n")
             if rowcount > 0:
-                average_out.write("\t".join([project, title, abstract, annotation, comment, str(rowcount)]))
+                average_out.write("\t".join([project, title, abstract, annotation, comment]))
                 num = len(runids)
+                average_out.write(f"\t{rowcount/num}")
                 for c in all_contigs:
                     average_out.write(f"\t{sum(run_counts[c])/num}")
                 average_out.write("\n")
@@ -145,12 +146,17 @@ def read_abstracts(abstractsf, reads_per_sample_file, average_per_proj, counts, 
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
-    parser.add_argument('-d', help='directory of SRA Run counts per sample', required=True)
+    parser.add_argument('-d', help='directory of SRA Run counts per sample', nargs='+')
     parser.add_argument('-a', help='abstracts file that includes annotations and comments', required=True)
     parser.add_argument('-r', help='file to write reads per sample to', required=True)
     parser.add_argument('-p', help='file to write average counts per project to', required=True)
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    cpr, ac = counts_per_sample(args.d, args.v)
+    countsperdir = {}
+    contigsperdir = set()
+    for subdir in args.d:
+        cpr, ac = counts_per_sample(args.d, args.v)
+        countsperdir.update(cpr)
+        contigsperdir.update(ac)
     read_abstracts(args.a, args.r, args.p, cpr, ac, args.v)
