@@ -157,6 +157,9 @@ if __name__ == "__main__":
     contigsperdir = set()
     for subdir in args.d:
         cpr, ac = counts_per_sample(args.d, args.v)
-        countsperdir.update(cpr)
+        for c in cpr:
+            if c not in countsperdir:
+                countsperdir[c] = {}
+            countsperdir[c].update(cpr[c])
         contigsperdir.update(ac)
-    read_abstracts(args.a, args.r, args.p, cpr, ac, args.v)
+    read_abstracts(args.a, args.r, args.p, countsperdir, contigsperdir, args.v)
