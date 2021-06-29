@@ -8,13 +8,13 @@ import os
 import sys
 
 
-TEMPDIR = "/local/edwa0468"
-RESULTS = "results"
-FILTERED = "filtered"
 # For more information on deciding which MAPQ value to set, please see
 # http://biofinysics.blogspot.com/2014/05/how-does-bowtie2-assign-mapq-scores.html
-MAPQ = 3
-IDXSTATS = "idxstats"
+#MAPQ = 3
+MAPQ = 10
+RESULTS = "results"
+FILTERED = f"filtered_Q{MAPQ}"
+IDXSTATS = f"idxstats_Q{MAPQ}"
 ABSTRACTS = "/home/edwa0468/GitHubs/EdwardsLab/searchSRA/searchSRA_abstracts.tsv.gz"
 
 def expand_uncompressed_files(wildcards):
@@ -26,8 +26,10 @@ def expand_uncompressed_files(wildcards):
 
 
 def find_directories(wildcards):
-    checkpoint_output = checkpoints.extract_results.get(**wildcards).output[0]
-    DRS, SMPS, = glob_wildcards(os.path.join(checkpoint_output, "{dir}", "{sample}.bam"))
+    # checkpoint_output = checkpoints.extract_results.get(**wildcards).output[0]
+    #filenames = expand_uncompressed_files(wildcards)
+    idxstats_output = checkpoints.idx_stats_done.get(**wildcards).output.f
+    DRS, SMPS, = glob_wildcards(os.path.join(idxstats_output, "{dir}", "{sample}.bam"))
     return expand(os.path.join(IDXSTATS, "{DIRS}"), DIRS=DRS)
 
 rule all:
@@ -87,11 +89,20 @@ rule idxstats:
             cut -f 1,3 | sed -e "s|^|{wildcards.SAMPLE}\t|" \
             > {output}
         """
-    
+
+checkpoint idx_stats_done:
+    input:
+        e = expand_uncompressed_files,
+    output:
+        d = IDXSTATS,
+        f = temporary("idxstats.done")
+    shell:
+        "touch {output.f}"
+
 rule merge:
     input:
-        d = find_directories,
-        e = expand_uncompressed_files
+        "idxstats.done",
+        d = find_directories
     output:
         p = "reads_per_project.tsv",
         s = "reads_per_sample.tsv"

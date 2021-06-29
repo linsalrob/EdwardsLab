@@ -156,7 +156,7 @@ if __name__ == "__main__":
     countsperdir = {}
     contigsperdir = set()
     for subdir in args.d:
-        cpr, ac = counts_per_sample(args.d, args.v)
+        cpr, ac = counts_per_sample(subdir, args.v)
         for c in cpr:
             if c not in countsperdir:
                 countsperdir[c] = {}
