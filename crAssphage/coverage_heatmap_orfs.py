@@ -159,7 +159,7 @@ if __name__ == '__main__':
                 start += x0
                 # sys.stderr.write("Start: {} End: {} Width: {}\n".format(start, end, width))
                 # Rectangle([startx, starty], width, height
-                patch = mpatches.Rectangle([start, y], width, 0.05, ec='Black', fc="DeepSkyBlue", lw=1)
+                patch = mpatches.Rectangle((start, y), width, 0.05, ec='Black', fc="DeepSkyBlue", lw=1)
                 if width > 0.02:
                     # we don't want to label boxes that are too small
                     texts.append([start+(width/2), y + 0.015, p[0]])
