@@ -37,7 +37,7 @@ def find_vc(mdf, genomecol, vccol, verbose=False):
     with open(mdf, 'r') as fin:
         for li in fin:
             p = li.strip().split("\t")
-        vc[p[genomecol]] = p[vccol]
+            vc[p[genomecol]] = p[vccol]
     if verbose:
         sys.stderr.write(f"Found {len(vc)} virus clusters in {mdf}\n")
     return vc
@@ -68,10 +68,10 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-d', help='mash distance file', required=True)
     parser.add_argument('-c', help='distance cutoff score, default = 0', default=0, type=float)
-    parser.add_argument('-v', help='verbose output', action='store_true')
     parser.add_argument('-m', help='metadata file', required=True)
     parser.add_argument('-g', help='genome column, default = 0', default=0, type=int)
     parser.add_argument('-l', help='virus cluster col in the metadata file', type=int, required=True)
+    parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
     bh = best_hits(args.d, args.c, args.v)
