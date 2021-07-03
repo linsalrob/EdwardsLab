@@ -2,6 +2,7 @@
 Convert a genbank file to sequences
 """
 
+import os
 import sys
 import argparse
 from roblib import genbank_to_faa, genbank_to_fna, genbank_to_orfs, genbank_to_ptt, genbank_to_functions, genbank_seqio
