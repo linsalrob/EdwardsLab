@@ -59,7 +59,8 @@ def count_hits(bh, vc, verbose=False):
             if hc[g][h] > bhc:
                 bhc = hc[g][h]
                 besthit = h
-        print(f"{g}\t{besthit}\t{bhc}\t{len(bh[g])}")
+        #print(f"{g}\t{besthit}\t{bhc}\t{len(bh[g])}")
+        print(f"{g}\t{besthit}")
 
     return hc
 
