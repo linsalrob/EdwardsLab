@@ -98,4 +98,4 @@ if __name__ == "__main__":
     with open(args.output, 'w') as out:
         for m in members:
             mems = "\t".join(members[m])
-            out.write(f"{m}\t{mems}\n")
+            out.write(f"{m} ({len(members[m])})\t{mems}\n")
