@@ -31,6 +31,10 @@ def merge_clusters(clx, mmx, x, y, verbose=False):
     xc = clx[x]
     yc = clx[y]
 
+    if xc == yc:
+        # nothing to do!
+        return clx, mmx
+
     for m in mmx[yc]:
         clx[m] = xc
     del mmx[yc]
@@ -59,7 +63,8 @@ def cluster(inputfile, threshold, verbose=False):
                 continue
             # is either p[0] or p[1] in a cluster?
             if p[0] in clusters and p[1] in clusters:
-                clusters, members = merge_clusters(clusters, members, p[0], p[1], verbose)
+                if clusters[p[0]] != clusters[p[1]]:
+                    clusters, members = merge_clusters(clusters, members, p[0], p[1], verbose)
             elif p[0] in clusters:
                 xc = clusters[p[0]]
                 clusters[p[1]] = xc
