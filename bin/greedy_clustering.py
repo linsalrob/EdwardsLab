@@ -26,7 +26,7 @@ def merge_clusters(clx, mmx, x, y, verbose=False):
 
     """
     if verbose:
-        sys.stderr.write(f"Merging clusters:\n{clx}\nMembers\n{mmx}\nAt {x} and {y}\n")
+        sys.stderr.write(f"Merging clusters At {x} and {y}\n")
 
     xc = clx[x]
     yc = clx[y]
@@ -37,6 +37,7 @@ def merge_clusters(clx, mmx, x, y, verbose=False):
 
     for m in mmx[yc]:
         clx[m] = xc
+        mmx[xc].add(m)
     del mmx[yc]
 
     return clx, mmx
