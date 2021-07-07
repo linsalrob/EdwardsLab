@@ -12,7 +12,7 @@ from itertools import combinations
 from scipy.stats.stats import pearsonr
 import matplotlib.pyplot as plt
 
-def read_data(f, h, c):
+def read_data(f, h, c, verbose=False):
     """
     Read the file and store the data.
     :param f: the file to read
@@ -20,6 +20,9 @@ def read_data(f, h, c):
     :param c: whether the first column is a label or data
     :return:
     """
+
+    if verbose:
+        sys.stderr.write(f"Reading data from {f}. Column headers: {h} Row names: {~c}\n")
 
     data = []
     headers = []
@@ -95,7 +98,7 @@ if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Generate all pairwise correlations between the data")
     parser.add_argument('-f', help='file of data with data in columns', required=True)
     parser.add_argument('-l', help='first line is a header line (will be used in output)', action='store_true')
-    parser.add_argument('-c', help='first column is data and should be included (default: the first columns is labels that are discarded)', action='store_true')
+    parser.add_argument('-c', help='first column is data and should be included (default: the first columns is labels that are saved if transposed)', action='store_true')
     parser.add_argument('-r', help='data is in rows (ie. transpose)', action='store_true')
     parser.add_argument('-n', help='filter for a particular contig that must be included in the pairwise calculations')
     parser.add_argument('-p', help='plot the pairwise data', action='store_true')
