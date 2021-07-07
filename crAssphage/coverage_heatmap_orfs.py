@@ -28,6 +28,7 @@ if __name__ == '__main__':
     parser.add_argument('-m', help='maximum value to use for any average', type=float)
     parser.add_argument('-p', help="draw primer regions. Be sure to include two -p for each primer indicating start and stop", action='append')
     parser.add_argument('-g', help='file of THEA ORF calls')
+    parser.add_argument('-r', help='add the ORF names if the ORF is wide enough', action='store_true')
     args = parser.parse_args()
 
     #here we just check we have an equal number of start/stop for the primers
@@ -160,7 +161,7 @@ if __name__ == '__main__':
                 # sys.stderr.write("Start: {} End: {} Width: {}\n".format(start, end, width))
                 # Rectangle([startx, starty], width, height
                 patch = mpatches.Rectangle((start, y), width, 0.05, ec='Black', fc="DeepSkyBlue", lw=1)
-                if width > 0.02:
+                if args.r and width > 0.02:
                     # we don't want to label boxes that are too small
                     texts.append([start+(width/2), y + 0.015, p[0]])
                 # print("{}\t{}".format(p[0], width))

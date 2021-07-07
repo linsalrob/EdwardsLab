@@ -2,6 +2,7 @@
 Convert a genbank file to sequences
 """
 
+import os
 import sys
 import argparse
 from roblib import genbank_to_faa, genbank_to_fna, genbank_to_orfs, genbank_to_ptt, genbank_to_functions, genbank_seqio
@@ -32,6 +33,10 @@ if __name__ == '__main__':
                         help='separate output into different files (with no other options just output gbk).')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
+
+    if not os.path.exists(args.genbank):
+        sys.stderr.write(f"FATAL: {args.genbank} does not exist. Please check the file path and try again!")
+        sys.exit(1)
 
     if args.seqid and not args.separate:
         sys.stderr.write("-i was provided, so requiring to separate files (--separate assumed)\n")
