@@ -2,7 +2,9 @@
 
 """
 Generate correlations between all the columns or rows of data. We will read a matrix file
-and transpose it if requested, to generate all pairwise Pearson's correlations
+and transpose it if requested, to generate all pairwise Pearson's correlations.
+
+Note see correlation_clustering.py to cluster these using hierarchical linkage
 """
 
 import os
