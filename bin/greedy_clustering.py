@@ -6,6 +6,7 @@ possible clusters in a leader clustering approach
 import os
 import sys
 import argparse
+import numpy as np
 from typing import List, Any, Dict, Set
 
 
@@ -60,6 +61,8 @@ def cluster(inputfile, threshold, verbose=False):
     with open(inputfile, 'r') as f:
         for li in f:
             p = li.strip().split("\t")
+            if p[2] == 'nan' or np.isnan(float(p[2])):
+                continue
             if float(p[2]) < threshold:
                 continue
             # is either p[0] or p[1] in a cluster?
