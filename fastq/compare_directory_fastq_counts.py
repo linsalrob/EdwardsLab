@@ -20,7 +20,7 @@ if __name__ == "__main__":
     print(f"Filename\t# seqs in {args.dir1}\t# bp in {args.dir1}\t# seqs in {args.dir2}\tbp in {args.dir2}")
     for fq in set(os.listdir(args.dir1)).union(set(os.listdir(args.dir2))):
         if args.v:
-            sys.stderr.write(f"{colours.GREEN}Reading: {fq}{colours.ENDC}")
+            sys.stderr.write(f"{colours.GREEN}Reading: {fq}{colours.ENDC}\n")
         data = [fq,0,0,0,0]
         if os.path.exists(os.path.join(args.dir1, fq)):
             for seqid, header, seq, qualscores in stream_fastq(os.path.join(args.dir1, fq)):
