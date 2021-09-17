@@ -24,11 +24,11 @@ if __name__ == "__main__":
             sys.stderr.write(f"{colours.GREEN}Reading: {fq}{colours.ENDC}")
         data = [fq,0,0,0,0]
         if os.path.exists(os.path.join(args.dir1, fq)):
-            for seqid, seq, qual in stream_fastq(os.path.join(args.dir1, fq)):
+            for seqid, header, seq, qualscores in stream_fastq(os.path.join(args.dir1, fq)):
                 data[1] += 1
                 data[2] += len(seq)
         if os.path.exists(os.path.join(args.dir2, fq)):
-            for seqid, seq, qual in stream_fastq(os.path.join(args.dir2, fq)):
+            for seqid, header, seq, qualscores in stream_fastq(os.path.join(args.dir2, fq)):
                 data[3] += 1
                 data[4] += len(seq)
         data[5] = f"{data[1] / data[3]:.3f}"
