@@ -17,8 +17,7 @@ if __name__ == "__main__":
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    print(f"Filename\t# seqs in {args.dir1}\t# bp in {args.dir1}\t# seqs in {args.dir2}\tbp in {args.dir2}\t", end="")
-    print(f"# {args.dir1}/{args.dir2}\tbp {args.dir1}/{args.dir2}")
+    print(f"Filename\t# seqs in {args.dir1}\t# bp in {args.dir1}\t# seqs in {args.dir2}\tbp in {args.dir2}")
     for fq in set(os.listdir(args.dir1)).union(set(os.listdir(args.dir2))):
         if args.v:
             sys.stderr.write(f"{colours.GREEN}Reading: {fq}{colours.ENDC}")
@@ -31,6 +30,4 @@ if __name__ == "__main__":
             for seqid, header, seq, qualscores in stream_fastq(os.path.join(args.dir2, fq)):
                 data[3] += 1
                 data[4] += len(seq)
-        data[5] = f"{data[1] / data[3]:.3f}"
-        data[6] = f"{data[2] / data[4]:.3f}"
         print("\t".join(map(str, data)))
