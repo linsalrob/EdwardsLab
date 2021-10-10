@@ -44,6 +44,10 @@ def lca(tids, verbose=False):
     wanted_levels = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
     taxas = []
     for tid in tids:
+        if verbose:
+            message(f"Getting taxonomy: {tid}", color="GREEN")
+        if not tid:
+            continue
         if tid in ignore_taxa:
             continue
         if tid not in taxonomies:
@@ -91,5 +95,5 @@ if __name__ == "__main__":
 
     with open(args.o, 'w') as out:
         for m in md5:
-            tid = lca(md5[m])
+            tid = lca(md5[m], args.v)
             out.write(f"{m}\t{tid}\n")
