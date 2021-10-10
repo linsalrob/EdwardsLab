@@ -70,7 +70,7 @@ def lca(tids, verbose=False):
     for i in range(6, -1, -1):
         if len(counts[i]) == 1:
             # this is the lca!
-            return counts[i]
+            return counts[i].pop()
     return 1 # root!
 
 
