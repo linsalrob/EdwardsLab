@@ -256,6 +256,30 @@ def taxonomy_hierarchy(tid, verbose=False):
         yield data['node'][tid].parent
         tid = data['node'][tid].parent
 
+def taxonomy_ids_as_list(conn, tid, verbose=False):
+    """
+    Return the taxonomy hierarchy as a list but just using the taxonomy IDs not the names
+    :param conn: the database connect
+    :param tid: the taxonomy id
+    :param verbose: more output
+    :return:
+    """
+    wanted_levels = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
+    this_taxa = ['', '', '', '', '', '', '']
+
+    t, n = get_taxonomy(tid, conn)
+    if not t:
+        sys.stderr.write("No taxonomy for {}\n".format(tid))
+        return this_taxa
+
+    while t.parent != 1 and t.taxid != 1:
+        if t.rank in wanted_levels:
+            if n.scientific_name:
+                this_taxa[wanted_levels.index(t.rank)] = t.taxid
+        t, n = get_taxonomy(t.parent, conn)
+
+    return this_taxa
+
 def taxonomy_hierarchy_as_list(conn, tid, verbose=False):
     """
     Return the taxonomy hierarchy as a list
