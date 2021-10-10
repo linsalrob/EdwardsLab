@@ -51,7 +51,7 @@ def lca(tids, verbose=False):
             if not t:
                 ignore_taxa.add(tid)
                 continue
-            taxonomies[tid] = taxonomy_ids_as_list(tid, verbose)
+            taxonomies[tid] = taxonomy_ids_as_list(conn, tid, verbose)
         taxas.append(taxonomies[tid])
 
     # now we just have to add the appropriate taxa and return
@@ -77,7 +77,7 @@ if __name__ == "__main__":
 
     # read all the md5s and map to a list of the genomes
     md5 = {}
-    fid = re.compile(r'^fig\|(\d+\.\d+)')
+    fid = re.compile(r'^fig\|(\d+)\.\d+')
     with open(args.f, 'r') as fin:
         for l in fin:
             p = l.strip().split("\t")
