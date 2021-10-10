@@ -16,7 +16,7 @@ import argparse
 import re
 
 from roblib import message
-from taxon import get_taxonomy_db, taxonomy_ids_as_list, get_taxonomy
+from taxon import get_taxonomy_db, taxonomy_ids_as_list, get_taxonomy, EntryNotInDatabaseError
 
 __author__ = 'Rob Edwards'
 
@@ -44,19 +44,22 @@ def lca(tids, verbose=False):
     wanted_levels = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
     taxas = []
     for tid in tids:
-        if verbose:
-            message(f"Getting taxonomy: {tid}", color="GREEN")
-        if not tid:
-            continue
-        if tid in ignore_taxa:
-            continue
-        if tid not in taxonomies:
-            t, n = get_taxonomy(tid, conn)
-            if not t:
-                ignore_taxa.add(tid)
+        try:
+            if verbose:
+                message(f"Getting taxonomy: {tid}", color="GREEN")
+            if not tid:
                 continue
-            taxonomies[tid] = taxonomy_ids_as_list(conn, tid, verbose)
-        taxas.append(taxonomies[tid])
+            if tid in ignore_taxa:
+                continue
+            if tid not in taxonomies:
+                t, n = get_taxonomy(tid, conn)
+                if not t:
+                    ignore_taxa.add(tid)
+                    continue
+                taxonomies[tid] = taxonomy_ids_as_list(conn, tid, verbose)
+            taxas.append(taxonomies[tid])
+        except EntryNotInDatabaseError:
+            ignore_taxa.add(tid)
 
     # now we just have to add the appropriate taxa and return
     # this is a two dimensional list
