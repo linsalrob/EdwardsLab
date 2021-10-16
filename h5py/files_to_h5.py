@@ -29,7 +29,7 @@ __author__ = 'Rob Edwards'
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Convert a series of data to h5py format')
-    parser.add_argument('-f', '--files', help='input file', required=True, action='append')
+    parser.add_argument('-f', '--files', help='input files', nargs='+')
     parser.add_argument('-o', '--output', help='output h5 file to write', required=True)
     parser.add_argument('-v', '--verbose', help='verbose output', action='store_true')
     parser.add_argument('-s', '--skip', help='skip lines that start *. This is very specific to parsed bam files',
