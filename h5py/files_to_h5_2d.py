@@ -51,7 +51,7 @@ if __name__ == "__main__":
     twod = []
     for contig in sorted_contigs:
         d = [data[f][contig] if contig in data[f] else 0 for f in sorted_files]
-        twod.append(d)
+        twod.append(np.array(d))
 
     with h5py.File(args.output, "w") as f:
         grp = f.create_dataset("contigs", data=np.array(twod))
