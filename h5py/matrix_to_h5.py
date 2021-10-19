@@ -20,7 +20,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Parse a tab or csv separated file and output it as an HDF5 format 2D array')
     parser.add_argument('-f', '--file', help='input tsv/csv file to convert', required=True)
     parser.add_argument('-o', '--output', help='output hdf5 format file to write', required=True)
-    parser.add_argument('-h', '--header', help='Skip the first row because it is a header')
+    parser.add_argument('-r', '--header', help='Skip the first row because it is a header')
     parser.add_argument('-d', '--dataset', help='dataset name that will be used in the output (default = data)', default='data')
     parser.add_argument('-s', '--separator', help='use an alternate input record separator(default: tab)', default="\t")
 
