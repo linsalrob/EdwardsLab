@@ -28,6 +28,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description='Convert a series of data to h5py format')
     parser.add_argument('-f', '--files', help='input files', nargs='+')
     parser.add_argument('-o', '--output', help='output h5 file to write', required=True)
+    parser.add_argument('-i', '--indexfile', help='index file to write', required=True)
     parser.add_argument('-v', '--verbose', help='verbose output', action='store_true')
     parser.add_argument('-s', '--skip', help='skip lines that start *. This is very specific to parsed bam files',
                         action='store_true')
@@ -49,9 +50,12 @@ if __name__ == "__main__":
     sorted_files = sorted(args.files)
 
     twod = []
-    for contig in sorted_contigs:
-        d = [data[f][contig] if contig in data[f] else 0 for f in sorted_files]
-        twod.append(np.array(d))
+    with open(args.indexfile, 'w') as out:
+        for i, contig in enumerate(sorted_contigs):
+            out.write("{}\t{}\n".format(i, contig))
+            d = [data[f][contig] if contig in data[f] else 0 for f in sorted_files]
+            twod.append(np.array(d))
+
 
     with h5py.File(args.output, "w") as f:
         grp = f.create_dataset("contigs", data=np.array(twod))
