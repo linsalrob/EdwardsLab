@@ -37,7 +37,7 @@ def parse_text_file(tf, pearsoncol=2):
     with open(tf, 'r') as fin:
         for l in fin:
             p=l.strip().split("\t")
-            if len(p) >= pearsoncol:
+            if len(p) <= pearsoncol:
                 sys.stderr.write(f"ERROR: {l} does not have enough entries for {pearsoncol} to be the score. Skipped\n")
                 continue
             ks.add(p[0])
