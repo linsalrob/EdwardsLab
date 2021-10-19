@@ -57,6 +57,8 @@ def parse_text_file(tf, pearsoncol=2):
     p = 0
     for i in range(len(allkeys)):
         for j in range(i + 1, len(allkeys)):
+            if allkeys[j] not in  data[allkeys[i]]:
+                data[allkeys[i]][allkeys[j]] = 0
             nct[p] = 1 - data[allkeys[i]][allkeys[j]]
             p += 1
     return nct
