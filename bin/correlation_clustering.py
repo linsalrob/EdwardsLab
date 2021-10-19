@@ -46,8 +46,11 @@ def parse_text_file(tf, pearsoncol=2):
                 data[p[0]]={}
             if p[1] not in data:
                 data[p[1]] = {}
-            data[p[0]][p[1]] = float(p[pearsoncol])
-            data[p[1]][p[0]] = float(p[pearsoncol])
+            val = float(p[pearsoncol])
+            if val > 1:
+                val = 1
+            data[p[0]][p[1]] = val
+            data[p[1]][p[0]] = val
 
     allkeys = list(ks)
     allkeys.sort()
