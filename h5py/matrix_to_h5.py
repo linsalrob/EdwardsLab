@@ -56,10 +56,10 @@ if __name__ == "__main__":
             indexout = open(args.indexfile, 'w')
         counter = -1
         for l in f:
-            counter += 1
             if args.header and not header:
                 header = True
                 continue
+            counter += 1
             p = l.strip().split(args.separator)
             if not args.col:
                 colname = p.pop(0)
