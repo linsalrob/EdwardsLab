@@ -27,6 +27,7 @@ if __name__ == "__main__":
             else:
                 sys.stderr.write(f"Neither a comma or tab in {args.i}. What is separator?\n")
                 sys.exit(1)
+            i2c[p[0]] = p[1]
 
     with open(args.c, 'r') as fin:
         for l in fin:
