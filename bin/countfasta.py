@@ -20,6 +20,7 @@ if __name__ == "__main__":
     parser.add_argument('-m', help='minimum length fo be inclued', type=int, default=0)
     parser.add_argument('-n', help='do NOT print the summary at the end', action='store_true')
     parser.add_argument('-t', help='tab separated output. Fields: [# seqs, total bp, shortest, longest, N50, N75]', action='store_true')
+    parser.add_argument('-v', help='more output', action='store_true')
     args = parser.parse_args()
 
     if not args.f and not args.d:
@@ -34,12 +35,19 @@ if __name__ == "__main__":
     if args.d:
         for subdir in args.d:
             for f in os.listdir(subdir):
+                if not (f.endswith('.fa') or f.endswith('.fasta') or f.endswith('.fna')):
+                    sys.stderr.write(f"Skipped {f}: does not look like a fasta file\n")
+                    continue
                 files.append(os.path.join(subdir, f))
+                if args.v:
+                    sys.stderr.write(f"Added {files[-1]}\n")
 
     overall = {'number': 0, 'total': 0, 'shortest':1e6, 'longest': 0}
 
 
     for faf in files:
+        if args.v:
+            sys.stderr.write(f"Counting sequences in {faf}\n")
         fa=read_fasta(faf)
 
         if len(fa.keys()) == 1 and list(fa.keys())[0] == '':
@@ -71,7 +79,7 @@ if __name__ == "__main__":
         auN /= length
 
         if args.n:
-            sys.exit(0)
+            continue
 
         if args.t:
             print("\t".join(map(str, [faf, len(lens), length, lens[0], lens[-1], n50, n75, auN])))

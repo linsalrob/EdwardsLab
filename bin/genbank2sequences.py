@@ -1,9 +1,11 @@
+#!/usr/bin/env python
 """
 Convert a genbank file to sequences
 """
 
 import os
 import sys
+import gzip
 import argparse
 from roblib import genbank_to_faa, genbank_to_fna, genbank_to_orfs, genbank_to_ptt, genbank_to_functions, genbank_seqio
 from roblib import genbank
@@ -31,6 +33,8 @@ if __name__ == '__main__':
     parser.add_argument('--phage_finder', help='make a phage finder file')
     parser.add_argument('--separate',  action='store_true',
                         help='separate output into different files (with no other options just output gbk).')
+    parser.add_argument('-z', '--zip', help='gzip compress the output. Experimental and may not work with everything!',
+                        action='store_true')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
@@ -121,10 +125,18 @@ if __name__ == '__main__':
         did = True
 
     if args.functions:
-        with open(args.functions, 'w') as out:
+        try:
+            if args.zip:
+                out = gzip.open(f"{args.functions}.gz", 'wt')
+            else:
+                out = open(args.functions, 'w')
             for sid, pid, prod in genbank_to_functions(args.genbank, True, args.v):
                 out.write(f"{sid}\t{pid}\t{prod}\n")
-        did = True
+            did = True
+            out.close()
+        except IOError as e:
+            sys.stderr.write(f"There was an error writing to {args.functions}: {e}\n")
+            sys.exit(1)
 
     if args.phage_finder:
         with open(args.phage_finder, 'w') as out:

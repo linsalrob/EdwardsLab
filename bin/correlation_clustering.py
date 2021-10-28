@@ -19,7 +19,7 @@ import numpy as np
 import scipy.cluster.hierarchy as sch
 
 
-def parse_text_file(tf, pearsoncol=2):
+def parse_text_file(tf, pearsoncol=2, insep="\t"):
     """
     Parse a text file and return an n-choose-2 array of the elements. The array returned has the distance from the first
     element to all other elements, and then the second element to n-1 elements (all but the first), and then the
@@ -27,7 +27,9 @@ def parse_text_file(tf, pearsoncol=2):
     :param tf: Text file with [a, b, pearson correlation, p-value] (e.g. the output from correlations.py)
     :type tf: str
     :param pearsoncol: the zero indexed column of the pearson correlation score
-    :tyoe numcols: int
+    :type numcols: int
+    :param insep: Input separator. Default = tab
+    :type insep: str
     :return: n-choose-2 array of the data.
     :rtype: np.array
     """
@@ -36,7 +38,7 @@ def parse_text_file(tf, pearsoncol=2):
     ks = set()
     with open(tf, 'r') as fin:
         for l in fin:
-            p=l.strip().split("\t")
+            p=l.strip().split(insep)
             if len(p) <= pearsoncol:
                 sys.stderr.write(f"ERROR: {l} does not have enough entries for {pearsoncol} to be the score. Skipped\n")
                 continue
@@ -69,19 +71,24 @@ def parse_text_file(tf, pearsoncol=2):
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Cluster genes based on %id with cutoffs")
-    parser.add_argument('-t', help='file with [a, b, distance] separated by tabs', required=True)
-    parser.add_argument('-j', help='clusters output file name. We print them out in json format', required=True)
-    parser.add_argument('-p', help='0 indexed column in input file with the pearson score. Default = 2', type=int, default=2)
-    parser.add_argument('-n', help='number of clusters to print (default=100)', type=int, default=100)
+    parser.add_argument('-t', '--tsv', help='file with [a, b, distance] separated by tabs', required=True)
+    parser.add_argument('-j', '--json', help='clusters output file name. We print them out in json format', required=True)
+    parser.add_argument('-p', '--pearsoncol', help='0 indexed column in input file with the pearson score. Default = 2', type=int, default=2)
+    parser.add_argument('-s', '--separator', help='Input separator. Default = tab', default="\t", type=str)
+    parser.add_argument('-n', '--noclust', help='number of clusters to print (default=100)', type=int, default=100)
     args = parser.parse_args()
 
-    matrix = parse_text_file(args.t, args.p)
+    matrix = parse_text_file(args.tsv, args.pearsoncol, args.separator)
 
     L = sch.linkage(matrix, method='average')
 
-    out = open(args.j, 'w')
-    for i in range(args.n+1):
-        ind = sch.fcluster(L, i/args.n, 'distance')
-        out.write(f"{{{i}}}: {{{ind}}},\n")
-        print(f"{{{100 - i}}}\t{{{max(ind)}}}")
+    print("Threshold\tNumber of clusters\tSize of largest cluster")
+    with open(args.json, 'w') as out:
+        out.write("[\n")
+        for i in range(args.noclust+1):
+            ind = sch.fcluster(L, i/args.noclust, 'distance')
+            uniqs, counts = np.unique(ind, return_counts=True)
+            out.write(f"{{cluster_id : {i}, largest_cluster : {max(counts)}, num_clusters: {uniqs.shape[0]}, clusters: {list(ind)}}},\n")
+            print(f"{i/args.noclust}\t{uniqs.shape[0]}\t{max(counts)}")
+        out.write("]\n")
 
