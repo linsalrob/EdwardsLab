@@ -30,8 +30,8 @@ def parse_text_file(tf, pearsoncol=2, insep="\t"):
     :type numcols: int
     :param insep: Input separator. Default = tab
     :type insep: str
-    :return: n-choose-2 array of the data.
-    :rtype: np.array
+    :return: n-choose-2 array of the data and the list of the keys in order
+    :rtype: np.array, list
     """
 
     data = {}
@@ -66,29 +66,85 @@ def parse_text_file(tf, pearsoncol=2, insep="\t"):
                 data[allkeys[i]][allkeys[j]] = 0
             nct[p] = 1 - data[allkeys[i]][allkeys[j]]
             p += 1
-    return nct
+    return nct, allkeys
 
-
-if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Cluster genes based on %id with cutoffs")
-    parser.add_argument('-t', '--tsv', help='file with [a, b, distance] separated by tabs', required=True)
-    parser.add_argument('-j', '--json', help='clusters output file name. We print them out in json format', required=True)
-    parser.add_argument('-p', '--pearsoncol', help='0 indexed column in input file with the pearson score. Default = 2', type=int, default=2)
-    parser.add_argument('-s', '--separator', help='Input separator. Default = tab', default="\t", type=str)
-    parser.add_argument('-n', '--noclust', help='number of clusters to print (default=100)', type=int, default=100)
-    args = parser.parse_args()
-
-    matrix = parse_text_file(args.tsv, args.pearsoncol, args.separator)
+def generate_clusters(matrix, idlist, jsonout, noclust=100, print_singles=False):
 
     L = sch.linkage(matrix, method='average')
 
     print("Threshold\tNumber of clusters\tSize of largest cluster")
-    with open(args.json, 'w') as out:
+    with open(jsonout, 'w') as out:
         out.write("[\n")
-        for i in range(args.noclust+1):
-            ind = sch.fcluster(L, i/args.noclust, 'distance')
+        for ele in range(noclust + 1):
+            threshold = ele / noclust
+            ind = sch.fcluster(L, threshold, 'distance')
             uniqs, counts = np.unique(ind, return_counts=True)
-            out.write(f"{{cluster_id : {i}, largest_cluster : {max(counts)}, num_clusters: {uniqs.shape[0]}, clusters: {list(ind)}}},\n")
-            print(f"{i/args.noclust}\t{uniqs.shape[0]}\t{max(counts)}")
+            freqs = {}
+            for idx, u in enumerate(uniqs):
+                freqs[u] = counts[idx]
+
+            clusters = {}
+            for idx, j in enumerate(ind):
+                if freqs[j] == 1 and not print_singles:
+                    continue
+                if j not in clusters:
+                    clusters[j] = []
+                clusters[j].append(idlist[idx])
+
+            # res = [i idlist[x] for x in ind]
+            # res = [x for x in ind]
+            # out.write(f"{{cluster_id : {i}, largest_cluster : {max(counts)}, num_clusters: {uniqs.shape[0]}, clusters: {res}}},\n")
+            singles = np.isin(counts, [1]).sum()
+            out.write(
+                f"{{cluster_id : {ele}, threshold: {threshold}, largest_cluster : {max(counts)}, num_clusters: {uniqs.shape[0]}, num_singleton_clusters: {singles}, clusters: {clusters}}},\n")
+            print(f"{threshold}\t{uniqs.shape[0]}\t{max(counts)}")
         out.write("]\n")
 
+
+def generate_a_cluster(matrix, idlist, jsonout, threshold=0.05, print_singles=False):
+    """
+    Generate a single cluster given a threshold
+    """
+
+    L = sch.linkage(matrix, method='average')
+    with open(jsonout, 'w') as out:
+        ind = sch.fcluster(L, threshold, 'distance')
+        uniqs, counts = np.unique(ind, return_counts=True)
+        freqs = {}
+        for idx, u in enumerate(uniqs):
+            freqs[u] = counts[idx]
+
+        clusters = {}
+        for idx, j in enumerate(ind):
+            if freqs[j] == 1 and not print_singles:
+                continue
+            if j not in clusters:
+                clusters[j] = []
+            clusters[j].append(idlist[idx])
+
+        singles = np.isin(counts, [1]).sum()
+        out.write(
+            f"{{threshold: {threshold}, largest_cluster : {max(counts)}, num_clusters: {uniqs.shape[0]}, num_singleton_clusters: {singles}, clusters: {clusters}}},\n")
+        print(f"{threshold}\t{uniqs.shape[0]}\t{max(counts)}")
+    out.write("\n")
+
+
+
+if __name__ == '__main__':
+    parser = argparse.ArgumentParser(description="Cluster genes based on Pearson correlation")
+    parser.add_argument('-f', '--file', help='file with [a, b, distance] separated by tabs', required=True)
+    parser.add_argument('-j', '--json', help='clusters output file name. We print them out in json format', required=True)
+    parser.add_argument('-p', '--pearsoncol', help='0 indexed column in input file with the pearson score. Default = 2', type=int, default=2)
+    parser.add_argument('-s', '--separator', help='Input separator. Default = tab', default="\t", type=str)
+    parser.add_argument('--singles', help='print clusters with one element in them', action='store_true')
+    group = parser.add_mutually_exclusive_group(help='You can either list all clusters, or just a single cluster', required=True)
+    group.add_argument('-t', '--threshold', help='clustering threshold to print a single cluster', type=float)
+    group.add_argument('-n', '--numclust', help='number of clusters to print with a range of thresholds (default=100)', type=int, default=100)
+
+    args = parser.parse_args()
+
+    matrix, idlist = parse_text_file(args.tsv, args.pearsoncol, args.separator)
+    if args.threshold:
+        generate_a_cluster(matrix, idlist, args.json, args.threshold, args.singles)
+    elif args.numclust:
+        generate_clusters(matrix, idlist, args.json, args.numclust, args.singles)
