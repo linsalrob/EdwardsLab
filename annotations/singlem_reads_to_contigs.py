@@ -88,8 +88,14 @@ def resolve_counts(counts, outputfile, threshold=0.75, verbose=False):
     with open(f"{outputfile}.allmatches.tsv", 'w') as all, open(f"{outputfile}.besthits.tsv", 'w') as best:
         for contig in sorted(counts.keys()):
             total = sum(counts[contig].values())
-            taxas = [sorted(counts[contig].keys())]
-            fracts = [counts[contig][t] / total for t in taxas]
+            all.write(contig)
+            taxas = []
+            fracts = []
+            for t in counts[contig]:
+                all.write(f"\t{t}|{counts[contig][t]}")
+                taxas.append(t)
+                fracts.append(counts[contig][t] / total)
+            all.write("\n")
             maxfr = max(fracts)
             if fracts.count(maxfr) > 1:
                 if verbose:
@@ -101,10 +107,7 @@ def resolve_counts(counts, outputfile, threshold=0.75, verbose=False):
                 decision = "Below threshold"
             else:
                 decision = taxas[fracts.index(maxfr)]
-            all.write(contig)
-            for c in counts[contig]:
-                all.write(f"\t{c}|{counts[contig][c]}")
-            all.write("\n")
+
             best.write(f"{contig}\t{decision}\n")
 
 
