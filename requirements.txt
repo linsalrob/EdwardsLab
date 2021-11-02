@@ -18,3 +18,4 @@ pytz
 ipython
 openpyxl
 h5py
+pysam
