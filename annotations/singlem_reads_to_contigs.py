@@ -95,7 +95,7 @@ def parse_bamfile(bamfile, mapping, verbose=False):
                 if read in mapping[mthd]:
                     if contig not in counts[mthd]:
                         counts[mthd][contig] = {}
-                    counts[mthd][contig][mapping[read]] = counts[mthd][contig].get(mapping[read], 0) + 1
+                    counts[mthd][contig][mapping[mthd][read]] = counts[mthd][contig].get(mapping[mthd][read], 0) + 1
 
     return counts
 
