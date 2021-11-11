@@ -97,7 +97,7 @@ def generate_clusters(matrix, idlist, jsonout, noclust=100, print_singles=False)
             singles = np.isin(counts, [1]).sum()
             out.write(
                 f"{{cluster_id : {ele}, threshold: {threshold}, largest_cluster : {max(counts)}, num_clusters: {uniqs.shape[0]}, num_singleton_clusters: {singles}, clusters: {clusters}}},\n")
-            print(f"{threshold}\t{uniqs.shape[0]}\t{max(counts)}")
+            print(f"Threshold: {threshold}\tNumber of clusters: {uniqs.shape[0]}\tLargest cluster{max(counts)}. See the output file ({jsonout}) for more details")
         out.write("]\n")
 
 
