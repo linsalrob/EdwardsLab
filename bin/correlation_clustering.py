@@ -137,7 +137,7 @@ if __name__ == '__main__':
     parser.add_argument('-p', '--pearsoncol', help='0 indexed column in input file with the pearson score. Default = 2', type=int, default=2)
     parser.add_argument('-s', '--separator', help='Input separator. Default = tab', default="\t", type=str)
     parser.add_argument('--singles', help='print clusters with one element in them', action='store_true')
-    group = parser.add_mutually_exclusive_group(help='You can either list all clusters, or just a single cluster', required=True)
+    group = parser.add_mutually_exclusive_group(required=True)
     group.add_argument('-t', '--threshold', help='clustering threshold to print a single cluster', type=float)
     group.add_argument('-n', '--numclust', help='number of clusters to print with a range of thresholds (default=100)', type=int, default=100)
 
