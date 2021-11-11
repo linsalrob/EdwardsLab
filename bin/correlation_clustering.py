@@ -126,7 +126,7 @@ def generate_a_cluster(matrix, idlist, jsonout, threshold=0.05, print_singles=Fa
         out.write(
             f"{{threshold: {threshold}, largest_cluster : {max(counts)}, num_clusters: {uniqs.shape[0]}, num_singleton_clusters: {singles}, clusters: {clusters}}},\n")
         print(f"{threshold}\t{uniqs.shape[0]}\t{max(counts)}")
-    out.write("\n")
+        out.write("\n")
 
 
 
