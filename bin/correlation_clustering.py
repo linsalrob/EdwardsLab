@@ -132,8 +132,8 @@ def generate_a_cluster(matrix, idlist, jsonout, threshold=0.05, print_singles=Fa
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Cluster genes based on Pearson correlation")
-    parser.add_argument('-f', '--file', help='file with [a, b, distance] separated by tabs', required=True)
-    parser.add_argument('-j', '--json', help='clusters output file name. We print them out in json format', required=True)
+    parser.add_argument('-f', '--file', help='file with [a, b, distance]', required=True)
+    parser.add_argument('-o', '--output', help='clusters output file name. We print them out in json format', required=True)
     parser.add_argument('-p', '--pearsoncol', help='0 indexed column in input file with the pearson score. Default = 2', type=int, default=2)
     parser.add_argument('-s', '--separator', help='Input separator. Default = tab', default="\t", type=str)
     parser.add_argument('--singles', help='print clusters with one element in them', action='store_true')
@@ -143,8 +143,8 @@ if __name__ == '__main__':
 
     args = parser.parse_args()
 
-    matrix, idlist = parse_text_file(args.tsv, args.pearsoncol, args.separator)
+    matrix, idlist = parse_text_file(args.file, args.pearsoncol, args.separator)
     if args.threshold:
-        generate_a_cluster(matrix, idlist, args.json, args.threshold, args.singles)
+        generate_a_cluster(matrix, idlist, args.output, args.threshold, args.singles)
     elif args.numclust:
-        generate_clusters(matrix, idlist, args.json, args.numclust, args.singles)
+        generate_clusters(matrix, idlist, args.output, args.numclust, args.singles)
