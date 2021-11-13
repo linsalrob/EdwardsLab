@@ -88,7 +88,7 @@ if __name__ == "__main__":
     os.makedirs(args.directory, exist_ok=True)
 
     for bin in bins['clusters']:
-        with open(os.path.join(args.directory, f"atavide_bin_{bin}.fa")) as out:
+        with open(os.path.join(args.directory, f"atavide_bin_{bin}.fa"), 'w') as out:
             for sid in bins['clusters'][bin]:
                 if idx2id:
                     try:
