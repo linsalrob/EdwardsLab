@@ -82,7 +82,8 @@ if __name__ == "__main__":
         idx2id = read_idx(args.idx, args.verbose)
 
     seqs = read_fasta(args.fasta, args.verbose)
-    bins = json.load(args.clusters)
+    with open(args.clusters, 'r') as binf:
+        bins = json.load(binf)
 
     os.makedirs(args.directory, exist_ok=True)
 
