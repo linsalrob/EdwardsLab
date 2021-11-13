@@ -124,14 +124,15 @@ def generate_a_cluster(matrix, idlist, jsonout, threshold=0.05, print_singles=Fa
     for idx, j in enumerate(ind):
         if freqs[j] == 1 and not print_singles:
             continue
-        if j not in clusters:
-            clusters[j] = []
-        clusters[j].append(idlist[idx])
+        ji = int(j)
+        if ji not in clusters:
+            clusters[ji] = []
+        clusters[ji].append(idlist[idx])
 
     singles = int(np.isin(counts, [1]).sum())
     outputdata = {
         "threshold": threshold,
-        "largest_cluster": max(counts),
+        "largest_cluster": int(max(counts)),
         "num_clusters": int(uniqs.shape[0]),
         "num_singleton_clusters": singles,
         "clusters": clusters
