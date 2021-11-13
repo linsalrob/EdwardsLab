@@ -9,7 +9,7 @@ correlations.py outputs a tuple of
 Here, we use 1-pearson correlation as our distance
 
 """
-
+import json
 import os
 import sys
 import math
@@ -72,42 +72,9 @@ def generate_clusters(matrix, idlist, jsonout, noclust=100, print_singles=False)
 
     L = sch.linkage(matrix, method='average')
 
-    print("Threshold\tNumber of clusters\tSize of largest cluster")
-    with open(jsonout, 'w') as out:
-        out.write("[\n")
-        for ele in range(noclust + 1):
-            threshold = ele / noclust
-            ind = sch.fcluster(L, threshold, 'distance')
-            uniqs, counts = np.unique(ind, return_counts=True)
-            freqs = {}
-            for idx, u in enumerate(uniqs):
-                freqs[u] = counts[idx]
-
-            clusters = {}
-            for idx, j in enumerate(ind):
-                if freqs[j] == 1 and not print_singles:
-                    continue
-                if j not in clusters:
-                    clusters[j] = []
-                clusters[j].append(idlist[idx])
-
-            # res = [i idlist[x] for x in ind]
-            # res = [x for x in ind]
-            # out.write(f"{{cluster_id : {i}, largest_cluster : {max(counts)}, num_clusters: {uniqs.shape[0]}, clusters: {res}}},\n")
-            singles = np.isin(counts, [1]).sum()
-            out.write(
-                f"{{cluster_id : {ele}, threshold: {threshold}, largest_cluster : {max(counts)}, num_clusters: {uniqs.shape[0]}, num_singleton_clusters: {singles}, clusters: {clusters}}},\n")
-            print(f"Threshold: {threshold}\tNumber of clusters: {uniqs.shape[0]}\tLargest cluster{max(counts)}. See the output file ({jsonout}) for more details")
-        out.write("]\n")
-
-
-def generate_a_cluster(matrix, idlist, jsonout, threshold=0.05, print_singles=False):
-    """
-    Generate a single cluster given a threshold
-    """
-
-    L = sch.linkage(matrix, method='average')
-    with open(jsonout, 'w') as out:
+    outputdata = []
+    for ele in range(noclust + 1):
+        threshold = ele / noclust
         ind = sch.fcluster(L, threshold, 'distance')
         uniqs, counts = np.unique(ind, return_counts=True)
         freqs = {}
@@ -122,13 +89,57 @@ def generate_a_cluster(matrix, idlist, jsonout, threshold=0.05, print_singles=Fa
                 clusters[j] = []
             clusters[j].append(idlist[idx])
 
+        # res = [i idlist[x] for x in ind]
+        # res = [x for x in ind]
+        # out.write(f"{{cluster_id : {i}, largest_cluster : {max(counts)}, num_clusters: {uniqs.shape[0]}, clusters: {res}}},\n")
         singles = np.isin(counts, [1]).sum()
-        out.write(
-            f"{{threshold: {threshold}, largest_cluster : {max(counts)}, num_clusters: {uniqs.shape[0]}, num_singleton_clusters: {singles}, clusters: {clusters}}},\n")
-        print(f"{threshold}\t{uniqs.shape[0]}\t{max(counts)}")
-        out.write("\n")
+        outputdata.append({
+            "cluster_id": ele,
+            "threshold": threshold,
+            "largest_cluster": max(counts),
+            "num_clusters": uniqs.shape[0],
+            "num_singleton_clusters": singles,
+            "clusters": clusters
+        })
+        print(f"Threshold: {threshold}\tNumber of clusters: {uniqs.shape[0]}\tLargest cluster{max(counts)}. See the output file ({jsonout}) for more details")
+
+    with open(jsonout, 'w') as out:
+        json.dump(outputdata, out)
 
 
+def generate_a_cluster(matrix, idlist, jsonout, threshold=0.05, print_singles=False):
+    """
+    Generate a single cluster given a threshold
+    """
+
+    L = sch.linkage(matrix, method='average')
+
+    ind = sch.fcluster(L, threshold, 'distance')
+    uniqs, counts = np.unique(ind, return_counts=True)
+    freqs = {}
+    for idx, u in enumerate(uniqs):
+        freqs[u] = counts[idx]
+
+    clusters = {}
+    for idx, j in enumerate(ind):
+        if freqs[j] == 1 and not print_singles:
+            continue
+        if j not in clusters:
+            clusters[j] = []
+        clusters[j].append(idlist[idx])
+
+    singles = np.isin(counts, [1]).sum()
+    outputdata = {
+        "threshold": threshold,
+        "largest_cluster": max(counts),
+        "num_clusters": uniqs.shape[0],
+        "num_singleton_clusters": singles,
+        "clusters": clusters
+    }
+    print(f"{threshold}\t{uniqs.shape[0]}\t{max(counts)}")
+
+    with open(jsonout, 'w') as out:
+        json.dump(outputdata, out)
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description="Cluster genes based on Pearson correlation")
