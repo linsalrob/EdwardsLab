@@ -81,7 +81,7 @@ if __name__ == "__main__":
             continue
         bc = mt[0]
         if bc not in files:
-            files[bc] = open(os.path.join(args.d, f"{bc}.fastq"))
+            files[bc] = open(os.path.join(args.d, f"{bc}.fastq"), "w")
         files[bc].write(f"@{header}\n{seq}\n+\n{qualscores}\n")
     for f in files:
         files[f].close()
