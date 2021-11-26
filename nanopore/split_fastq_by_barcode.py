@@ -72,8 +72,10 @@ if __name__ == "__main__":
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
+    os.makedirs(args.d, exist_ok=True)
     srch = re.compile(r'barcode=(\S+)')
     files = {}
+
     for seqid, header, seq, qualscores in stream_fastq(args.f):
         mt = srch.findall(header)
         if not mt:
