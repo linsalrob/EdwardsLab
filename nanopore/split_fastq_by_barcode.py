@@ -8,76 +8,21 @@ import os
 import re
 import sys
 import argparse
-
-__author__ = 'Rob Edwards'
-
-
-import os
-import sys
 import gzip
 
-import subprocess
-from .rob_error import SequencePairError, FastqFormatError
-from .colours import colours, message
 
 __author__ = 'Rob Edwards'
 
-
-def read_fasta(fname: str, whole_id: bool = True, qual: bool = False) -> dict:
+class FastqFormatError(Exception):
     """
-    Read a fasta file and return a hash.
+    Exception raised for sequences not being paired properly.
 
-    If wholeId is set to false only the first part of the ID
-    (upto the first white space) is returned
-
-    :param fname: The file name to read
-    :param whole_id: Whether to keep the whole id, or trim to first whitespace (default = all)
-    :param qual: these are quality scores (so add a space between lines!)
-    :return: dict
+    :param message: explanation of the error
     """
 
-    try:
-        if fname.endswith('.gz'):
-            f = gzip.open(fname, 'rt')
-        elif fname.endswith('.lrz'):
-            f = subprocess.Popen(['/usr/bin/lrunzip', '-q', '-d', '-f', '-o-', fname], stdout=subprocess.PIPE).stdout
-        else:
-            f = open(fname, 'r')
-    except IOError as e:
-        sys.stderr.write(str(e) + "\n")
-        sys.stderr.write("Message: \n" + str(e.message) + "\n")
-        sys.exit("Unable to open file " + fname)
-
-    seqs = {}
-    seq = ""
-    seqid = ""
-    for line in f:
-        line = line.rstrip('\r\n')
-        if line.startswith(">"):
-            if seqid != "":
-                seqs[seqid] = seq
-                seq = ""
-            seqid = line.replace(">", "", 1)
-            if not whole_id and seqid.count(" ") > 0:
-                seqids = seqid.split(" ")
-                seqid = seqids[0]
-        else:
-            if qual:
-                seq += " " + line
-            else:
-                seq += line
-
-    seqs[seqid] = seq.strip()
-    return seqs
-
-
-def readFasta(file, whole_id=True):
-    """
-    Read a fasta file and return a hash.
-
-    If wholeId is set to false only the first part of the ID (upto the first white space) is returned
-    """
-    return read_fasta(file, whole_id)
+    def __init__(self, message):
+        self.message = message
+        super().__init__(self.message)
 
 
 def stream_fastq(fqfile):
@@ -137,6 +82,6 @@ if __name__ == "__main__":
         bc = mt[0]
         if bc not in files:
             files[bc] = open(os.path.join(args.d, f"{bc}.fastq"))
-        bc.write(f"@{header}\n{seq}\n+\n{qualscores}\n")
+        files[bc].write(f"@{header}\n{seq}\n+\n{qualscores}\n")
     for f in files:
         files[f].close()
