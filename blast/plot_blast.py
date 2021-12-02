@@ -11,7 +11,7 @@ import os
 import sys
 
 
-def read_blast_file(blastf, evalue=10, query=False, verbose=False, contiglist=[]):
+def read_blast_file(blastf, evalue=10, query=False, verbose=False, contiglist=[], mincontiglen=0):
     '''
     Read the blast file and return an array with the number of times each base has been seen.
 
@@ -27,6 +27,8 @@ def read_blast_file(blastf, evalue=10, query=False, verbose=False, contiglist=[]
     :type verbose: bool
     :return: A hash of the contig names and an array of hits to that contig
     :rtype: dict
+    :param mincontiglen: the minimum length of the contig to be included in the plot
+    :type mincontiglen: int
     '''
 
     # marginal speed up!
@@ -52,6 +54,8 @@ def read_blast_file(blastf, evalue=10, query=False, verbose=False, contiglist=[]
     # create the empty array
     hits = {}
     for c in contig_size:
+        if contig_size[c] < mincontiglen:
+            continue
         hits[c] = []
         for i in range(contig_size[c]+1):
             hits[c].append(0)
@@ -70,6 +74,8 @@ def read_blast_file(blastf, evalue=10, query=False, verbose=False, contiglist=[]
                 contig = p[1]
                 startpos = int(p[8])
                 endpos = int(p[9])
+            if contig not in hits:
+                continue
             if wantedcontigs and contig not in wantedcontigs:
                 continue
             for i in range(startpos, endpos+1):
@@ -148,7 +154,10 @@ def window_merge(hits, window):
             maxi = i+window
             if maxi > len(hits[c]):
                 maxi = len(hits[c])
-            # sys.stderr.write("Window: " + str(window) + " i: " + str(i) +  " maxi : " + str(maxi) + " mini: " + str(mini) + "\n")
+            mini = int(mini)
+            maxi = int(maxi)
+            i = int(i)
+            sys.stderr.write("Contig: " + str(c) + " Window: " + str(window) + " i: " + str(i) +  " maxi : " + str(maxi) + " mini: " + str(mini) + "\n")
             avhits[c][i] = 1.0 * sum(hits[c][mini:maxi]) / (maxi-mini)
             i+=window
 
@@ -241,6 +250,7 @@ if __name__ == "__main__":
     parser.add_argument("-b", help='blast file', required=True)
     parser.add_argument("-i", help='image output file', required=True)
     parser.add_argument('-c', help='minimum coverage for regions to write', type=float)
+    parser.add_argument('-l', help='minimum contig length', type=int, default=0)
     parser.add_argument('-a', help='size to merge adjacent regions in printing over coverage (default=1000)', default=1000, type=int)
     parser.add_argument('-m', help='minimum size of window over threshold to print (default=100)', default=100, type=int)
     parser.add_argument('-w', help='window width to merge for plot (default=5000bp) (only affects plot)', default=5000, type=int)
@@ -255,7 +265,7 @@ if __name__ == "__main__":
     # plot_hits(hits_to_list(read_blast_file(blastf)))
     # plot_hits(hits_to_list(window_merge(read_blast_file(blastf), 5000)))
 
-    hitshash = read_blast_file(args.b, contiglist=args.o)
+    hitshash = read_blast_file(args.b, contiglist=args.o, mincontiglen=args.l)
     windowhash = window_merge(hitshash, args.w)
 
     if args.c:
