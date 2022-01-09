@@ -19,3 +19,7 @@ ipython
 openpyxl
 h5py
 pysam
+bs4
+lxml
+plotly
+suffix_trees

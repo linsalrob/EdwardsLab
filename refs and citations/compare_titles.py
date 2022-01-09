@@ -1,6 +1,8 @@
 """
 Compare my titles from google sheets (abstracted to a list of just titles) to the references in paperpile
 available
+
+NOTE: SEE https://github.com/linsalrob/CompareReferences
 """
 
 import os
