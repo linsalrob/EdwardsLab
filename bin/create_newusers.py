@@ -13,9 +13,9 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-b', '--base', help='base of the username (default="user")', default="user")
     parser.add_argument('-n', '--number', help='number of accounts to create. (default=100)', type=int, default=100)
-    parser.add_argument('-s', '--servers', help='number of servers to share users among', default=6)
-    parser.add_argument('-u', '--users', help='users file for bash to write (default="users.tsv")')
-    parser.add_argument('-a', '--accounts', help='accounts file to give to the users (default="accounts.tsv")')
+    parser.add_argument('-s', '--servers', help='number of servers to share users among', type=int, default=6)
+    parser.add_argument('-u', '--users', help='users file for bash to write (default="users.tsv")', default="users.tsv")
+    parser.add_argument('-a', '--accounts', help='accounts file to give to the users (default="accounts.tsv")', default="accounts.tsv")
     args = parser.parse_args()
 
 
