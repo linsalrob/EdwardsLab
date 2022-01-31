@@ -9,8 +9,11 @@ map reads using bowtie2, and take the unmapped reads and reassemble.
 Repeat that with the site data sets and then again with the sample
 datasets.
 
-To run on the cluster use this command:
+To run on the deepthought use this command:
 
+snakemake --configfile process_metagenomes.json -s ~/GitHubs/EdwardsLab/snakemake/process_metagenomes.snakefile --profile slurm
+
+to run this on anthill use this command:
 snakemake --configfile process_metagenomes.json -s ~/GitHubs/EdwardsLab/snakemake/process_metagenomes.snakefile --profile sge
 
 """
@@ -70,8 +73,8 @@ rule prinseq:
     output:
         r1 = os.path.join(PSEQDIR, "{sample}_good_out_R1.fastq"),
         r2 = os.path.join(PSEQDIR, "{sample}_good_out_R2.fastq"),
-        s1 = os.path.join(PSEQDIR, "{sample}_single_out_R1.fastq"),
-        s2 = os.path.join(PSEQDIR, "{sample}_single_out_R2.fastq"),
+        s1 = temporary(os.path.join(PSEQDIR, "{sample}_single_out_R1.fastq")),
+        s2 = temporary(os.path.join(PSEQDIR, "{sample}_single_out_R2.fastq")),
         b1 = temporary(os.path.join(PSEQDIR, "{sample}_bad_out_R1.fastq")),
         b2 = temporary(os.path.join(PSEQDIR, "{sample}_bad_out_R2.fastq"))
     conda: "envs/prinseq.yaml"
@@ -97,16 +100,16 @@ rule megahit_assemble:
         s2 = os.path.join(PSEQDIR, "{sample}_single_out_R2.fastq")
     output:
         os.path.join(ASSDIR, "{sample}/final.contigs.fa"),
+        os.path.join(ASSDIR, "{sample}/log"),
         temporary(os.path.join(ASSDIR, "{sample}/checkpoints.txt")),
         temporary(os.path.join(ASSDIR, "{sample}/done")),
         temporary(directory(os.path.join(ASSDIR, "{sample}/intermediate_contigs"))),
-        temporary(os.path.join(ASSDIR, "{sample}/log")),
         temporary(os.path.join(ASSDIR, "{sample}/options.json"))
     params:
         odir = directory(os.path.join(ASSDIR, '{sample}'))
     resources:
-        mem_mb=20000,
-        cpus=8
+        mem_mb=64000,
+        cpus=16
     conda:
         "envs/megahit.yaml"
     shell:
@@ -148,7 +151,7 @@ rule index_contigs:
         ridx1 = temporary(os.path.join(CRMDIR, "round1_contigs.rev.1.bt2l")),
         ridx2 = temporary(os.path.join(CRMDIR, "round1_contigs.rev.2.bt2l"))
     resources:
-        mem_mb=20000,
+        mem_mb=64000,
         cpus=8
     conda:
         "envs/bowtie.yaml"
@@ -370,7 +373,7 @@ rule final_assembly_stats:
         os.path.join(STATS, "final_assembly.txt")
     shell:
         """
-        countfasta.py -f {input} > {output}
+        ~/GitHubs/EdwardsLab/bin/countfasta.py -f {input} > {output}
         """
 
 
@@ -440,6 +443,8 @@ rule bai_final_bams:
         os.path.join(RMRD, "{sample}.final_contigs.bam")
     output:
         os.path.join(RMRD, "{sample}.final_contigs.bam.bai")
+    conda:
+        "envs/bowtie.yaml"
     shell:
         "samtools index {input}"
 

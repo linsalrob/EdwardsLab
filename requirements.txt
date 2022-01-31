@@ -6,6 +6,7 @@ numpy
 pandas
 PhiSpy
 pybtex
+jupyter
 pymongo
 requests
 scipy
@@ -16,4 +17,9 @@ scikit-learn
 pytz
 ipython
 openpyxl
-
+h5py
+pysam
+bs4
+lxml
+plotly
+suffix_trees

@@ -1,3 +1,4 @@
+#!/usr/bin/env python
 """
 Separate a single genbank file with lots of entries into a directory of single files.
 """
