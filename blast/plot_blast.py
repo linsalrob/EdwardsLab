@@ -266,8 +266,11 @@ if __name__ == "__main__":
     parser.add_argument('-w', help='window width to merge for plot (default=5000bp) (only affects plot)', default=5000, type=int)
     parser.add_argument('-y', help='maximum y value to plot (default = all hits)', type=int, default=0)
     parser.add_argument('-n', help='suppress the plot (no plot)', action='store_true')
-    parser.add_argument('-k', help='include contig breaks (default=no breaks', action='store_true')
-    parser.add_argument('-p', help='print a list of the contigs (in order) as they are added to the image', action='store_true')
+    parser.add_argument('-k', help='include contig breaks (default=no breaks)', action='store_true')
+    parser.add_argument('-p', action='store_true',
+                        help='print a list of the contigs (in order) as they are added to the image')
+    parser.add_argument('--artemis', action='store_true',
+                        help='print coverage plots that can be imported into artemis. These are called artemis.contigname')
     parser.add_argument('-cov', help='print the average coverage of each contig', action='store_true')
     parser.add_argument('-o', help='only use data from this contig (or these, you can use multiple -o)', action='append', default=[])
     args = parser.parse_args()
@@ -295,3 +298,12 @@ if __name__ == "__main__":
         else:
             plot_hits(hitlist, args.i, breaks=[], window=args.w, maxy=args.y)
 
+    if args.artemis:
+        os.makedirs("artemis_plots", exist_ok=True)
+        for contig in hitshash:
+            contigname=contig.replace(" ", "_")
+            with open(os.path.join("artemis_plots", f"artemis_{contigname}.tsv"), 'w') as out:
+                out.write("# BASE VAL1\n# colour 0:0:0\n")
+                for i,j in enumerate(hitshash[contig]):
+                    if j > 0:
+                        out.write(f"{i} {j}")
