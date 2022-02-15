@@ -269,7 +269,7 @@ if __name__ == "__main__":
     parser.add_argument('-k', help='include contig breaks (default=no breaks)', action='store_true')
     parser.add_argument('-p', action='store_true',
                         help='print a list of the contigs (in order) as they are added to the image')
-    parser.add_argument('--artemis', action='store_true',
+    parser.add_argument('-artemis', action='store_true',
                         help='print coverage plots that can be imported into artemis. These are called artemis.contigname')
     parser.add_argument('-cov', help='print the average coverage of each contig', action='store_true')
     parser.add_argument('-o', help='only use data from this contig (or these, you can use multiple -o)', action='append', default=[])
@@ -306,4 +306,4 @@ if __name__ == "__main__":
                 out.write("# BASE VAL1\n# colour 0:0:0\n")
                 for i,j in enumerate(hitshash[contig]):
                     if j > 0:
-                        out.write(f"{i} {j}")
+                        out.write(f"{i} {j}\n")
