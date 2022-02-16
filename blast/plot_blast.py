@@ -173,7 +173,7 @@ def print_average_coverage(hits):
     for c in hits:
         print(f"{c}\t{sum(hits[c])/len(hits[c])}")
 
-def plot_hits(hits, outputfile, breaks=[], window=0, maxy=0):
+def plot_hits(hits, outputfile, breaks=[], window=0, maxy=0, width=6.4, height=4.8):
     '''
     Plot the hits!
     :param breaks: An optional list of contig breakpoints to be added. If an empty list is provided no lines added
@@ -198,7 +198,7 @@ def plot_hits(hits, outputfile, breaks=[], window=0, maxy=0):
     cx=[200000, 200000]
     cy=[0, 1000]
 
-    fig = plt.figure()
+    fig = plt.figure(figsize=(width, height))
     ax = fig.add_subplot(111)
 
 
@@ -272,6 +272,8 @@ if __name__ == "__main__":
     parser.add_argument('-artemis', action='store_true',
                         help='print coverage plots that can be imported into artemis. These are called artemis.contigname')
     parser.add_argument('-cov', help='print the average coverage of each contig', action='store_true')
+    parser.add_argument('-width', help='image width (inches). Default=6.4', default=6.4, type=float)
+    parser.add_argument('-height', help='image height (inches). Default=4.8', default=4.8, type=float)
     parser.add_argument('-o', help='only use data from this contig (or these, you can use multiple -o)', action='append', default=[])
     args = parser.parse_args()
 
@@ -294,7 +296,7 @@ if __name__ == "__main__":
 
     if not args.n:
         if args.k:
-           plot_hits(hitlist, args.i, breaks=breaklist, window=args.w, maxy=args.y)
+           plot_hits(hitlist, args.i, breaks=breaklist, window=args.w, maxy=args.y, width=args.width, height=args.height)
         else:
             plot_hits(hitlist, args.i, breaks=[], window=args.w, maxy=args.y)
 
