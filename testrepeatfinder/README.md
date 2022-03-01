@@ -50,9 +50,23 @@ is empty, then please check `python3-embed`
 You then need to use a `c++` compiler to compile it. Put the `cflags` and `libs` in the appropriate positions:
 
 ```bash
-c++ -o repeatFinder -I/usr/include/python3.7m -I/usr/include/x86_64-linux-gnu/python3.7m  ./repeatFinder.cpp -lpython3.7m
+c++ -Wall -o repeatFinder -I/usr/include/python3.7m -I/usr/include/x86_64-linux-gnu/python3.7m  ./repeatFinder.cpp -lpython3.7m
 ```
 
+You can do this all in one step like so:
+
+```bash
+c++ -Wall -o repeatFinder $(pkg-config --cflags python3-embed) ./repeatFinder.cpp $(pkg-config --libs python3-embed)
+```
+
+## LD_LIBRARY_PATH
+
+Note: If the output from `pkg-config --libs python3-embed` includes a `-L` option (for example: `-L/home/edwa0468/miniconda3/envs/bioinformatics/lib -lpython3.8
+`) you might need to add that to your linker library path, otherwise you will get the error: `./repeatFinder: error while loading shared libraries: libpython3.8.so.1.0: cannot open shared object file: No such file or directory`
+
+```bash
+export LD_LIBRARY_PATH=$LD_LIBRARY_PATH:/home/edwa0468/miniconda3/envs/bioinformatics/lib
+```
 
 ## For debugging
 
