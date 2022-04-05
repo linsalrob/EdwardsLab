@@ -8,6 +8,7 @@ import re
 import binascii
 import gzip
 from Bio import SeqIO
+from BCBio import GFF  # bcbio-gff package
 import pandas as pd
 from .colours import message
 
@@ -353,3 +354,20 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
                                              'header'])
 
     return genecalls
+
+def genbank_to_gff(gbkf, gfff, verbose=False):
+    """
+    Convert the genbank file to a gff3 format file
+    :param gbkf: the genbank input file
+    :param gfff: the gff3 format output file
+    :param verbose: more output
+    :return: nothing
+    """
+
+    with open(out_gff, 'w') as outf:
+        for seq in genbank_seqio(gbkf):
+            if verbose:
+                sys.stderr.write(f"Parsing {seq.id}\n")
+            GFF.write(seq, outf, True)
+
+

@@ -1,4 +1,5 @@
 biopython
+bcbio-gff>=0.6.6
 datrie
 matplotlib
 networkx

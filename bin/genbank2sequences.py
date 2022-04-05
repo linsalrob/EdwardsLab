@@ -30,6 +30,7 @@ if __name__ == '__main__':
     parser.add_argument('-f', '--functions', help='output file for two column table of [protein id, function]')
     parser.add_argument('-i', '--seqid', help='Only output these sequence ID(s) [multiple -i allowed]',
                         action='append')
+    parser.add_argument('--gff3', help="Output gff3 format (experimental)")
     parser.add_argument('--phage_finder', help='make a phage finder file')
     parser.add_argument('--separate',  action='store_true',
                         help='separate output into different files (with no other options just output gbk).')
@@ -144,6 +145,10 @@ if __name__ == '__main__':
                 out.write("\t".join(map(str, tple)) + "\n")
         did = True
 
+    if args.gff3:
+        genbank_to_gff(args.genbank, args.gff3, args.v)
+        did = True
+
     if not did and args.separate:
         lastid = None
         out = None
@@ -156,6 +161,6 @@ if __name__ == '__main__':
             SeqIO.write(seq, out, 'genbank')
             out.close()
         did = True
-
+    
     if not did:
-        sys.stderr.write("Please provide either a -n, -a, -o, -p, -f output file! (or all)\n")
+        sys.stderr.write("Please provide either a -n, -a, -o, -p, -f, --gff3 output file! (or all)\n")
