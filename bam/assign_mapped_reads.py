@@ -39,7 +39,7 @@ if __name__ == "__main__":
         reads.add(seqid)
 
 
-    dests = {}
+    dests = {r:set() for r in reads}
     # read each bam file
     for bamfile in args.bam:
         bamreader = pysam.AlignmentFile(bamfile, "rb")
@@ -49,7 +49,7 @@ if __name__ == "__main__":
             if seqid.endswith('.1') or seqid.endswith(r'\1') or seqid.endswith('.2') or seqid.endswith(r'\2'):
                 seqid = seqid[:-2]
             if seqid in reads:
-                dests[seqid] = bamfile
+                dests[seqid].add(bamfile)
             else:
                 sys.stderr.write(f"ERROR. Found sequence {seqid} in the bamfile that is not in the fastq file\n")
 
@@ -59,13 +59,14 @@ if __name__ == "__main__":
     out = open(args.output, 'w')
     print(f"read\t{sampleid}", file=out)
     for r in reads:
-        if r in dests:
-            if len(dests[r]) > 1:
-                counts['ambiguous'] = counts.get('ambiguous') + 1
-                print(f"{r}\tamibguous", file=out)
-            else:
-                counts[dests[r]] = counts.get(dests[r]) + 1
-                print(f"{r}\t{dests[r]}", file=out)
+        if len(dests[r]) > 1:
+            membs = ", ".join(sorted(dests[r]))
+            counts['ambiguous'] = counts.get('ambiguous') + 1
+            print(f"{r}\tamibguous\t{membs}", file=out)
+        elif len(dests[r]) == 1:
+            membs = dests[r].pop()
+            counts[membs] = counts.get(membs) + 1
+            print(f"{r}\t{membs}", file=out)
         else:
             counts['unassigned'] = counts.get('unassigned') + 1
             print(f"{r}\tunassigned", file=out)
