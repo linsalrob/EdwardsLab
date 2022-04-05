@@ -8,7 +8,7 @@ import sys
 import gzip
 import argparse
 from roblib import genbank_to_faa, genbank_to_fna, genbank_to_orfs, genbank_to_ptt, genbank_to_functions, genbank_seqio
-from roblib import genbank
+from roblib import genbank, genbank_to_gff
 from Bio import SeqIO
 
 __author__ = 'Rob Edwards'

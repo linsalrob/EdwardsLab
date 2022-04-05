@@ -355,19 +355,24 @@ def genbank_to_pandas(gbkf, mincontiglen, ignorepartials=True, convert_selenocys
 
     return genecalls
 
-def genbank_to_gff(gbkf, gfff, verbose=False):
+def genbank_to_gff(gbkf, out_gff, verbose=False):
     """
     Convert the genbank file to a gff3 format file
     :param gbkf: the genbank input file
-    :param gfff: the gff3 format output file
+    :param out_gff: the gff3 format output file
     :param verbose: more output
     :return: nothing
     """
 
     with open(out_gff, 'w') as outf:
+        """
         for seq in genbank_seqio(gbkf):
             if verbose:
-                sys.stderr.write(f"Parsing {seq.id}\n")
+                sys.stderr.write(f"Parsing {seq.id} with first seq: {seq.seq[0:10]}\n")
             GFF.write(seq, outf, True)
+        """
+        if verbose:
+            sys.stderr.write(f"Parsing {gbkf} to GFF3\n")
+        GFF.write(genbank_seqio(gbkf), outf, True)
 
 

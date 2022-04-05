@@ -18,6 +18,7 @@ from .rob_error import SequencePairError, FastqFormatError
 from .colours import colours, colors, message
 from .genbank import genbank_to_faa, genbank_to_fna, genbank_to_orfs, genbank_seqio
 from .genbank import genbank_to_ptt, genbank_to_functions, feature_id, genbank_to_pandas
+from .genbank import genbank_to_gff
 from .file_chooser import choose_a_file, write_a_file
 
 __all__ = [
@@ -32,6 +33,6 @@ __all__ = [
     'bcolors', 'colours', 'colors', 'message',
     'SequencePairError', 'FastqFormatError',
     'genbank_to_faa', 'genbank_to_fna', 'genbank_to_orfs', 'genbank_to_ptt', 'genbank_seqio', 'genbank_to_functions',
-    'feature_id', 'genbank_to_pandas',
+    'feature_id', 'genbank_to_pandas', 'genbank_to_gff',
     'choose_a_file', 'write_a_file'
     ]
