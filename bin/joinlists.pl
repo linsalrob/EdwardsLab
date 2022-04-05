@@ -4,13 +4,14 @@
 
 use strict;
 
-my $header; my @files; my $filetitle; my $zero = ""; my $skip=0;
+my $header; my @files; my $filetitle; my $zero = ""; my $skip=0; my $sort = 0;
 while (@ARGV) {
 	my $t=shift @ARGV;
 	if ($t eq "-h") {$header=1}
 	elsif ($t eq "-t") {$filetitle=1}
 	elsif ($t eq "-z") {$zero=0}
 	elsif ($t eq "-s") {$skip=1}
+	elsif ($t eq "--sort") {$sort = 1}
 	elsif (-e $t) {push @files, $t}
 	else {
 		print STDERR "Don't understand $t\n";
@@ -30,10 +31,15 @@ the rest of the columns the values
 -t use the file names as titles in the output
 -z use 0 instead of null for non-existent values
 -s skip lines that start #
+--sort sort the file names before joining
 
 EOF
 
 die;
+}
+
+if ($sort) {
+	@files = sort {lc($a) cmp lc($b)} @files;
 }
 
 my $data; my %allkeys; my $headers; 
