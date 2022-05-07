@@ -20,10 +20,12 @@ if __name__ == "__main__":
     args = parser.parse_args()
 
     counts = {}
+    filecount = 0
     for dirpath, dirname, filename in os.walk(args.d):
         for paf in filename:
             if args.v:
-                sys.stderr.write(f"Processing {os.path.join(dirpath, paf)}")
+                sys.stderr.write(f"Processing {os.path.join(dirpath, paf)}\n")
+            filecount += 1
             with gzip.open(os.path.join(dirpath, paf), 'rt') as fin:
                 for l in fin:
                     p = l.strip().split("\t")
@@ -32,6 +34,8 @@ if __name__ == "__main__":
                     counts[p[5]][0] += int(p[9])
                     counts[p[5]][1] += int(p[10])
 
-    for contig in counts:
-        print(f"{contig}\t{counts[0]}\t{counts[1]}\t{counts[contig][0]/counts[contig][1]}")
+    sys.stderr.write(f"Processed {filecount} PAF files\n")
+    with open(args.o, 'w') as out:
+        for contig in counts:
+            out.write(f"{contig}\t{counts[contig][0]}\t{counts[contig][1]}\t{counts[contig][0]/counts[contig][1]}\n")
 
