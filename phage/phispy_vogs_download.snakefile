@@ -34,6 +34,7 @@ Configs we need:
 
 import os
 import sys
+import gzip
 
 
 if 'filelist' not in config:
@@ -70,24 +71,30 @@ def get_samples():
         for l in f:
             samples[l.strip()] = ""
 
-    with open(config['assembly'], 'r') as f:
-        for l in f:
-            if l.startswith("#"):
-                continue
-            p = l.strip().split("\t")
-            # we strip off the protocol because we prefer rsync but fall
-            # fall back to curl if that doesn't work
-            if p[0] not in samples:
-                continue
-            if p[19] == "na":
-                samples.pop(p[0])
-                continue
-            # remove the protocol
-            p[19] = p[19].replace("https://", "", 1)
-            p[19] = p[19].replace("http://", "", 1)
-            p[19] = p[19].replace("ftp://", "", 1)
-            ass_id = p[19].split("/")[-1]
-            samples[p[0]] = f"{p[19]}/{ass_id}_genomic.gbff.gz"
+    if config['assembly'].endswith('.gz'):
+        f = gzip.open(config['assembly'], 'rt')
+    else:
+        f = open(config['assembly'], 'r')
+
+    for l in f:
+        if l.startswith("#"):
+            continue
+        p = l.strip().split("\t")
+        # we strip off the protocol because we prefer rsync but fall
+        # fall back to curl if that doesn't work
+        if p[0] not in samples:
+            continue
+        if p[19] == "na":
+            samples.pop(p[0])
+            continue
+        # remove the protocol
+        p[19] = p[19].replace("https://", "", 1)
+        p[19] = p[19].replace("http://", "", 1)
+        p[19] = p[19].replace("ftp://", "", 1)
+        ass_id = p[19].split("/")[-1]
+        samples[p[0]] = f"{p[19]}/{ass_id}_genomic.gbff.gz"
+
+    f.close()
 
     return list(samples.keys()), samples
 
