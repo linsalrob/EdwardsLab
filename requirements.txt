@@ -24,3 +24,5 @@ bs4
 lxml
 plotly
 suffix_trees
+tk
+
