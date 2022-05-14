@@ -62,7 +62,7 @@ def get_url(wildcards):
 def get_directories(samps):
     d = []
     for s in samps:
-        d.append(os.path.join(config['output'], s[0:9], s[0:13]))
+        d.append(os.path.join(s[0:9], s[0:13]))
     return d
 
 def get_samples():
@@ -76,23 +76,23 @@ def get_samples():
     else:
         f = open(config['assembly'], 'r')
 
-    for l in f:
-        if l.startswith("#"):
-            continue
-        p = l.strip().split("\t")
-        # we strip off the protocol because we prefer rsync but fall
-        # fall back to curl if that doesn't work
-        if p[0] not in samples:
-            continue
-        if p[19] == "na":
-            samples.pop(p[0])
-            continue
-        # remove the protocol
-        p[19] = p[19].replace("https://", "", 1)
-        p[19] = p[19].replace("http://", "", 1)
-        p[19] = p[19].replace("ftp://", "", 1)
-        ass_id = p[19].split("/")[-1]
-        samples[p[0]] = f"{p[19]}/{ass_id}_genomic.gbff.gz"
+        for l in f:
+            if l.startswith("#"):
+                continue
+            p = l.strip().split("\t")
+            # we strip off the protocol because we prefer rsync but fall
+            # fall back to curl if that doesn't work
+            if p[0] not in samples:
+                continue
+            if p[19] == "na":
+                samples.pop(p[0])
+                continue
+            # remove the protocol
+            p[19] = p[19].replace("https://", "", 1)
+            p[19] = p[19].replace("http://", "", 1)
+            p[19] = p[19].replace("ftp://", "", 1)
+            ass_id = p[19].split("/")[-1]
+            samples[p[0]] = f"{p[19]}/{ass_id}_genomic.gbff.gz"
 
     f.close()
 
@@ -105,10 +105,10 @@ rule all:
     input:
         expand(
             [
-                os.path.join("{directory}", "VOGS", "{sample}_VOGS_phispy.log.gz"),
-                os.path.join("{directory}", "VOGS", "{sample}_VOGS_prophage_coordinates.tsv.gz"),
-                os.path.join("{directory}", "VOGS", "{sample}_VOGS_phage.gbk.gz"),
-                os.path.join("{directory}", "VOGS", "{sample}_VOGS_protein_functions.txt.gz")
+                os.path.join(config['output'], "{directory}", "VOGS", "{sample}_VOGS_phispy.log.gz"),
+                os.path.join(config['output'], "{directory}", "VOGS", "{sample}_VOGS_prophage_coordinates.tsv.gz"),
+                os.path.join(config['output'], "{directory}", "VOGS", "{sample}_VOGS_phage.gbk.gz"),
+                os.path.join(config['output'], "{directory}", "VOGS", "{sample}_VOGS_protein_functions.txt.gz")
             ], zip, sample=SAMPLES, directory=DIRS)
 
 
@@ -123,15 +123,16 @@ rule download_genbank:
     so unaliasing that unsets it
     """
     output:
-        temporary(os.path.join(config['gbk'], "{sample}_genomic.gbff.gz"))
+        gbf = os.path.join(config['gbk'], "{directory}", "{sample}_genomic.gbff.gz")
     params:
         url = get_url,
-        gbd = config['gbk']
+        gbd = os.path.join(config['gbk'], "{directory}")
     shell:
         """
         set +e
         unalias rsync
-        rsync --copy-links --recursive --times --verbose rsync://{params.url} {params.gbd}
+        mkdir --parents {params.gbd}
+        rsync --copy-links --recursive --times --verbose rsync://{params.url} {output.gbf}
         exitcode=$?
         if [ $exitcode == 10 ]
         then
@@ -145,16 +146,16 @@ rule download_genbank:
 
 rule run_phispy:
     input:
-        os.path.join(config['gbk'], "{sample}_genomic.gbff.gz")
+        os.path.join(config['gbk'], "{directory}", "{sample}_genomic.gbff.gz")
     output:
-        temporary(os.path.join('{directory}', "VOGS", "{sample}_VOGS_bacteria.fasta")),
-        temporary(os.path.join('{directory}', "VOGS", "{sample}_VOGS_phage.fasta")),
-        os.path.join('{directory}',"VOGS", "{sample}_VOGS_phispy.log"),
-        temporary(os.path.join('{directory}', "VOGS", "{sample}_VOGS_bacteria.gbk")),
-        os.path.join('{directory}', "VOGS", "{sample}_VOGS_phage.gbk"),
-        os.path.join('{directory}', "VOGS", "{sample}_VOGS_prophage_coordinates.tsv"),
+        temporary(os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_bacteria.fasta")),
+        temporary(os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_phage.fasta")),
+        os.path.join(config['output'], '{directory}',"VOGS", "{sample}_VOGS_phispy.log"),
+        temporary(os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_bacteria.gbk")),
+        os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_phage.gbk"),
+        os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_prophage_coordinates.tsv"),
     params:
-        phispydir = os.path.join('{directory}', "VOGS"),
+        phispydir = os.path.join(config['output'], '{directory}', "VOGS"),
         sample = "{sample}_VOGS"
     shell:
         """
@@ -171,35 +172,35 @@ rule run_phispy:
 
 rule gzip_log:
     input:
-        os.path.join('{directory}', "VOGS", "{sample}_VOGS_phispy.log")
+        os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_phispy.log")
     output:
-        os.path.join('{directory}', "VOGS", "{sample}_VOGS_phispy.log.gz")
+        os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_phispy.log.gz")
     shell:
         "gzip {input}"
 
 rule gzip_gbk:
     input:
-        gbk = os.path.join('{directory}', "VOGS", "{sample}_VOGS_phage.gbk"),
-        pc = os.path.join('{directory}', "VOGS", "{sample}_VOGS_prophage_coordinates.tsv.gz"),
-        pf = os.path.join('{directory}', "VOGS", "{sample}_VOGS_protein_functions.txt.gz"),
+        gbk = os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_phage.gbk"),
+        pc = os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_prophage_coordinates.tsv.gz"),
+        pf = os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_protein_functions.txt.gz"),
     output:
-        os.path.join('{directory}', "VOGS", "{sample}_VOGS_phage.gbk.gz")
+        os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_phage.gbk.gz")
     shell:
         "gzip {input.gbk}"
 
 rule gzip_tsv:
     input:
-        os.path.join('{directory}', "VOGS", "{sample}_VOGS_prophage_coordinates.tsv")
+        os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_prophage_coordinates.tsv")
     output:
-        os.path.join('{directory}', "VOGS", "{sample}_VOGS_prophage_coordinates.tsv.gz")
+        os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_prophage_coordinates.tsv.gz")
     shell:
         "gzip {input}"
         
 rule create_phage_protein_list:
     input:
-        gbk = os.path.join('{directory}', "VOGS", "{sample}_VOGS_phage.gbk")
+        gbk = os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_phage.gbk")
     output:
-        txt = os.path.join('{directory}', "VOGS", "{sample}_VOGS_protein_functions.txt")
+        txt = os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_protein_functions.txt")
     shell:
         """
         python3 ~/GitHubs/EdwardsLab/bin/genbank2sequences.py -g {input.gbk} --functions {output.txt}
@@ -207,9 +208,9 @@ rule create_phage_protein_list:
     
 rule gzip_pl:
     input:
-        os.path.join('{directory}', "VOGS", "{sample}_VOGS_protein_functions.txt")
+        os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_protein_functions.txt")
     output:
-        os.path.join('{directory}', "VOGS", "{sample}_VOGS_protein_functions.txt.gz")
+        os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_protein_functions.txt.gz")
     shell:
         "gzip {input}"
 
