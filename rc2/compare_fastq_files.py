@@ -25,21 +25,25 @@ if __name__ == "__main__":
     for f in os.listdir(args.d):
         subdir = os.path.join(args.d, f)
         if os.path.isdir(subdir):
+            if args.v:
+                sys.stderr.write(f"Reading {f}\n")
             alldirs.append(f)
             for fq in os.listdir(subdir):
                 if fq.startswith('index'):
                     continue
                 if not fq.endswith('.gz'):
-                    sys.stderr.write(f"Not gzip compressed: {os.path.join(subdir, fq)}")
+                    sys.stderr.write(f"Not gzip compressed: {os.path.join(subdir, fq)}\n")
                     continue
                 if fq not in hashes:
                     hashes[fq] = {}
                 file_hash = hashlib.blake2b()
-                with open(os.path.join(subdir, fq), 'rb') as f:
-                    while chunk := f.read(8192):
+                with open(os.path.join(subdir, fq), 'rb') as fin:
+                    while chunk := fin.read(8192):
                         file_hash.update(chunk)
-                hashes[fq][subdir] = file_hash.hexdigest()
+                hashes[fq][f] = file_hash.hexdigest()
 
+    if args.v:
+        sys.stderr.write(f"Output to {args.o}\n")
     with open(args.o, 'w') as out:
         out.write("\t".join(["fastq"] + alldirs))
         out.write("\n")
