@@ -129,17 +129,6 @@ rule download_genbank:
         gbd = os.path.join(config['gbk'], "{directory}")
     shell:
         """
-        echo "y"
-        """
-
-
-rule nothing:
-    input:
-        "xxx"
-    output:
-        "yyy"
-    shell:
-        """
         set +e
         unalias rsync
         mkdir --parents {params.gbd}
