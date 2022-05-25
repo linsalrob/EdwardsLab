@@ -15,7 +15,7 @@ and then process it using phispy
 
 NOTES:
 
-    1. unalias rsync before proceeding
+    1. unalias rsync before proceeding. 
     2. best way to run this is on the cluster with ~100 genomes per file
        otherwise the DAG gets confusing for snakemake.
     3. Provide all the configs on the command line because then you can 
@@ -124,13 +124,15 @@ rule download_genbank:
     """
     output:
         gbf = os.path.join(config['gbk'], "{directory}", "{sample}_genomic.gbff.gz")
+    resources:
+        load_onehundred=10
     params:
         url = get_url,
         gbd = os.path.join(config['gbk'], "{directory}")
     shell:
         """
         set +e
-        unalias rsync
+        if alias rsync 2>/dev/null; then unalias rsync; fi
         mkdir --parents {params.gbd}
         rsync --copy-links --recursive --times --verbose rsync://{params.url} {output.gbf}
         exitcode=$?
@@ -156,12 +158,13 @@ rule run_phispy:
         os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_prophage_coordinates.tsv"),
     params:
         phispydir = os.path.join(config['output'], '{directory}', "VOGS"),
-        sample = "{sample}_VOGS"
+        sample = "{sample}_VOGS",
+	vogs=config['vogs']
     shell:
         """
         set +e
         mkdir --parents phispydir;
-        PhiSpy.py -o {params.phispydir} --quiet --output_choice 5 -p {params.sample} --phmms /home3/redwards/VOGs/VOGs.hmm {input}
+        PhiSpy.py -o {params.phispydir} --quiet --output_choice 5 -p {params.sample} --phmms {params.vogs} {input}
         exitcode=$?
         if [ $exitcode -gt 19 ]
         then
