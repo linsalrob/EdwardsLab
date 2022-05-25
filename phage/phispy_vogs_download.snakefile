@@ -27,6 +27,7 @@ Configs we need:
     2. output: directory base where to write the files (e.g. phispy_20220130)
     3. gbk: directory where to store the genomes and/or look for them
     4. assembly: the latest assembly summary from genbank. We use this to get the URLs
+    5. vogs: full path to the VOGdb hmms. e.g  /home3/redwards/VOGs/VOGs.hmm (we use version 99 because that was what was available in 2020)
 
 
 """
@@ -52,6 +53,10 @@ if 'gbk' not in config:
 
 if 'assembly' not in config:
     sys.stderr.write("FATAL: Please provide the genbank assembly summary file\n")
+    sys.exit(0)
+
+if 'vogs' not in config:
+    sys.stderr.write("FATAL: Please provide the location of the vogs. E.g. /home3/redwards/VOGs/VOGs.hmm\n")
     sys.exit(0)
 
 
