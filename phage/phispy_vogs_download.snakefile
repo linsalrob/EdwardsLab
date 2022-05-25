@@ -113,8 +113,10 @@ rule all:
                 os.path.join(config['output'], "{directory}", "VOGS", "{sample}_VOGS_phispy.log.gz"),
                 os.path.join(config['output'], "{directory}", "VOGS", "{sample}_VOGS_prophage_coordinates.tsv.gz"),
                 os.path.join(config['output'], "{directory}", "VOGS", "{sample}_VOGS_phage.gbk.gz"),
-                os.path.join(config['output'], "{directory}", "VOGS", "{sample}_VOGS_protein_functions.txt.gz")
             ], zip, sample=SAMPLES, directory=DIRS)
+                
+# removed this because we don't need              
+# os.path.join(config['output'], "{directory}", "VOGS", "{sample}_VOGS_protein_functions.txt.gz")
 
 
 rule download_genbank:
