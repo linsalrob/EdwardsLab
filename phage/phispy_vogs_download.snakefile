@@ -192,7 +192,6 @@ rule gzip_gbk:
     input:
         gbk = os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_phage.gbk"),
         pc = os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_prophage_coordinates.tsv.gz"),
-        pf = os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_protein_functions.txt.gz"),
     output:
         os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_phage.gbk.gz")
     shell:
@@ -206,21 +205,3 @@ rule gzip_tsv:
     shell:
         "gzip {input}"
         
-rule create_phage_protein_list:
-    input:
-        gbk = os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_phage.gbk")
-    output:
-        txt = os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_protein_functions.txt")
-    shell:
-        """
-        python3 ~/GitHubs/EdwardsLab/bin/genbank2sequences.py -g {input.gbk} --functions {output.txt}
-        """
-    
-rule gzip_pl:
-    input:
-        os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_protein_functions.txt")
-    output:
-        os.path.join(config['output'], '{directory}', "VOGS", "{sample}_VOGS_protein_functions.txt.gz")
-    shell:
-        "gzip {input}"
-
