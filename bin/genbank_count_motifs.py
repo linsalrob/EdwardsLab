@@ -19,8 +19,9 @@ if __name__ == "__main__":
 
     motif = args.m.upper()
 
+    print("File\tContig\tLength\tNumber matches")
     for seq in genbank_seqio(args.f, args.v):
         dna = seq.seq.upper()
         count = dna.count(motif)
         count += dna.count(rc(motif))
-        print(f"{args.f}\t{seq.id}\t{count}")
+        print(f"{args.f}\t{seq.id}\t{len(dna)}\t{count}")
