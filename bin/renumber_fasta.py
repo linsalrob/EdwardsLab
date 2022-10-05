@@ -18,6 +18,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-f', help='input file', required=True)
     parser.add_argument('-o', help='output file', required=True)
+    parser.add_argument('-d', help='input directory of files')
     parser.add_argument('-i', help='id mapping file', required=True)
     parser.add_argument('-n', help='number to start from. Default: 1', type=int, default=1)
     parser.add_argument('-x', help='maximum number of sequences to write out', type=int)
