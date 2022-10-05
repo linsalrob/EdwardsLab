@@ -10,21 +10,46 @@ else {open(IN, $file) || die "$! $file"}
 
 
 my $indna = 0;
-my $first = 0;
+my $defn;
+my $id;
+my $seq;
 while (<IN>) {
 	if (index($_, "LOCUS") == 0) {
 		my @a=split /\s+/;
-		print "\n" if ($first);
-		$first = 1;
-		print ">$a[1]\n";
+		$id = $a[1];
+		next;
+	}
+	if (index($_, "DEFINITION") == 0) {
+		chomp;
+		s/DEFINITION\s+//;
+		$defn = $_;
+		my $line = <IN>;
+		while (index($line, " ") == 0) {
+			chomp($line);
+			$defn .= $line;
+			$line = <IN>;
+		}
+		$defn =~ s/\s+/ /g;
 		next;
 	}
 	if (index($_, "ORIGIN") == 0) {$indna = 1; next}
-	if (index($_, "//") == 0) {$indna = 0; next}
+	if (index($_, "//") == 0) {
+		$indna = 0;
+		if ($id && $defn && $seq) {
+			print ">$id [$defn]\n$seq\n";
+		} elsif ($id && $seq) {
+			print STDERR "NO DEFN FOR $id\n";
+			print ">$id [NONE]\n$seq\n";
+		} elsif ($seq) {
+			print STDERR "NO ID for $seq in $file\n";
+		}
+		($id, $defn, $seq)=(undef, undef, undef);
+		next
+	}
 	next unless ($indna);
 	chomp;
 	s/[\d\s]+//g;
-	print;
+	$seq .= $_;
 }
 close IN;
 
