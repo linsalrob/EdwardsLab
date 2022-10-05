@@ -86,7 +86,7 @@ def stream_fastq(fqfile):
         if not header:
             break
         if not header.startswith("@"):
-            raise FastqFormatError(f"The file does not appear to be a four-line fastq file at line {linecounter}")
+            raise FastqFormatError(f"The file {fqfile} does not appear to be a four-line fastq file at line {linecounter}")
         header = header.strip()
         seqidparts = header.split(' ')
         seqid = seqidparts[0]
