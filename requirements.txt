@@ -1,5 +1,6 @@
 biopython
 bcbio-gff>=0.6.6
+crc64iso
 datrie
 matplotlib
 networkx
