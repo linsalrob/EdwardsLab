@@ -5,19 +5,30 @@ convert a bibtex file to tsv
 import os
 import sys
 import argparse
+from roblib_tk import choose_a_file, write_a_file
 from bibtex import parse_bibtex_file
 
 __author__ = 'Rob Edwards'
 
 if __name__ == "__main__":
     parser = argparse.ArgumentParser()
-    parser.add_argument('-f', help='input bibtext file', required=True)
-    parser.add_argument('-o', help='output tsv file', required=True)
+    parser.add_argument('-f', help='input bibtext file')
+    parser.add_argument('-o', help='output tsv file')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    bt = parse_bibtex_file(args.f, args.v)
-    out = open(args.o, "w", encoding="utf-8")
+    if args.f:
+        bt = parse_bibtex_file(args.f, args.v)
+    else:
+        filename = choose_a_file("Choose a bibtex file")
+        bt = parse_bibtex_file(filename, False)
+
+    if args.o:
+        out = open(args.o, "w", encoding="utf-8")
+    else:
+        filename = write_a_file("Where to save the results")
+        out = open(filename, "w", encoding="utf-8")
+
 
 
     fields = ["year", "title", "booktitle", "journal", "volume", "number", "organization", "pages", "publisher", "school", "institution"]
