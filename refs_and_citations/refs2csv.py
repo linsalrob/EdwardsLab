@@ -5,7 +5,7 @@ convert a bibtex file to tsv
 import os
 import sys
 import argparse
-from roblib import choose_a_file, write_a_file
+from roblib_tk import choose_a_file, write_a_file
 from bibtex import parse_bibtex_file
 
 __author__ = 'Rob Edwards'

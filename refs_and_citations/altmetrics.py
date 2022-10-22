@@ -7,7 +7,8 @@ We expect a link, but will check for it
 import os
 import sys
 import argparse
-from roblib import message, choose_a_file, write_a_file
+from roblib import message
+from roblib_tk import choose_a_file, write_a_file
 import requests
 import re
 from bs4 import BeautifulSoup
