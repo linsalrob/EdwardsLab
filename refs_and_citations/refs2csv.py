@@ -5,7 +5,8 @@ convert a bibtex file to tsv
 import os
 import sys
 import argparse
-from bibtex import parse_bibtex_file
+from roblib import message
+from pybtex.database import parse_file, BibliographyData
 
 __author__ = 'Rob Edwards'
 
@@ -16,7 +17,9 @@ if __name__ == "__main__":
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
 
-    bt = parse_bibtex_file(args.f, args.v)
+    if args.v:
+        message(f"Parsing {args.f}", "GREEN")
+    bt = parse_file(args.f, 'bibtex')
     out = open(args.o, "w", encoding="utf-8")
 
 
