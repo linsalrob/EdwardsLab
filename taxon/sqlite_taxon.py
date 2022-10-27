@@ -190,59 +190,89 @@ def create_load(conn, datadir, verbose=False):
 
     return conn
 
-def not_used(conn, datadir, verbose=False):
+def accession2taxid(conn, datadir, verbose=False):
     """
-    Unreachable code!
-    
-    The following two sections are deprecated because NCBI no longer supports gi_taxid tables directly
-    
-    However, there is the new accession2taxid folder with similar data and we should update this code
-    with that folder.
-
-    This is here as legacy code
+    This uses the (not so) new accession2taxid tables to load protein IDs
     """
 
-    # the gi_taxid
-    dbfile = os.path.join(datadir, "gi_taxid_nucl.dmp.gz")
+    if not os.path.exists(datadir):
+        print(f"ERROR: {datadir} does not exist. Can not load accession2taxid", file=sys.stderr)
+        return
     if verbose:
-        sys.stderr.write("loading GI_TAXID (NUCL) table: {}\n".format(dbfile))
-    if not os.path.exists(dbfile):
-        sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
-        sys.exit(-1)
-    conn.execute("CREATE TABLE gi_taxid_nucl (gi INTEGER PRIMARY KEY, tax_id INTEGER)")
-    conn.commit()
-    with gzip.open(dbfile, "rt") as f:
-        for l in f:
-            p = l.strip().split('\t')
-            p = [x.strip() for x in p]
-            try:
-                conn.execute("INSERT INTO gi_taxid_nucl VALUES (?, ?)", p)
-            except sqlite3.OperationalError as e:
-                sys.stderr.write("{}".format(e))
-                sys.stderr.write("\nWhile insert on: {}\n".format(p))
-                sys.exit()
-    conn.commit()
+        print(f"Loading databases in {datadir}", file=sys.stderr)
 
-    # the gi_taxid
-    dbfile = os.path.join(datadir, "gi_taxid_prot.dmp.gz")
-    if verbose:
-        sys.stderr.write("loading GI_TAXID (PROT) table: {}\n".format(dbfile))
-    if not os.path.exists(dbfile):
-        sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
-        sys.exit(-1)
-    conn.execute("CREATE TABLE gi_taxid_prot (gi INTEGER PRIMARY KEY, tax_id INTEGER)")
-    conn.commit()
-    with gzip.open(dbfile, "rt") as f:
-        for l in f:
-            p = l.strip().split('\t')
-            p = [x.strip() for x in p]
-            try:
-                conn.execute("INSERT INTO gi_taxid_prot VALUES (?, ?)", p)
-            except sqlite3.OperationalError as e:
-                sys.stderr.write("{}".format(e))
-                sys.stderr.write("\nWhile insert on: {}\n".format(p))
-                sys.exit()
-    conn.commit()
+    protein_acc_ver = set()
+    for protfile in ["prot.accession2taxid.FULL.gz", "prot.accession2taxid.gz"]:
+        dbfile = os.path.join(datadir, protfile)
+        if verbose:
+            print(f"loading prot2taxid (NUCL) table: {dbfile}", file=sys.stderr)
+        if not os.path.exists(dbfile):
+            print("ERROR: {dbfile} does not exist", file=sys.stderr)
+            continue
+
+        conn.execute("CREATE TABLE prot2taxid (accession TEXT, accession_version TEXT PRIMARY KEY, tax_id INTEGER)")
+        conn.commit()
+        with gzip.open(dbfile, "rt") as f:
+            for l in f:
+                p = l.strip().split('\t')
+                p = [x.strip() for x in p]
+                (thisacc, thisaccver, thistid) = (None, None, None)
+                if len(p) == 4:
+                    if p[1] not in protein_acc_ver:
+                        protein_acc_ver.add(p[1])
+                        (thisacc, thisaccver, thistid) = p[0], p[1], p[2]
+                elif len(p) == 2:
+                    if p[0] not in protein_acc_ver:
+                        protein_acc_ver.add(p[0])
+                        (thisacc, thisaccver, thistid) = None, p[0], p[1]
+                else:
+                    print(f"Error. Was not expecting {len(p)} columns in {dbfile} from {l}",
+                          file=sys.stderr)
+                    continue
+
+                if thisaccver:
+                    try:
+                        conn.execute("INSERT INTO prot2taxid (accession, accession_version, tax_id) VALUES (?, ?, ?)", [thisacc, thisaccver, thistid])
+                    except sqlite3.OperationalError as e:
+                        sys.stderr.write("{}".format(e))
+                        sys.stderr.write("\nWhile insert on: {}\n".format(p))
+                        sys.exit()
+
+        conn.commit()
+
+
+    nucl_acc_ver = set()
+    for nuclfile in ["nucl_gb.accession2taxid.gz", "nucl_wgs.accession2taxid.EXTRA.gz", "nucl_wgs.accession2taxid.gz"]:
+        dbfile = os.path.join(datadir, nuclfile)
+        if verbose:
+            print(f"loading nucl2taxid table: {dbfile}", file=sys.stderr)
+        if not os.path.exists(dbfile):
+            print("ERROR: {dbfile} does not exist", file=sys.stderr)
+            continue
+        conn.execute("CREATE TABLE nucl2taxid (accession TEXT, accession_version TEXT PRIMARY KEY, tax_id INTEGER)")
+        conn.commit()
+        with gzip.open(dbfile, "rt") as f:
+            for l in f:
+                p = l.strip().split('\t')
+                p = [x.strip() for x in p]
+                (thisacc, thisaccver, thistid) = (None, None, None)
+                if len(p) == 4 or len(p) == 3:
+                    if p[1] not in nucl_acc_ver:
+                        nucl_acc_ver.add(p[1])
+                        (thisacc, thisaccver, thistid) = p[0], p[1], p[2]
+                else:
+                    print(f"Error. Was not expecting {len(p)} columns in {dbfile} from {l}",
+                          file=sys.stderr)
+                    continue
+                if not thisaccver:
+                    continue
+                try:
+                    conn.execute("INSERT INTO nucl2taxid (accession, accession_version, tax_id) VALUES (?, ?, ?)", [thisacc, thisaccver, thistid])
+                except sqlite3.OperationalError as e:
+                    sys.stderr.write("{}".format(e))
+                    sys.stderr.write("\nWhile insert on: {}\n".format(p))
+                    sys.exit()
+        conn.commit()
 
 
     return conn
@@ -295,5 +325,7 @@ if __name__ == '__main__':
 
     conn = connect_to_db(args.p, args.s, args.v)
     conn = create_load(conn, args.d, args.v)
+    if os.path.exists(os.path.join(args.d, "accession2taxid")):
+        conn = accession2taxid(conn, os.path.join(args.d, "accession2taxid"), args.v)
     conn = create_indices(conn, args.v)
     disconnect(conn, args.v)
