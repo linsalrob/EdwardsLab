@@ -76,7 +76,7 @@ def create_load(conn, datadir, verbose=False):
             p = l.strip().rstrip("|").split('\t|')
             p = [x.strip() for x in p]
             try:
-                conn.execute("INSERT INTO nodes VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", p)
+                conn.execute("INSERT OR IGNORE INTO nodes VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)", p)
             except sqlite3.OperationalError as e:
                 sys.stderr.write("{}".format(e))
                 sys.stderr.write("\nWhile insert on: {}\n".format(p))
@@ -98,7 +98,7 @@ def create_load(conn, datadir, verbose=False):
             p = l.strip().rstrip("|").split('\t|')
             p = [x.strip() for x in p]
             try:
-                conn.execute("INSERT INTO names VALUES (?, ?, ?, ?)", p)
+                conn.execute("INSERT OR IGNORE INTO names VALUES (?, ?, ?, ?)", p)
             except sqlite3.OperationalError as e:
                 sys.stderr.write("{}".format(e))
                 sys.stderr.write("\nWhile insert on: {}\n".format(p))
@@ -119,7 +119,7 @@ def create_load(conn, datadir, verbose=False):
             p = l.strip().rstrip("|").split('\t|')
             p = [x.strip() for x in p]
             try:
-                conn.execute("INSERT INTO division VALUES (?, ?, ?, ?)", p)
+                conn.execute("INSERT OR IGNORE INTO division VALUES (?, ?, ?, ?)", p)
             except sqlite3.OperationalError as e:
                 sys.stderr.write("{}".format(e))
                 sys.stderr.write("\nWhile insert on: {}\n".format(p))
@@ -140,7 +140,7 @@ def create_load(conn, datadir, verbose=False):
             p = l.strip().rstrip("|").split('\t|')
             p = [x.strip() for x in p]
             try:
-                conn.execute("INSERT INTO gencode VALUES (?, ?, ?, ?, ?)", p)
+                conn.execute("INSERT OR IGNORE INTO gencode VALUES (?, ?, ?, ?, ?)", p)
             except sqlite3.OperationalError as e:
                 sys.stderr.write("{}".format(e))
                 sys.stderr.write("\nWhile insert on: {}\n".format(p))
@@ -161,7 +161,7 @@ def create_load(conn, datadir, verbose=False):
             p = l.strip().rstrip("|").split('\t|')
             p = [x.strip() for x in p]
             try:
-                conn.execute("INSERT INTO merged VALUES (?, ?)", p)
+                conn.execute("INSERT OR IGNORE INTO merged VALUES (?, ?)", p)
             except sqlite3.OperationalError as e:
                 sys.stderr.write("{}".format(e))
                 sys.stderr.write("\nWhile insert on: {}\n".format(p))
@@ -181,7 +181,7 @@ def create_load(conn, datadir, verbose=False):
         for l in f:
             l = l.replace("|", "").strip()
             try:
-                conn.execute("INSERT INTO deleted VALUES (?)", [l])
+                conn.execute("INSERT OR IGNORE INTO deleted VALUES (?)", [l])
             except sqlite3.OperationalError as e:
                 sys.stderr.write("{}".format(e))
                 sys.stderr.write("\nWhile insert on: {}\n".format(l))
@@ -202,6 +202,8 @@ def accession2taxid(conn, datadir, verbose=False):
         print(f"Loading databases in {datadir}", file=sys.stderr)
 
     protein_acc_ver = set()
+    conn.execute("CREATE TABLE prot2taxid (accession TEXT, accession_version TEXT PRIMARY KEY, tax_id INTEGER)")
+    conn.commit()
     for protfile in ["prot.accession2taxid.FULL.gz", "prot.accession2taxid.gz"]:
         dbfile = os.path.join(datadir, protfile)
         if verbose:
@@ -210,8 +212,6 @@ def accession2taxid(conn, datadir, verbose=False):
             print("ERROR: {dbfile} does not exist", file=sys.stderr)
             continue
 
-        conn.execute("CREATE TABLE prot2taxid (accession TEXT, accession_version TEXT PRIMARY KEY, tax_id INTEGER)")
-        conn.commit()
         with gzip.open(dbfile, "rt") as f:
             for l in f:
                 p = l.strip().split('\t')
@@ -244,7 +244,7 @@ def accession2taxid(conn, datadir, verbose=False):
 
                 if thisaccver:
                     try:
-                        conn.execute("INSERT INTO prot2taxid (accession, accession_version, tax_id) VALUES (?, ?, ?)", [thisacc, thisaccver, thistid])
+                        conn.execute("INSERT OR IGNORE INTO prot2taxid (accession, accession_version, tax_id) VALUES (?, ?, ?)", [thisacc, thisaccver, thistid])
                     except sqlite3.OperationalError as e:
                         sys.stderr.write("{}".format(e))
                         sys.stderr.write("\nWhile insert on: {}\n".format(p))
@@ -254,15 +254,15 @@ def accession2taxid(conn, datadir, verbose=False):
 
 
     nucl_acc_ver = set()
+    conn.execute("CREATE TABLE nucl2taxid (accession TEXT, accession_version TEXT PRIMARY KEY, tax_id INTEGER)")
+    conn.commit()
     for nuclfile in ["nucl_gb.accession2taxid.gz", "nucl_wgs.accession2taxid.EXTRA.gz", "nucl_wgs.accession2taxid.gz"]:
         dbfile = os.path.join(datadir, nuclfile)
         if verbose:
-            print(f"loading nucl2taxid table: {dbfile}", file=sys.stderr)
+            print(f"loading nucl2taxid (NUCL) table: {dbfile}", file=sys.stderr)
         if not os.path.exists(dbfile):
             print("ERROR: {dbfile} does not exist", file=sys.stderr)
             continue
-        conn.execute("CREATE TABLE nucl2taxid (accession TEXT, accession_version TEXT PRIMARY KEY, tax_id INTEGER)")
-        conn.commit()
         with gzip.open(dbfile, "rt") as f:
             for l in f:
                 p = l.strip().split('\t')
@@ -281,7 +281,7 @@ def accession2taxid(conn, datadir, verbose=False):
                     continue
                 if thisaccver:
                     try:
-                        conn.execute("INSERT INTO nucl2taxid (accession, accession_version, tax_id) VALUES (?, ?, ?)", [thisacc, thisaccver, thistid])
+                        conn.execute("INSERT OR IGNORE INTO nucl2taxid (accession, accession_version, tax_id) VALUES (?, ?, ?)", [thisacc, thisaccver, thistid])
                     except sqlite3.OperationalError as e:
                         sys.stderr.write("{}".format(e))
                         sys.stderr.write("\nWhile insert on: {}\n".format(p))
