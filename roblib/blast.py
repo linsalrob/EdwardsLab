@@ -35,6 +35,10 @@ class BlastResult():
 
         return self.evalue < 1e-5
 
+    def __str__(self):
+        return "\t".join(map(str, self.query, self.db, self.alignment_length, self.percent_id, self.gaps,
+                             self.mismatches, self.query_start, self.query_end, self.db_start, self.db_end,
+                             self.evalue, self.bitscore, self.query_length, self.subject_length))
 
 def stream_blast_results(blastf, verbose=False):
     """
