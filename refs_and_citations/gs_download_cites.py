@@ -15,12 +15,21 @@ __author__ = 'Rob Edwards'
 
 
 # set the list of URLs here, one per line. I use the cluster URL
-urls = """https://scholar.google.com.au/scholar?cluster=14010637174481174662&hl=en&as_sdt=0,5
-https://scholar.google.com.au/scholar?cluster=3594831305775159639&hl=en&as_sdt=0,5
-https://scholar.google.com.au/scholar?cluster=15167524751210606010&hl=en&as_sdt=0,5
-https://scholar.google.com.au/scholar?cluster=5969962267209833595&hl=en&as_sdt=0,5
-https://scholar.google.com.au/scholar?cluster=17952037617385651824&hl=en&as_sdt=0,5
-https://scholar.google.com.au/scholar?cluster=4584519224434788975&hl=en&as_sdt=0,5
+urls = """https://scholar.google.com.au/scholar?cluster=13011484634294850749&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=15948142415166130473&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=4483447249227580912&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=11513119306974836518&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=4513723272904109625&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=12765392127648450959&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=16106135173513489063&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=8144540207175036240&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=15312967259686395118&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=3453650122218310673&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=10194930186593133536&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=2653269953959691334&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=7067622931716524932&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=5911286658349579584&hl=en&as_sdt=0,5
+https://scholar.google.com.au/scholar?cluster=4555724394641856429&hl=en&as_sdt=0,5
 """
 
 
