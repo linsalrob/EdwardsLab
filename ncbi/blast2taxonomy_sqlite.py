@@ -19,7 +19,7 @@ parser.add_argument('-o', help="Output file (blast results + taxonomy", required
 parser.add_argument('-p', help='blast program (blastn, blastp, or blastx (default)', default='blastx')
 parser.add_argument('-q', help='Look for taxid of query (default is to use database', action='store_true')
 parser.add_argument('-t', help=f'taxonomy directory (default={default_tax_dir})', default=default_tax_dir)
-parser.add_argument('-v', help='verbose output')
+parser.add_argument('-v', help='verbose output', action='store_true')
 
 args = parser.parse_args()
 
