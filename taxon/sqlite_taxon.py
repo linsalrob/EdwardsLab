@@ -7,7 +7,7 @@ import sys
 import argparse
 import sqlite3
 import json
-
+import time
 from config import get_db_dir
 import gzip
 
@@ -65,7 +65,7 @@ def create_load(conn, datadir, verbose=False):
     ## The NODES table
     dbfile = os.path.join(datadir, "nodes.dmp")
     if verbose:
-        sys.stderr.write("loading NODES table: {}\n".format(dbfile))
+        print(f"loading NODES table: {dbfile} at {time.time}", file=sys.stderr)
     if not os.path.exists(dbfile):
         sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
         sys.exit(-1)
@@ -87,7 +87,7 @@ def create_load(conn, datadir, verbose=False):
     # the NAMES table
     dbfile = os.path.join(datadir, "names.dmp")
     if verbose:
-        sys.stderr.write("loading NAMES table: {}\n".format(dbfile))
+        print(f"loading NAMES table: {dbfile} at {time.time}", file=sys.stderr)
     if not os.path.exists(dbfile):
         sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
         sys.exit(-1)
@@ -108,7 +108,7 @@ def create_load(conn, datadir, verbose=False):
     # the DIVISION table
     dbfile = os.path.join(datadir, "division.dmp")
     if verbose:
-        sys.stderr.write("loading DIVISION table: {}\n".format(dbfile))
+        print(f"loading DIVISION table: {dbfile} at {time.time}", file=sys.stderr)
     if not os.path.exists(dbfile):
         sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
         sys.exit(-1)
@@ -129,7 +129,7 @@ def create_load(conn, datadir, verbose=False):
     # the GENETIC CODE table
     dbfile = os.path.join(datadir, "gencode.dmp")
     if verbose:
-        sys.stderr.write("loading GENETIC CODE table: {}\n".format(dbfile))
+        print(f"loading GENETIC CODE table: {dbfile} at {time.time}", file=sys.stderr)
     if not os.path.exists(dbfile):
         sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
         sys.exit(-1)
@@ -150,7 +150,7 @@ def create_load(conn, datadir, verbose=False):
     # the MERGED database
     dbfile = os.path.join(datadir, "merged.dmp")
     if verbose:
-        sys.stderr.write("loading MERGED table: {}\n".format(dbfile))
+        print(f"loading MERGED table: {dbfile} at {time.time}", file=sys.stderr)
     if not os.path.exists(dbfile):
         sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
         sys.exit(-1)
@@ -171,7 +171,7 @@ def create_load(conn, datadir, verbose=False):
     # The deleted nodes
     dbfile = os.path.join(datadir, "delnodes.dmp")
     if verbose:
-        sys.stderr.write("loading DELETED table: {}\n".format(dbfile))
+        print(f"loading DELETED table: {dbfile} at {time.time}", file=sys.stderr)
     if not os.path.exists(dbfile):
         sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
         sys.exit(-1)
@@ -207,7 +207,7 @@ def accession2taxid(conn, datadir, verbose=False):
     for protfile in ["prot.accession2taxid.FULL.gz", "prot.accession2taxid.gz"]:
         dbfile = os.path.join(datadir, protfile)
         if verbose:
-            print(f"loading prot2taxid (PROT) table: {dbfile}", file=sys.stderr)
+            print(f"loading prot2taxid (PROT) table: {dbfile} at {time.time}", file=sys.stderr)
         if not os.path.exists(dbfile):
             print("ERROR: {dbfile} does not exist", file=sys.stderr)
             continue
@@ -259,7 +259,7 @@ def accession2taxid(conn, datadir, verbose=False):
     for nuclfile in ["nucl_gb.accession2taxid.gz", "nucl_wgs.accession2taxid.EXTRA.gz", "nucl_wgs.accession2taxid.gz"]:
         dbfile = os.path.join(datadir, nuclfile)
         if verbose:
-            print(f"loading nucl2taxid (NUCL) table: {dbfile}", file=sys.stderr)
+            print(f"loading nucl2taxid (NUCL) table: {dbfile} at {time.time}", file=sys.stderr)
         if not os.path.exists(dbfile):
             print("ERROR: {dbfile} does not exist", file=sys.stderr)
             continue
