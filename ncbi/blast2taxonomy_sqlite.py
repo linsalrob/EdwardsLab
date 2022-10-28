@@ -43,7 +43,7 @@ print("Read taxonomy", file=sys.stderr)
 
 conn = connect_to_db(os.path.join(args.t, "taxonomy.sqlite3"))
 
-want = ['superkingdom', 'phylum', 'class', 'order', 'family', 'genus', 'species']
+no_result = ['', '', '', '', '', '', '', '']
 
 results = {}
 with open(args.b, 'r') as f, open(args.o, 'w') as out:
@@ -53,9 +53,9 @@ with open(args.b, 'r') as f, open(args.o, 'w') as out:
         if p[bl_col] in acc2tax:
             tid = acc2tax[p[bl_col]]
             tax = taxonomy_hierarchy_as_list(conn=conn, tid=tid, verbose=args.v)
-            print("\t".join(map(str, p+tax)), file=out)
+            print("\t".join(map(str, p+[str(tid)]+tax)), file=out)
         else:
             if args.v:
                 print(f"Warning: No taxid for {p[bl_col]} found", file=sys.stderr)
-            print(p, file=out)
+            print("\t".join(map(str, p+no_result)), file=out)
 
