@@ -8,11 +8,12 @@ from .load_from_database import get_taxonomy_db, get_taxonomy, connect_to_db, ge
 from .load_from_database import all_ids, taxonomy_hierarchy, all_species_ids, taxonomy_ids_as_list
 from .taxonomy import TaxonNode, TaxonName, TaxonDivision
 from .Error import NoNameFoundError, EntryNotInDatabaseError
+from .read_accession_files import read_acc_tax_id
 
 __all__ = [
     'read_taxa', 'read_nodes', 'extended_names', 'read_names', 'read_divisions', 'read_gi_tax_id', 'read_tax_id_gi',
     'get_taxonomy_db', 'get_taxonomy', 'connect_to_db', 'get_db_dir', 'get_taxid_for_name', 'all_ids',
-    'taxonomy_hierarchy', 'taxonomy_hierarchy_as_list', 'taxonomy_ids_as_list'
+    'taxonomy_hierarchy', 'taxonomy_hierarchy_as_list', 'taxonomy_ids_as_list', 'read_acc_tax_id'
     ]
 
 

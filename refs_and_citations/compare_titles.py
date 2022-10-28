@@ -10,7 +10,6 @@ import sys
 import argparse
 
 from roblib import bcolors
-from roblib import bcolors
 from pybtex.database import parse_file
 
 doctitles = set()
