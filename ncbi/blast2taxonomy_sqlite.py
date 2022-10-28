@@ -10,6 +10,7 @@ import sys
 import argparse
 import re
 from taxon import taxonomy_hierarchy_as_list, connect_to_db, read_acc_tax_id
+from roblib import stream_blast_results
 
 default_tax_dir = os.path.join(os.environ['HOME'], "ncbi", "taxonomy", "current")
 parser = argparse.ArgumentParser(description="Add taxonomy to a blast output file")
@@ -46,16 +47,19 @@ conn = connect_to_db(os.path.join(args.t, "taxonomy.sqlite3"))
 no_result = ['', '', '', '', '', '', '', '']
 
 results = {}
-with open(args.b, 'r') as f, open(args.o, 'w') as out:
-    for l in f:
-        p=l.strip().split("\t")
-        m = []
-        if p[bl_col] in acc2tax:
-            tid = acc2tax[p[bl_col]]
-            tax = taxonomy_hierarchy_as_list(conn=conn, tid=tid, verbose=args.v)
-            print("\t".join(map(str, p+[str(tid)]+tax)), file=out)
-        else:
-            if args.v:
-                print(f"Warning: No taxid for {p[bl_col]} found", file=sys.stderr)
-            print("\t".join(map(str, p+no_result)), file=out)
 
+with open(args.o, 'w') as out:
+    for br in stream_blast_results(args.b):
+        tid = None
+        prot = br.db
+        if args.q:
+            prot = br.query
+        if prot in acc2tax:
+            tid = acc2tax[prot]
+        if not tid:
+            if args.v:
+                print(f"Warning: No taxid for {prot} found", file=sys.stderr)
+            print("\t".join(map(str, br+no_result)), file=out)
+
+        tax = taxonomy_hierarchy_as_list(conn=conn, tid=tid, verbose=args.v)
+        print("\t".join(map(str, br+[str(tid)]+tax)), file=out)
