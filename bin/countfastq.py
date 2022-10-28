@@ -44,8 +44,12 @@ if __name__ == "__main__":
             sys.exit(1)
 
         lens = []
-        for (sid, label, seq, qual) in stream_fastq(faf):
-            lens.append(len(seq))
+        try:
+            for (sid, label, seq, qual) in stream_fastq(faf):
+                lens.append(len(seq))
+        except FastqFormatError as e:
+            print(f"{faf} is not a fastq file. Skipped", file=sys.stderr)
+            continue
         lens.sort()
         length=sum(lens)
 
