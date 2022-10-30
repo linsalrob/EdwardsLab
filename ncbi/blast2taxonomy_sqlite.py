@@ -6,7 +6,7 @@ kingdom phylum class order family genus species
 
 import os
 import sys
-
+import time
 import argparse
 import re
 from taxon import taxonomy_hierarchy_as_list, connect_to_db, read_acc_tax_id
@@ -35,13 +35,6 @@ if not os.path.exists(os.path.join(args.t, "taxonomy.sqlite3")):
     print(f"FATAL: taxonomy.sqlite3 not found in {args.t}. Please load the database first", file=sys.stderr)
     sys.exit(1)
 
-if not os.path.exists(os.path.join(args.t, "accession2taxid")):
-    print(f"FATAL: accession2taxid  not found in {args.t}. Please download that data first", file=sys.stderr)
-    sys.exit(1)
-
-print("Reading taxonomy", file=sys.stderr)
-acc2tax = read_acc_tax_id(dbtype=dbtype, tax_dir=args.t, verbose=args.v)
-print("Read taxonomy", file=sys.stderr)
 
 conn = connect_to_db(os.path.join(args.t, "taxonomy.sqlite3"))
 
@@ -55,8 +48,7 @@ with open(args.o, 'w') as out:
         prot = br.db
         if args.q:
             prot = br.query
-        if prot in acc2tax:
-            tid = acc2tax[prot]
+        tid, node, name =  acc_to_taxonomy(prot, conn, protein=True, verbose=args.v)
         if not tid:
             if args.v:
                 print(f"Warning: No taxid for {prot} found", file=sys.stderr)
