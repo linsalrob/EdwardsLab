@@ -9,7 +9,7 @@ import sys
 import time
 import argparse
 import re
-from taxon import taxonomy_hierarchy_as_list, connect_to_db, read_acc_tax_id
+from taxon import taxonomy_hierarchy_as_list, connect_to_db, read_acc_tax_id, acc_to_taxonomy
 from roblib import stream_blast_results
 
 default_tax_dir = os.path.join(os.environ['HOME'], "ncbi", "taxonomy", "current")
