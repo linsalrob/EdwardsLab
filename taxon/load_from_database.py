@@ -136,10 +136,10 @@ def get_taxonomy(taxid, conn, verbose=False):
     return t, n
 
 
-def gi_to_taxonomy(gi, conn, protein=False, verbose=False):
+def acc_to_taxonomy(acc, conn, protein=False, verbose=False):
     """
     Convert an NCBI gi to a taxonomy object
-    :param gi: The NCBI gi number
+    :param acc: The NCBI accession number
     :param conn: the database connection
     :param protein: Whether the object refers to protein (True) or DNA (False). Default=DNA
     :param verbose: More output
@@ -148,20 +148,20 @@ def gi_to_taxonomy(gi, conn, protein=False, verbose=False):
 
     global data
     cur = conn.cursor()
-    if gi in data['gi2tax']:
-        taxid = data['gi2tax']
-        return data['node'][taxid], data['name'][taxid]
+    if acc in data['acc2tax']:
+        taxid = data['acc2tax']
+        return taxid, data['node'][taxid], data['name'][taxid]
 
-    db = "gi_taxid_nucl"
+    db = "nucl2taxid"
     if protein:
-        db = "gi_taxid_prot"
-    sqlexe="select tax_id from {} where gi = ?".format(db)
-    cur.execute(sqlexe, [gi])
+        db = "prot2taxid"
+    sqlexe=f"select tax_id from {db} where accession_version = ?"
+    cur.execute(sqlexe, [acc])
     p = cur.fetchone()[0]
-    data['gi2tax'][gi] = p
+    data['gi2tax'][acc] = p
     if verbose:
-        sys.stderr.write("GI: {} Taxonomy: {}\n".format(gi, p))
-    return get_taxonomy(p, conn)
+        print(f"GI: {acc} Taxonomy: {p}", file=sys.stderr)
+    return p, get_taxonomy(p, conn)
 
 def all_ids_complete(conn, protein=False, verbose=False):
     """
