@@ -8,7 +8,7 @@ and the N50 of the data set.
 import os
 import sys
 import argparse
-from roblib import bcolors, stream_fastq
+from roblib import bcolors, stream_fastq, FastqFormatError
 
 __author__ = 'Rob Edwards'
 
