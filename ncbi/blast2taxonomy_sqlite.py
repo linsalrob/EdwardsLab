@@ -52,7 +52,8 @@ with open(args.o, 'w') as out:
         if not tid:
             if args.v:
                 print(f"Warning: No taxid for {prot} found", file=sys.stderr)
-            print("\t".join(map(str, br+no_result)), file=out)
+            print("\t".join(map(str, [str(br)]+no_result)), file=out)
+            continue
 
         tax = taxonomy_hierarchy_as_list(conn=conn, tid=tid, verbose=args.v)
-        print("\t".join(map(str, br+[str(tid)]+tax)), file=out)
+        print("\t".join(map(str, [str(br), str(tid)]+tax)), file=out)
