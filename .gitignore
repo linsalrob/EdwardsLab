@@ -83,7 +83,6 @@ models/pickles/*.p
 # cmake
 CMakeCache.txt 
 CMakeFiles
-Makefile
 cmake_install.cmake
 cmake-build-debug/*
 CMakeCache.txt
@@ -91,6 +90,8 @@ install_manifest.txt
 
 # compiled file
 bin/fastq2fasta
+bin/count_fasta
+bin/fastq_avqual
 
 # a virtual environment for anthill
 venv_anthill/
