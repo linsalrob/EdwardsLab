@@ -15,7 +15,7 @@ import time
 from .config import get_db_dir
 
 
-data = {"node": {}, "name": {}, "division": {}}
+data = {"node": {}, "name": {}, "division": {}, "acc2tax": {}}
 default_database = os.path.join(get_db_dir(), "taxonomy.sqlite3")
 conn = None
 
@@ -149,7 +149,7 @@ def acc_to_taxonomy(acc, conn, protein=False, verbose=False):
     global data
     cur = conn.cursor()
     if acc in data['acc2tax']:
-        taxid = data['acc2tax']
+        taxid = data['acc2tax'][acc]
         return taxid, data['node'][taxid], data['name'][taxid]
 
     db = "nucl2taxid"
@@ -157,11 +157,17 @@ def acc_to_taxonomy(acc, conn, protein=False, verbose=False):
         db = "prot2taxid"
     sqlexe=f"select tax_id from {db} where accession_version = ?"
     cur.execute(sqlexe, [acc])
-    p = cur.fetchone()[0]
-    data['gi2tax'][acc] = p
+    res = cur.fetchone()
+    if not res:
+        print(f"ERROR: No taxid for {acc}. Skipped", file=sys.stderr)
+        return None, None, None
+
+    p = res[0]
+    data['acc2tax'][acc] = p
     if verbose:
         print(f"GI: {acc} Taxonomy: {p}", file=sys.stderr)
-    return p, get_taxonomy(p, conn)
+    t, n = get_taxonomy(p, conn)
+    return p, t, n
 
 def all_ids_complete(conn, protein=False, verbose=False):
     """
