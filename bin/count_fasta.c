@@ -21,7 +21,7 @@
 
 void helpme() {
 	fprintf(stderr,
-			"countfasta [-f fasta file] [-d directory]"
+			"countfasta [-f fasta file] [-d directory]\n"
 	       );
 }
 
@@ -99,6 +99,7 @@ void read_directory(char *dirname, int verbose) {
 
 int main(int argc, char *argv[]) {
 	int verbose = 0;
+	int done = 0;
 	for (;;) {
 		switch(getopt(argc, argv, "d:f:v:")) {
 			default:
@@ -110,12 +111,18 @@ int main(int argc, char *argv[]) {
 				verbose = 1;
 			case 'd':
 				read_directory(optarg, verbose);
+				done = 1;
 				continue;
 			case 'f':
 				count_file(optarg, verbose);
+				done = 1;
 				continue;
 		}
 		break;
+	}
+	if (done == 0) {
+		helpme();
+		return 1;
 	}
 }
 
