@@ -92,6 +92,7 @@ install_manifest.txt
 bin/fastq2fasta
 bin/count_fasta
 bin/fastq_avqual
+bin/fastq_average_qual
 
 # a virtual environment for anthill
 venv_anthill/
