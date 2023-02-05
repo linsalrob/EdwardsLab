@@ -8,29 +8,70 @@
 #include <zlib.h>
 #include <stdio.h>
 #include <stdlib.h>
+#include <getopt.h>
+#include <string.h>
 #include "kseq.h"
 
 KSEQ_INIT(gzFile, gzread)
 
 #define table_size 10000
 
+void helpme() {
+  fprintf(stderr,
+      "fastq2fasta [options] <fastq file> <fasta file>\n"
+      "Use  - for either input or output to use STDIN/STDOUT\n"
+      "Options:\n"
+      "\t-r replace spaces in the fasta header line with '_'\n"
+      "\t-n <1/2> add the read number to the header line at the first space\n"
+   );
+}
+
 int main(int argc, char *argv[]) {
 
 	if ( argc < 2) {
-		printf("Usage: %s <fastq file (use - to read from STDIN)> <fasta file (use - to write to STDOUT)>\n", argv[0]);
+		helpme();
 		return 1;
 	}
 	
+
+	int replace = 0;
+	char *n = NULL;
+
+	for (;;) {
+		switch(getopt(argc, argv, "rn:")) {
+			default:
+				helpme();
+				return 1;
+			case -1:
+				break;
+			case 'r':
+				replace = 1;
+				continue;
+			case 'n':
+				n = optarg;
+				continue;
+		}
+		break;
+	}
+
+	if (optind +2 != argc) {
+		helpme();
+		return 1;
+	}
+
+	char* fqf = argv[optind];
+	char* faf = argv[optind+1]; 
+
 	FILE *fw;
 	kseq_t *seq;
 
 
 	FILE *instream = NULL;
  
-	if (strcmp(argv[1], "-") !=0) {
-		instream = fopen(argv[1], "r");
+	if (strcmp(fqf, "-") !=0) {
+		instream = fopen(fqf, "r");
 		if (instream == NULL) {
-			fprintf(stderr, "ERROR: Can't open %s\n", argv[1]);
+			fprintf(stderr, "ERROR: Can't open %s\n", fqf);
 			return 1;
 		}
 	}
@@ -38,20 +79,33 @@ int main(int argc, char *argv[]) {
 		instream = stdin;
 	gzFile fp = gzdopen(fileno(instream), "r");
 	if (fp == NULL) {
-		fprintf(stderr, "ERROR: There was a problem opening the stream to %s\n", argv[1]);
+		fprintf(stderr, "ERROR: There was a problem opening the stream to %s\n", fqf);
 		return 1;
 	}
 
 
-	if (strcmp(argv[2], "-") != 0)
-		fw = fopen(argv[2],"w");
+	if (strcmp(faf, "-") != 0)
+		fw = fopen(faf, "w");
 	else
 		fw = stdout;
 
 	seq = kseq_init(fp);
 	int l;
 	while ((l = kseq_read(seq)) >= 0) {
-		fprintf(fw, ">%s\n%s\n", seq->name.s, seq->seq.s);
+		if (replace) {
+			for (long unsigned int i = 0; i <= strlen(seq->comment.s); i++) {
+				if (seq->comment.s[i] == ' ') {
+					seq->comment.s[i] = '_';
+				}
+			}
+			fprintf(fw, ">%s_%s\n%s\n", seq->name.s, seq->comment.s, seq->seq.s);
+		}
+		else if (n) {
+			fprintf(fw, ">%s/%s %s\n%s\n", seq->name.s, n, seq->comment.s, seq->seq.s);
+		}
+		else {
+			fprintf(fw, ">%s %s\n%s\n", seq->name.s, seq->comment.s, seq->seq.s);
+		}
 	}
 	kseq_destroy(seq);
 	gzclose(fp);
