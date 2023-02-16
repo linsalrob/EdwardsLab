@@ -9,7 +9,8 @@ all:
 	gcc $(FLAGS) -o count_fasta count_fasta.c -lz
 	# c++ $(FLAGS) -o fq2fa fastq2fasta.cpp 
 	gcc $(FLAGS) -o fastq2fasta fastq2fasta.c -lz
+	gcc $(FLAGS) -o count_fastq count_fastq.c -lz
 
 clean:
-	rm -f fastq_avqual count_fasta fastq2fasta
+	rm -f fastq_avqual count_fasta fastq2fasta count_fastq
 
