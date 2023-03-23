@@ -11,6 +11,8 @@
 #include <getopt.h>
 #include <string.h>
 #include "kseq.h"
+#include <sys/stat.h>
+#include <dirent.h>
 
 KSEQ_INIT(gzFile, gzread)
 
@@ -18,21 +20,14 @@ KSEQ_INIT(gzFile, gzread)
 
 void helpme() {
   fprintf(stderr,
-      "fastq2fasta [options] <fastq file>\n"
-      "Use  - to read from STDIN\n"
+      "count_fastq <fastq file or directory>\n"
+      "\tUse  - to read from STDIN\n"
+      "\tPass a directory to process all fastq files in that directory\n"
    );
 }
 
-int main(int argc, char *argv[]) {
-
-	if ( argc < 2) {
-		helpme();
-		return 1;
-	}
-	
-
-	char* fqf = argv[1];
-
+// count the sequences in a single file
+int count_file(char *fqf) {
 	kseq_t *seq;
 
 
@@ -58,15 +53,52 @@ int main(int argc, char *argv[]) {
 
 	seq = kseq_init(fp);
 	int l;
-	int total = 0;
-	int count = 0;
+	unsigned long total = 0;
+	unsigned long count = 0;
 	while ((l = kseq_read(seq)) >= 0) {
 		total += strlen(seq->seq.s);
 		count++;
 	}
-	printf("%s\t%i\t%i\n", fqf, count, total);
+	printf("%s\t%li\t%li\n", fqf, count, total);
 	kseq_destroy(seq);
 	gzclose(fp);
+	return 0;
+}
+
+int main(int argc, char *argv[]) {
+
+	if ( argc < 2) {
+		helpme();
+		return 1;
+	}
+	
+
+	// test if argv[1] is a directory
+	struct stat sb;
+
+	if (stat(argv[1], &sb) == 0 && S_ISDIR(sb.st_mode))
+	{
+		DIR *d;
+		struct dirent *dir;
+		d = opendir(argv[1]);
+		if (d) {
+			int r = 0;
+			while ((dir = readdir(d)) != NULL) {
+				if (dir->d_type == DT_REG) {
+					char filepath[strlen(argv[1]) + strlen(dir->d_name) + 1]; 
+					strcpy(filepath, argv[1]);
+					strcat(filepath, "/");
+					strcat(filepath, dir->d_name);
+					r += count_file(filepath);
+				}
+			}
+			closedir(d);
+			return r;
+		}
+	}
+
+	return count_file(argv[1]);
+
 }
 
 
