@@ -21,7 +21,7 @@
 
 void helpme() {
 	fprintf(stderr,
-			"countfasta [-f fasta file] [-d directory]\n"
+			"countfasta [-p print all read lengths] [-f fasta file] [-d directory]\n"
 	       );
 }
 
@@ -54,7 +54,7 @@ void join_path(char *destination, const char *path1, const char *path2) {
     destination[0] = '\0';
 }
 
-void count_file(char *filename, int verbose) {
+void count_file(char *filename, int print_all, int verbose) {
 	gzFile fp;
 
 	int MAXLINELEN = 100000;
@@ -69,18 +69,29 @@ void count_file(char *filename, int verbose) {
 
 	size_t len = 0;
 	int n = 0;
+	char *lastid = NULL;
+	int this_seq_len = 0;
 	while ((gzgets(fp, line, MAXLINELEN)) != NULL) {
 		if ((int) line[0] == 62) { // not sure why I'm using an ascii comparison, but I'm thinking ascii at the moment
 			n++;
+			if (lastid && print_all) {
+				lastid[strcspn(lastid, "\r\n")] = 0;
+				printf("%s\t%i\n", lastid, this_seq_len);
+			}
+			lastid = line;
+			this_seq_len = 0;
 		}
 		else {
 			len += strlen(line);
+			this_seq_len += strlen(line);
 		}
 	}
+	if (print_all)
+		printf("%s\t%i\n", lastid, this_seq_len);
 	printf("%s\t%i\t%zu\n", filename, n, len);
 }
 
-void read_directory(char *dirname, int verbose) {
+void read_directory(char *dirname, int print_all, int verbose) {
 	DIR *d;
 	struct dirent *dir;
 	d = opendir(dirname);
@@ -90,7 +101,7 @@ void read_directory(char *dirname, int verbose) {
 				continue;
 			char full_path[strlen(dirname) + strlen(dir->d_name) + 2];
 			join_path(full_path, dirname, dir->d_name);
-			count_file(full_path, verbose);
+			count_file(full_path, print_all, verbose);
 		}
 		closedir(d);
 	}
@@ -100,8 +111,9 @@ void read_directory(char *dirname, int verbose) {
 int main(int argc, char *argv[]) {
 	int verbose = 0;
 	int done = 0;
+	int print_all = 0;
 	for (;;) {
-		switch(getopt(argc, argv, "d:f:v:")) {
+		switch(getopt(argc, argv, "pd:f:v:")) {
 			default:
 				helpme();
 				return 1;
@@ -110,11 +122,14 @@ int main(int argc, char *argv[]) {
 			case 'v':
 				verbose = 1;
 			case 'd':
-				read_directory(optarg, verbose);
+				read_directory(optarg, print_all, verbose);
 				done = 1;
 				continue;
+			case 'p':
+				print_all = 1;
+				continue;
 			case 'f':
-				count_file(optarg, verbose);
+				count_file(optarg, print_all, verbose);
 				done = 1;
 				continue;
 		}
