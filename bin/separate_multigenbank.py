@@ -33,11 +33,15 @@ if __name__ == '__main__':
                 out.close()
                 out = None
             continue
-        if 'LOCUS' in l:
+        if l.startswith('LOCUS'):
             if out:
                 out.close()
             m=re.match('LOCUS\s+(\S+)', l)
-            outfilename = m.groups()[0]
+            try:
+                outfilename = m.groups()[0]
+            except:
+                print(f"Can not extract an output file name from {l}", file=sys.stderr)
+                continue
             if not outfilename:
                 sys.stderr.write("FATAL: Could not parse a filename from {}".format(l))
                 sys.exit(-1)
