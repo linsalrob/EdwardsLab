@@ -32,15 +32,6 @@ long double next_hash(char* seq, int p, int k, long double last_hash) {
 
 
 int main(int argc, char *argv[]) {
-	/*
-	   char* s = "abcdefghij";
-	   char* t = "bcdefghijk";
-	   char* u = "abcdefghijk";
-	char* s = "abcdefghijklmn";
-	char* t = "bcdefghijklmno";
-	char* u = "abcdefghijklmno";
-	*/
-
 	char* s = "abc";
 	char* t = "bcd";
 	char* u = "abcd";
