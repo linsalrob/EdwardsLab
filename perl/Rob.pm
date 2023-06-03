@@ -403,9 +403,10 @@ sub read_fastq {
 Stream a fastq file. This is like read_fastq but does not send the whole file, instead it sends a stream. The default is 1GB of data, but you can set that by adding a number to the call.
 
 usage:
-while ($rob->stream_fastq("filename")) {
-	## do something
-}
+while (my $seq = $rob->stream_fastq("$dir/$fq")) {
+	foreach my $id (keys %$seq) {
+		# the sequence is $seq->{$id}->[0]
+		# the quality is $seq->{$id}->[1]
 
 usage to set the stream size:
 while ($rob->stream_fastq($filename, 1000000)) {
