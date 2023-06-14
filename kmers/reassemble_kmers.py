@@ -55,15 +55,24 @@ def reassemble(kmers, verbose=False):
 
 
 if __name__ == '__main__':
-    oristring = "RobIsCoolIsAGreatString"
-    kmers = []
-    kmerlen = 6
-    for i in range(len(oristring) - kmerlen+1):
-        kmers.append(oristring[i:i+kmerlen])
-    shuffle(kmers)
-    newstring = reassemble(kmers, False)
-    print(f"Ori: {oristring}\nKmers: {kmers}\nNew: {newstring}")
+    if (len(sys.argv) ==1):
+        print("Some example strings and their assemblies")
+        oristring = "RobIsCoolIsAGreatString"
+        kmers = []
+        kmerlen = 6
+        for i in range(len(oristring) - kmerlen+1):
+            kmers.append(oristring[i:i+kmerlen])
+        shuffle(kmers)
+        newstring = reassemble(kmers, False)
+        print(f"Ori: {oristring}\nKmers: {kmers}\nNew: {newstring}")
 
-    kmers = ['AGCTGC','GAGCTG','CTGCTA', 'AGAGCT', 'TAGAGC', 'GCTGCT']
-    newstring2 = reassemble(kmers, False)
-    print(f"Kmers: {kmers}\nNew: {newstring2}")
+        kmers = ['AGCTGC','GAGCTG','CTGCTA', 'AGAGCT', 'TAGAGC', 'GCTGCT']
+        newstring2 = reassemble(kmers, False)
+        print(f"Kmers: {kmers}\nNew: {newstring2}")
+        print("\n\nProvide some kmers as words on the command line\n")
+    else:
+        kmers = sys.argv[1:]
+        newstring = reassemble(kmers, False)
+        print(f"Kmers: {kmers}\nNew: {newstring}")
+
+
