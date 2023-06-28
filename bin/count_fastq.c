@@ -30,6 +30,7 @@ void helpme() {
 int count_file(char *fqf) {
 	kseq_t *seq;
 
+	fprintf(stderr, "Reading %s\n", fqf);
 
 	FILE *instream = NULL;
  
@@ -84,13 +85,29 @@ int main(int argc, char *argv[]) {
 		if (d) {
 			int r = 0;
 			while ((dir = readdir(d)) != NULL) {
-				if (dir->d_type == DT_REG) {
+				char filepath[strlen(argv[1]) + strlen(dir->d_name) + 1]; 
+				strcpy(filepath, argv[1]);
+				strcat(filepath, "/");
+				strcat(filepath, dir->d_name);
+
+				struct stat sbf;
+				if (stat(filepath, &sbf) == 0 && S_ISREG(sbf.st_mode))
+					r += count_file(filepath);
+				else 
+					fprintf(stderr, "Skipped %s because it is not a regular file. Its type is %o (last 3 numbers are permissions o, g, w; regular file is 0100000)\n", filepath, sbf.st_mode);
+
+				/*
+				 * dir->d_type is often returning 0 (DT_UNKNOWN) for valid files, and I think it is a 
+				 * filesystem issue. See https://stackoverflow.com/a/47079705
+				 if (dir->d_type == DT_REG) {
 					char filepath[strlen(argv[1]) + strlen(dir->d_name) + 1]; 
 					strcpy(filepath, argv[1]);
 					strcat(filepath, "/");
 					strcat(filepath, dir->d_name);
 					r += count_file(filepath);
-				}
+				} else 
+					fprintf(stderr, "Skipped %s because it is not a regular file. Its type is %d\n", dir->d_name, dir->d_type);
+				*/
 			}
 			closedir(d);
 			return r;
