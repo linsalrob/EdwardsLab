@@ -113,6 +113,8 @@ venv_linux/
 bin/primer-basecounting
 bin/primer-predictions
 bin/primer-trimming
+bin/count_fastq
 fastq/change_fastq_pair_symbol
+fastq/filter_fastq_length
 bangers
-
+rob_tests/hashes
