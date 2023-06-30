@@ -24,7 +24,7 @@ unless (scalar(@files) > 1) {
 $0 <files>
 
 Join two or more lists from two files. Anything with the same keys will be merged. 
-This assumes there are two separated by tabs, and the first column is the key and 
+This assumes they are separated by tabs, and the first column is the key and 
 the rest of the columns the values
 
 -h files include header row (first column is used from file 1)
