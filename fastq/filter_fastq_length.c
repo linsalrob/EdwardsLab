@@ -21,12 +21,20 @@ int main(int argc, char* argv[]) {
 	fp = gzopen(argv[1], "r");
 	seq = kseq_init(fp);
 	int l;
+	int kept = 0;
+	int dropped = 0;
 	int minlen = atoi(argv[2]);
-	fprintf(stderr, "Filtering %s. Reads shorter than %d will be ignored\n", argv[1], minlen);
+	// fprintf(stderr, "Filtering %s. Reads shorter than %d will be ignored\n", argv[1], minlen);
 	while ((l = kseq_read(seq)) >= 0) {
-		if (seq->seq.l > minlen)
+		if (seq->seq.l > minlen) {
 			printf("@%s %s\n%s\n+\n%s\n", seq->name.s, seq->comment.s, seq->seq.s, seq->qual.s);
+			kept++;
+		} else{
+			dropped++;
+		}
 	}
+	fprintf(stderr, "Kept: %d  Dropped: %d\n", kept, dropped);
 	return 0;
 }
+
 
