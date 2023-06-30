@@ -92,6 +92,10 @@ int main(int argc, char *argv[]) {
 	seq = kseq_init(fp);
 	int l;
 	while ((l = kseq_read(seq)) >= 0) {
+		if (seq->comment.l == 0) {
+			seq->comment.s = malloc(1);
+			seq->comment.s = '\0';
+		}
 		if (replace) {
 			for (long unsigned int i = 0; i <= strlen(seq->comment.s); i++) {
 				if (seq->comment.s[i] == ' ') {
