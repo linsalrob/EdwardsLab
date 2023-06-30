@@ -26,7 +26,7 @@ if __name__ == "__main__":
         end = len(adapter)
         while (end >= args.m):
             if adapter[0:end] in seq:
-                offset = seq.find(adapter[0:end])
+                offset = seq.find(adapter[0:end]) + end
                 print(f"{sid}\t{adapter[0:end]}\t{offset}\t{len(seq) - offset}")
                 break
             end -= 1
