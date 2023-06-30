@@ -155,7 +155,12 @@ def acc_to_taxonomy(acc, conn, protein=False, verbose=False):
     db = "nucl2taxid"
     if protein:
         db = "prot2taxid"
-    sqlexe=f"select tax_id from {db} where accession_version = ?"
+
+    if "." in acc:
+        sqlexe=f"select tax_id from {db} where accession_version = ?"
+    else:
+        sqlexe=f"select tax_id from {db} where accession = ?"
+
     cur.execute(sqlexe, [acc])
     res = cur.fetchone()
     if not res:

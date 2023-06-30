@@ -44,6 +44,8 @@ class TaxonNode:
         if len(others) > 0:
             print("WARNING: {} :: {}".format(p, others))
 
+    def __str__(self):
+        return f"taxid|{self.taxid}"
 
 '''
 Taxonomy names file (names.dmp):
@@ -61,6 +63,8 @@ class TaxonName:
         self.unique = u
         self.nameClass = nc
 
+    def __str__(self):
+        return self.name
 
 '''
 Divisions file (division.dmp):

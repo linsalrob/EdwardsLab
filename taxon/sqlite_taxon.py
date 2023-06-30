@@ -252,6 +252,10 @@ def accession2taxid(conn, datadir, verbose=False):
 
         conn.commit()
 
+    # conn.execute("CREATE INDEX prot_acc2tax ON prot2taxid ('accession', 'taxid')") # there is no accession only for prots
+    conn.execute("CREATE INDEX prot_accver2tax ON prot2taxid ('accession.version', 'taxid')")
+    conn.commit()
+
 
     nucl_acc_ver = set()
     conn.execute("CREATE TABLE nucl2taxid (accession TEXT, accession_version TEXT PRIMARY KEY, tax_id INTEGER)")
@@ -288,6 +292,9 @@ def accession2taxid(conn, datadir, verbose=False):
                         sys.exit()
         conn.commit()
 
+    conn.execute("CREATE INDEX nucl_acc2tax ON nucl2taxid ('accession', 'taxid')")
+    conn.execute("CREATE INDEX nucl_accver2tax ON nucl2taxid ('accession.version', 'taxid')")
+    conn.commit()
 
     return conn
 
