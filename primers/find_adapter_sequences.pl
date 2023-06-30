@@ -127,7 +127,7 @@ while (<IN>) {
 
 }
 
-if ($i7n) {
+if ($i7n > 20) {
 	my $adapter = "";
 	for my $base (@i7counts) {
 		my $tot = 0;
@@ -164,7 +164,7 @@ if ($i7n) {
 	}
 }
 
-if ($i5n) {
+if ($i5n > 20) {
 	my $adapter = "";
 	for my $base (@i5counts) {
 		my $tot = 0;
