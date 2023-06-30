@@ -31,6 +31,8 @@ class TaxonNode:
         if len(others) > 0:
             print("WARNING: {} :: {}".format(p, others))
 
+    def __str__(self):
+        return f"taxid|{self.taxid}"
 
 class TaxonName:
     def __init__(self, t=None, n=None, u=None, nc=None):
@@ -116,6 +118,9 @@ class TaxonName:
         if self.equivalent_name:
             return self.equivalent_name
         raise NoNameFoundError(f"No name was found for taxonomy ID {self.taxid}")
+
+    def __str__(self):
+        return self.get_name()
 
 class TaxonDivision:
     def __init__(self, i=None, c=None, n=None, co=None):
