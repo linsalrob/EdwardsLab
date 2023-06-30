@@ -28,4 +28,15 @@ sbatch --array=1-$NUM_R1_READS:1 ~/GitHubs/EdwardsLab/process_JCJ_metagenomes/fa
 ```
 
 
+2. Filter the `fastp` trimmed sequences against the human genome
+
+
+Next, we want to remove any human genomes from the data. We map the reads to the human genome, and then use our [samtools flags](https://edwards.flinders.edu.au/command-line-deconseq/) to filter human and non-human sequences.
+
+Note that we are using the NCBI human genomes for pipelines for this 
+
+```
+sbatch --array=1-$NUM_R1_READS:1 ~/GitHubs/EdwardsLab/process_JCJ_metagenomes/humans.slurm
+```
+
 
