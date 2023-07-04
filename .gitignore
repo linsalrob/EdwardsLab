@@ -114,6 +114,7 @@ bin/primer-basecounting
 bin/primer-predictions
 bin/primer-trimming
 bin/count_fastq
+bin/fastg2gfa
 fastq/change_fastq_pair_symbol
 fastq/filter_fastq_length
 bangers
