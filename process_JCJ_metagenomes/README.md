@@ -39,4 +39,41 @@ Note that we are using the NCBI human genomes for pipelines for this
 sbatch --array=1-$NUM_R1_READS:1 ~/GitHubs/EdwardsLab/process_JCJ_metagenomes/humans.slurm
 ```
 
+3. Convert the `fastq` sequences to `fasta` sequences. 
+
+Note that `mmseqs easy-taxonomy` requires a fasta file, so here we convert the fastq to fasta files. We also take advantage of this to either add /1 /2 to the R1/R2 reads respectively. It helps with subsequence parsing!!
+
+```
+sbatch ~/GitHubs/EdwardsLab/process_JCJ_metagenomes/fastq2fasta.slurm no_human
+```
+
+7. Run `mmseqs` against the UniRef50 database
+
+Note that this is  bash script that submits slurm jobs
+
+```
+bash ~/GitHubs/EdwardsLab/process_JCJ_metagenomes/mmseqs_easy_taxonomy_submit.sh UniRef50 mmseqs fasta
+
+```
+
+
+
+
+
+
+
+
+
+# Assembly and Binning
+
+9. Assembly
+
+I'm using `megahit` for this, just because it works and finishes in a reasonable time. An easy megahit submit script takes care of the hard work:
+
+```
+bash /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/megahit_submit.sh
+```
+
+This creates separate directories in the `megahit` directory with each assembly.
+
 

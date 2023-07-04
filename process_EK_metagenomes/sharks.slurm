@@ -37,17 +37,17 @@ samtools index $BGFS/output/$O
 
 echo "From $O"
 echo "R1 matching shark genome:"
-samtools view -F 4 -f 65 $BGFS/output/$O | cut -f 1 | awk '!s[$1]++' | wc -l
-samtools fastq -F 4 -f 65 $BGFS/output/$O | gzip -c > $BGFS/sharks/$R1
+# samtools view -F 4 -f 65 $BGFS/output/$O | cut -f 1 | awk '!s[$1]++' | wc -l
+samtools fastq -F 3588 -f 65 $BGFS/output/$O | gzip -c > $BGFS/sharks/$R1
 echo "R2 matching shark genome:"
-samtools view -F 4 -f 129 $BGFS/output/$O | cut -f 1 | awk '!s[$1]++' | wc -l
-samtools fastq -F 4 -f 129 $BGFS/output/$O | gzip -c > $BGFS/sharks/$R2
+# samtools view -F 4 -f 129 $BGFS/output/$O | cut -f 1 | awk '!s[$1]++' | wc -l
+samtools fastq -F 3588 -f 129 $BGFS/output/$O | gzip -c > $BGFS/sharks/$R2
 
 
 
 
-samtools fastq -f 77 $BGFS/output/$O | gzip -c > $BGFS/no_sharks/$R1
-samtools fastq -f 141 $BGFS/output/$O | gzip -c > $BGFS/no_sharks/$R2
+samtools fastq -F 3584 -f 77 $BGFS/output/$O | gzip -c > $BGFS/no_sharks/$R1
+samtools fastq -F 3584 -f 141 $BGFS/output/$O | gzip -c > $BGFS/no_sharks/$R2
 
 # We don't currently save singleton reads, but these are they:
 # samtools fastq -f 4 -F 1 $SAMPLE.bam > $SAMPLE.unmapped.single.fastq

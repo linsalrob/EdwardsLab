@@ -83,6 +83,9 @@ Next, we want to remove all the shark genomes from the data. We map the reads to
 sbatch --array=1-$NUM_R1_READS:1 ~/GitHubs/EdwardsLab/process_EK_metagenomes/sharks.slurm
 ```
 
+*TODO*:
+   1. resolve why this prints some reads multiple times to the matches (sharks) sequences. I think it is multimapped reads?
+
 
 6. Convert the `fastq` sequences to `fasta` sequences. 
 
@@ -96,7 +99,69 @@ sbatch ~/GitHubs/EdwardsLab/process_EK_metagenomes/fastq2fasta.slurm no_sharks/
 
 Note that this is  bash script that submits slurm jobs
 
+```
+~/GitHubs/EdwardsLab/process_EK_metagenomes/mmseqs_easy_taxonomy_submit.sh
+```
+
+8. Count everything
+
+I use a mix of counting strategies to count everything, because I found an annoying gotcha.
+
+First, count the fastq files:
 
 
+```
+for D in fastq fastq_fastp sharks no_sharks; do ~/GitHubs/EdwardsLab/process_EK_metagenomes/count_fastq.slurm $D; done
+```
+
+Previously, we couldn't just count the fastq reads in sharks, because `minimap2` and `samtools` was writing secondary alignments, but I've added the filter for those - `-F 3584` (or `-F 3588 when combined with `-F 4`)
+
+Next, count the `mmseqs` output. 
+
+
+```
+sbatch ~/GitHubs/EdwardsLab/process_EK_metagenomes/count_mmseqs.slurm
+```
+
+This sneakily puts something into the STDERR that we want to use in our Sankey plots, the total number of Bacteria, Archaea, Eukarya, Viruses, and Other
+
+
+Next, we merge all the counts into a single table
+
+```
+perl ../bin/merge_counts.pl count_fastq-215962\*out count_mmseqs-2159834.out count_sharks.txt count_nosharks.txt > counts.tsv
+```
+
+Finally, we print out the Sankey-matic text. This also includes the URL where to paste the text to make the plot. Note that if you include the mmseqs error file, as shown here, we'll include the Bacteria etc in the Sankey plot
+
+```
+perl ../bin/sankey_matic.pl -f counts.tsv -m count_mmseqs-2159834.err
+```
+
+# Assembly and Binning
+
+9. Assembly
+
+I'm using `megahit` for this, just because it works and finishes in a reasonable time. An easy megahit submit script takes care of the hard work:
+
+```
+bash /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/megahit_submit.sh
+```
+
+This creates separate directories in the `megahit` directory with each assembly.
+
+10. Binning
+
+At Vijini's suggestion I'm using [VAMB](https://github.com/RasmussenLab/vamb). This has a big advantage in that it concatenates the contigs from separate assemblies and then attempts to co-bin them. 
+
+```
+sbatch /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/vamb.slurm
+```
+
+Note: for two megahit assemblies, I had an issue where `vamb` died because the contigs fasta file was badly formed. I used this one-liner to check the other contigs, deleted those megahit assemblies, and re-assembled them.
+
+```
+for F in $(find megahit -name final.contigs.fa); do echo $F; perl -ne 'print if (/^.+>/)' $F; done > bad_assemblies
+```
 
 

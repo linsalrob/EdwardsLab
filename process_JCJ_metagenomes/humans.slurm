@@ -27,6 +27,10 @@ cp $HUMAN $BGFS/human.fna.gz
 
 R1=$(head -n $SLURM_ARRAY_TASK_ID R1_reads.txt | tail -n 1)
 R2=${R1/R1/R2}
+
+echo "Processing $R1 and $R2" >&2;
+echo "Processing $R1 and $R2";
+
 cp $SOURCE/$R1 $SOURCE/$R2 $BGFS/fastq
 
 # 1651490_20171010_S_R1.fastq.gz
@@ -44,17 +48,17 @@ samtools index $BGFS/output/$O
 
 echo "From $O"
 echo "R1 matching human genome:"
-samtools view -F 4 -f 65 $BGFS/output/$O | cut -f 1 | awk '!s[$1]++' | wc -l
-samtools fastq -F 4 -f 65 $BGFS/output/$O | gzip -c > $BGFS/human/$R1
+samtools view -F 3588 -f 65 $BGFS/output/$O | cut -f 1 | awk '!s[$1]++' | wc -l
+samtools fastq -F 3588 -f 65 $BGFS/output/$O | gzip -c > $BGFS/human/$R1
 echo "R2 matching human genome:"
-samtools view -F 4 -f 129 $BGFS/output/$O | cut -f 1 | awk '!s[$1]++' | wc -l
-samtools fastq -F 4 -f 129 $BGFS/output/$O | gzip -c > $BGFS/human/$R2
+samtools view -F 3588 -f 129 $BGFS/output/$O | cut -f 1 | awk '!s[$1]++' | wc -l
+samtools fastq -F 3588 -f 129 $BGFS/output/$O | gzip -c > $BGFS/human/$R2
 
 
 
 
-samtools fastq -f 77 $BGFS/output/$O | gzip -c > $BGFS/no_human/$R1
-samtools fastq -f 141 $BGFS/output/$O | gzip -c > $BGFS/no_human/$R2
+samtools fastq -F 3584 -f 77 $BGFS/output/$O | gzip -c > $BGFS/no_human/$R1
+samtools fastq -F 3584 -f 141 $BGFS/output/$O | gzip -c > $BGFS/no_human/$R2
 
 # We don't currently save singleton reads, but these are they:
 # samtools fastq -f 4 -F 1 $SAMPLE.bam > $SAMPLE.unmapped.single.fastq
