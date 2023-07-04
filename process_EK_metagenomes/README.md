@@ -83,10 +83,6 @@ Next, we want to remove all the shark genomes from the data. We map the reads to
 sbatch --array=1-$NUM_R1_READS:1 ~/GitHubs/EdwardsLab/process_EK_metagenomes/sharks.slurm
 ```
 
-*TODO*:
-   1. resolve why this prints some reads multiple times to the matches (sharks) sequences. I think it is multimapped reads?
-
-
 6. Convert the `fastq` sequences to `fasta` sequences. 
 
 Note that `mmseqs easy-taxonomy` requires a fasta file, so here we convert the fastq to fasta files. We also take advantage of this to either add /1 /2 to the R1/R2 reads respectively. It helps with subsequence parsing!!
