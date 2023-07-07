@@ -134,6 +134,12 @@ Finally, we print out the Sankey-matic text. This also includes the URL where to
 perl ../bin/sankey_matic.pl -f counts.tsv -m count_mmseqs-2159834.err
 ```
 
+9. Make a taxonomy table
+
+```
+python /home/edwa0468/GitHubs/EdwardsLab/taxon/mmseqs_report_to_table.py -d mmseqs -o mmseqs_taxonomy -v
+```
+
 # Assembly and Binning
 
 9. Assembly
@@ -160,4 +166,34 @@ Note: for two megahit assemblies, I had an issue where `vamb` died because the c
 for F in $(find megahit -name final.contigs.fa); do echo $F; perl -ne 'print if (/^.+>/)' $F; done > bad_assemblies
 ```
 
+
+# Short version with little or no explanations!
+
+1. R1_reads.txt
+
+```
+find fastq -name \*R1\* -printf "%f\n" > R1_reads.txt
+NUM_R1_READS=$(wc -l R1_reads.txt | cut -f 1 -d ' ')
+echo There are $NUM_R1_READS R1 readsA
+if [[ $(find fastq -name \*R2\* | awk 's++{} END {print s}') != $NUM_R1_READS ]]; then echo "There are a different number of R1 and R2 reads"; fi
+```
+
+2. fastp
+
+```
+JOB=$(sbatch --parsable --array=1-$NUM_R1_READS:1 ~/GitHubs/EdwardsLab/process_EK_metagenomes/fastp.slurm)
+JOB=$(sbatch --parsable --dependency=afterok:$JOB --array=1-$NUM_R1_READS:1 ~/GitHubs/EdwardsLab/process_EK_metagenomes/sharks.slurm)
+JOB=$(sbatch --parsable --dependency=afterok:$JOB ~/GitHubs/EdwardsLab/process_EK_metagenomes/fastq2fasta.slurm no_sharks/)
+JOB=$(sbatch --parsable --dependency=afterok:$JOB ~/GitHubs/EdwardsLab/process_EK_metagenomes/count_mmseqs.slurm)
+JOB=$(sbatch --parsable --dependency=afterok:$JOB /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/megahit_submit.slurm)
+JOB=$(sbatch --parsable --dependency=afterok:$JOB /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/vamb.slurm)
+
+
+
+```
+Still to do:
+
+```
+~/GitHubs/EdwardsLab/process_EK_metagenomes/mmseqs_easy_taxonomy_submit.sh
+python /home/edwa0468/GitHubs/EdwardsLab/taxon/mmseqs_report_to_table.py -d mmseqs -o mmseqs_taxonomy -v
 

@@ -13,31 +13,33 @@ set -euo pipefail
 eval "$(conda shell.bash hook)"
 conda activate vamb
 
-mkdir --parents vamb
+OUTDIR=vamb2
+mkdir --parents $OUTDIR
 
-if [[ ! -e vamb/contigs.fna.gz ]]; then
-	python /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/vamb_concatenate.py vamb/contigs.fna.gz megahit/*/output/final.contigs.fa 
+if [[ ! -e $OUTDIR/contigs.fna.gz ]]; then
+	python /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/vamb_concatenate.py $OUTDIR/contigs.fna.gz megahit/*/output/final.contigs.fa 
 fi
 
-mkdir --parents $BGFS/vamb $BGFS/vamb/mapped_reads  $BGFS/fastq
-mkdir --parents vamb/mapped_reads
+mkdir --parents $BGFS/$OUTDIR $BGFS/$OUTDIR/mapped_reads  $BGFS/fastq
+mkdir --parents $OUTDIR/mapped_reads
 
-FILEEND="_R1_001.fastq.gz";
+#FILEEND="_R1_001.fastq.gz";
+FILEEND="_R1.fastq.gz";
 SOURCE=no_sharks
 
-cp vamb/contigs.fna.gz $BGFS/vamb
-minimap2 -I100G -d $BGFS/vamb/contigs.mmi $BGFS/vamb/contigs.fna.gz
+cp $OUTDIR/contigs.fna.gz $BGFS/$OUTDIR
+minimap2 -I100G -d $BGFS/$OUTDIR/contigs.mmi $BGFS/$OUTDIR/contigs.fna.gz
 for R1 in $(sort -R R1_reads.txt); do
 	R2=${R1/R1/R2}
 	cp $SOURCE/$R1 $SOURCE/$R2 $BGFS/fastq
 	BAM=${R1/$FILEEND/.bam}
-	minimap2 -t 16 -N 5 -ax sr $BGFS/vamb/contigs.mmi --split-prefix $BGFS/mmsplit$$ $BGFS/fastq/$R1 $BGFS/fastq/$R2 | samtools view -F 3584 -b --threads 16  | samtools sort -o $BGFS/vamb/mapped_reads/$BAM -
+	minimap2 -t 16 -N 5 -ax sr $BGFS/$OUTDIR/contigs.mmi --split-prefix $BGFS/mmsplit$$ $BGFS/fastq/$R1 $BGFS/fastq/$R2 | samtools view -F 3584 -b --threads 16  | samtools sort -@ 16 -o $BGFS/$OUTDIR/mapped_reads/$BAM -
 done
 
-rsync -a $BGFS/vamb/ vamb/
+rsync -a $BGFS/$OUTDIR/ $OUTDIR/
 
-vamb --outdir vamb/vamb --fasta $BGFS/vamb/contigs.fna.gz --bamfiles $BGFS/vamb/mapped_reads/*bam -o C -p 16 --cuda
+vamb --outdir $OUTDIR/vamb --fasta $BGFS/$OUTDIR/contigs.fna.gz --bamfiles $BGFS/$OUTDIR/mapped_reads/*bam -o C -p 16 --cuda
 
-python ~/GitHubs/EdwardsLab/process_EK_metagenomes/vamb_create_fasta.py $BGFS/vamb/contigs.fna.gz vamb/vamb/vae_clusters.tsv 20000 vamb/bins
+python ~/GitHubs/EdwardsLab/process_EK_metagenomes/vamb_create_fasta.py $BGFS/$OUTDIR/contigs.fna.gz $OUTDIR/vamb/vae_clusters.tsv 20000 $OUTDIR/bins
 
-rsync -a $BGFS/vamb/ vamb/
+rsync -a $BGFS/$OUTDIR/ $OUTDIR/

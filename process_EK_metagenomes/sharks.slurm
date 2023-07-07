@@ -28,7 +28,9 @@ R2=${R1/R1/R2}
 cp $SOURCE/$R1 $SOURCE/$R2 $BGFS/fastq
 
 
-O=${R1/_R1_001.fastq.gz/.bam}
+#FILEEND="_R1_001.fastq.gz";
+FILEEND="_R1.fastq.gz";
+O=${R1/$FILEEND/.bam}
 
 minimap2 -t 16 --split-prefix=$BGFS/tmp$$ -a -xsr $BGFS/Ref-SharkAll.fna $BGFS/fastq/$R1 $BGFS/fastq/$R2 | samtools view -bh | samtools sort -o $BGFS/output/$O -
 samtools index $BGFS/output/$O
