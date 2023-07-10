@@ -1,6 +1,8 @@
 # This is yet another stand alone metagneome processing pipeline, starting from fastq files provided by SAGC
 
-## 1. After downloading the `zip` file from SAGC and uncompressing it, we have four lanes of data, called `L01`, `L02`, `L03`, and `L04`. We merge those into a single file:
+## 1. Concatenate lanes
+
+After downloading the `zip` file from SAGC and uncompressing it, we have four lanes of data, called `L01`, `L02`, `L03`, and `L04`. We merge those into a single file:
 
 ```
 sbatch join_sagc_lanes.slurm
