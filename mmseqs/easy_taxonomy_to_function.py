@@ -29,11 +29,11 @@ if __name__ == "__main__":
     try:
         con = sqlite3.connect(args.d)
     except sqlite3.Error as e:
-        sys.stderr.write("ERROR Creating database: {}\n".format(os.path.join(outdir, dbname)))
+        sys.stderr.write(f"ERROR Connecting to database: {args.d}\n")
         sys.stderr.write(e)
         sys.exit(-1)
 
-    urs = re.compile('^UniRef\d+_(\w+)')
+    urs = re.compile(r'^UniRef\d+_(\w+)')
     cur = con.cursor()
 
     with gzip.open(args.f, 'rt') if is_gzip(args.f) else open(args.f, 'r') as f:
@@ -42,35 +42,41 @@ if __name__ == "__main__":
             m = urs.match(p[0])
             if m and m.group(1):
                 try:
-                    # cur.execute("select distinct superclass, class, subclass, subsystem_name, func from subsystems where func in (select func from trembl where uniprot = ?);", [m.group(1)])
+                    # cur.execute("select distinct superclass, class, subclass, subsystem_name, func from subsystems
+                    # where func in (select func from trembl where uniprot = ?);", [m.group(1)])
                     cur.execute("select func from trembl where uniprot = ?", [m.group(1)])
                 except sqlite3.OperationalError as e:
                     sys.stderr.write("{}".format(e))
                     sys.stderr.write("\nWhile insert on: {}\n".format(p))
                     sys.exit()
-                
+
                 funcs = cur.fetchone()
                 if funcs:
                     func = funcs[0]
                     # print(f"Func: {func}", file=sys.stderr)
                     try:
-                        cur.execute("select distinct superclass, class, subclass, subsystem_name, func from subsystems where func = ?", [func]);
+                        cur.execute("select distinct superclass, class, subclass, subsystem_name, func from "
+                                    "subsystems where func = ?", [func])
                     except sqlite3.OperationalError as e:
                         sys.stderr.write("{}".format(e))
                         sys.stderr.write("\nWhile insert on: {}\n".format(p))
                         sys.exit()
-                    s = cur.fetchone()
-                    if s:
-                        print("\t".join(list(p) + [func] + list(s)))
+                    counts = 0
+                    results = []
+                    for s in (cur.fetchall()):
+                        results.append(print("\t".join(list(p) + [func] + list(s))))
+                        counts += 1
+                    if results:
+                        for r in results:
+                            print(f"{r}\t{counts}")
                     else:
                         # print(f"Can't find a class for {m.group(1)}", file=sys.stderr)
-                        print("\t".join(p))
+                        print("\t".join(p + [func, "", "", "", "", "", counts]))
                 else:
-                    print("\t".join(p))
+                    print("\t".join(p + ["", "", "", "", "", "", 0]))
 
             else:
                 print(f"Can't parse ID from {p[0]}", file=sys.stderr)
-                print("\t".join(p))
+                print("\t".join(p + ["", "", "", "", "", "", 0]))
 
     con.close()
-
