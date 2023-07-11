@@ -42,13 +42,32 @@ if __name__ == "__main__":
             m = urs.match(p[0])
             if m and m.group(1):
                 try:
-                    cur.execute("select distinct superclass, class, subclass, subsystem_name, func from subsystems where func in (select func from trembl where uniprot = ?);", m.group(1))
+                    # cur.execute("select distinct superclass, class, subclass, subsystem_name, func from subsystems where func in (select func from trembl where uniprot = ?);", [m.group(1)])
+                    cur.execute("select func from trembl where uniprot = ?", [m.group(1)])
                 except sqlite3.OperationalError as e:
                     sys.stderr.write("{}".format(e))
                     sys.stderr.write("\nWhile insert on: {}\n".format(p))
                     sys.exit()
-                s = cur.fetchone()
-                print("\t".join(p+s))
+                
+                funcs = cur.fetchone()
+                if funcs:
+                    func = funcs[0]
+                    # print(f"Func: {func}", file=sys.stderr)
+                    try:
+                        cur.execute("select distinct superclass, class, subclass, subsystem_name, func from subsystems where func = ?", [func]);
+                    except sqlite3.OperationalError as e:
+                        sys.stderr.write("{}".format(e))
+                        sys.stderr.write("\nWhile insert on: {}\n".format(p))
+                        sys.exit()
+                    s = cur.fetchone()
+                    if s:
+                        print("\t".join(list(p) + [func] + list(s)))
+                    else:
+                        # print(f"Can't find a class for {m.group(1)}", file=sys.stderr)
+                        print("\t".join(p))
+                else:
+                    print("\t".join(p))
+
             else:
                 print(f"Can't parse ID from {p[0]}", file=sys.stderr)
                 print("\t".join(p))
