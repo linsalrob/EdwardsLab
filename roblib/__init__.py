@@ -19,6 +19,7 @@ from .colours import colours, colors, message
 from .genbank import genbank_to_faa, genbank_to_fna, genbank_to_orfs, genbank_seqio
 from .genbank import genbank_to_ptt, genbank_to_functions, feature_id, genbank_to_pandas
 from .genbank import genbank_to_gff
+from .files import is_gzip
 
 __all__ = [
     'mean', 'median', 'stdev',
@@ -33,4 +34,5 @@ __all__ = [
     'SequencePairError', 'FastqFormatError',
     'genbank_to_faa', 'genbank_to_fna', 'genbank_to_orfs', 'genbank_to_ptt', 'genbank_seqio', 'genbank_to_functions',
     'feature_id', 'genbank_to_pandas', 'genbank_to_gff',
+    'is_gzip'
     ]
