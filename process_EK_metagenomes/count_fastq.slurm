@@ -1,11 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name=countfastq
-#SBATCH --time=5-0
+#SBATCH --time=0-1
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
-#SBATCH --mem=32G
+#SBATCH --mem=4G
 #SBATCH -o count_fastq-%j.out
 #SBATCH -e count_fastq-%j.err
+#SBATCH --partition=short
 
 DIR=$1
 
