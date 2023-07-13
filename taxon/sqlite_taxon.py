@@ -6,15 +6,14 @@ import os
 import sys
 import argparse
 import sqlite3
-import json
-import time
-from config import get_db_dir
+from datetime import datetime
 import gzip
 
 
 def connect_to_db(outdir, dbname, verbose=False):
     """
     Connect to the database
+    :param outdir: the directory to write to
     :param dbname: the database file name
     :param verbose: print addtional output
     :return: the database connection
@@ -65,7 +64,7 @@ def create_load(conn, datadir, verbose=False):
     ## The NODES table
     dbfile = os.path.join(datadir, "nodes.dmp")
     if verbose:
-        print(f"loading NODES table: {dbfile} at {time.time()}", file=sys.stderr)
+        print(f"loading NODES table: {dbfile} at {datetime.now()}", file=sys.stderr)
     if not os.path.exists(dbfile):
         sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
         sys.exit(-1)
@@ -87,7 +86,7 @@ def create_load(conn, datadir, verbose=False):
     # the NAMES table
     dbfile = os.path.join(datadir, "names.dmp")
     if verbose:
-        print(f"loading NAMES table: {dbfile} at {time.time()}", file=sys.stderr)
+        print(f"loading NAMES table: {dbfile} at {datetime.now()}", file=sys.stderr)
     if not os.path.exists(dbfile):
         sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
         sys.exit(-1)
@@ -108,7 +107,7 @@ def create_load(conn, datadir, verbose=False):
     # the DIVISION table
     dbfile = os.path.join(datadir, "division.dmp")
     if verbose:
-        print(f"loading DIVISION table: {dbfile} at {time.time()}", file=sys.stderr)
+        print(f"loading DIVISION table: {dbfile} at {datetime.now()}", file=sys.stderr)
     if not os.path.exists(dbfile):
         sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
         sys.exit(-1)
@@ -129,7 +128,7 @@ def create_load(conn, datadir, verbose=False):
     # the GENETIC CODE table
     dbfile = os.path.join(datadir, "gencode.dmp")
     if verbose:
-        print(f"loading GENETIC CODE table: {dbfile} at {time.time()}", file=sys.stderr)
+        print(f"loading GENETIC CODE table: {dbfile} at {datetime.now()}", file=sys.stderr)
     if not os.path.exists(dbfile):
         sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
         sys.exit(-1)
@@ -150,7 +149,7 @@ def create_load(conn, datadir, verbose=False):
     # the MERGED database
     dbfile = os.path.join(datadir, "merged.dmp")
     if verbose:
-        print(f"loading MERGED table: {dbfile} at {time.time()}", file=sys.stderr)
+        print(f"loading MERGED table: {dbfile} at {datetime.now()}", file=sys.stderr)
     if not os.path.exists(dbfile):
         sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
         sys.exit(-1)
@@ -171,7 +170,7 @@ def create_load(conn, datadir, verbose=False):
     # The deleted nodes
     dbfile = os.path.join(datadir, "delnodes.dmp")
     if verbose:
-        print(f"loading DELETED table: {dbfile} at {time.time()}", file=sys.stderr)
+        print(f"loading DELETED table: {dbfile} at {datetime.now()}", file=sys.stderr)
     if not os.path.exists(dbfile):
         sys.stderr.write("ERROR: {} does not exist\n".format(dbfile))
         sys.exit(-1)
@@ -207,7 +206,7 @@ def accession2taxid(conn, datadir, verbose=False):
     for protfile in ["prot.accession2taxid.FULL.gz", "prot.accession2taxid.gz"]:
         dbfile = os.path.join(datadir, protfile)
         if verbose:
-            print(f"loading prot2taxid (PROT) table: {dbfile} at {time.time()}", file=sys.stderr)
+            print(f"loading prot2taxid (PROT) table: {dbfile} at {datetime.now()}", file=sys.stderr)
         if not os.path.exists(dbfile):
             print("ERROR: {dbfile} does not exist", file=sys.stderr)
             continue
@@ -252,18 +251,13 @@ def accession2taxid(conn, datadir, verbose=False):
 
         conn.commit()
 
-    # conn.execute("CREATE INDEX prot_acc2tax ON prot2taxid ('accession', 'taxid')") # there is no accession only for prots
-    conn.execute("CREATE INDEX prot_accver2tax ON prot2taxid ('accession.version', 'taxid')")
-    conn.commit()
-
-
     nucl_acc_ver = set()
     conn.execute("CREATE TABLE nucl2taxid (accession TEXT, accession_version TEXT PRIMARY KEY, tax_id INTEGER)")
     conn.commit()
     for nuclfile in ["nucl_gb.accession2taxid.gz", "nucl_wgs.accession2taxid.EXTRA.gz", "nucl_wgs.accession2taxid.gz"]:
         dbfile = os.path.join(datadir, nuclfile)
         if verbose:
-            print(f"loading nucl2taxid (NUCL) table: {dbfile} at {time.time()}", file=sys.stderr)
+            print(f"loading nucl2taxid (NUCL) table: {dbfile} at {datetime.now()}", file=sys.stderr)
         if not os.path.exists(dbfile):
             print("ERROR: {dbfile} does not exist", file=sys.stderr)
             continue
@@ -292,9 +286,6 @@ def accession2taxid(conn, datadir, verbose=False):
                         sys.exit()
         conn.commit()
 
-    conn.execute("CREATE INDEX nucl_acc2tax ON nucl2taxid ('accession', 'taxid')")
-    conn.execute("CREATE INDEX nucl_accver2tax ON nucl2taxid ('accession.version', 'taxid')")
-    conn.commit()
 
     return conn
 
