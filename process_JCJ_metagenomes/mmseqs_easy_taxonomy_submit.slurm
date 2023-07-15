@@ -1,4 +1,15 @@
 #!/bin/bash
+#SBATCH --job-name=mmseqs_submit
+#SBATCH --time=0-1
+#SBATCH --ntasks=1
+#SBATCH --cpus-per-task=1
+#SBATCH --mem=8GB
+#SBATCH -o mmseqs_submit-%j.out
+#SBATCH -e mmseqs_submit-%j.err
+
+set -euo pipefail
+eval "$(conda shell.bash hook)"
+conda activate bioinformatics
 
 ###############################################################
 #                                                             #
