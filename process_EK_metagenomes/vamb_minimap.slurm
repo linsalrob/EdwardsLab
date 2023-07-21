@@ -22,8 +22,6 @@ if [[ ! -e $OUTDIR/contigs.fna.gz ]]; then
 	#python /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/vamb_concatenate.py $OUTDIR/contigs.fna.gz megahit/*/output/final.contigs.fa 
 fi
 
-mkdir --parents $BGFS/$OUTDIR $BGFS/$OUTDIR/mapped_reads  $BGFS/fastq
-mkdir --parents $OUTDIR/mapped_reads
 
 #FILEEND="_R1_001.fastq.gz";
 FILEEND="_R1.fastq.gz";
@@ -33,6 +31,8 @@ R2=${R1/R1/R2}
 BAM=${R1/$FILEEND/.bam}
 
 if [[ ! -e $OUTDIR/mapped_reads/$BAM ]]; then
+	mkdir --parents $BGFS/$OUTDIR $BGFS/$OUTDIR/mapped_reads  $BGFS/fastq
+	mkdir --parents $OUTDIR/mapped_reads
 
 	if [[ -e $OUTDIR/contigs.mmi ]]; then
 		cp $OUTDIR/contigs.mmi $BGFS/$OUTDIR/contigs.mmi
