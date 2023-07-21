@@ -142,6 +142,27 @@ perl ../bin/sankey_matic.pl -f counts.tsv -m count_mmseqs-2159834.err
 python /home/edwa0468/GitHubs/EdwardsLab/taxon/mmseqs_report_to_table.py -d mmseqs -o mmseqs_taxonomy -v
 ```
 
+## 10. Add the subsytems to the mmseqs output
+
+Note that to do this you need access ot the SQLite database that connects UniProt ID to subsytem. Currently that is in `/home/edwa0468/UniRef/uniref.sqlite`
+
+```
+sbatch --array=1-$NUM_R1_READS:1 /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/mmseqs_add_subsystems.slurm
+```
+
+This creates a new file for every mmseqs top hit file, which appends the subsytems information to the file. Note that at the moment it makes a separate entry for reads that map to multiple subsystems. 
+
+## 11. Calculate the statistics for the mmseqs hits.
+
+We test normalizing three ways:
+- not normalising
+- on the sum of all top hits
+- on the sum of all top hits that have a subsystem
+
+```
+sbatch /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/count_subsystems.slurm
+```
+
 # Assembly and Binning
 
 ## 10. Assembly
