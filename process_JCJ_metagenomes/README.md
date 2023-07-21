@@ -77,3 +77,16 @@ bash /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/megahit_submit.sh
 This creates separate directories in the `megahit` directory with each assembly.
 
 
+
+
+
+## All commands
+
+```
+JOB=$(sbatch --parsable --array=1-$NUM_R1_READS:1 ~/GitHubs/EdwardsLab/process_JCJ_metagenomes/fastp.slurm)
+JOB=$(sbatch --parsable --dependency=afterok:$JOB --array=1-$NUM_R1_READS:1 ~/GitHubs/EdwardsLab/process_JCJ_metagenomes/humans.slurm)
+JOB=$(sbatch --parsable --dependency=afterok:$JOB ~/GitHubs/EdwardsLab/process_JCJ_metagenomes/fastq2fasta.slurm no_human)
+JOB=$(sbatch --parsable --dependency=afterok:$JOB ~/GitHubs/EdwardsLab/process_JCJ_metagenomes/mmseqs_easy_taxonomy_submit.slurm UniRef50 mmseqs fasta)
+echo "Last job is $JOB"
+
+```
