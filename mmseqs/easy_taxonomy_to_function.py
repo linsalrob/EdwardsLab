@@ -53,7 +53,6 @@ if __name__ == "__main__":
                 funcs = cur.fetchone()
                 if funcs:
                     func = funcs[0]
-                    # print(f"Func: {func}", file=sys.stderr)
                     try:
                         cur.execute("select distinct superclass, class, subclass, subsystem_name, func from "
                                     "subsystems where func = ?", [func])
@@ -64,19 +63,22 @@ if __name__ == "__main__":
                     counts = 0
                     results = []
                     for s in (cur.fetchall()):
-                        results.append(print("\t".join(list(p) + [func] + list(s))))
+                        # print(">>", end="", file=sys.stderr)
+                        # print("|\t|".join(s), end="", file=sys.stderr);
+                        # print("<<", file=sys.stderr)
+                        results.append("\t".join(list(p) + [func] + list(s)))
                         counts += 1
                     if results:
                         for r in results:
-                            print(f"{r}\t{counts}")
+                            print(f"{r}\t{int(p[1])/counts}")
                     else:
                         # print(f"Can't find a class for {m.group(1)}", file=sys.stderr)
-                        print("\t".join(p + [func, "", "", "", "", "", counts]))
+                        print("\t".join(p + [func, "", "", "", "", "", p[1]]))
                 else:
-                    print("\t".join(p + ["", "", "", "", "", "", 0]))
+                    print("\t".join(p + ["", "", "", "", "", "", p[1]]))
 
             else:
                 print(f"Can't parse ID from {p[0]}", file=sys.stderr)
-                print("\t".join(p + ["", "", "", "", "", "", 0]))
+                print("\t".join(p + ["", "", "", "", "", "", p[1]]))
 
     con.close()
