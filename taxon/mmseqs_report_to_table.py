@@ -78,7 +78,7 @@ if __name__ == "__main__":
                     if 'all' not in data[s]:
                         print(f"No 'all' in {s}", file=sys.stderr)
                         continue
-                    if n in data[s][w]:
+                    if w in data[s] and n in data[s][w]:
                         print(f"\t{data[s][w][n]}", file=out, end="")
                     else:
                         print("\t0", file=out, end="")
