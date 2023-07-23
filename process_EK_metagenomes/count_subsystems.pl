@@ -5,14 +5,18 @@ use Rob;
 my $rob = new Rob;
 
 my %opts;
-getopts('d:v', \%opts);
+getopts('d:m:s:v', \%opts);
 unless ($opts{d}) {
 	die <<EOF;
 	$0
 	-d directory of mmseqs outputs [mmseqs]
+	-m metadata file. If you provide this we strip of _S34 (or whatever) and then try and rename your columns
+	-s subsystems output directory [subsystems]
 	-v verbose output
 EOF
 }
+
+unless ($opts{s}) {$opts{s}="subsystems"}
 
 
 # 0       UniRef50_L1JF06
@@ -42,6 +46,19 @@ my %allsub;
 my %total;
 my %sstotal;
 
+my %meta;
+
+if ($opts{m}) {
+	open(IN, $opts{m}) || die "$! $opts{m}";
+	while (<IN>) {
+		chomp;
+		my @a=split /\t/;
+		$a[0] =~ s/_S\d+$//;
+		$meta{$a[0]} = $a[1];
+	}
+	close IN;
+}
+
 opendir(DIR, $opts{d}) || die "$! : $opts{d}";
 foreach my $sub (grep {$_ !~ /^\./} readdir(DIR)) {
 	# mmseqs/SAGCFN_22_00789_S34/SAGCFN_22_00789_S34_tophit_report_subsystems.gz
@@ -50,22 +67,25 @@ foreach my $sub (grep {$_ !~ /^\./} readdir(DIR)) {
 		next;
 	}
 	open(IN, "gunzip -c $opts{d}/$sub/${sub}_tophit_report_subsystems.gz |") || die "$! opening pipe to  $opts{d}/$sub/${sub}_tophit_report_subsystems.gz";
-	$allsub{$sub}=1;
+	my $id = $sub;
+	$id =~ s/_S\d+$//;
+	if ($meta{$id}) {$id = $meta{$id}}
+	$allsub{$id}=1;
 	while (<IN>) {
 		chomp;
 		my @a=split /\t/;
-		$total{$sub}+=$a[14]; ## this is the total of all reads
+		$total{$id}+=$a[14]; ## this is the total of all reads
 		next unless ($a[9]);
-		$sstotal{$sub}+=$a[14]; ## this is the total of only those reads that have a subsystems match
-		$class->{$sub}->{$a[9]} += $a[14];
+		$sstotal{$id}+=$a[14]; ## this is the total of only those reads that have a subsystems match
+		$class->{$id}->{$a[9]} += $a[14];
 		$ac->{$a[9]} = 1;
-		$lvl1->{$sub}->{$a[10]} += $a[14];
+		$lvl1->{$id}->{$a[10]} += $a[14];
 		$al1->{$a[10]} = 1;
-		$lvl2->{$sub}->{"$a[10]; $a[11]"} += $a[14];
+		$lvl2->{$id}->{"$a[10]; $a[11]"} += $a[14];
 		$al2->{"$a[10]; $a[11]"} = 1;
-		$ss->{$sub}->{$a[12]} += $a[14];
+		$ss->{$id}->{$a[12]} += $a[14];
 		$ass->{$a[12]} = 1;
-		$all->{$sub}->{"$a[9]; $a[10]; $a[11]; $a[12]"} += $a[14];
+		$all->{$id}->{"$a[9]; $a[10]; $a[11]; $a[12]"} += $a[14];
 		$aall->{"$a[9]; $a[10]; $a[11]; $a[12]"} = 1;
 	}
 	close IN;
@@ -73,9 +93,9 @@ foreach my $sub (grep {$_ !~ /^\./} readdir(DIR)) {
 
 
 my @allsub = sort {$a cmp $b} keys %allsub;
-mkdir "subsystems", 0755;
+mkdir "$opts{s}", 0755;
 
-open(OUT, ">subsystems/class_raw.tsv") || die "$! subsystems/class_raw.tsv";
+open(OUT, ">$opts{s}/class_raw.tsv") || die "$! $opts{s}/class_raw.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$ac) {
 	print OUT $s;
@@ -87,7 +107,7 @@ foreach my $s (sort {$a cmp $b} keys %$ac) {
 }
 close OUT;
 
-open(OUT, ">subsystems/level1_raw.tsv") || die "$! subsystems/level1_raw.tsv";
+open(OUT, ">$opts{s}/level1_raw.tsv") || die "$! $opts{s}/level1_raw.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$al1) {
 	print OUT $s;
@@ -99,7 +119,7 @@ foreach my $s (sort {$a cmp $b} keys %$al1) {
 }
 close OUT;
 
-open(OUT, ">subsystems/level2_raw.tsv") || die "$! subsystems/level2_raw.tsv";
+open(OUT, ">$opts{s}/level2_raw.tsv") || die "$! $opts{s}/level2_raw.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$al2) {
 	print OUT $s;
@@ -112,7 +132,7 @@ foreach my $s (sort {$a cmp $b} keys %$al2) {
 close OUT;
 
 
-open(OUT, ">subsystems/subsystems_raw.tsv") || die "$! subsystems/subsystems_raw.tsv";
+open(OUT, ">$opts{s}/$opts{s}_raw.tsv") || die "$! $opts{s}/$opts{s}_raw.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$ass) {
 	print OUT $s;
@@ -125,7 +145,7 @@ foreach my $s (sort {$a cmp $b} keys %$ass) {
 close OUT;
 
 
-open(OUT, ">subsystems/all_raw.tsv") || die "$! subsystems/all_raw.tsv";
+open(OUT, ">$opts{s}/all_raw.tsv") || die "$! $opts{s}/all_raw.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$aall) {
 	print OUT $s;
@@ -144,7 +164,7 @@ close OUT;
 
 map {$total{$_} /= 1e6} keys %total;
 
-open(OUT, ">subsystems/class_norm_all.tsv") || die "$! subsystems/class_norm_all.tsv";
+open(OUT, ">$opts{s}/class_norm_all.tsv") || die "$! $opts{s}/class_norm_all.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$ac) {
 	print OUT $s;
@@ -156,7 +176,7 @@ foreach my $s (sort {$a cmp $b} keys %$ac) {
 }
 close OUT;
 
-open(OUT, ">subsystems/level1_norm_all.tsv") || die "$! subsystems/level1_norm_all.tsv";
+open(OUT, ">$opts{s}/level1_norm_all.tsv") || die "$! $opts{s}/level1_norm_all.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$al1) {
 	print OUT $s;
@@ -168,7 +188,7 @@ foreach my $s (sort {$a cmp $b} keys %$al1) {
 }
 close OUT;
 
-open(OUT, ">subsystems/level2_norm_all.tsv") || die "$! subsystems/level2_norm_all.tsv";
+open(OUT, ">$opts{s}/level2_norm_all.tsv") || die "$! $opts{s}/level2_norm_all.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$al2) {
 	print OUT $s;
@@ -181,7 +201,7 @@ foreach my $s (sort {$a cmp $b} keys %$al2) {
 close OUT;
 
 
-open(OUT, ">subsystems/subsystems_norm_all.tsv") || die "$! subsystems/subsystems_norm_all.tsv";
+open(OUT, ">$opts{s}/$opts{s}_norm_all.tsv") || die "$! $opts{s}/$opts{s}_norm_all.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$ass) {
 	print OUT $s;
@@ -194,7 +214,7 @@ foreach my $s (sort {$a cmp $b} keys %$ass) {
 close OUT;
 
 
-open(OUT, ">subsystems/all_norm_all.tsv") || die "$! subsystems/all_norm_all.tsv";
+open(OUT, ">$opts{s}/all_norm_all.tsv") || die "$! $opts{s}/all_norm_all.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$aall) {
 	print OUT $s;
@@ -211,7 +231,7 @@ close OUT;
 
 map {$sstotal{$_} /= 1e6} keys %sstotal;
 
-open(OUT, ">subsystems/class_norm_ss.tsv") || die "$! subsystems/class_norm_ss.tsv";
+open(OUT, ">$opts{s}/class_norm_ss.tsv") || die "$! $opts{s}/class_norm_ss.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$ac) {
 	print OUT $s;
@@ -223,7 +243,7 @@ foreach my $s (sort {$a cmp $b} keys %$ac) {
 }
 close OUT;
 
-open(OUT, ">subsystems/level1_norm_ss.tsv") || die "$! subsystems/level1_norm_ss.tsv";
+open(OUT, ">$opts{s}/level1_norm_ss.tsv") || die "$! $opts{s}/level1_norm_ss.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$al1) {
 	print OUT $s;
@@ -235,7 +255,7 @@ foreach my $s (sort {$a cmp $b} keys %$al1) {
 }
 close OUT;
 
-open(OUT, ">subsystems/level2_norm_ss.tsv") || die "$! subsystems/level2_norm_ss.tsv";
+open(OUT, ">$opts{s}/level2_norm_ss.tsv") || die "$! $opts{s}/level2_norm_ss.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$al2) {
 	print OUT $s;
@@ -248,7 +268,7 @@ foreach my $s (sort {$a cmp $b} keys %$al2) {
 close OUT;
 
 
-open(OUT, ">subsystems/subsystems_norm_ss.tsv") || die "$! subsystems/subsystems_norm_ss.tsv";
+open(OUT, ">$opts{s}/$opts{s}_norm_ss.tsv") || die "$! $opts{s}/$opts{s}_norm_ss.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$ass) {
 	print OUT $s;
@@ -261,7 +281,7 @@ foreach my $s (sort {$a cmp $b} keys %$ass) {
 close OUT;
 
 
-open(OUT, ">subsystems/all_norm_ss.tsv") || die "$! subsystems/all_norm_ss.tsv";
+open(OUT, ">$opts{s}/all_norm_ss.tsv") || die "$! $opts{s}/all_norm_ss.tsv";
 print OUT "\t", join("\t", @allsub), "\n";
 foreach my $s (sort {$a cmp $b} keys %$aall) {
 	print OUT $s;
