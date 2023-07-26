@@ -23,8 +23,8 @@ fi
 mkdir --parents $BGFS/$OUTDIR $BGFS/$OUTDIR/mapped_reads  $BGFS/fastq
 mkdir --parents $OUTDIR/mapped_reads
 
-FILEEND="_R1_001.fastq.gz";
-#FILEEND="_R1.fastq.gz";
+#FILEEND="_R1_001.fastq.gz";
+FILEEND="_R1.fastq.gz";
 SOURCE=no_sharks
 
 cp $OUTDIR/contigs.fna.gz $BGFS/$OUTDIR
