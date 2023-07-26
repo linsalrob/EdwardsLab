@@ -51,7 +51,7 @@ HOSTJOB=$(sbatch --parsable --array=1-$NUM_R1_READS:1 --dependency=afterok:$JOB 
 3. Convert to fasta for mmseqs
 
 ```
-FAJOB=$(sbatch --parsable --dependency=afterok:$JOB /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/fastq2fasta.slurm)
+FAJOB=$(sbatch --parsable --dependency=afterok:$HOSTJOB /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/fastq2fasta.slurm)
 ```
 
 4. Run mmseqs taxonomy
@@ -70,23 +70,21 @@ sbatch --dependency=afterok:$SSJOB /home/edwa0468/GitHubs/EdwardsLab/process_EK_
 5. Run megahit
  
 ```
-MEGAHITJOB=$(sbatch  --parsable --dependency=afterok:$JOB /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/megahit_submit.slurm
+MEGAHITJOB=$(sbatch  --parsable --dependency=afterok:$HOSTJOB --array=1-$NUM_R1_READS:1 /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/megahit.slurm
 ```
 
 6. Combine assemblies for VAMB
 
-Note: this takes a few (<10) minutes, and so I run it on the head node. 
+Note: this takes a few (<10) minutes, and so I run it on the short queue
 
 ```
-export OUTDIR=vamb
-mkdir $OUTDIR
-python /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/vamb_concatenate.py $OUTDIR/contigs.fna.gz megahit/\*/output/final.contigs.fa
+VCJOB=$(sbatch --parsable --dependency=afterok:$MEGAHITJOB process_metagenomes/vamb_concat.slurm)
 ```
 
 7. Map vamb reads.
 
 ```
-VMJOB=$(sbatch --parsable --array=1-$NUM_R1_READS:1 process_metagenomes/vamb_minimap.slurm)
+VMJOB=$(sbatch --parsable  --dependency=afterok:$VCJOB --array=1-$NUM_R1_READS:1 process_metagenomes/vamb_minimap.slurm)
 ```
 
 
@@ -105,11 +103,14 @@ sbatch --dependency=afterok:$VMJOB process_metagenomes/vamb.slurm
 export NUM_R1_READS=$(wc -l R1_Reads.txt | cut -f 1 -d ' ')
 JOB=$(sbatch --parsable --array=1-$NUM_R1_READS:1 ~/GitHubs/EdwardsLab/process_metagenomes/fastp.slurm)
 HOSTJOB=$(sbatch --parsable --array=1-$NUM_R1_READS:1 --dependency=afterok:$JOB process_metagenomes/host_removal.slurm)
-FAJOB=$(sbatch --parsable --dependency=afterok:$JOB /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/fastq2fasta.slurm)
+FAJOB=$(sbatch --parsable --dependency=afterok:$HOSTJOB /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/fastq2fasta.slurm)
 MMSEQSJOB=$(sbatch --parsable --dependency=afterok:$FAJOB /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/mmseqs_easy_taxonomy_submit.slurm)
 SSJOB=$(sbatch --parsable --dependency=afterok:$MMSEQSJOB --array=1-$NUM_R1_READS:1 process_metagenomes/mmseqs_add_subsystems.slurm)
 sbatch --dependency=afterok:$SSJOB /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/count_subsystems.slurm
-MEGAHITJOB=$(sbatch  --parsable --dependency=afterok:$JOB /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/megahit_submit.slurm)
+MEGAHITJOB=$(sbatch  --parsable --dependency=afterok:$HOSTJOB --array=1-$NUM_R1_READS:1 /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/megahit.slurm)
+VCJOB=$(sbatch --parsable --dependency=afterok:$MEGAHITJOB process_metagenomes/vamb_concat.slurm)
+VMJOB=$(sbatch --parsable  --dependency=afterok:$VCJOB --array=1-$NUM_R1_READS:1 process_metagenomes/vamb_minimap.slurm)
+sbatch --dependency=afterok:$VMJOB process_metagenomes/vamb.slurm
 
 
 ```
