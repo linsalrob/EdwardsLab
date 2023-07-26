@@ -40,12 +40,18 @@ if [[ $(find fastq -name \*R2\* | awk 's++{} END {print s}') != $NUM_R1_READS ]]
 JOB=$(sbatch --parsable --array=1-$NUM_R1_READS:1 ~/GitHubs/EdwardsLab/process_metagenomes/fastp.slurm)
 ```
 
-*NOTE*: This pipeline doesn't do host removal. See either [process_EK_metagenomes](../process_EK_metagenomes) or [process_JCJ_metagenomes](../process_JCJ_metagenomes) for examples that remove host sequences.
+3. HOST REMOVAL (optional)
+
+If you don't want to do host removal just set `HOSTREMOVED=fastq_fastp` in DEFINITIONS.sh
+
+```
+HOSTJOB=$(sbatch --parsable --array=1-$NUM_R1_READS:1 --dependency=afterok:$JOB process_metagenomes/host_removal.slurm)
+```
 
 3. Convert to fasta for mmseqs
 
 ```
-FAJOB=$(sbatch --parsable --dependency=afterok:$JOB /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/fastq2fasta.slurm fastq_fastp)
+FAJOB=$(sbatch --parsable --dependency=afterok:$JOB /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/fastq2fasta.slurm)
 ```
 
 4. Run mmseqs taxonomy
@@ -57,7 +63,8 @@ MMSEQSJOB=$(sbatch --parsable --dependency=afterok:$FAJOB /home/edwa0468/GitHubs
 4b. Add the subsystems to the taxonomy
 
 ```
-sbatch --dependency=afterok:$MMSEQSJOB --array=1-$NUM_R1_READS:1 process_metagenomes/mmseqs_add_subsystems.slurm
+SSJOB=$(sbatch --parsable --dependency=afterok:$MMSEQSJOB --array=1-$NUM_R1_READS:1 process_metagenomes/mmseqs_add_subsystems.slurm)
+sbatch --dependency=afterok:$SSJOB /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/count_subsystems.slurm
 ```
 
 5. Run megahit
@@ -87,4 +94,22 @@ VMJOB=$(sbatch --parsable --array=1-$NUM_R1_READS:1 process_metagenomes/vamb_min
 
 ```
 sbatch --dependency=afterok:$VMJOB process_metagenomes/vamb.slurm
+```
+
+
+
+
+# All commands in one go:
+
+```
+export NUM_R1_READS=$(wc -l R1_Reads.txt | cut -f 1 -d ' ')
+JOB=$(sbatch --parsable --array=1-$NUM_R1_READS:1 ~/GitHubs/EdwardsLab/process_metagenomes/fastp.slurm)
+HOSTJOB=$(sbatch --parsable --array=1-$NUM_R1_READS:1 --dependency=afterok:$JOB process_metagenomes/host_removal.slurm)
+FAJOB=$(sbatch --parsable --dependency=afterok:$JOB /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/fastq2fasta.slurm)
+MMSEQSJOB=$(sbatch --parsable --dependency=afterok:$FAJOB /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/mmseqs_easy_taxonomy_submit.slurm)
+SSJOB=$(sbatch --parsable --dependency=afterok:$MMSEQSJOB --array=1-$NUM_R1_READS:1 process_metagenomes/mmseqs_add_subsystems.slurm)
+sbatch --dependency=afterok:$SSJOB /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/count_subsystems.slurm
+MEGAHITJOB=$(sbatch  --parsable --dependency=afterok:$JOB /home/edwa0468/GitHubs/EdwardsLab/process_metagenomes/megahit_submit.slurm)
+
+
 ```

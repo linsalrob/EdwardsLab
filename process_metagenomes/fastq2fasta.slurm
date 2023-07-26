@@ -12,11 +12,6 @@ eval "$(conda shell.bash hook)"
 conda activate bioinformatics
 
 
-if [[ $# == 0 ]]; then
-	echo "$0 <directory of fastq files>" >&2;
-	exit 1;
-fi
-
 if [[ ! -e DEFINITIONS.sh ]]; then
 	echo "Please create a DEFINITIONS.sh file with SOURCE, FILEEND, HOSTREMOVED" >&2
 	exit 2;
@@ -47,6 +42,6 @@ export -f extract_R1
 export -f extract_R2
 mkdir -p fasta
 
-find -L $1 -type f -name \*R1\*fastq.gz | parallel -j 16 extract_R1
-find -L $1 -type f -name \*R2\*fastq.gz | parallel -j 16 extract_R2
+find -L $HOSTREMOVED -type f -name \*R1\*fastq.gz | parallel -j 16 extract_R1
+find -L $HOSTREMOVED -type f -name \*R2\*fastq.gz | parallel -j 16 extract_R2
 
