@@ -1,11 +1,12 @@
 #!/bin/bash
 #SBATCH --job-name=JoinSAGCLanes
-#SBATCH --time=5-0
+#SBATCH --time=0-12
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=1
 #SBATCH --mem=2G
 #SBATCH -o joinlanes-%j.out
 #SBATCH -e joinlanes-%j.err
+#SBATCH --partition=short
 
 set -euo pipefail
 eval "$(conda shell.bash hook)"
