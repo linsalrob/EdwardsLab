@@ -4,13 +4,9 @@
 #SBATCH --ntasks=1
 #SBATCH --cpus-per-task=32
 #SBATCH --mem=32G
-#SBATCH -o megahit-%j.out
-#SBATCH -e megahit-%j.err
+#SBATCH -o megahit-%A_%a.out
+#SBATCH -e megahit-%A_%a.err
 
-# NOTE: 
-# - You need the --qos option specified
-# - Maxiumum runtime: 7 days
-# - 
 
 ## For an example run on Emma's EagleRay data
 # 
@@ -38,25 +34,36 @@
 
 set -euo pipefail
 
-if [[ $# != 3 ]]; then
-	echo "$0 <R1 reads> <R2 reads> <output directory>" >&2;
-	exit 2;
-fi
-
 eval "$(conda shell.bash hook)"
 conda activate bioinformatics
 
-mkdir $BGFS/input 
-cp -t $BGFS/input $1 $2
-R1=$BGFS/input/`basename $1`;
-R2=$BGFS/input/`basename $2`;
-O=$BGFS/output
 
-megahit -1 $R1 -2 $R2 -o $O
+if [[ ! -e DEFINITIONS.sh ]]; then
+	echo "Please create a DEFINITIONS.sh file with SOURCE, FILEEND, HOSTREMOVED" >&2
+	exit 2;
+fi
 
-megahit_toolkit contig2fastg 119 $BGFS/output/final.contigs.fa > $BGFS/output/final.graph.fastg; 
-fastg2gfa $BGFS/output/final.graph.fastg > $BGFS/output/final.gfa
+source DEFINITIONS.sh
 
-mkdir -p `dirname $3`
 
-rsync -av $O $3
+
+mkdir --parents megahit
+for R1 in $(cat R1_reads.txt); do
+	R2=${R1/R1/R2};
+	O=${R1/$FILEEND/};
+
+
+	if [[ ! -e megahit/$O ]]; then
+		mkdir $BGFS/input 
+		cp -t $BGFS/input $HOSTREMOVED/$R1 $HOSTREMOVED/$R2
+		TMPO=$BGFS/$O
+
+		megahit -1 $BGFS/input/$R1 -2 $BGFS/input/$R2 -o $TMPO
+
+		megahit_toolkit contig2fastg 119 $TMPO/final.contigs.fa > $TMPO/final.graph.fastg; 
+		fastg2gfa $TMPO/final.graph.fastg > $TMPO/final.gfa
+
+
+		rsync -av $TMPO megahit/$O
+	fi
+done
