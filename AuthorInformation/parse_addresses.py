@@ -19,7 +19,7 @@ def parse_file(filename):
     authors = set()
     firstline = True # ignore the first line
 
-    with open(filename, 'r') as f:
+    with open(filename, 'r', encoding='latin-1') as f:
         for l in f:
             if firstline:
                 firstline = False
