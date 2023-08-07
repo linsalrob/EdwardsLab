@@ -48,41 +48,43 @@ def parse_file(filename):
                 if p[14]:
                     auth.order = int(p[14])
                 if p[15]:
-                    auth.contribution = p[15]
+                    auth.contribution = p[15].replace('"', '')
+                if len(p) > 16 and p[16]:
+                    auth.funding = p[16].replace('"', '')
 
                 primary = Address()
                 if p[7]:
-                    primary.department = p[7]
+                    primary.department = p[7].replace('"', '')
                 if p[8]:
-                    primary.institution = p[8]
+                    primary.institution = p[8].replace('"', '')
                 if p[9]:
-                    primary.street = p[9]
+                    primary.street = p[9].replace('"', '')
                 if p[10]:
-                    primary.city = p[10]
+                    primary.city = p[10].replace('"', '')
                 if p[11]:
-                    primary.state = p[11]
+                    primary.state = p[11].replace('"', '')
                 if p[12]:
-                    primary.zip = p[12]
+                    primary.zip = p[12].replace('"', '')
                 if p[13]:
-                    primary.country = p[13]
+                    primary.country = p[13].replace('"', '')
 
                 auth.primaryaddress = primary
 
                 secondary = Address()
                 if len(p) > 17 and p[17]:
-                    secondary.department = p[17]
+                    secondary.department = p[17].replace('"', '')
                 if len(p) > 18 and p[18]:
-                    secondary.institution = p[18]
+                    secondary.institution = p[18].replace('"', '')
                 if len(p) > 19 and p[19]:
-                    secondary.street = p[19]
+                    secondary.street = p[19].replace('"', '')
                 if len(p) > 20 and p[20]:
-                    secondary.city = p[20]
+                    secondary.city = p[20].replace('"', '')
                 if len(p) > 21 and p[21]:
-                    secondary.state = p[21]
+                    secondary.state = p[21].replace('"', '')
                 if len(p) > 22 and p[22]:
-                    secondary.zip = p[22]
+                    secondary.zip = p[22].replace('"', '')
                 if len(p) > 23 and p[23]:
-                    secondary.country = p[23]
+                    secondary.country = p[23].replace('"', '')
 
                 if secondary.is_valid():
                     auth.secondaryaddress = secondary
@@ -226,8 +228,35 @@ def print_author_contributions(authors):
     sys.stdout.write("<p> &nbsp; </p><h1>Author Contributions</h1><p> &nbsp; </p>\n")
     for c in contribs:
         output = ", ".join(map(str, sorted(contribs[c])))
-        output += " {}".format(c)
-        sys.stdout.write("{}. ".format(output))
+        output += f" {c}"
+        sys.stdout.write(f"{output}. ")
+    sys.stdout.write("</p>\n\n\n")
+
+def print_funding(authors):
+    """
+    Print the author funding list
+    :param authors:
+    :return:
+    """
+
+    funding = OrderedDict()
+
+    a: Author
+    for a in sorted(authors, key=operator.attrgetter('order', 'lastnamelower', 'firstnamelower')):
+        f = a.funding
+        if not f:
+            continue
+        # thisf = ''.join([f[0].lower(), f[1:]]) # convert the first letter to lower case as it will be in a sentence
+        thisf = f
+        if thisf not in funding:
+            funding[thisf] = []
+        funding[thisf].append(a.abbreviation)
+
+    sys.stdout.write("<p> &nbsp; </p><h1>Funding Acknowledgements</h1><p> &nbsp; </p>\n")
+    for f in funding:
+        output = ", ".join(map(str, sorted(funding[f])))
+        output += f" acknowledges funding from {f}"
+        sys.stdout.write(f"{output}. ")
     sys.stdout.write("</p>\n\n\n")
 
 
@@ -352,6 +381,7 @@ if __name__ == '__main__':
 
     print_author_list(authors)
     print_author_contributions(authors)
+    print_funding(authors)
 
 
 

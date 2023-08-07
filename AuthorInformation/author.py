@@ -195,6 +195,7 @@ class Author:
         self.primaryaddress = Address()
         self.secondaryaddress = Address()
         self.contribution = None
+        self.funding = None
         self.order = 100 # this is high by default but we overwrite it if we have a value
         self.verbose = verbose
 
