@@ -23,19 +23,23 @@ if __name__ == "__main__":
     out = open(args.o, "w", encoding="utf-8")
 
 
-    fields = ["year", "title", "booktitle", "journal", "volume", "number", "organization", "pages", "publisher", "school", "institution"]
+    fields = ["year", "title", "booktitle", "journal", "volume", "number", "organization", "pages", "publisher", "school", "institution", "doi"]
     persons = ["author", "editor"]
 
     out.write('key\tType\tAuthors\tEditors\t')
     out.write("\t".join(fields))
     out.write("\n")
 
+    warned = set()
+
     for e in bt.entries:
         data = [bt.entries[e].key, bt.entries[e].type, "", ""]
         data += ["" for w in fields]
         for f in bt.entries[e].fields:
             if f not in fields:
-                sys.stderr.write(f"Found new field: '{f}'\n")
+                if f not in warned:
+                    sys.stderr.write(f"Found new field: '{f}'\n")
+                    warned.add(f)
                 continue
             data[fields.index(f)+4] = bt.entries[e].fields[f]
 
@@ -50,9 +54,15 @@ if __name__ == "__main__":
                 for e in bt.entries[e].persons['editor']:
                     editors.append(str(e))
                 data[3] = ", ".join(editors)
-            for k in bt.entries[e].persons:
-                if k not in ['author', 'editor']:
-                    sys.stderr.write(f"Have a person {k} in {bt.entries[e].key}\n")
+            try:
+                for k in bt.entries[e].persons:
+                    if k not in ['author', 'editor']:
+                        sys.stderr.write(f"Have a person {k} in {bt.entries[e].key}\n")
+            except AttributeError as err:
+                print(f"ERROR for {e} parsing persons:", file=sys.stderr)
+                print(err, file=sys.stderr)
+
+
         else:
             sys.stderr.write(f"No persons in {bt.entries[e].key}\n")
         print("\t".join(data), file=out)

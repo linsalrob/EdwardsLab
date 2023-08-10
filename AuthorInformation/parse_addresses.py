@@ -259,6 +259,15 @@ def print_funding(authors):
         sys.stdout.write(f"{output}. ")
     sys.stdout.write("</p>\n\n\n")
 
+def print_orcids(authors):
+    """
+    Print the ORCID list
+    """
+
+    print("\n\n<h1>ORCID Information</h1>\n<ul>")
+    for a in sorted(authors, key=operator.attrgetter('order', 'lastnamelower', 'firstnamelower')):
+        print(f"<li>{a.abbreviation}: {a.orcid}</li>")
+    print("</ul>")
 
 def nature_form(authors):
     """
@@ -380,6 +389,7 @@ if __name__ == '__main__':
         sys.exit(0)
 
     print_author_list(authors)
+    print_orcids(authors)
     print_author_contributions(authors)
     print_funding(authors)
 
