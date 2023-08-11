@@ -4,6 +4,7 @@ crc64iso
 datrie
 matplotlib
 networkx
+natsort
 numpy
 pandas
 PhiSpy
