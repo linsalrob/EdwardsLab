@@ -20,7 +20,7 @@ if __name__ == "__main__":
     sequential = True
     lastid = None
     with open(args.read1, 'w') as r1out, open(args.read2, 'w') as r2out:
-        for seqid, seq in stream_fasta(args.f, True):
+        for seqid, seq in stream_fasta(args.fasta, True):
             r = seqid.split(" ")[0][-1]
             if r == '1':
                 print(f">{seqid}\n{seq}", file=r1out)
@@ -38,4 +38,4 @@ if __name__ == "__main__":
             else:
                 print(f"Can't parse 1/2 from {seqid}", file=sys.stderr)
     if not sequential:
-        print("WARNING: The sequences are NOT in sequential order. If that matters you should reorder them!")
+        print(f"WARNING: The sequences in {args.fasta} are NOT in sequential order. If that matters you should reorder them!", file=sys.stderr)
