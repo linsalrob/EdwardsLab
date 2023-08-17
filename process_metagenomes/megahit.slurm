@@ -48,22 +48,24 @@ source DEFINITIONS.sh
 
 
 mkdir --parents megahit
-for R1 in $(cat R1_reads.txt); do
-	R2=${R1/R1/R2};
-	O=${R1/$FILEEND/};
+R1=$(head -n $SLURM_ARRAY_TASK_ID R1_reads.txt | tail -n 1)
+R2=${R1/R1/R2};
+O=${R1/$FILEEND/};
 
 
-	if [[ ! -e megahit/$O ]]; then
-		mkdir $BGFS/input 
-		cp -t $BGFS/input $HOSTREMOVED/$R1 $HOSTREMOVED/$R2
-		TMPO=$BGFS/$O
+if [[ -e megahit/$O ]]; then
+	echo "megahit/$O already exists. Nothing to do" >&2;
+	exit 0;
+fi
 
-		megahit -1 $BGFS/input/$R1 -2 $BGFS/input/$R2 -o $TMPO
+mkdir $BGFS/input 
+cp -t $BGFS/input $HOSTREMOVED/$R1 $HOSTREMOVED/$R2
+TMPO=$BGFS/output
 
-		megahit_toolkit contig2fastg 119 $TMPO/final.contigs.fa > $TMPO/final.graph.fastg; 
-		fastg2gfa $TMPO/final.graph.fastg > $TMPO/final.gfa
+megahit -1 $BGFS/input/$R1 -2 $BGFS/input/$R2 -o $TMPO
+
+megahit_toolkit contig2fastg 119 $TMPO/final.contigs.fa > $TMPO/final.graph.fastg; 
+fastg2gfa $TMPO/final.graph.fastg > $TMPO/final.gfa
 
 
-		rsync -av $TMPO megahit/$O
-	fi
-done
+rsync -av $TMPO megahit/$O
