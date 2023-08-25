@@ -120,3 +120,5 @@ fastq/filter_fastq_length
 bangers
 rob_tests/hashes
 bin/fasta_split
+
+jupyter/*.png
