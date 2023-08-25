@@ -31,6 +31,12 @@ cp /home/edwa0468/GitHubs/fast-adapter-trimming/adapters/IlluminaAdapters.fa $BG
 
 R1=$(head -n $SLURM_ARRAY_TASK_ID R1_reads.txt | tail -n 1)
 R2=${R1/R1/R2}
+
+if [[ -e fastq_fastp/$R1 ]] && [[ -e fastq_fastp/$R2 ]]; then
+	echo "Nothing to do for $R1 and $R2" >&2;
+	exit 0;
+fi
+
 cp $SOURCE/$R1 $SOURCE/$R2 $BGFS/fastq
 
 echo "fastp -n 1 -l 100 -i $BGFS/fastq/$R1 -I $BGFS/fastq/$R2 -o $BGFS/output/$R1 -O $BGFS/output/$R2 --adapter_fasta $BGFS/IlluminaAdapters.fa " >&2

@@ -8,6 +8,10 @@
 #SBATCH -o vamb_concat-%j.out
 #SBATCH -e vamb_concat-%j.err
 
+eval "$(conda shell.bash hook)"
+conda activate vamb
+
+
 mkdir -p vamb
-python /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/vamb_concatenate.py vamb/contigs.fna.gz megahit/\*/output/final.contigs.fa
+python /home/edwa0468/GitHubs/EdwardsLab/process_EK_metagenomes/vamb_concatenate.py vamb/contigs.fna.gz megahit/*/output/final.contigs.fa
 
