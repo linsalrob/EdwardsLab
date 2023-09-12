@@ -78,6 +78,8 @@ if __name__ == "__main__":
         for url in f:
             url = url.strip()
             tit, cit = url_to_cites(url, args.v)
-            print(f"{tit}\t{cit}", file=out)
+            s = re.compile(r'cluster=(\d+)')
+            cid = s.findall(url)[0]
+            print(f"{cid}\t{tit}\t{cit}", file=out)
             time.sleep(randint(0,60))
 
