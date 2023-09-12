@@ -11,12 +11,14 @@ PhiSpy
 pybtex
 jupyter
 pymongo
+pyreadr
 requests
 scipy
 seaborn
 sklearn
 python-dateutil
 scikit-learn
+scikit-bio
 pytz
 ipython
 openpyxl
