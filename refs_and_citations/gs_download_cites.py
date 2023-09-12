@@ -3,7 +3,9 @@ Given a list of GS URLs, download the page from google scholar and get the title
 
 We use requests to get the page, and then sleep a random time to try and avoid bot detection!
 """
+import argparse
 import os
+from roblib import message
 import sys
 import requests
 import time
@@ -45,26 +47,37 @@ def url_to_cites(url, verbose=False):
         print(f"FATAL: There was an error retrieving {url}. Return code was {r.status_code} and I can't continue", file=sys.stderr)
         return
     if verbose:
-        print(f"Retrieved {url}\nParsing", file=sys.stderr)
+        message(f"Retrieved {url}\nParsing", "BLUE")
     soup = BeautifulSoup(r.text, 'lxml')
     tit = soup.find("div", {"class": "gs_ri"}).find("h3", {"class": "gs_rt"}).text
     if verbose:
-        print(f"Title: {tit}", file=sys.stderr)
+        message(f"Title: {tit}", "BLUE")
     cites = [0]
     cb = re.compile('Cited by (\d+)')
     for c in cb.findall(str(soup)):
         cites.append(int(c))
     if verbose:
-        print(f"All citations: {cites}. We used the most!", file=sys.stderr)
+        message(f"All citations: {cites}. We used the most!", "BLUE")
     best_cite = sorted(cites, reverse=True)[0]
 
     return (tit, best_cite)
 
 
-url_list = urls.splitlines()
-with open('gs_data.txt', 'w') as out:
-    for url in url_list:
-        tit, cit = url_to_cites(url, True)
-        print(f"{tit}\t{cit}", file=out)
-        time.sleep(randint(0,60))
+
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser()
+    parser.add_argument('-f', help='file of one gs link per line', required=True)
+    parser.add_argument('-o', help='output tsv file', required=True)
+    parser.add_argument('-v', help='verbose output', action='store_true')
+    args = parser.parse_args()
+
+    if args.v:
+        message(f"Parsing {args.f}", "GREEN")
+
+    with open(args.f, 'r') as f, open(args.o, 'w') as out:
+        for url in f:
+            url = url.strip()
+            tit, cit = url_to_cites(url, args.v)
+            print(f"{tit}\t{cit}", file=out)
+            time.sleep(randint(0,60))
 
