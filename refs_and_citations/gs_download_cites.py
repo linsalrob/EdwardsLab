@@ -49,7 +49,11 @@ def url_to_cites(url, verbose=False):
     if verbose:
         message(f"Retrieved {url}\nParsing", "BLUE")
     soup = BeautifulSoup(r.text, 'lxml')
-    tit = soup.find("div", {"class": "gs_ri"}).find("h3", {"class": "gs_rt"}).text
+    try:
+        tit = soup.find("div", {"class": "gs_ri"}).find("h3", {"class": "gs_rt"}).text
+    except AttributeError as e:
+        return ("UNABLE TO RETRIEVE", "0")
+    
     if verbose:
         message(f"Title: {tit}", "BLUE")
     cites = [0]
@@ -68,18 +72,31 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser()
     parser.add_argument('-f', help='file of one gs link per line', required=True)
     parser.add_argument('-o', help='output tsv file', required=True)
+    parser.add_argument('-p', help='partial output, these will be skipped')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
+
+    if os.path.exists(args.o):
+        message(f"{args.o} ALREADY EXISTS, NOT OVERWRITING", "RED");
+        sys.exit(10)
+
+    skip = set()
+    if args.p:
+        with open(args.p, 'r') as f:
+            for l in f:
+                skip.add(l.strip().split("\t")[0])
 
     if args.v:
         message(f"Parsing {args.f}", "GREEN")
 
+    s = re.compile(r'cluster=(\d+)')
     with open(args.f, 'r') as f, open(args.o, 'w') as out:
         for url in f:
             url = url.strip()
-            tit, cit = url_to_cites(url, args.v)
-            s = re.compile(r'cluster=(\d+)')
             cid = s.findall(url)[0]
+            if cid in skip:
+                continue
+            tit, cit = url_to_cites(url, args.v)
             print(f"{cid}\t{tit}\t{cit}", file=out)
-            time.sleep(randint(0,60))
+            time.sleep(randint(0,600))
 
