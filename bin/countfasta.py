@@ -19,7 +19,7 @@ if __name__ == "__main__":
     parser.add_argument('-l', help='list the lengths for each sequence (default = not to)', action='store_true')
     parser.add_argument('-m', help='minimum length fo be inclued', type=int, default=0)
     parser.add_argument('-n', help='do NOT print the summary at the end', action='store_true')
-    parser.add_argument('-t', help='tab separated output. Fields: [# seqs, total bp, shortest, longest, N50, N75]', action='store_true')
+    parser.add_argument('-t', help='tab separated output. Fields: [SeqID, # seqs, total bp, shortest, longest, N50, N75, auN]', action='store_true')
     parser.add_argument('-v', help='more output', action='store_true')
     args = parser.parse_args()
 
