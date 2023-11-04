@@ -52,6 +52,8 @@ def parse_altmetrics_files(filename, verbose=False):
             url = ""
             altid = ""
             l = l.strip()
+            if not l:
+                continue
             if s.match(l):
                 altid = l
                 url = f"https://www.altmetric.com/details/{l}"
@@ -130,7 +132,7 @@ def parse_altmetrics_files(filename, verbose=False):
                         if m:
                             altref.citations[m.groups()[1]] = m.groups()[0]
                             all_citation_sources.add(m.groups()[1])
-                all_references.append(altref)
+            all_references.append(altref)
 
     return all_references, max_summaries, all_mention_sources, all_citation_sources
 

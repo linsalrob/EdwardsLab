@@ -10,8 +10,13 @@ import re
 
 __author__ = 'Rob Edwards'
 
+
+
 if True:
-    url = 'https://www.altmetric.com/details/1386636'
+    if sys.argv[1]:
+        url = sys.argv[1]
+    else:
+        url = 'https://www.altmetric.com/details/1386636'
     headers = {'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/96.0.4664.110 Safari/537.36'}
     r = requests.get(url, headers=headers)
     if r.status_code != 200:
