@@ -15,6 +15,9 @@ def get_accessions(allkeys, data, accessions, verbose):
     """
     Get the data for some accesssions
     """
+    if not accessions:
+        return allkeys, data
+
     NCBI_API_KEY = os.environ['NCBI_API_KEY']
     rest_url = "https://www.ncbi.nlm.nih.gov/datasets/docs/v2/openapi3/openapi3.docs.yaml"
     url = 'https://api.ncbi.nlm.nih.gov/datasets/v2alpha'
@@ -75,7 +78,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-a', '--accessions', help='file of GenBank assembly accessions', required=True)
     parser.add_argument('-o', '--output', help='output file', required=True)
-    parser.add_argument('-n', '--num_requests', help='number of simultaneous requests default: 1000', default=1000, type=int)
+    parser.add_argument('-n', '--num_requests', help='number of simultaneous requests default: 200', default=200, type=int)
     parser.add_argument('-v', '--verbose', help='verbose output', action='store_true')
     args = parser.parse_args()
 
