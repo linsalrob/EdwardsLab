@@ -24,7 +24,19 @@ def get_accessions(allkeys, data, accessions, verbose):
     if verbose:
         print(f"Getting {accessions}", file=sys.stderr)
 
-    r = requests.get(url + summary, headers={"Content-Type": "text", "api-key": NCBI_API_KEY})
+    try:
+        r = requests.get(url + summary, headers={"Content-Type": "text", "api-key": NCBI_API_KEY})
+        r.raise_for_status()
+    except requests.exceptions.HTTPError as errh:
+        raise SystemExit("Http Error:" + errh)
+    except requests.exceptions.ConnectionError as errc:
+        raise SystemExit("Error Connecting:" + errc)
+    except requests.exceptions.Timeout as errt:
+        raise SystemExit("Timeout Error:" + errt)
+    except requests.exceptions.RequestException as err:
+        raise SystemExit(err)
+
+
     d = json.loads(r.text)
 
     wanted_keys = ['organism', 'assembly_info',
