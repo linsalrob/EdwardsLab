@@ -28,11 +28,11 @@ def get_accessions(allkeys, data, accessions, verbose):
         r = requests.get(url + summary, headers={"Content-Type": "text", "api-key": NCBI_API_KEY})
         r.raise_for_status()
     except requests.exceptions.HTTPError as errh:
-        raise SystemExit("Http Error:" + errh)
+        raise SystemExit(errh)
     except requests.exceptions.ConnectionError as errc:
-        raise SystemExit("Error Connecting:" + errc)
+        raise SystemExit(errc)
     except requests.exceptions.Timeout as errt:
-        raise SystemExit("Timeout Error:" + errt)
+        raise SystemExit(errt)
     except requests.exceptions.RequestException as err:
         raise SystemExit(err)
 
