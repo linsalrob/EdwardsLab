@@ -11,7 +11,7 @@ from roblib import colours
 __author__ = 'Rob Edwards'
 
 
-def get_accessions(allkeys, data, accessions):
+def get_accessions(allkeys, data, accessions, verbose):
     """
     Get the data for some accesssions
     """
@@ -21,9 +21,10 @@ def get_accessions(allkeys, data, accessions):
 
     summary = f"/genome/accession/{accessions}/dataset_report"
 
+    if verbose:
+        print(f"Getting {accessions}", file=sys.stderr)
+
     r = requests.get(url + summary, headers={"Content-Type": "text", "api-key": NCBI_API_KEY})
-    with open("temp.txt", 'w') as out:
-        out.write(r.text)
     d = json.loads(r.text)
 
     wanted_keys = ['organism', 'assembly_info',
@@ -85,11 +86,11 @@ if __name__ == "__main__":
                 accessions = l
             acc_count += 1
             if acc_count >= args.num_requests:
-                allkeys, data = get_accessions(allkeys, data, accessions)
+                allkeys, data = get_accessions(allkeys, data, accessions, args.verbose)
                 accessions = None
                 acc_count = 0
 
-    allkeys, data = get_accessions(allkeys, data, accessions)
+    allkeys, data = get_accessions(allkeys, data, accessions, args.verbose)
     thekeys = sorted(allkeys)
 
     with open(args.output, 'w') as out:
