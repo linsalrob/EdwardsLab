@@ -64,6 +64,13 @@ def get_accessions(allkeys, data, accessions, verbose):
             for sub_key in report[wk][item_key].keys():
                 if sub_key == 'attributes':
                     for kvpair in report[wk][item_key][sub_key]:
+                        if 'name' not in kvpair:
+                            print(f"{colours.PINK}No 'name' in {kvpair} from {accession}", file=sys.stderr)
+                            continue
+                        if 'value' not in kvpair:
+                            print(f"{colours.PINK}No 'value' in {kvpair} from {accession}", file=sys.stderr)
+                            continue
+
                         keyname = f"{wk} : {item_key} : {sub_key} : {kvpair['name']}"
                         data[accession][keyname] = kvpair['value']
                         allkeys.add(keyname)
