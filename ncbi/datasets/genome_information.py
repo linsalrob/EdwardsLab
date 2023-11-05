@@ -61,6 +61,7 @@ def get_accessions(allkeys, data, accessions):
 if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-a', '--accessions', help='file of GenBank assembly accessions', required=True)
+    parser.add_argument('-o', '--output', help='output file', required=True)
     parser.add_argument('-n', '--num_requests', help='number of simultaneous requests default: 1000', default=1000, type=int)
     parser.add_argument('-v', '--verbose', help='verbose output', action='store_true')
     args = parser.parse_args()
@@ -88,9 +89,10 @@ if __name__ == "__main__":
                 accessions = None
                 acc_count = 0
 
+    allkeys, data = get_accessions(allkeys, data, accessions)
     thekeys = sorted(allkeys)
 
-    with open('output.tsv', 'w') as out:
+    with open(args.output, 'w') as out:
         print("\t".join(["accession"] + thekeys), file=out)
         for acc in data:
             print(acc, end="", file=out)
