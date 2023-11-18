@@ -34,11 +34,11 @@ if __name__ == "__main__":
     for path in Path(args.directory).rglob('*.tophit_aln.gz'):
         metagenome = os.path.split(path)[-2]
         count = {}
-        with gzip.open(path, 'r') as f:
+        with gzip.open(path, 'rt') as f:
             for l in f:
                 p = l.strip().split("\t")
                 if float(p[2]) < args.percent:
                     continue
                 count[p[0]] = count.get(p[0], 0) + 1
         if len(count.keys()) > args.number:
-            print("\t".join([metagenome, path, len(count.keys())]))
+            print("\t".join(map(str, [metagenome, path, len(count.keys())])))
