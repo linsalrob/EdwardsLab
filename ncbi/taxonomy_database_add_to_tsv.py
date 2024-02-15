@@ -25,7 +25,8 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     numcols = -1
-    with gzip.open(args.f, 'r') as infile, gzip.open(args.o, 'w') as out:
+    
+    with gzip.open(args.f, 'rt') as infile, open(args.o, 'w') as out:
         for i, l in enumerate(infile):
             p = l.strip().split("\t")
             if numcols < 0:
