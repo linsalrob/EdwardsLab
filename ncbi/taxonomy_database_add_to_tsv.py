@@ -5,6 +5,7 @@ Note that we throw an error if not all the rows have the same number of columns.
 """
 
 import argparse
+import gzip
 import sys
 from taxon import get_taxonomy_db, get_taxonomy
 
@@ -24,7 +25,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
 
     numcols = -1
-    with open(args.f, 'r') as infile, open(args.o, 'w') as out:
+    with gzip.open(args.f, 'r') as infile, gzip.open(args.o, 'w') as out:
         for i, l in enumerate(infile):
             p = l.strip().split("\t")
             if numcols < 0:
@@ -40,6 +41,6 @@ if __name__ == '__main__':
                 if t.rank in want:
                     results[want.index(t.rank)] = want[want.index(t.rank)][0] + "__" + n.scientific_name
                 t, n = get_taxonomy(t.parent, dbcon)
-            print("\t".join(map(str, p + results)))
+            print("\t".join(map(str, p + results)), file=out)
 
 
