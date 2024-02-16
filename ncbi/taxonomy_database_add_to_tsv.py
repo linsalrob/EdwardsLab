@@ -39,7 +39,7 @@ if __name__ == '__main__':
             t, n = get_taxonomy(p[args.c], dbcon)
             # while t.parent != 1 and t.taxid != 1:
             while t.taxid != 1:
-                if t.rank in want:
+                if t.rank in want and n.scientific_name:
                     results[want.index(t.rank)] = want[want.index(t.rank)][0] + "__" + n.scientific_name
                 t, n = get_taxonomy(t.parent, dbcon)
             print("\t".join(map(str, p + results)), file=out)
