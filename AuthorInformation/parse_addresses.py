@@ -24,8 +24,13 @@ def parse_file(filename):
             if firstline:
                 firstline = False
                 continue
-            p = l.rstrip().split("\t")
+            l = l.rstrip()
+            
+            if not l:
+                continue
 
+            p = l.split("\t")
+            
             if len(p) < 15:
                 sys.stderr.write("ERROR: Malformed: {}\t{}\n".format(len(p), p))
                 continue
