@@ -398,6 +398,77 @@ sub read_fastq {
 	return $tple;
 }
 
+=head1 stream_fasta
+
+Stream a fasta file. This is like read_fasta but does not send the whole file, instead it sends a stream. The default is 1GB of data, but you can set that by adding a number to the call.
+
+usage:
+
+while (defined (my $seq = $rob->stream_fasta("secondary_aa.faa"))) {
+	foreach my $id (keys %$seq) {
+		$seq->{$id} is the sequences
+	
+	}
+}
+
+usage to set the stream size:
+while (defined (my $seq = $rob->stream_fasta($filename, 1000000))) {
+	## do something
+}
+
+
+=cut
+
+sub stream_fasta {
+	my ($self, $file, $size)=@_;
+	my $fh;
+	unless (defined $size) {$size = 100000000}
+	if ($self->{'filehandles'}->{$file}) {
+		$fh = $self->{'filehandles'}->{$file};
+	}
+	else {
+		if ($file =~ /\.gz$/) {open($fh, "gunzip -c $file|") || die "Can't open a pipe to $file"}
+		elsif ($file =~ /\.zip$/) {open($fh, "unzip -p $file|") || die "Can't open a pipe to $file"}
+		else {open ($fh, $file) || die "Can't open $file"}
+		$self->{'filehandles'}->{$file}=$fh;
+	}
+
+	unless (defined $self->{'stream_fasta_position'}) { $self->{'stream_fasta_position'} = 0; }
+	my $currpos = $self->{'stream_fasta_position'};
+	print STDERR "Seeking $currpos\n";
+	seek $fh, $currpos, 0;
+	my $seekpos = tell $fh;
+	my $data;
+	while ($fh && !eof $fh && $seekpos < ($currpos + $size)) {
+		seek $fh, $seekpos, 0;
+		my $id = <$fh>;
+		$id =~ s/^>//;
+		chomp($id);
+		my $seq = <$fh>;
+		chomp $seq;
+		
+		my $preseq = tell $fh;
+		my $temp = <$fh>;
+		while ($temp !~ /^>/) {
+			chomp $temp;
+			$seq .= $temp;
+			$preseq = tell $fh;
+			$temp = <$fh>;
+		}
+		$data->{$id} = $seq;
+		$seekpos = $preseq;
+	}
+	$self->{'stream_fasta_position'} = $seekpos;
+	print STDERR "Returning because seekpos is $seekpos\n";
+	if (eof $self->{'filehandles'}->{$file}) {
+		print STDERR "Closing filehandle\n";
+		close $self->{'filehandles'}->{$file};
+	}
+	
+	return $data;
+}
+
+
 =head1 stream_fastq
 
 Stream a fastq file. This is like read_fastq but does not send the whole file, instead it sends a stream. The default is 1GB of data, but you can set that by adding a number to the call.
