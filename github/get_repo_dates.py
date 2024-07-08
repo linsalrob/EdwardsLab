@@ -43,7 +43,7 @@ if __name__ == "__main__":
     dt = js['commit']['commit']['author']['date']
     lk =  js['_links']['html']
 
-    print("\t".join([username, reponame, author, branch, dt, lk]))
+    print("\t".join([args.repo, username, reponame, author, branch, dt, lk]))
 
 
 
