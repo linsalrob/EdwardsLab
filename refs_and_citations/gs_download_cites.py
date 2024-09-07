@@ -111,6 +111,8 @@ if __name__ == "__main__":
     with open(args.f, 'r') as f, open(args.o, 'w') as out:
         for url in f:
             url = url.strip()
+            if not url:
+                continue
 
             if gsid.match(url):
                 # this is just a gs cluster id
