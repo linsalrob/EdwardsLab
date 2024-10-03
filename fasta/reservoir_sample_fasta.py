@@ -46,7 +46,7 @@ if __name__ == "__main__":
             # seqs.append(seq)
             line = next(stream)
             if line.startswith('>'):
-                ids.append(line.replace('>', ''))
+                ids.append(line.strip())
                 seqs.append("")
                 tnow = time.time_ns()
                 if i %1000 == 0 and args.verbose:
@@ -73,7 +73,7 @@ if __name__ == "__main__":
                     if n %1000 == 0 and args.verbose:
                         print(f"\t{bcolors.PINK}Read {n} reads {tnow - tthen:,} ns{bcolors.ENDC}", file=sys.stderr)
                     tthen = tnow
-                lastid = line.replace('>', '')
+                lastid = line.strip()
                 lastseq = ""
             else:
                 lastseq += line.strip()
@@ -91,11 +91,18 @@ if __name__ == "__main__":
         ron = 0
         if args.verbose:
             print(f"{bcolors.BLUE}Parsing {args.reverse}{bcolors.ENDC}", file=sys.stderr)
-        with opener(args.reverse_output, 'wt') as out:
-            for seqid, seq in stream_fasta(args.reverse, whole_id=True):
-                if seqid in finalids:
-                    print(f">{seqid}\n{seq}", file=out)
+        print_seq = False
+        with opener(args.reverse_output, 'wt') as out, faopener(args.reverse, 'rt') as stream:
+            for line in stream:
+                if line.startswith('>'):
+                    if line.strip() in finalids:
+                        print_seq = True
+                    else:
+                        print_seq = False
+                if print_seq:
+                    print(line, file=out)
                     ron += 1
+
         if ron != len(finalids):
             message(f"WARNING: We printed {len(finalids)} in the forward file but only {ron} ids in the reverse", "RED")
 
