@@ -6,6 +6,7 @@ This is a single pass (c.f. subsample_fasta.py which uses 2 passes) as the reser
 import gzip
 import os
 import sys
+import time
 import argparse
 from roblib import stream_fasta, bcolors, message
 import random
@@ -29,21 +30,53 @@ if __name__ == "__main__":
     # the reservoirs
     ids = []
     seqs = []
+    tthen = time.time_ns()
     if args.verbose:
         print(f"{bcolors.BLUE}Parsing {args.fasta}{bcolors.ENDC}", file=sys.stderr)
-    stream = stream_fasta(args.fasta, whole_id=True)
-    for i in range(args.sample):
-        seqid, seq = next(stream)
-        ids.append(seqid)
-        seqs.append(seq)
+    # stream = stream_fasta(args.fasta, whole_id=True)
 
-    n = args.sample
-    for seqid, seq in stream:
-        j = random.randint(0, n)
-        if j < args.sample:
-            ids[j] = seqid
-            seqs[j] = seq
-        n += 1
+    faopener = open
+    if args.fasta.endswith('.gz'):
+        faopener = gzip.open
+    with faopener(args.fasta, 'rt') as stream:
+        i = 0
+        while i < args.sample:
+            #seqid, seq = next(stream)
+            # ids.append(seqid)
+            # seqs.append(seq)
+            line = next(stream)
+            if line.startswith('>'):
+                ids.append(line.replace('>', ''))
+                seqs.append("")
+                tnow = time.time_ns()
+                if i %1000 == 0 and args.verbose:
+                    print(f"\t{bcolors.GREEN}Read {i} reads in {tnow - tthen:,} ns{bcolors.ENDC}", file=sys.stderr)
+                tthen = tnow
+                i += 1
+            else:
+                seqs[-1] += line.strip()
+
+        n = args.sample
+        if args.verbose:
+            print(f"\t{bcolors.GREEN}Read {args.sample} reads{bcolors.ENDC}", file=sys.stderr)
+        lastseq = ""
+        lastid = None
+        for line in stream:
+            if line.startswith('>'):
+                if lastid:
+                    j = random.randint(0, n)
+                    if j < args.sample:
+                        ids[j] = lastid
+                        seqs[j] = lastseq
+                    n += 1
+                    tnow = time.time_ns()
+                    if n %1000 == 0 and args.verbose:
+                        print(f"\t{bcolors.PINK}Read {n} reads {tnow - tthen:,} ns{bcolors.ENDC}", file=sys.stderr)
+                    tthen = tnow
+                lastid = line.replace('>', '')
+                lastseq = ""
+            else:
+                lastseq += line.strip()
 
     opener = open
     if args.output.endswith('.gz'):
