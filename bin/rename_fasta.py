@@ -26,4 +26,4 @@ if __name__ == "__main__":
     counter = 0
     for seqid, seq in stream_fasta(args.f):
         counter += 1
-        print(f">{ren}_{counter}\n{seq}\n")
+        print(f">{ren}_{counter}\n{seq}")

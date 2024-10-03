@@ -11,6 +11,7 @@ import requests
 import time
 from bs4 import BeautifulSoup
 import re
+import json
 from random import randint, choice
 
 __author__ = 'Rob Edwards'
@@ -36,7 +37,7 @@ https://scholar.google.com.au/scholar?cluster=4555724394641856429&hl=en&as_sdt=0
 
 
 headers = {
-    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/117.0.0.0 Safari/537.36',
+    'user-agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/128.0.0.0 Safari/537.36',
     'accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/avif,image/webp,image/apng,*/*;q=0.8,application/signed-exchange;v=b3;q=0.7',
     'ACCEPT-ENCODING': 'gzip, deflate, br',
     'ACCEPT-LANGUAGE': 'en-AU,en;q=0.9,en-US;q=0.8',
@@ -44,6 +45,14 @@ headers = {
 
 # we use a requests session to store cookies etc
 session = requests.Session()
+
+def convert_to_strings(obj):
+    if isinstance(obj, dict):
+        return {k: convert_to_strings(v) for k, v in obj.items()}
+    elif isinstance(obj, list):
+        return [convert_to_strings(i) for i in obj]
+    else:
+        return str(obj)
 
 def url_to_cites(url, outfile=None, verbose=False):
     """
@@ -83,7 +92,9 @@ if __name__ == "__main__":
     parser.add_argument('-f', help='file of one gs link per line', required=True)
     parser.add_argument('-o', help='output tsv file', required=True)
     parser.add_argument('-p', help='partial output, these will be skipped')
+    parser.add_argument('-c', help='cookie file in json format. Eg. use a chrome extension to download from Google Scholar')
     parser.add_argument('-s', help='random sleep time (seconds). Default=100', type=int, default=100)
+    parser.add_argument('-i', help='interactive. If you are running locally, when google knows we are bot, we stop until you tell us to carry on!', action='store_true')
     parser.add_argument('-w', help='write the html to specified directory')
     parser.add_argument('-v', help='verbose output', action='store_true')
     args = parser.parse_args()
@@ -93,8 +104,8 @@ if __name__ == "__main__":
         sys.exit(10)
 
 
-
     skip = set()
+    words = set()
     if args.p:
         with open(args.p, 'r') as f:
             for l in f:
@@ -104,8 +115,17 @@ if __name__ == "__main__":
         message(f"Parsing {args.f}", "GREEN")
     if args.w:
         os.makedirs(args.w, exist_ok=True)
+    
+    if args.c:
+        if args.c:
+            message(f"Reading cookies from {args.c}", "GREEN")
+        with open(args.c, 'r') as cookiein:
+            cookies = convert_to_strings(json.load(cookiein))
 
-    words = set()
+    for cookie in cookies:
+        message(f"Adding {cookie}", "PINK")
+        session.cookies.update(cookie)
+
     s = re.compile(r'cluster=(\d+)')
     gsid = re.compile(r'^\d+$')
     with open(args.f, 'r') as f, open(args.o, 'w') as out:
@@ -117,7 +137,7 @@ if __name__ == "__main__":
             if gsid.match(url):
                 # this is just a gs cluster id
                 cid = url
-                url = f"https://scholar.google.com/scholar?cluster={cid}&hl=en&as_sdt=0,5"
+                url = f"https://scholar.google.com.au/scholar?cluster={cid}&hl=en&as_sdt=0,5"
             else:
                 cid = s.findall(url)[0]
             if cid in skip:
@@ -126,6 +146,10 @@ if __name__ == "__main__":
             if args.w:
                 outfile = os.path.join(args.w, f"{cid}.html")
             tit, cit = url_to_cites(url, outfile, args.v)
+            if tit == "UNABLE TO RETRIEVE":
+                print(f"Warning! Google has detected we may be a bot. Open the file: {args.w}/{cid}.html and click login.")
+                user_input = input("Press return when you are done, and we'll try again")
+                tit, cit = url_to_cites(url, outfile, args.v)
             print(f"{cid}\t{tit}\t{cit}", file=out)
             time.sleep(randint(0,args.s))
             # here we search for a random word from all our titles so far

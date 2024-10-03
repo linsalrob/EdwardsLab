@@ -64,18 +64,22 @@ def check_dups(bibtexf, verbose=False):
     dupentries=False
     with open(bibtexf, 'r', encoding="utf8") as bin:
         for l in bin:
+            l=l.strip()
+            comma_index = l.find(',')
+            if comma_index != -1:  # Check if a comma was found
+                l = l[:comma_index]
             if l.startswith('@'):
                 l = l.replace('@misc', '')
                 l = l.replace('@article', '')
                 l = l.replace('@inproceedings', '')
                 if l in entries:
-                    sys.stderr.write("Duplicate entry " + l.replace('{', '').replace(',', ''))
+                    print("Duplicate entry " + l.replace('{', '').replace(',', ''), file=sys.stderr)
                     dupentries=True
                 entries.add(l)
 
     if dupentries:
-        sys.stderr.write(f"FATAL: The bibtex file {bibtexf} has duplicate entries in it. Please remove them before trying to continue\n")
-        sys.stderr.write("(It is an issue with Google Scholar, but pybtex breaks with duplicate entries. Sorry)\n")
+        print(f"FATAL: The bibtex file {bibtexf} has duplicate entries in it. Please remove them before trying to continue\n", file=sys.stderr)
+        print("(It is an issue with Google Scholar, but pybtex breaks with duplicate entries. Sorry)\n", file=sys.stderr)
         sys.exit(-1)
 
 

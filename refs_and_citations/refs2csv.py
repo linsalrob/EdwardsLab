@@ -36,6 +36,9 @@ if __name__ == "__main__":
         data = [bt.entries[e].key, bt.entries[e].type, "", ""]
         data += ["" for w in fields]
         for f in bt.entries[e].fields:
+            if f == 'journaltitle':
+                data[fields.index('journal')+4] = bt.entries[e].fields[f]
+                continue
             if f not in fields:
                 if f not in warned:
                     sys.stderr.write(f"Found new field: '{f}'\n")
