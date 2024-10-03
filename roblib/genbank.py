@@ -210,8 +210,8 @@ def genbank_to_ptt(gbkf, printout=False, verbose=False):
 
     res = []
 
-    gire = re.compile('GI:(\d+)')
-    cogre = re.compile('(COG\S+)')
+    gire = re.compile(r'GI:(\d+)')
+    cogre = re.compile(r'(COG\S+)')
     for seq in genbank_seqio(gbkf):
         if verbose:
             sys.stderr.write(f"Parsing {seq.id}\n")

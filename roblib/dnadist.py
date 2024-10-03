@@ -26,7 +26,7 @@ def parse_dnadist(dnadistancefile):
         numelements = int(f.readline().strip())
         thisline = []
         for l in f:
-            p = re.split("\s+", l.strip())
+            p = re.split(r'\s+', l.strip())
             if l.startswith(' '):
                 thisline.extend(p)
             else:
