@@ -54,7 +54,19 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Usage: %s <in.seq>\n", argv[0]);
         return 1;
     }
-    fp = gzopen(argv[1], "r");
+
+    if (strcmp(argv[1], "-") == 0) {
+	fprintf(stderr, "Reading from command line\n");
+        fp = gzdopen(fileno(stdin), "r");
+    } else {
+	fp = gzopen(argv[1], "r");  // Open the specified file
+    }
+
+    if (!fp) {
+        fprintf(stderr, "Failed to open %s for reading.\n", argv[1]);
+	return 1;
+    }
+
     seq = kseq_init(fp);
     while ((l = kseq_read(seq)) >= 0) {
         printf(">%s\n", seq->name.s);
