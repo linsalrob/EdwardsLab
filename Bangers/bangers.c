@@ -30,7 +30,10 @@ KSEQ_INIT(gzFile, gzread)
  // "U": "NNN", "V": "ATT", "W": "TGG", "X": "NNN",
  // "Y": "TAT", "Z": "NNN",
  
-
+ // The following amino acids are currently grouped:
+ // {D, N}; {E, Q}; {F, H, Y}; 
+ // {I, L, V, M};  {K, R}; {S, T}
+ //
 
 int main(int argc, char *argv[])
 {
@@ -38,7 +41,7 @@ int main(int argc, char *argv[])
     // declare our array of strings and populate with default values.
     char codons[26][4] = {
 	 "GCT", "NNN", "TGT", "AAC", "CAG", "TAT", "GGT",
-	 "TAT", "ATT", "NNN", "AAG", "ATT", "ATT", "AAC",
+	 "TAT", "ATT", "NNN", "AAG", "ATT", "ATG", "AAC",
 	 "NNN", "CCT", "CAG", "AAG", "ACT", "ACT", "NNN",
 	 "ATT", "TGG", "NNN", "TAT", "NNN"
     };
