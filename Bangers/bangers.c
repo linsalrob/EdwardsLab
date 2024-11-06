@@ -41,7 +41,7 @@ int main(int argc, char *argv[])
     // declare our array of strings and populate with default values.
     char codons[26][4] = {
 	 "GCT", "NNN", "TGT", "AAC", "CAG", "TAT", "GGT",
-	 "TAT", "ATT", "NNN", "AAG", "ATT", "ATG", "AAC",
+	 "TAT", "ATT", "NNN", "AAG", "ATT", "ATT", "AAC",
 	 "NNN", "CCT", "CAG", "AAG", "ACT", "ACT", "NNN",
 	 "ATT", "TGG", "NNN", "TAT", "NNN"
     };
@@ -59,7 +59,6 @@ int main(int argc, char *argv[])
     }
 
     if (strcmp(argv[1], "-") == 0) {
-	fprintf(stderr, "Reading from command line\n");
         fp = gzdopen(fileno(stdin), "r");
     } else {
 	fp = gzopen(argv[1], "r");  // Open the specified file
