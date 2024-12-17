@@ -12,6 +12,7 @@ pybtex
 jupyter
 pymongo
 pyreadr
+pytaxonkit
 requests
 scipy
 seaborn
