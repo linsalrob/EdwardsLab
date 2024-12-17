@@ -30,7 +30,10 @@ KSEQ_INIT(gzFile, gzread)
  // "U": "NNN", "V": "ATT", "W": "TGG", "X": "NNN",
  // "Y": "TAT", "Z": "NNN",
  
-
+ // The following amino acids are currently grouped:
+ // {D, N}; {E, Q}; {F, H, Y}; 
+ // {I, L, V, M};  {K, R}; {S, T}
+ //
 
 int main(int argc, char *argv[])
 {
@@ -54,7 +57,18 @@ int main(int argc, char *argv[])
         fprintf(stderr, "Usage: %s <in.seq>\n", argv[0]);
         return 1;
     }
-    fp = gzopen(argv[1], "r");
+
+    if (strcmp(argv[1], "-") == 0) {
+        fp = gzdopen(fileno(stdin), "r");
+    } else {
+	fp = gzopen(argv[1], "r");  // Open the specified file
+    }
+
+    if (!fp) {
+        fprintf(stderr, "Failed to open %s for reading.\n", argv[1]);
+	return 1;
+    }
+
     seq = kseq_init(fp);
     while ((l = kseq_read(seq)) >= 0) {
         printf(">%s\n", seq->name.s);
