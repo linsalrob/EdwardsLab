@@ -135,11 +135,19 @@ if __name__ == "__main__":
     if args.v:
         print(f"Found {len(total_vocab)} total tokens", file=sys.stderr)
 
+    # normalise jaccard distance
+    maxjaccard = 0
+    for c in clusters:
+        tokens = cluster_tokens[c]
+        j = len(tokens.intersection(virfuncs)) / len(tokens.union(virfuncs))
+        if j > maxjaccard:
+            maxjaccard = j
+
     words_in_common = {}
     word_cluster_count = {}
     with open(args.o, 'w') as out:
         print(
-            "Cluster\tTokens\tVirulence Factors\tIntersection\tUnion\tJaccard Distance\tFrac cluster virulence\tEnrichment Score\tNormalized Enrichment Score",
+            "Cluster\tTokens\tVirulence Factors\tIntersection\tUnion\tJaccard Distance\tNormalised Jaccard\tFrac cluster virulence\tEnrichment Score\tNormalized Enrichment Score",
             file=out)
         for c in clusters:
             tokens = cluster_tokens[c]
@@ -155,12 +163,13 @@ if __name__ == "__main__":
             enrichment2 = (observed_matches - expected_matches) / (observed_matches + expected_matches) if (
                                                                                                                        observed_matches + expected_matches) > 0 else np.nan
 
-            print("\t".join(map(str, [c,
+            print("\t".join(map(str, [f"Cluster {c}",
                                       len(tokens),
                                       len(virfuncs),
                                       len(tokens.intersection(virfuncs)),
                                       len(tokens.union(virfuncs)),
                                       len(tokens.intersection(virfuncs)) / len(tokens.union(virfuncs)),
+                                      (len(tokens.intersection(virfuncs)) / len(tokens.union(virfuncs))) / maxjaccard,
                                       len(tokens.intersection(virfuncs)) / len(tokens),
                                       enrichment_score,
                                       enrichment2])),
