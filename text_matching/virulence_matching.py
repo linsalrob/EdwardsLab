@@ -18,11 +18,15 @@ import numpy as np
 
 # this list includes some common biological words and the list of english stopwords from NLTK
 
-common_vfdb_words = {'cell', 'resistance', 'iron', 'bacterial', 'systems', 'transporter', 'cluster',
-                     'biosynthesis', 'utilization', 'repair', 'uptake', 'pathway', 'fatty', 'subunits', 'division',
-                     'acid', 'secretion', 'cycle', 'stress', 'synthesis', 'efflux', 'catabolism', 'synthase',
-                     'degradation', 'reductase', 'proteins', 'operon', 'factors', 'antibiotic', 'including',
-                     'modification', 'heme', 'siderophore', 'mycobacterial', 'sulfur', 'membrane', 'complex', 'acids'}
+common_vfdb_words = {'acid', 'acids', 'amino', 'bacillus', 'bacteria', 'bacterial', 'betaine',
+                     'biogenesis', 'biosynthesis', 'catabolism', 'cell', 'class', 'cluster', 'complex', 'containing',
+                     'cycle', 'degradation', 'division', 'efflux', 'elongation', 'enzymes', 'esat6', 'factors', 'fatty',
+                     'including', 'lipid', 'locus', 'membrane', 'modification',
+                     'operon', 'outer', 'pathway', 'peptide', 'phosphate', 'processing', 'proteins',
+                     'reductase', 'regulation', 'regulator', 'regulatory', 'repair', 'resistance', 'response',
+                     'secretion', 'signal', 'sporulation', 'stress', 'subunits', 'sulfur', 'synthase',
+                     'synthesis', 'systems', 'targets', 'transcription', 'transporter', 'twocomponent', 'uptake',
+                     'utilization', 'wall'}
 
 bio_stopwords = {'putative', 'predicted', 'family', 'domain', 'protein', 'hypothetical',
     'transport', 'binding', 'component', 'subunit', 'associated',
@@ -166,6 +170,7 @@ if __name__ == "__main__":
         json.dump(words_in_common, out, indent=4)
 
     for w in word_cluster_count:
-        if len(word_cluster_count[w]) > 5:
+        if len(word_cluster_count[w]) > 3:
+            #print(f"{w}: {len(word_cluster_count[w])} clusters")
             print(f"'{w}', ", end="")
     print()
