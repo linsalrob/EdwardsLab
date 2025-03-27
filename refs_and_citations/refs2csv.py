@@ -7,6 +7,7 @@ import sys
 import argparse
 from roblib import message
 from pybtex.database import parse_file, BibliographyData
+from datetime import datetime
 
 __author__ = 'Rob Edwards'
 
@@ -39,7 +40,17 @@ if __name__ == "__main__":
             if f == 'journaltitle':
                 data[fields.index('journal')+4] = bt.entries[e].fields[f]
                 continue
-            if f not in fields:
+            if f == 'date':
+                print(f"Trying to parse date {bt.entries[e].fields[f]}", file=sys.stderr)
+
+                if len(bt.entries[e].fields[f]) == 4:
+                    data[fields.index('year')+4] = bt.entries[e].fields[f]
+                elif len(bt.entries[e].fields[f]) == 7:
+                    data[fields.index('year')+4] = bt.entries[e].fields[f].split("-")[0]
+                elif len(bt.entries[e].fields[f]) == 10:
+                    data[fields.index('year')+4] = bt.entries[e].fields[f].split("-")[0]
+                continue
+            elif f not in fields:
                 if f not in warned:
                     sys.stderr.write(f"Found new field: '{f}'\n")
                     warned.add(f)
