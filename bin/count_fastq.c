@@ -30,7 +30,7 @@ void helpme() {
 int count_file(char *fqf) {
 	kseq_t *seq;
 
-	fprintf(stderr, "Reading %s\n", fqf);
+	// fprintf(stderr, "Reading %s\n", fqf);
 
 	FILE *instream = NULL;
  
@@ -93,8 +93,8 @@ int main(int argc, char *argv[]) {
 				struct stat sbf;
 				if (stat(filepath, &sbf) == 0 && S_ISREG(sbf.st_mode))
 					r += count_file(filepath);
-				else 
-					fprintf(stderr, "Skipped %s because it is not a regular file. Its type is %o (last 3 numbers are permissions o, g, w; regular file is 0100000)\n", filepath, sbf.st_mode);
+				// else 
+				// 	fprintf(stderr, "Skipped %s because it is not a regular file. Its type is %o (last 3 numbers are permissions o, g, w; regular file is 0100000)\n", filepath, sbf.st_mode);
 
 				/*
 				 * dir->d_type is often returning 0 (DT_UNKNOWN) for valid files, and I think it is a 
