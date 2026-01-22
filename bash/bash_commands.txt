@@ -1,3 +1,4 @@
+if [[ $# -eq 0 ]]; then echo "No arguments supplied"; exit; fi # check for arguments
 
 global replace:  !!:gs/one/two/ 
 sort on tab:	sort -t$'\t' -k3
