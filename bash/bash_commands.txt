@@ -224,18 +224,68 @@ ARGUMENTS: $@ is array of all arguments (for F in "$@" ...) $# is number of argu
 
 Alternative to resolveip: getent ahosts deepthought.flinders.edu.au   | getent hosts deepthought.flinders.edu.au
 
+List of the files in an ftp direcotory (e.g PATRIC) curl -l ftp://ftp.patricbrc.org/genomes/36809.213/
 Find the number of inodes in a directory: du --inodes --one-file-system --separate-dirs > inodes.count
+parallel md5sum using xargs: DIR=$(basename $PWD);   find ${DIR} -type f | xargs -L1 -P24  md5sum > ${DIR}.md5
+
+
+# make a plot using gnuplot from the command line
+samtools coverage IlluminaContigs.IlluminaReads.bam | cut -f 7 | grep -v mean | sort -n | awk 'BEGIN {c=0} {c++; print c,$1}'  | gnuplot -p -e 'set term png; set title "Illumina Contig Coverage"; plot "/dev/stdin" with dots notitle' > IlluminaContigCoverage.png
+samtools depth NanoporeContigs.NanoporeReads.bam | awk '!/^#/ {print $2,$3}' | gnuplot -p -e 'set term png; set title "Nanopore Reads, Nanopore Contigs"; plot "/dev/stdin" with dots notitle' >   NanoporeContigs.NanoporeReads.png
+
+# get the absolute path of a file using find:  find ~+  -maxdepth 1 -type f
+
+run a command in a tmux window: make a script called command.sh then use tmux new-session -d -s "myTempSession" command.sh
+
+find the number of inodes in a directory: Find the number of inodes in a directory: du --inodes --one-file-system --separate-dirs > inodes.count
+
+get the sha256 sum for a URL (e.g. for conda): URL=https://pypi.io/packages/source/p/pyctv_taxonomy/pyctv_taxonomy-0.25.tar.gz;  curl -sL $URL | openssl sha256
 
 awk -F"\t" '!s[$10]++ {print $10}' # split a file on tab
 
 
 mount network drive: sudo mount -t drvfs R: /mnt/r
+print tab separated text in columns:  column -t /home/roac0030/data/2023_kinshasa/hecatomb.out/results/summary.tsv
+sum a list of numbers in human readable format: cat tmp.txt | numfmt --from=iec | awk 's+=$1 {} END {print s}'  | numfmt --to=iec
 
 here's a trick to pipe stderr to less, but not pipe stdout to less: command 3>&1 1>/dev/null 2>&3  | less
+split a tar archive into separate files `split -b 200G -d no_human.tgz no_human.tgz.` and then rejoin them: `cat no_human.tgz.* | tar zxf -`
+
+vimdiff commands: (grep -A 7 vimdiff ~/bash_commands.txt to see them all)
+]c :        - next difference
+[c :        - previous difference
+do          - diff obtain
+dp          - diff put
+zo          - open folded text
+zc          - close folded text
+:diffupdate - re-scan the files for differences
+
 
 to install samtools you need mamba install -y --override-channels -c conda-forge -c bioconda -c defaults samtools=1.20 (or whatever the latest version is)
 
 use ffmpeg to make an image a lot smaller:  mkdir small; for IMG in $(find . -maxdepth 1 -type f); do ffmpeg -i $IMG  -vf "scale='if(gt(iw,ih),1600,-1)':'if(gt(ih,iw),1600,-1)'" small/$IMG; done
+python to sort a dict and get key with max value: orfmx = max(orf_tax[tx], key=orf_tax[tx].get)
+
+# conda or mamba commands
+conda / mamba remove --name my_env --all
+conda / mamba env export --from-history > environment.yml
+conda / mamba env create -f environment.yml
+conda / mamba env create -f environment.yml -p /path/to/env
+conda / mamba env list
+
+
+find a list of files that have _R1
+
+filename=abcd_R1.fasta.gz; if [[ $filename =~ (.+)_R1.fasta.gz ]]; then echo ${BASH_REMATCH[1]}; else # this is not an R1 file; fi
+
+simple proxy / network routing for web http traffic. (grep -A 6 NetworkRouting ~/bash_commands.txt)
+1. In browser -> network settings -> settings 
+    SOCKS Host: 127.0.0.1  Port: 1080
+    Use SOCKS v5
+    Enable Proxy DNS when using SOCKS v5
+2. Open ssh connection:
+    ssh -D 1080 -C -q -N deepthought.flinders.edu.au
+
 
 find . -type d -empty -delete # recursive find and delete files
 git switch to a new branch and push after last commit: NEWBRANCH=new_branch; git switch -c $NEWBRANCH && git push -u origin $NEWBRANCH
