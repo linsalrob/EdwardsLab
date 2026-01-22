@@ -26,6 +26,7 @@ Create an author. This is the information we have
 21	State / Region
 22	ZIP / Postcode
 23	Country
+24 Funding Acknowledgements
 
 
 
@@ -155,16 +156,29 @@ class Address:
         :rtype : bool
         """
 
-        if self.verbose:
-            if not self.institution:
-                sys.stderr.write("Invalid address. No institution found\n")
-            if not self.street:
-                sys.stderr.write("Invalid address. No street found\n")
-            if not self.city:
-                sys.stderr.write("Invalid address. No city found\n")
-            if not self.country:
-                sys.stderr.write("Invalid address. No country found\n")
-
+        if (self.institution or self.street or self.city or self.country):
+            # we have one, do we have them all
+            if self.verbose:
+                outstr = None
+                if not self.institution:
+                    outstr = "institution"
+                if not self.street:
+                    if outstr:
+                        outstr += "/street"
+                    else:
+                        outstr = "street"
+                if not self.city:
+                    if outstr:
+                        outstr += "/city"
+                    else:
+                        outstr = "city"
+                if not self.country:
+                    if outstr:
+                        outstr += "/country"
+                    else:
+                        outstr = "country"
+                if outstr:
+                    print(f"No {outstr} found. Invalid address", file=sys.stderr)
 
         if (self.institution and self.street and self.city and self.country):
             return True
@@ -306,7 +320,6 @@ class Author:
             return None
         else:
             return self.secondaryaddress.__str__()
-
 
     def is_valid(self):
         """
