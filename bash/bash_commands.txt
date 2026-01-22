@@ -1,0 +1,241 @@
+
+global replace:  !!:gs/one/two/ 
+sort on tab:	sort -t$'\t' -k3
+
+insert copyright sign  ctrl-shift-u then a2<space>
+
+
+kill -15 terminate not kill
+
+
+
+grep -F -x -v -f file1 file2   -> find all the things that are NOT in file 1 in file2 (eliminate -v to find things that are)
+# another way to find missing things:
+for I in $(cat metagenome_ids.txt); do z=$(grep $I metagenome_sizes.txt); if [[ -z $z ]]; then echo $I; fi; done
+
+
+Average a list of numbers (eg. from cut):
+cut -f 2 | awk '{s+=$1}END{print "Average:",s/NR}'
+samtools  depth SRR4408002.bam | cut -d$'\t' -f 3 | awk '{if ($1>max) {max=$1}} END {print "MAX: ", max}'
+perl -lane 'print "$#F\n"' FILE | awk '{s+=$1}END{print "Average:",s/NR}'
+perl -F$'\t' -lane 'print "$#F\n"'
+
+
+# List or count  all unique members in a file
+cut -f 2 counts.tsv | awk '!a[$0]++'  | wc -l  ## alternative and much faster to sort -u
+
+
+sort -t$'\t' -k3 -nr file.txt
+
+for i in $(seq 1 5); do if [ $i == 3 ]; then echo $i; fi; done
+
+Ctrl + a – go to the start of the command line
+Ctrl + e – go to the end of the command line
+Ctrl + k – delete from cursor to the end of the command line
+Ctrl + u – delete from cursor to the start of the command line
+Ctrl + w – delete from cursor to start of word (i.e. delete backwards one word)
+Ctrl + y – paste word or text that was cut using one of the deletion shortcuts (such as the one above) after the cursor
+Ctrl + xx – move between start of command line and current cursor position (and back again)
+Alt + b – move backward one word (or go to start of word the cursor is currently on)
+Alt + f – move forward one word (or go to end of word the cursor is currently on)
+Alt + d – delete to end of word starting at cursor (whole word if cursor is at the beginning of word)
+Alt + c – capitalize to end of word starting at cursor (whole word if cursor is at the beginning of word)
+Alt + u – make uppercase from cursor to end of word
+Alt + l – make lowercase from cursor to end of word
+Alt + t – swap current word with previous
+Ctrl + f – move forward one character
+Ctrl + b – move backward one character
+Ctrl + d – delete character under the cursor
+Ctrl + h – delete character before the cursor
+Ctrl + t – swap character under cursor with the previous one
+
+
+PRINTING:
+list printers: lpstat -p -d
+submit a file to one printer: lpr -p Beach fedex.txt
+
+
+
+
+Search through a path (e.g. PERL5LIB) for a file
+IFS=':' read -r -a array <<< `env | grep PERL`
+for a in ${array[@]}; do if [ -e $a/Rob.pm ]; then echo $a/Rob.pm; fi; done
+
+
+# uncompress a file, head a few thousand lines and recompress it. Note this puts the recompressed file in the dir smaller
+mkdir smaller; for i in *; do echo $i; gunzip -c $i | head -n 500000 | gzip > smaller/$i; done
+
+# fastq print all sequences: perl -ne '$c++; print if ($c==2); if ($c == 5) {$c=1}' barcodes.fastq | sort | uniq -c
+
+
+# Enable middle button copy paste on a mouse
+# First figure out which your mouse is
+xinput list
+# mine was device 13. List all the parameters:
+xinput list-props 13
+# enable the middle button
+sudo xinput set-prop 13 "libinput Middle Emulation Enabled" 1 
+
+## THIS may do it in one line:
+xinput set-prop  `xinput list | grep "Logitech USB Receiver" | grep pointer | sed -e 's/^.*id=//; s/\s.*$//'` "libinput Middle Emulation Enabled" 1
+
+# compress all files in a directory that are not already compressed
+find . -type f ! -name '*.gz' -exec gzip "{}" \;
+
+# parallelise zip compression of files. Note the -print0 from find requires the -0 from xargs (uses nul to terminate, not newlines)
+find . -maxdepth 1 -name \*out -print0 | xargs -n 1 -0 -i -P4 zip -r {}.zip {}
+
+xinput list-props `xinput list | grep "Synaptics TouchPad" | sed -e 's/^.*id=//; s/\s.*$//'`
+sudo xinput set-prop `xinput list | grep "Synaptics TouchPad" | sed -e 's/^.*id=//; s/\s.*$//'`  "Synaptics Palm Detection" 1
+sudo xinput set-prop `xinput list | grep "Synaptics TouchPad" | sed -e 's/^.*id=//; s/\s.*$//'`  "Synaptics Palm Dimensions" 5, 5
+
+
+perl -npe 's/\s+/\n/g' temp.txt | sort | sponge temp.txt   ## overwrite a file
+
+# head and tail a directory listing
+ls -lSr treestatsA |  (head;echo;tail)
+cat file |  (head;echo;tail)
+
+
+# escape single quote
+perl -e '$n=1; $r=0; $c=0; for $i (qw[A C D E F G H I K L M N P Q R S T V W Y]) {print "'"'"'$i'"'"': ($r, $c, $n),\n"; $n++; $c++; if ($c > 3) {$r++; $c=0}}'
+
+
+# fingerprint id_rsa.pub file e.g. for github or jetstream openstack
+ssh-keygen -E md5 -lf ~/.ssh/edwards_jetstream_rsa.pub
+
+# blast best outputs:
+echo /usr/local/blast+/bin/blastn -query $F -db /home2/db/blast/nt/nt -out $OUT -task blastn -outfmt "'"6 std qlen slen staxid ssciname scomname sblastname stitle"'" -evalue 1e-10 -num_threads 16 > $BN;
+
+
+# if bash completion is not working, eg for python, use `complete -r` to turn off programmable bash completion: http://www.gnu.org/software/bash/manual/bashref.html#Programmable-Completion
+
+
+# count bases using seqtk
+seqtk comp SRR3403836.fastq.gz | awk '{s+=$2} END {print "Number of lines: ",NR," Number of bases: ",s}'
+
+
+qsub ignore some nodes: -l 'h=!(node15|node24|node31|node40|node42)'
+
+
+Quote :   '"'"'  end qutoe, start double quote, the quote to escape, end double quote start single quote. The key is not to put any whitespace in this string
+
+sort -t$'\t' -k2
+
+Foreground colors
+Code	Color
+30	Black	
+31	Red	
+32	Green	
+33	Yellow	
+34	Blue	
+35	Magenta	
+36	Cyan	
+37	Light gray	
+39	Default foreground color	
+90	Dark gray	
+91	Light red	
+92	Light green	
+93	Light yellow	
+94	Light blue	
+95	Light magenta	
+96	Light cyan	
+97	White	
+
+Background colors
+Code	Color	Example	Preview
+40	Black	
+41	Red	
+42	Green	
+43	Yellow	
+44	Blue	
+45	Magenta	
+46	Cyan	
+47	Light gray	
+49	Default background color	
+100	Dark gray	
+101	Light red	
+102	Light green	
+103	Light yellow	
+104	Light blue	
+105	Light magenta	
+106	Light cyan	
+107	White	
+
+
+# ssh disable config and keys
+ssh -o PubkeyAuthentication=no  
+ssh -o IdentitiesOnly=yes   # use only the key you specify
+
+
+# disable cups automatically adding printers
+sudo vi /etc/cups/cups-browsed.conf
+--> edit the line to look like: BrowseRemoteProtocols none
+sudo systemctl disable cups-browsed
+sudo service cups restart
+<!--stackedit_data:
+eyJoaXN0b3J5IjpbMTY2Nzc4MTczMl19
+-->
+
+
+
+# make a temp directory and do some stuff there
+TD=$(mktemp -d);   # do stuff   ; rm -fr "$TD"
+
+# note that on a big machine you should set
+export TMPDIR=/dev/shm
+because this will use RAMdisk for your tempdir. mktemp uses TMPDIR to find location
+
+
+Show escapes as colors in less: less -R
+
+
+Remove one or more entries from your path:    PATH=$(env | grep PATH | tr ":" "\n" | grep -v "GitHubs/PhiSpy" | tr "\n" ":")
+
+print only filenames with find: 
+find ../contigs -printf "%f\n"  |grep fasta
+
+# split fasta files using awk
+gunzip -c uniref50.fasta.gz | awk 'BEGIN {n_seq=0;} /^>/ {if(n_seq%100000==0){file=sprintf("uniref50_files/file%d.fa",n_seq);} print >> file; n_seq++; next;} { print >>
+file; }'
+
+# print the unique lines in a file using awk: awk '!s[$0]++' subsys.prots.md5.ids  # the {print} is implied by default if {} is not given
+
+# sort a file by two columns, first alphabetically and then numerically: sort -t$'\t' -k 1,1 -k 3,3nr genus_comps.tsv | less   (-k1,1 is from col 1 to col 1)
+
+# use environment variables in awk JOB=phispy; qstat | awk -v j=$JOB '$0 ~ j {print}' | less  # note that $0 ~ j replaces /j/ since /j/ just matches a j 
+
+
+Extract pages from PDF: gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -dFirstPage=1 -dLastPage=3 -sOutputFile=partial.pdf full.pdf
+Combine two PDFs: gs -sDEVICE=pdfwrite -dNOPAUSE -dBATCH -sOutputFile=combined.pdf file1.pdf file2.pdf
+Separate PDF into pages: gs -sDEVICE=pdfwrite -dSAFER -o ouput.%d.pdf input.pdf
+
+convert between human readable formats: numfmt --to=iec 662705643522   ; numfmt --from=iec 618G
+sum up human readable file sizes sort -h sizes_20210315.txt | cut -f 1 | numfmt --from=iec | awk 's+=$1 {}; END {print s}' | numfmt --to=iec
+
+An alternative to (head; echo; tail): Sometimes head consumes the whole stream into the buffer and so you don't get any output. This fixes that find xml -size 1c | xargs ls -lSr | (sed -u 10q ; echo ; tail)
+
+Extract just the name and trim of path and extension: for FB in $(find bam -name \*bam); do F=$(basename $FB .bam); echo $F; done
+
+
+Make a random string for a file name: RAND=$(openssl rand -hex 3)
+
+ARGUMENTS: $@ is array of all arguments (for F in "$@" ...) $# is number of arguments if [[ $# -eq 0 ]]; then exit 
+
+Alternative to resolveip: getent ahosts deepthought.flinders.edu.au   | getent hosts deepthought.flinders.edu.au
+
+Find the number of inodes in a directory: du --inodes --one-file-system --separate-dirs > inodes.count
+
+awk -F"\t" '!s[$10]++ {print $10}' # split a file on tab
+
+
+mount network drive: sudo mount -t drvfs R: /mnt/r
+
+here's a trick to pipe stderr to less, but not pipe stdout to less: command 3>&1 1>/dev/null 2>&3  | less
+
+to install samtools you need mamba install -y --override-channels -c conda-forge -c bioconda -c defaults samtools=1.20 (or whatever the latest version is)
+
+use ffmpeg to make an image a lot smaller:  mkdir small; for IMG in $(find . -maxdepth 1 -type f); do ffmpeg -i $IMG  -vf "scale='if(gt(iw,ih),1600,-1)':'if(gt(ih,iw),1600,-1)'" small/$IMG; done
+
+find . -type d -empty -delete # recursive find and delete files
+git switch to a new branch and push after last commit: NEWBRANCH=new_branch; git switch -c $NEWBRANCH && git push -u origin $NEWBRANCH
