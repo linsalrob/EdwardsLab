@@ -8,8 +8,102 @@ import argparse
 from author import Author, Address
 import operator
 from collections import OrderedDict
+from openpyxl import load_workbook
 
-def parse_file(filename):
+
+def parse_row(row, verbose=False):
+    """
+    parse a row from a tsv file or an excel file
+    """
+
+    if len(row) < 15:
+        sys.stderr.write("ERROR: Malformed: {}\t{}\n".format(len(row), row))
+        return None
+
+    if not row[2]:
+        return None
+
+    auth = Author(row[2], verbose=verbose)
+    if verbose:
+        print(f"Auth: {auth}", file=sys.stderr)
+    if len(row) > 24 and row[24]:
+        auth.funding = row[2] + " " + row[24].replace('"', '')
+
+    try:
+        if row[1]:
+            auth.orcid = row[1]
+        if row[3]:
+            auth.lastname = row[3]
+            auth.lastnamelower = row[3].lower()
+        if row[4]:
+            auth.firstname = row[4]
+            auth.firstnamelower = row[4].lower()
+        if row[5]:
+            auth.middleinitial = row[5]
+        if row[6]:
+            auth.email = row[6].replace(' ', '')
+        if row[14]:
+            auth.order = int(row[14])
+        if row[15]:
+            auth.contribution = row[15].replace('"', '')
+    except Exception as err:
+        print(f"Error parsing author name {row[2]}: {err}\n", file=sys.stderr)
+        return None
+
+    if verbose:
+        print(f"Checking primary address for {auth}", file=sys.stderr)
+
+    primary = Address(verbose=verbose)
+    try:
+        if row[7]:
+            primary.department = row[7].replace('"', '')
+        if row[8]:
+            primary.institution = row[8].replace('"', '')
+        if row[9]:
+            primary.street = row[9].replace('"', '')
+        if row[10]:
+            primary.city = row[10].replace('"', '')
+        if row[11]:
+            primary.state = row[11].replace('"', '')
+        if row[12]:
+            primary.zip = str(row[12]).replace('"', '')
+        if row[13]:
+            primary.country = row[13].replace('"', '')
+    except Exception as err:
+        print(f"Error parsing primary address for {row[2]}: {err}\n", file=sys.stderr)
+        return None
+
+    auth.primaryaddress = primary
+    if verbose:
+        print(f"Checking secondary address for {auth}", file=sys.stderr)
+
+    secondary = Address(verbose=verbose)
+    try:
+        if len(row) > 17 and row[17]:
+            secondary.department = row[17].replace('"', '')
+        if len(row) > 18 and row[18]:
+            secondary.institution = row[18].replace('"', '')
+        if len(row) > 19 and row[19]:
+            secondary.street = row[19].replace('"', '')
+        if len(row) > 20 and row[20]:
+            secondary.city = row[20].replace('"', '')
+        if len(row) > 21 and row[21]:
+            secondary.state = row[21].replace('"', '')
+        if len(row) > 22 and row[22]:
+            secondary.zip = str(row[22]).replace('"', '')
+        if len(row) > 23 and row[23]:
+            secondary.country = row[23].replace('"', '')
+
+        if secondary.is_valid():
+            auth.secondaryaddress = secondary
+    except Exception as err:
+        print(f"Error parsing secondary address for {row[2]}: {err}\n", file=sys.stderr)
+        return None
+
+    return auth
+
+
+def parse_file(filename, verbose=False):
     """
     parse a file and create a set of authors
     :param filename: file to parse
@@ -17,87 +111,39 @@ def parse_file(filename):
     """
 
     authors = set()
+    abbrevs = set()
     firstline = True # ignore the first line
 
-    with open(filename, 'r', encoding='latin-1') as f:
-        for l in f:
-            if firstline:
-                firstline = False
+    if '.xls' in filename:
+        try:
+            workbook = load_workbook(filename=filename, data_only=True)
+            sheet = workbook["authors"]
+        except Exception as err:
+            print(f"Error parsing {filename} as an excel file and extracting sheet 'authors': {err}", file=sys.stderr)
+            return None
+        for row in sheet.iter_rows(values_only=True):
+            if row[1] == 'ORCID' or 'acronym' in row[2]:
                 continue
-            l = l.rstrip()
-            
-            if not l:
+            auth = parse_row(row, verbose=verbose)
+            if auth in authors:
+                print(f"Duplicate author {auth} in {filename}", file=sys.stderr)
                 continue
-
-            p = l.split("\t")
-            
-            if len(p) < 15:
-                sys.stderr.write("ERROR: Malformed: {}\t{}\n".format(len(p), p))
-                continue
-
-            auth = Author(p[2])
-
-            try:
-                if p[1]:
-                    auth.orcid = p[1]
-                if p[3]:
-                    auth.lastname = p[3]
-                    auth.lastnamelower = p[3].lower()
-                if p[4]:
-                    auth.firstname = p[4]
-                    auth.firstnamelower = p[4].lower()
-                if p[5]:
-                    auth.middleinitial = p[5]
-                if p[6]:
-                    auth.email = p[6].replace(' ', '')
-                if p[14]:
-                    auth.order = int(p[14])
-                if p[15]:
-                    auth.contribution = p[15].replace('"', '')
-                if len(p) > 16 and p[16]:
-                    auth.funding = p[16].replace('"', '')
-
-                primary = Address()
-                if p[7]:
-                    primary.department = p[7].replace('"', '')
-                if p[8]:
-                    primary.institution = p[8].replace('"', '')
-                if p[9]:
-                    primary.street = p[9].replace('"', '')
-                if p[10]:
-                    primary.city = p[10].replace('"', '')
-                if p[11]:
-                    primary.state = p[11].replace('"', '')
-                if p[12]:
-                    primary.zip = p[12].replace('"', '')
-                if p[13]:
-                    primary.country = p[13].replace('"', '')
-
-                auth.primaryaddress = primary
-
-                secondary = Address()
-                if len(p) > 17 and p[17]:
-                    secondary.department = p[17].replace('"', '')
-                if len(p) > 18 and p[18]:
-                    secondary.institution = p[18].replace('"', '')
-                if len(p) > 19 and p[19]:
-                    secondary.street = p[19].replace('"', '')
-                if len(p) > 20 and p[20]:
-                    secondary.city = p[20].replace('"', '')
-                if len(p) > 21 and p[21]:
-                    secondary.state = p[21].replace('"', '')
-                if len(p) > 22 and p[22]:
-                    secondary.zip = p[22].replace('"', '')
-                if len(p) > 23 and p[23]:
-                    secondary.country = p[23].replace('"', '')
-
-                if secondary.is_valid():
-                    auth.secondaryaddress = secondary
-            except Exception as err:
-                sys.stderr.write("Error parsing {}: {}\n".format(p[2], err))
-                continue
-
             authors.add(auth)
+    else:
+        with open(filename, 'r', encoding='cp1252') as f:
+            for l in f:
+                if firstline:
+                    firstline = False
+                    continue
+                l = l.rstrip()
+                if not l:
+                    continue
+                row = l.split("\t")
+                auth = parse_row(row, verbose=verbose)
+                if auth in authors:
+                    print(f"Duplicate author {auth} in {filename}", file=sys.stderr)
+                    continue
+                authors.add(auth)
     return authors
 
 
@@ -321,6 +367,28 @@ def comma_list(authors):
         else:
             print(" ".join(map(str, [a.firstname, a.lastname])), end=", ")
 
+def biorxiv(authors):
+    """
+    print a tsv file that you can upload to biorxiv
+    Fields are Email	Institution	First Name	Middle Name(s)/Initial(s)	Last Name	Suffix	Corresponding Author	Home Page URL	Collaborative Group/Consortium	ORCiD
+
+    :param authors: the set of authors
+    :return:
+    """
+
+    print("Email\tInstitution\tFirst Name\tMiddle Name(s)/Initial(s)\tLast Name\tSuffix\tCorresponding Author\tHome Page URL\tCollaborative Group/Consortium\tORCiD")
+
+    for a in sorted(authors, key=operator.attrgetter('order', 'lastnamelower', 'firstnamelower')):
+        data= [a.email]
+        inst = a.primaryaddress.get_address()
+        secinst = a.secondaryaddress.get_address()
+        if secinst:
+            inst = f"{inst}; {secinst}"
+        data.append(inst)
+        data+= [a.firstname, a.middleinitial, a.lastname, "", "", "", "", a.orcid]
+        print("\t".join(map(str, data)))
+
+
 
 def email_list(authors):
     """
@@ -350,19 +418,20 @@ def orcid_list(authors):
             print(nm)
 
 if __name__ == '__main__':
-    parser = argparse.ArgumentParser(description="Parse the author information from our google doc for the crAssphage paper")
-    parser.add_argument('-f', help='Google doc of author information', required=True)
+    parser = argparse.ArgumentParser(description="Parse the author information from our google doc. We can read either an excel or tsv file")
+    parser.add_argument('-f', help='Author information', required=True)
     parser.add_argument('-t', help="test validity of the author information", action='store_true')
     parser.add_argument('-d', help='check for duplicate entries', action='store_true')
     parser.add_argument('-o', help='print the author list as ORCids in the correct order', action='store_true')
     parser.add_argument('-n', help='print the author list suitable for cutting and pasting to nature', action='store_true')
     parser.add_argument('-s', help='print the author list to add to the science bulk upload', action='store_true')
+    parser.add_argument('-b', help='print a tsv file to upload to bioRxiv', action='store_true')
     parser.add_argument('-c', help='print the author list comma separated', action='store_true')
     parser.add_argument('-e', help='print the author list to use sending emails', action='store_true')
     parser.add_argument('-v', help='verbose output', action="store_true")
     args = parser.parse_args()
 
-    authors = parse_file(args.f)
+    authors = parse_file(args.f, args.v)
 
     if args.d:
         check_spellings(authors)
@@ -382,6 +451,11 @@ if __name__ == '__main__':
 
     if args.c:
         comma_list(authors)
+        print()
+        sys.exit(0)
+
+    if args.b:
+        biorxiv(authors)
         print()
         sys.exit(0)
 
