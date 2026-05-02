@@ -36,7 +36,7 @@ if __name__ == '__main__':
         if l.startswith('LOCUS'):
             if out:
                 out.close()
-            m=re.match('LOCUS\s+(\S+)', l)
+            m=re.match(r'LOCUS\s+(\S+)', l)
             try:
                 outfilename = m.groups()[0]
             except:
