@@ -1,5 +1,4 @@
 PhiSpy
-bcbio-gff>=0.6.6
 biopython
 bs4
 crc64iso

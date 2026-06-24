@@ -8,9 +8,9 @@ import re
 import binascii
 import gzip
 from Bio import SeqIO
-from BCBio import GFF  # bcbio-gff package
 import pandas as pd
 from .colours import message
+from .gff import write_gff3
 
 __author__ = 'Rob Edwards'
 __copyright__ = 'Copyright 2020, Rob Edwards'
@@ -365,14 +365,7 @@ def genbank_to_gff(gbkf, out_gff, verbose=False):
     """
 
     with open(out_gff, 'w') as outf:
-        """
-        for seq in genbank_seqio(gbkf):
-            if verbose:
-                sys.stderr.write(f"Parsing {seq.id} with first seq: {seq.seq[0:10]}\n")
-            GFF.write(seq, outf, True)
-        """
         if verbose:
             sys.stderr.write(f"Parsing {gbkf} to GFF3\n")
-        GFF.write(genbank_seqio(gbkf), outf, True)
-
+        write_gff3(genbank_seqio(gbkf), outf)
 
