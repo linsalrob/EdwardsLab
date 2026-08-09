@@ -21,6 +21,8 @@ from .genbank import genbank_to_ptt, genbank_to_functions, feature_id, genbank_t
 from .genbank import genbank_to_gff
 from .gff import GffRecord, read_gff, read_gff3, write_gff3
 from .files import is_gzip
+from .seqio_filter import SeqioFilter
+
 
 __all__ = [
     'mean', 'median', 'stdev',
@@ -36,5 +38,5 @@ __all__ = [
     'genbank_to_faa', 'genbank_to_fna', 'genbank_to_orfs', 'genbank_to_ptt', 'genbank_seqio', 'genbank_to_functions',
     'feature_id', 'genbank_to_pandas', 'genbank_to_gff',
     'GffRecord', 'read_gff', 'read_gff3', 'write_gff3',
-    'is_gzip'
+    'is_gzip', 'SeqioFilter'
     ]
