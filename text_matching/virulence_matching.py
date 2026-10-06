@@ -40,7 +40,7 @@ stopwords = common_vfdb_words.union(bio_stopwords).union(nltk_topwords)
 __author__ = 'Rob Edwards'
 
 bacterial_pathogens = {
-    'kingdom': ['Bacteria'],
+    'kingdom': ['Bacteria', 'Eukaryota'],
     'phylum': ['Chlamydiota', 'Actinomycetota', 'Pseudomonadota', 'Mycoplasmatota', 'Spirochaetota', 'Bacillota',
                'Campylobacterota'],
     'class': ['Chlamydiia', 'Spirochaetia', 'Epsilonproteobacteria', 'Bacilli', '', 'Betaproteobacteria',
@@ -87,7 +87,7 @@ if __name__ == "__main__":
     parser = argparse.ArgumentParser(description=' ')
     parser.add_argument('-j', help='json file of clusters from autoencoder', default='clusters.json.gz')
     parser.add_argument('-f', help='virulence factor database file', default='vfdb.txt.gz')
-    parser.add_argument('-t', help='bacterial taxa used in the clusters', default='family')
+    parser.add_argument('-t', help='taxa level used in the clusters (default: family)', default='family')
     parser.add_argument('-o', help='output file', default='cluster_virulence_score.tsv')
     parser.add_argument('-s', help='split words in tokens', action='store_true')
     parser.add_argument('-v', help='verbose output', action='store_true')
@@ -121,7 +121,8 @@ if __name__ == "__main__":
     if args.v:
         print(f"Found {len(virfuncs)} virulence factors in the database", file=sys.stderr)
 
-    with gzip.open(args.j, 'rt', encoding='latin1') as f:  # 'rt' means read text
+    opener = gzip.open if args.j.endswith('.gz') else open
+    with opener(args.j, 'rt', encoding='latin1') as f:  # 'rt' means read text
         clusters = json.load(f)
 
     cluster_tokens = {}
@@ -160,9 +161,11 @@ if __name__ == "__main__":
             expected_matches = len(tokens) * (len(virfuncs) / len(total_vocab))
             enrichment_score = (
                                            observed_matches - expected_matches) / expected_matches if expected_matches > 0 else np.nan
-            enrichment2 = (observed_matches - expected_matches) / (observed_matches + expected_matches) if (
-                                                                                                                       observed_matches + expected_matches) > 0 else np.nan
-
+            enrichment2 = (observed_matches - expected_matches) / (observed_matches + expected_matches) if (observed_matches + expected_matches) > 0 else np.nan
+            if tokens:
+                frac_cv = len(tokens.intersection(virfuncs)) / len(tokens)
+            else:
+                frac_cv = 0
             print("\t".join(map(str, [f"Cluster {c}",
                                       len(tokens),
                                       len(virfuncs),
@@ -170,7 +173,7 @@ if __name__ == "__main__":
                                       len(tokens.union(virfuncs)),
                                       len(tokens.intersection(virfuncs)) / len(tokens.union(virfuncs)),
                                       (len(tokens.intersection(virfuncs)) / len(tokens.union(virfuncs))) / maxjaccard,
-                                      len(tokens.intersection(virfuncs)) / len(tokens),
+                                      frac_cv,
                                       enrichment_score,
                                       enrichment2])),
                   file=out)
@@ -178,8 +181,10 @@ if __name__ == "__main__":
     with open("virulence_factors_in_clusters.json", 'w') as out:
         json.dump(words_in_common, out, indent=4)
 
+    maxt = 3
+    print(f"Tokens in more than {maxt} clusters")
     for w in word_cluster_count:
         if len(word_cluster_count[w]) > 3:
-            #print(f"{w}: {len(word_cluster_count[w])} clusters")
-            print(f"'{w}', ", end="")
+            print(f"{w}: {len(word_cluster_count[w])} clusters")
+            #print(f"'{w}', ", end="")
     print()
