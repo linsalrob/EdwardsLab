@@ -7,6 +7,7 @@ import sys
 import argparse
 
 from Bio import Seq, SeqIO
+from roblib import SeqioFilter
 
 __author__ = 'Rob Edwards'
 __copyright__ = 'Copyright 2020, Rob Edwards'
@@ -25,10 +26,27 @@ def list_features(gbf, verbose=False):
     """
 
     record = SeqioFilter(SeqIO.parse(gbf, "genbank"))
+    all_records = []
+    all_keys = set()
     for entry in record:
         for feature in entry.get_features('CDS'):
-            print(f"{entry.id}\t{feature.id}\t{feature.function}")
+            all_records.append(feature.qualifiers)
+            all_keys.update(feature.qualifiers.keys())
 
+    ak = sorted(all_keys)
+    print("\t".join(ak))
+    for r in all_records:
+        first = False
+        for a in ak:
+            if first:
+                print("\t", end="")
+            else:
+                first = True
+            if a in r:
+                print(r[a][0], end="")
+            else:
+                print(end="")
+        print()
 
 if __name__ == '__main__':
     parser = argparse.ArgumentParser(description=" ")
