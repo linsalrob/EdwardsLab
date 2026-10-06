@@ -44,17 +44,21 @@ if __name__ == "__main__":
             #seqid, seq = next(stream)
             # ids.append(seqid)
             # seqs.append(seq)
-            line = next(stream)
-            if line.startswith('>'):
-                ids.append(line.strip())
-                seqs.append("")
-                tnow = time.time_ns()
-                if i %1000 == 0 and args.verbose:
-                    print(f"\t{bcolors.GREEN}Read {i} reads in {tnow - tthen:,} ns{bcolors.ENDC}", file=sys.stderr)
-                tthen = tnow
-                i += 1
-            else:
-                seqs[-1] += line.strip()
+            try:
+                line = next(stream)
+                if line.startswith('>'):
+                    ids.append(line.strip())
+                    seqs.append("")
+                    tnow = time.time_ns()
+                    if i %1000 == 0 and args.verbose:
+                        print(f"\t{bcolors.GREEN}Read {i} reads in {tnow - tthen:,} ns{bcolors.ENDC}", file=sys.stderr)
+                    tthen = tnow
+                    i += 1
+                else:
+                    seqs[-1] += line.strip()
+            except StopIteration:
+                print(f"\t{bcolors.PINK}End of the file {args.fasta} reached after {i} records{bcolors.ENDC}", file=sys.stderr)
+                break
 
         n = args.sample
         if args.verbose:
@@ -82,7 +86,7 @@ if __name__ == "__main__":
     if args.output.endswith('.gz'):
         opener = gzip.open
     with opener(args.output, 'wt') as out:
-        for i in range(args.sample):
+        for i in range(len(ids)):
             print(f">{ids[i]}\n{seqs[i]}", file=out)
 
     if args.reverse:
@@ -97,11 +101,11 @@ if __name__ == "__main__":
                 if line.startswith('>'):
                     if line.strip() in finalids:
                         print_seq = True
+                        ron += 1
                     else:
                         print_seq = False
                 if print_seq:
                     print(line, file=out)
-                    ron += 1
 
         if ron != len(finalids):
             message(f"WARNING: We printed {len(finalids)} in the forward file but only {ron} ids in the reverse", "RED")
